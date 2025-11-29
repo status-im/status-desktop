@@ -6391,30 +6391,6 @@ Recuerda tu contraseña y no la compartas con nadie.</translation>
         <translation>Habilita para permitirte destruir tokens remotamente. Útil para revocar permisos de individuos</translation>
     </message>
     <message>
-        <source>Decimals (DP)</source>
-        <translation>Decimales (DP)</translation>
-    </message>
-    <message>
-        <source>Max 10</source>
-        <translation>Máx. 10</translation>
-    </message>
-    <message>
-        <source>Please enter how many decimals your token should have</source>
-        <translation>Por favor escribe cuántos decimales debe tener tu token</translation>
-    </message>
-    <message>
-        <source>Your decimal amount is too cool (use 0-9 only)</source>
-        <translation>Tu cantidad de decimales es demasiado cool (usa solo 0-9)</translation>
-    </message>
-    <message>
-        <source>Your decimal amount contains invalid characters (use 0-9 only)</source>
-        <translation>Tu cantidad de decimales contiene caracteres inválidos (usa solo 0-9)</translation>
-    </message>
-    <message>
-        <source>Enter a number between 1 and 10</source>
-        <translation>Escribe un número entre 1 y 10</translation>
-    </message>
-    <message>
         <source>Show fees</source>
         <translation>Mostrar comisiones</translation>
     </message>
@@ -10857,6 +10833,10 @@ al cargar</translation>
         <source>Last check %1</source>
         <translation>Última verificación %1</translation>
     </message>
+    <message>
+        <source>Available if third-party services enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MarkAsIDVerifiedDialog</name>
@@ -14755,6 +14735,10 @@ al cargar</translation>
     <message>
         <source>Search for token or enter token address</source>
         <translation>Buscar token o facilitar dirección del token</translation>
+    </message>
+    <message>
+        <source>Loading more tokens...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

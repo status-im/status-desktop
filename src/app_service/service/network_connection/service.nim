@@ -41,7 +41,7 @@ const MARKET* = "market"
 const COLLECTIBLES* = "collectibles"
 
 const UNSUPPORTED_MULTICHAIN_FEATURES: Table[string, seq[int]] = {
-  COLLECTIBLES: @[CHAINID_BSC_MAINNET, CHAINID_BSC_TESTNET, CHAINID_STATUS_NETWORK_SEPOLIA]
+  COLLECTIBLES: @[BSC_MAINNET, BSC_TESTNET, STATUS_NETWORK_SEPOLIA]
 }.toTable
 
 
@@ -149,7 +149,7 @@ QtObject:
         result[k] = connection_status_backend.initConnectionState(
           value = getStateValue(v.getStr)
         )
-  
+
   proc getChainStatusTable(statusPerChain: Table[int, ProviderStatus]): ConnectionStatusNotification =
     result = initCustomStatusNotification()
     for chain, status in statusPerChain.pairs:

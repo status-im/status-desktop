@@ -23,7 +23,7 @@ Item {
 
             readonly property var assetsData: [
                 {
-                    tokensKey: "stt_key",
+                    key: "stt_key",
                     communityId: "",
                     name: "Status Test Token",
                     currencyBalanceAsString: "42,23 USD",
@@ -47,7 +47,7 @@ Item {
                     sectionName: ""
                 },
                 {
-                    tokensKey: "dai_key",
+                    key: "dai_key",
                     communityId: "",
                     name: "Dai Stablecoin",
                     currencyBalanceAsString: "45,92 USD",
@@ -58,7 +58,7 @@ Item {
                     sectionName: "Popular assets"
                 },
                 {
-                    tokensKey: "zrx_key",
+                    key: "zrx_key",
                     communityId: "",
                     name: "0x",
                     currencyBalanceAsString: "41,22 USD",
@@ -115,7 +115,7 @@ Item {
 
             model.append(control.assetsData.map(
                 e => ({
-                        tokensKey: e.tokensKey,
+                        key: e.key,
                         communityId: e.communityId,
                         name: e.name,
                         currencyBalanceAsString: e.currencyBalanceAsString,

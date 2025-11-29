@@ -22,7 +22,10 @@ Item {
     width: 1200
     height: 800
 
-    TokensBySymbolModel {
+    property string ethGroupKey: "eth-native"
+    property string sttGroupKey: "status-test-token"
+
+    TokenGroupsModel {
         id: plainTokensModel
     }
 
@@ -35,12 +38,10 @@ Item {
                 readonly property var accounts: WalletAccountsModel {}
             }
             walletAssetsStore: WalletAssetsStore {
-                id: thisWalletAssetStore
                 walletTokensStore: TokensStore {
-                    plainTokensBySymbolModel: TokensBySymbolModel {}
+                    tokenGroupsModel: TokenGroupsModel {}
                 }
-                readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-                assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+                assetsWithFilteredBalances: GroupedAccountsAssetsModel {}
             }
             currencyStore: CurrenciesStore {}
             networksStore: NetworksStore {}
@@ -52,7 +53,7 @@ Item {
 
         readonly property var tokenSelectorAdaptor: TokenSelectorViewAdaptor {
             assetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
-            plainTokensBySymbolModel: plainTokensModel
+            tokenGroupsModel: plainTokensModel
             flatNetworksModel: d.adaptor.networksStore.activeNetworks
             currentCurrency: d.adaptor.currencyStore.currentCurrency
 
@@ -69,7 +70,7 @@ Item {
             currencyStore: d.adaptor.currencyStore
             flatNetworksModel: d.adaptor.networksStore.activeNetworks
             processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
-            plainTokensBySymbolModel: plainTokensModel
+            tokenGroupsModel: plainTokensModel
             selectedAccountAddress: d.adaptor.swapFormData.selectedAccountAddress
             selectedNetworkChainId: d.goOptChainId
         }
@@ -112,14 +113,14 @@ Item {
             controlUnderTest = createTemporaryObject(componentUnderTest, root,
                                                      {
                                                          swapSide: SwapInputPanel.SwapSide.Pay,
-                                                         tokenKey: "STT",
+                                                         groupKey: sttGroupKey,
                                                          tokenAmount: "10000000.0000001"
                                                      })
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
 
             tryCompare(controlUnderTest, "swapSide", SwapInputPanel.SwapSide.Pay)
-            tryCompare(controlUnderTest, "selectedHoldingId", "STT")
+            tryCompare(controlUnderTest, "selectedHoldingId", sttGroupKey)
             tryCompare(controlUnderTest, "value", 10000000.0000001)
             verify(controlUnderTest.valueValid)
         }
@@ -140,13 +141,14 @@ Item {
             const valid = data.valid
             const tokenAmount = data.tokenAmount
             const tokenSymbol = "STT"
+            const tokenGroupKey = sttGroupKey
 
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
             verify(!!controlUnderTest)
-            controlUnderTest.tokenKey = tokenSymbol
+            controlUnderTest.groupKey = tokenGroupKey
             controlUnderTest.tokenAmount = tokenAmount
 
-            tryCompare(controlUnderTest, "selectedHoldingId", tokenSymbol)
+            tryCompare(controlUnderTest, "selectedHoldingId", tokenGroupKey)
             if (!valid)
                 expectFail(data.tag, "Invalid data expected to fail: %1".arg(tokenAmount))
             tryCompare(controlUnderTest, "value", parseFloat(tokenAmount))
@@ -164,10 +166,10 @@ Item {
         }
 
         function test_enterTokenAmountLocalizedNumber() {
-            controlUnderTest = createTemporaryObject(componentUnderTest, root, {tokenKey: "STT"})
+            controlUnderTest = createTemporaryObject(componentUnderTest, root, {groupKey: sttGroupKey})
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
-            tryCompare(controlUnderTest, "selectedHoldingId", "STT")
+            tryCompare(controlUnderTest, "selectedHoldingId", sttGroupKey)
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
@@ -217,7 +219,7 @@ Item {
             verify(!!sttDelegate)
             mouseClick(sttDelegate)
 
-            tryCompare(controlUnderTest, "selectedHoldingId", "STT")
+            tryCompare(controlUnderTest, "selectedHoldingId", sttGroupKey)
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
@@ -240,7 +242,7 @@ Item {
 
         // verify that when "fiatInputInteractive" mode is on, the Max send button text shows fiat currency symbol (e.g. "1.2 USD")
         function test_maxButtonFiatCurrencySymbol() {
-            controlUnderTest = createTemporaryObject(componentUnderTest, root, {tokenKey: "ETH"})
+            controlUnderTest = createTemporaryObject(componentUnderTest, root, {groupKey: ethGroupKey})
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
             controlUnderTest.fiatInputInteractive = true
@@ -268,7 +270,7 @@ Item {
 
         // verify that in default mode, the Max send button text doesn't show the currency symbol for crypto (e.g. "1.2" for ETH)
         function test_maxButtonNoCryptoCurrencySymbol() {
-            controlUnderTest = createTemporaryObject(componentUnderTest, root, {tokenKey: "ETH"})
+            controlUnderTest = createTemporaryObject(componentUnderTest, root, {groupKey: ethGroupKey})
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
 
@@ -281,10 +283,10 @@ Item {
         }
 
         function test_clickingMaxButton() {
-            controlUnderTest = createTemporaryObject(componentUnderTest, root, {tokenKey: "ETH"})
+            controlUnderTest = createTemporaryObject(componentUnderTest, root, {groupKey: ethGroupKey})
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
-            tryCompare(controlUnderTest, "selectedHoldingId", "ETH")
+            tryCompare(controlUnderTest, "selectedHoldingId", ethGroupKey)
 
             const maxTagButton = findChild(controlUnderTest, "maxTagButton")
             verify(!!maxTagButton)
@@ -348,14 +350,15 @@ Item {
             const bottomItemText = findChild(amountToSendInput, "bottomItemText")
             verify(!!bottomItemText)
 
-            for (let i= 0; i < d.tokenSelectorAdaptor.outputAssetsModel.count; i++) {
-                let modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
+            const assetCount = assetSelectorList.count
+            for (let i= 0; i < assetCount; i++) {
                 mouseClick(holdingSelector)
                 waitForRendering(assetSelectorList)
                 assetSelectorList.positionViewAtIndex(i, ListView.Center)
 
-                const delToTest = findChild(assetSelectorList, "tokenSelectorAssetDelegate_%1".arg(modelItemToTest.name))
+                const delToTest = assetSelectorList.itemAtIndex(i)
                 verify(!!delToTest)
+                const modelItemToTest = ModelUtils.get(assetSelectorList.model, i)
                 mouseClick(delToTest)
 
                 waitForRendering(controlUnderTest)
@@ -364,14 +367,17 @@ Item {
                 verify(!maxTagButton.text.endsWith(modelItemToTest.symbol))
                 tryCompare(maxTagButton, "type", modelItemToTest.currentBalance === 0 ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal)
 
-                // check input value and state
                 if (maxTagButton.enabled) {
                     mouseClick(maxTagButton)
                     waitForRendering(amountToSendInput)
 
-                    tryCompare(amountToSendInput, "text", modelItemToTest.currentBalance === 0 ? "" : maxTagButton.maxSafeValue.toString())
-                    tryCompare(controlUnderTest, "value", maxTagButton.maxSafeValue)
-                    verify(modelItemToTest.currentBalance === 0 ? !controlUnderTest.valueValid : controlUnderTest.valueValid)
+                    if (modelItemToTest.currentBalance === 0) {
+                        tryCompare(amountToSendInput, "text", "")
+                        verify(!controlUnderTest.valueValid)
+                    } else {
+                        tryCompare(controlUnderTest, "value", maxTagButton.maxSafeValue)
+                        verify(controlUnderTest.valueValid)
+                    }
                     compare(bottomItemText.text,  d.adaptor.currencyStore.formatCurrencyAmount(
                                 maxTagButton.maxSafeValue * amountToSendInput.cryptoPrice, d.adaptor.currencyStore.currentCurrency))
                 }
@@ -417,16 +423,18 @@ Item {
 
             waitForRendering(assetSelectorList)
 
-            for (let i= 0; i < d.tokenSelectorAdaptor.outputAssetsModel.count; i++) {
+            const assetCount = assetSelectorList.count
+            for (let i= 0; i < assetCount; i++) {
                 mouseClick(tokenSelectorButton)
                 waitForRendering(dropdown.contentItem)
                 waitForRendering(assetSelectorList)
                 verify(dropdown.open)
 
-                const modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
+                const modelItemToTest = ModelUtils.get(assetSelectorList.model, i)
                 verify(!!modelItemToTest)
 
-                const delToTest = findChild(assetSelectorList, "tokenSelectorAssetDelegate_%1".arg(modelItemToTest.name))
+                assetSelectorList.positionViewAtIndex(i, ListView.Center)
+                const delToTest = assetSelectorList.itemAtIndex(i)
                 verify(!!delToTest)
                 if(delToTest.interactive) {
                     mouseClick(delToTest)
@@ -442,19 +450,19 @@ Item {
                     compare(controlUnderTest.value, numberTested)
                     compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.text, modelItemToTest.decimals).toString())
                     compare(controlUnderTest.valueValid, numberTested <= maxTagButton.maxSafeValue)
-                    compare(controlUnderTest.selectedHoldingId, modelItemToTest.tokensKey)
+                    compare(controlUnderTest.selectedHoldingId, modelItemToTest.key)
                     compare(controlUnderTest.amountEnteredGreaterThanBalance, numberTested > maxTagButton.maxSafeValue)
                 }
             }
         }
 
         function test_if_values_are_reset_after_setting_tokenAmount_as_empty() {
-            const tokenKeyToTest = "ETH"
+            const tokenKeyToTest = ethGroupKey
             let numberTestedString = "1.0001"
-            let modelItemToTest = ModelUtils.getByKey(d.tokenSelectorAdaptor.outputAssetsModel, "tokensKey", tokenKeyToTest)
+            let modelItemToTest = ModelUtils.getByKey(d.tokenSelectorAdaptor.outputAssetsModel, "key", tokenKeyToTest)
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {
                                                          swapSide: SwapInputPanel.SwapSide.Pay,
-                                                         tokenKey: tokenKeyToTest,
+                                                         groupKey: tokenKeyToTest,
                                                          tokenAmount: numberTestedString
                                                      })
             verify(!!controlUnderTest)
@@ -490,12 +498,12 @@ Item {
         }
 
         function test_if_values_not_reset_on_modelReset() {
-            const tokenKeyToTest = "ETH"
+            const tokenKeyToTest = ethGroupKey
             let numberTestedString = "1.0001"
-            let modelItemToTest = ModelUtils.getByKey(d.tokenSelectorAdaptor.outputAssetsModel, "tokensKey", tokenKeyToTest)
+            let modelItemToTest = ModelUtils.getByKey(d.tokenSelectorAdaptor.outputAssetsModel, "key", tokenKeyToTest)
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {
                                                          swapSide: SwapInputPanel.SwapSide.Pay,
-                                                         tokenKey: tokenKeyToTest,
+                                                         groupKey: tokenKeyToTest,
                                                          tokenAmount: numberTestedString
                                                      })
             verify(!!controlUnderTest)

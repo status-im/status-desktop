@@ -7,6 +7,7 @@ import app/global/utils
 import app/core/eventemitter
 import app_service/common/utils
 import app_service/common/wallet_constants
+import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/currency/service as currency_service
@@ -44,12 +45,10 @@ type
     tmpSendTransactionDetails: TmpSendTransactionDetails
     tmpClearLocalDataLater: bool
 
-# Forward declaration
-method getTokenBalance*(self: Module, address: string, chainId: int, tokensKey: string): CurrencyAmount
-
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
+  tokenService: token_service.Service,
   walletAccountService: wallet_account_service.Service,
   networkService: network_service.Service,
   currencyService: currency_service.Service,
@@ -59,7 +58,7 @@ proc newModule*(
   result = Module()
   result.delegate = delegate
   result.events = events
-  result.controller = controller.newController(result, events, walletAccountService, networkService, currencyService,
+  result.controller = controller.newController(result, events, tokenService, walletAccountService, networkService, currencyService,
     transactionService, keycardService)
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
@@ -92,14 +91,14 @@ proc convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): Ne
       amountIn = "",
       $network.amountOut)
 
-proc convertNetworkDtoToNetworkRouteItem(self: Module, network: network_service_item.NetworkItem): NetworkRouteItem =
+proc convertNetworkDtoToNetworkRouteItem(self: Module, network: network_service_item.NetworkItem, tokenBalance: CurrencyAmount): NetworkRouteItem =
   result = initNetworkRouteItem(
       network.chainId,
       network.layer,
       true,
       false,
       true,
-      self.getTokenBalance(self.view.getSelectedSenderAccountAddress(), network.chainId, self.view.getSelectedAssetKey())
+      tokenBalance
       )
 
 proc convertSuggestedFeesDtoToGasFeesItem(self: Module, gasFees: SuggestedFeesDto): GasFeesItem =
@@ -148,10 +147,54 @@ proc convertTransactionPathDtoToSuggestedRouteItem(self: Module, pathOld: Transa
     approvalL1FeeInWei = pathNew.approvalL1Fee.toString(),
   )
 
+method getTokenBalanceForChainId*(self: Module, chainId: int): CurrencyAmount =
+  let assetKey = self.view.getSelectedAssetKey()
+  if assetKey.len == 0:
+    return self.controller.getTokenBalance(self.view.getSelectedSenderAccountAddress(), "")
+
+  let tokenItem = self.controller.getTokenByGroupKeyAndChainId(assetKey, chainId)
+  if tokenItem.isNil:
+    error "no token found for group key and chain id", groupKey=assetKey, chainId=chainId
+    return newCurrencyAmount()
+  return self.controller.getTokenBalance(self.view.getSelectedSenderAccountAddress(), tokenItem.key)
+
 proc refreshNetworks*(self: Module) =
   let networks = self.controller.getCurrentNetworks()
-  let fromNetworks = networks.map(x => self.convertNetworkDtoToNetworkRouteItem(x))
-  let toNetworks = networks.map(x => self.convertNetworkDtoToNetworkRouteItem(x))
+  let assetKey = self.view.getSelectedAssetKey()
+  if assetKey.len == 0:
+    let tokenBalance = self.controller.getTokenBalance(self.view.getSelectedSenderAccountAddress(), "")
+    let fromNetworks = networks.map(x => self.convertNetworkDtoToNetworkRouteItem(x, tokenBalance))
+    let toNetworks = networks.map(x => self.convertNetworkDtoToNetworkRouteItem(x, tokenBalance))
+    self.view.setNetworkItems(fromNetworks, toNetworks)
+    return
+
+  let tokens = self.controller.getTokensByGroupKey(assetKey)
+  if tokens.len == 0:
+    error "no tokens found for group key", groupKey=assetKey
+    return
+
+  if tokens.len < 2:
+    error "cannot bridge - only one token found for group key", groupKey=assetKey
+    return
+
+  var
+    fromNetworks: seq[NetworkRouteItem]
+    toNetworks: seq[NetworkRouteItem]
+  for token in tokens:
+    var network: network_service_item.NetworkItem
+    for i in 0..<networks.len:
+      if networks[i].chainId == token.chainId:
+        network = networks[i]
+        break
+
+    if network.isNil:
+      error "network not found for token", tokenKey=token.key
+      continue
+
+    let tokenBalance = self.controller.getTokenBalance(self.view.getSelectedSenderAccountAddress(), token.key)
+    fromNetworks.add(self.convertNetworkDtoToNetworkRouteItem(network, tokenBalance))
+    toNetworks.add(self.convertNetworkDtoToNetworkRouteItem(network, tokenBalance))
+
   self.view.setNetworkItems(fromNetworks, toNetworks)
 
 method load*(self: Module) =
@@ -171,9 +214,6 @@ method viewDidLoad*(self: Module) =
   self.refreshNetworks()
   self.moduleLoaded = true
   self.delegate.sendModuleDidLoad()
-
-method getTokenBalance*(self: Module, address: string, chainId: int, tokensKey: string): CurrencyAmount =
-  return self.controller.getTokenBalance(address, chainId, tokensKey)
 
 proc buildTransactionsFromRoute(self: Module) =
   let err = self.controller.buildTransactionsFromRoute(self.tmpSendTransactionDetails.uuid)

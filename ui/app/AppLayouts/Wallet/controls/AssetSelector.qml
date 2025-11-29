@@ -12,19 +12,25 @@ Control {
     id: root
 
     /** Expected model structure: see SearchableAssetsPanel::model **/
-    property alias model: searchableAssetsPanel.model
-    property alias nonInteractiveKey: searchableAssetsPanel.nonInteractiveKey
+    property var model
+
+    property string nonInteractiveKey
+
+    property bool hasMoreItems: false
+    property bool isLoadingMore: false
 
     readonly property bool isSelected: button.selected
 
-    signal selected(string key)
+    signal search(string keyword)
+    signal selected(string groupKey)
+    signal loadMoreRequested()
 
-    function setSelection(name: string, icon: url, key: string) {
+    function setSelection(name: string, icon: url, tokenGroupKey: string) {
         button.name = name
         button.icon = icon
         button.selected = true
 
-        searchableAssetsPanel.highlightedKey = key ?? ""
+        searchableAssetsPanel.highlightedKey = tokenGroupKey ?? ""
     }
 
     function reset() {
@@ -70,6 +76,13 @@ Control {
 
             objectName: "searchableAssetsPanel"
 
+            model: root.model
+            nonInteractiveKey: root.nonInteractiveKey
+            hasMoreItems: root.hasMoreItems
+            isLoadingMore: root.isLoadingMore
+
+            onLoadMoreRequested: root.loadMoreRequested()
+
             function setCurrentAndClose(name, icon) {
                 button.name = name
                 button.icon = icon
@@ -78,14 +91,24 @@ Control {
             }
 
             onSelected: function(key) {
-                const entry = ModelUtils.getByKey(root.model, "tokensKey", key)
+                const entry = ModelUtils.getByKey(root.model, "key", key) // refers to group key
+                if (!entry) {
+                    console.error("asset couldn't be resolved for the key", key)
+                    return
+                }
                 highlightedKey = key
 
                 setCurrentAndClose(entry.symbol, entry.iconSource)
                 root.selected(key)
             }
+
+            onSearch: function(keyword) {
+                root.search(keyword)
+            }
         }
 
-        onClosed: searchableAssetsPanel.clearSearch()
+        onClosed: {
+            searchableAssetsPanel.clearSearch()
+        }
     }
 }

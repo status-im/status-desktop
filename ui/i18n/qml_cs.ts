@@ -6402,30 +6402,6 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Decimals (DP)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Max 10</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please enter how many decimals your token should have</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your decimal amount is too cool (use 0-9 only)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your decimal amount contains invalid characters (use 0-9 only)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter a number between 1 and 10</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show fees</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10890,6 +10866,10 @@ to load</source>
         <source>Last check %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Available if third-party services enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MarkAsIDVerifiedDialog</name>
@@ -14795,6 +14775,10 @@ to load</source>
     </message>
     <message>
         <source>Search for token or enter token address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading more tokens...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

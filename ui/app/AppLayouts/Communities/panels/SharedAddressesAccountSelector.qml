@@ -28,7 +28,7 @@ StatusListView {
     property var communityCollectiblesModel
     property string communityId
 
-    property var getCurrencyAmount: function (balance, symbol){}
+    property var getCurrencyAmount: function (balance, key){}
 
     signal toggleAddressSelection(string keyUid, string address)
     signal airdropAddressSelected (string address)
@@ -250,8 +250,8 @@ StatusListView {
 
             sourceModel: filteredBalances
 
-            function filterPredicate(symbol) {
-                return root.uniquePermissionAssetsKeys.includes(symbol.toUpperCase())
+            function filterPredicate(groupKey) {
+                return root.uniquePermissionAssetsKeys.includes(groupKey)
             }
 
             proxyRoles: [
@@ -274,8 +274,8 @@ StatusListView {
             ]
 
             filters: FastExpressionFilter {
-                expression: walletAccountAssetsModel.filterPredicate(model.symbol)
-                expectedRoles: ["symbol"]
+                expression: walletAccountAssetsModel.filterPredicate(model.groupKey)
+                expectedRoles: ["groupKey"]
             }
         }
 
@@ -299,7 +299,7 @@ StatusListView {
                     if (type === Constants.TokenType.ERC20)
                         return LocaleUtils.currencyAmountToLocaleString(
                                     root.getCurrencyAmount(model.enabledNetworkBalance,
-                                                           model.symbol))
+                                                           model.tokenKey))
 
                     return LocaleUtils.numberToLocaleString(model.enabledNetworkBalance)
                             + " " + model.symbol

@@ -30,22 +30,24 @@ Control {
     required property CurrenciesStore currencyStore
     required property var flatNetworksModel
     required property var processedAssetsModel
-    property var plainTokensBySymbolModel
+
+    property var allTokenGroupsForChainModel
+    property var searchResultModel
 
     property int selectedNetworkChainId: -1
     onSelectedNetworkChainIdChanged: reevaluateSelectedId()
     property string selectedAccountAddress
     onSelectedAccountAddressChanged: reevaluateSelectedId()
-    property string nonInteractiveTokensKey
+    property string nonInteractiveGroupKey
 
-    property string tokenKey
-    onTokenKeyChanged: {
-        d.selectedHoldingId = tokenKey
+    property string groupKey
+    onGroupKeyChanged: {
+        d.selectedHoldingId = groupKey
         reevaluateSelectedId()
     }
 
-    property string defaultTokenKey
-    property string oppositeSideTokenKey
+    property string defaultGroupKey
+    property string oppositeSideGroupKey
 
     property string tokenAmount
     onTokenAmountChanged: Qt.callLater(d.updateInputText) // FIXME remove the callLater(), shouldn't be needed now
@@ -67,7 +69,7 @@ Control {
     readonly property string selectedHoldingId: d.selectedHoldingId
     readonly property double value: amountToSendInput.asNumber
     readonly property string rawValue: {
-        if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.item.marketDetails || !d.selectedHolding.item.marketDetails.currencyPrice) {
+        if (!d.isSelectedHoldingValidAsset) {
             return "0"
         }
         return amountToSendInput.amount
@@ -85,6 +87,10 @@ Control {
         amountToSendInput.forceActiveFocus()
     }
 
+    function reset() {
+        d.adaptor.search("")
+    }
+
     enum SwapSide {
         Pay = 0,
         Receive = 1
@@ -99,42 +105,39 @@ Control {
     QtObject {
         id: d
 
-        property string selectedHoldingId: root.tokenKey
+        property string selectedHoldingId: root.groupKey
+
 
         function reevaluateSelectedId() {
-            const tokenSymbol = Constants.uniqueSymbolToTokenSymbol(d.selectedHoldingId)
-            let uniqueSymbol = Constants.tokenSymbolToUniqueSymbol(tokenSymbol, root.selectedNetworkChainId)
-            if (uniqueSymbol === "" || uniqueSymbol === root.oppositeSideTokenKey) {
-                if (root.defaultTokenKey !== root.oppositeSideTokenKey) {
-                    uniqueSymbol = root.defaultTokenKey
-                } else {
-                    uniqueSymbol = ""
-                }
-            }
-
-            const entry = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", uniqueSymbol)
-            if (entry && SQUtils.ModelUtils.contains(entry.addressPerChain, "chainId", root.selectedNetworkChainId)) {
-                d.selectedHoldingId = uniqueSymbol
-            } else {
+            const entry = SQUtils.ModelUtils.getByKey(d.adaptor.outputAssetsModel, "key", d.selectedHoldingId)
+            if (!entry) {
                 // Token doesn't exist in destination chain
-                d.selectedHoldingId = root.defaultTokenKey
+                d.selectedHoldingId = root.defaultGroupKey
             }
         }
 
+
         readonly property var selectedHolding: ModelEntry {
-            sourceModel: holdingSelector.model
-            key: "tokensKey"
+            sourceModel: d.adaptor.outputAssetsModel
+            key: "key"
             value: d.selectedHoldingId
             onValueChanged: d.setHoldingToSelector()
             onAvailableChanged: d.setHoldingToSelector()
         }
 
         function setHoldingToSelector() {
+            // search in currentlly selected output asset model (full(lazy-loaded) or search)
             if (selectedHolding.available && !!selectedHolding.item) {
-                holdingSelector.setSelection(selectedHolding.item.symbol, selectedHolding.item.iconSource, selectedHolding.item.tokensKey)
-            } else {
-                holdingSelector.reset()
+                holdingSelector.setSelection(selectedHolding.item.symbol, selectedHolding.item.iconSource, selectedHolding.item.key)
+                return
             }
+            // search in full model (lazy-loaded items) if not found in selected model (fir example while searching, but the other token is selected)
+            const entry = SQUtils.ModelUtils.getByKey(d.adaptor.fullOutputAssetsModel, "key", d.selectedHoldingId)
+            if (!!entry) {
+                holdingSelector.setSelection(entry.symbol, entry.iconSource, entry.key)
+                return
+            }
+            holdingSelector.reset()
         }
         
         readonly property bool isSelectedHoldingValidAsset: selectedHolding.available && !!selectedHolding.item
@@ -146,7 +149,9 @@ Control {
 
         readonly property var adaptor: TokenSelectorViewAdaptor {
             assetsModel: root.processedAssetsModel
-            plainTokensBySymbolModel: root.plainTokensBySymbolModel
+            allTokenGroupsForChainModel: root.allTokenGroupsForChainModel
+            searchResultModel: root.searchResultModel
+
             flatNetworksModel: root.flatNetworksModel
             currentCurrency: root.currencyStore.currentCurrency
 
@@ -297,7 +302,15 @@ Control {
                 Layout.alignment: Qt.AlignRight
 
                 model: d.adaptor.outputAssetsModel
-                nonInteractiveKey: root.nonInteractiveTokensKey
+                hasMoreItems: d.adaptor.outputAssetsModel.hasMoreItems
+                isLoadingMore: d.adaptor.outputAssetsModel.isLoadingMore
+                nonInteractiveKey: root.nonInteractiveGroupKey
+
+                onSearch: function(keyword) {
+                    d.adaptor.search(keyword)
+                }
+
+                onLoadMoreRequested: d.adaptor.loadMoreItems()
 
                 onSelected: function(key) {
                     // Token existance checked with plainTokensBySymbolModel

@@ -47,8 +47,8 @@ proc getEnabledChainIds*(self: Controller): seq[int] =
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()
 
-proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
-  return self.currencyService.getCurrencyFormat(symbol)
+proc getCurrencyFormat*(self: Controller, key: string): CurrencyFormatDto =
+  return self.currencyService.getCurrencyFormat(key)
 
 proc getKeycardsWithSameKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
   return self.walletAccountService.getKeycardsWithSameKeyUid(keyUid)

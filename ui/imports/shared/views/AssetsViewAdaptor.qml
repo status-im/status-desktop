@@ -44,7 +44,7 @@ QObject {
     // function formatting tokens balance expressed in a commonly used units,
     // e.g. 1.2 for 1.2 ETH, according to rules specific for given symbol
     property var formatBalance:
-        (balance, symbol) => `${balance.toLocaleString(Qt.locale())} ${symbol}`
+        (balance, key) => `${balance.toLocaleString(Qt.locale())} ${key}`
 
     // function providing error message per token depending on used chains,
     // should return empty string if no error found
@@ -65,7 +65,7 @@ QObject {
         All roles from the source model are passed directly to the output model,
         additionally:
 
-        key         [string] - renamed from tokensKey
+        key         [string] - refers to token group key
         icon        [url]    - from image or fetched by symbol for well-known tokens
         balance     [double] - tokens balance is the commonly used unit, e.g. 1.2 for 1.2 ETH,
                                computed from balances according to provided criteria
@@ -97,18 +97,16 @@ QObject {
 
             // Read-only roles exposed to the model:
 
-            readonly property string key: model.tokensKey
-
             readonly property string error:
                 root.chainsError(chainsAggregator.uniqueChains)
 
             readonly property double balance:
                 AmountsArithmetic.toNumber(totalBalanceAggregator.value, model.decimals)
-            readonly property string balanceText: root.formatBalance(balance, model.symbol)
+            readonly property string balanceText: root.formatBalance(balance, model.key)
 
             readonly property bool marketDetailsAvailable: !hasCommunityId
             readonly property bool marketDetailsLoading: model.detailsLoading
-            readonly property real marketPrice: marketDetails.currencyPrice.amount ?? 0
+            readonly property real marketPrice: !!marketDetails.currencyPrice? marketDetails.currencyPrice.amount ?? 0 : 0
             readonly property real marketChangePct24hour: marketDetails.changePct24hour ?? 0
 
             readonly property bool visible: {
@@ -125,7 +123,7 @@ QObject {
             }
 
             readonly property url icon:
-                !!model.image ? model.image
+                !!model.logoUri ? model.logoUri
                               : Constants.tokenIcon(model.symbol, false)
 
             readonly property url communityIcon: model.communityImage ?? ""
@@ -184,11 +182,11 @@ QObject {
         }
 
         expectedRoles:
-            ["tokensKey", "symbol", "image", "balances", "decimals",
+            ["key", "symbol", "logoUri", "balances", "decimals",
              "detailsLoading", "marketDetails", "communityId", "communityImage",
              "visible"]
         exposedRoles:
-            ["key", "error", "balance", "balanceText", "icon",
+            ["error", "balance", "balanceText", "icon",
              "visible", "canBeHidden", "marketDetailsAvailable", "marketDetailsLoading",
              "marketPrice", "marketChangePct24hour", "communityIcon"]
     }

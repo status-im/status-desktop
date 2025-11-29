@@ -15,24 +15,7 @@ import SortFilterProxyModel
 SplitView {
     id: root
 
-    readonly property var sourcesOfTokensModel: SourceOfTokensModel {}
-    readonly property var flatTokensModel: FlatTokensModel {}
-    readonly property var joinModel: LeftJoinModel {
-        leftModel: root.flatTokensModel
-        rightModel: NetworksModel.flatNetworks
-
-        joinRole: "chainId"
-    }
-    readonly property var tokensProxyModel: SortFilterProxyModel {
-        sourceModel: joinModel
-
-        proxyRoles:  [
-            ConstantRole {
-                name: "explorerUrl"
-                value: "https://status.im/"
-            }
-        ]
-    }
+    readonly property var tokenListsModel: TokenListsModel {}
 
     orientation: Qt.Vertical
 
@@ -44,8 +27,8 @@ SplitView {
 
         SupportedTokenListsPanel {
             anchors.fill: parent
-            sourcesOfTokensModel: root.sourcesOfTokensModel
-            tokensListModel: root.tokensProxyModel
+            tokenListsModel: root.tokenListsModel
+            allNetworks: NetworksModel.flatNetworks
         }
     }
 

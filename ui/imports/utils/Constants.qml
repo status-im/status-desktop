@@ -788,12 +788,10 @@ QtObject {
         readonly property int actionSyncDevice: 3
     }
 
-    readonly property QtObject supportedTokenSources: QtObject {
+    readonly property QtObject hiddenTokenLists: QtObject {
         readonly property string nativeList: "native"
-        readonly property string uniswap: "Uniswap Labs Default"
-        readonly property string aave: "Aave token list"
-        readonly property string status: "Status Token List"
         readonly property string custom: "custom"
+        readonly property string community: "community"
     }
 
     enum LocalPairingState {
@@ -909,8 +907,21 @@ QtObject {
 
     readonly property string ethToken: "ETH"
     readonly property string bnbToken: "BNB"
+    readonly property string sntToken: "SNT"
+    readonly property string sttToken: "STT"
     readonly property string usdcToken: "USDC"
     readonly property string gweiToken: "Gwei" // special "fake" token, added here to facilitate fee representation in locale
+
+    readonly property string ethGroupKey: "eth-native"
+    readonly property string bnbGroupKey: "bsc-native"
+    readonly property string sntGroupKey: "status"
+    readonly property string sttGroupKey: "status-test-token"
+    readonly property string usdcGroupKeyEvm: "usd-coin"
+    readonly property string usdcGroupKeyBsc: "usd-coin-bsc"
+    readonly property string usdtGroupKeyEvm: "tether"
+    readonly property string daiGroupKey: "dai"
+    readonly property string aaveGroupKey: "aave"
+
     readonly property var rawDecimals: {
         "ETH": 18,
         "BNB": 18,
@@ -1334,7 +1345,14 @@ QtObject {
     ]
 
     function tokenIcon(symbol, useDefault=true) {
-        const tmpSymbol = uniqueSymbolToTokenSymbol(symbol)
+        let tmpSymbol = symbol
+        let index = symbol.indexOf(" (EVM)")
+        if (index === -1) {
+            index = symbol.indexOf(" (BSC)")
+        }
+        if (index !== -1) {
+            tmpSymbol = symbol.substring(0, index)
+        }
 
         if (!!tmpSymbol && knownTokenPNGs.indexOf(tmpSymbol) !== -1)
             return Theme.png("tokens/" + tmpSymbol)
@@ -1346,21 +1364,6 @@ QtObject {
 
     function isDefaultTokenIcon(url) {
         return url.indexOf("DEFAULT-TOKEN") !== -1
-    }
-
-    function getSupportedTokenSourceImage(name, useDefault=true) {
-        if (name === supportedTokenSources.uniswap)
-            return Theme.png("tokens/UNI")
-
-        if (name === supportedTokenSources.aave)
-            return Theme.png("tokens/AAVE")
-
-        if (name === supportedTokenSources.status)
-            return Theme.png("tokens/SNT")
-
-        if (useDefault)
-            return Theme.png("tokens/DEFAULT-TOKEN")
-        return ""
     }
 
     enum RecipientAddressObjectType {
@@ -1549,52 +1552,6 @@ QtObject {
     readonly property int maxActiveNetworks: 5
 
     readonly property int maxEmojiReactionsPerMessage: 20
-
-    /*
-        Hacky workaround functions to deal with token collision workaround https://github.com/status-im/status-go/pull/6538
-        We use unique symbols with the form "symbol(decimals)" to avoid bundling tokens with different decimals.
-        Remove these functions when the status-go PR is reverted.
-    */
-    function tokenSymbolToUniqueSymbol(symbol, chainId) {
-        if (symbol === "USDT" || symbol === "USDC") {
-            if (chainId === Constants.chains.binanceSmartChainMainnetChainId || chainId === Constants.chains.binanceSmartChainTestnetChainId) {
-                return symbol + " (BSC)"
-            }
-            return symbol + " (EVM)"
-        } else if (symbol === "SWFTC") {
-            if (chainId === Constants.chains.binanceSmartChainMainnetChainId || chainId === Constants.chains.binanceSmartChainTestnetChainId) {
-                return symbol + " (BSC)"
-            }
-            return symbol + " (EVM)"
-        } else if (symbol === "FLUX") {
-            return symbol + " (EVM)"
-        }
-
-        return symbol
-    }
-
-    readonly property QtObject uniqueSymbols: QtObject {
-        readonly property string usdtEvm: "USDT (EVM)"
-        readonly property string usdtBsc: "USDT (BSC)"
-        readonly property string usdcEvm: "USDC (EVM)"
-        readonly property string usdcBsc: "USDC (BSC)"
-        readonly property string swftcEvm: "SWFTC (EVM)"
-        readonly property string swftcBsc: "SWFTC (BSC)"
-        readonly property string fluxEvm: "FLUX (EVM)"
-    }
-
-    function uniqueSymbolToTokenSymbol(uniqueSymbol) {
-        if (uniqueSymbol === uniqueSymbols.usdtEvm || uniqueSymbol === uniqueSymbols.usdtBsc) {
-            return "USDT"
-        } else if (uniqueSymbol === uniqueSymbols.usdcEvm || uniqueSymbol === uniqueSymbols.usdcBsc) {
-            return "USDC"
-        } else if (uniqueSymbol === uniqueSymbols.swftcEvm || uniqueSymbol === uniqueSymbols.swftcBsc) {
-            return "SWFTC"
-        } else if (uniqueSymbol === uniqueSymbols.fluxEvm) {
-            return "FLUX"
-        }
-        return uniqueSymbol
-    }
 
     enum BackupImportState {
         None,

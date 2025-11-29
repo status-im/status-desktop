@@ -28,10 +28,10 @@ QtObject:
         supply, infiniteSupply, transferable, selfDestruct, chainId, imageCropInfoJson)
 
   proc computeDeployAssetsFee*(self: View, uuid: string, communityId: string, fromAddress: string, name: string,
-    symbol: string, description: string, supply: string, infiniteSupply: bool, decimals: int, chainId: int,
+    symbol: string, description: string, supply: string, infiniteSupply: bool, chainId: int,
     imageCropInfoJson: string) {.slot.} =
       self.communityTokensModule.computeDeployAssetsFee(uuid, communityId, fromAddress, name, symbol, description, supply,
-        infiniteSupply, decimals, chainId, imageCropInfoJson)
+        infiniteSupply, chainId, imageCropInfoJson)
 
   proc computeDeployTokenOwnerFee*(self:View, uuid: string, communityId: string, fromAddress: string, ownerName: string,
     ownerSymbol: string, ownerDescription: string, masterName: string, masterSymbol: string, masterDescription: string,

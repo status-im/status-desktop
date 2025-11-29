@@ -375,12 +375,12 @@ Item {
                 recipientChainName = toChainName
             }
 
-            const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", fromAsset)
+            const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.tokenGroupsModel, "key", fromAsset)
             if (!!fromToken) {
                 sentAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
             }
 
-            const toToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", toAsset)
+            const toToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.tokenGroupsModel, "key", toAsset)
             if (!!toToken) {
                 receivedAmount = currencyStore.formatCurrencyAmountFromBigInt(toAmount, toToken.symbol, toToken.decimals)
             }
@@ -2047,7 +2047,7 @@ Item {
                                 dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
                                 dAppsServiceLoader.dappDisconnectRequested(dappUrl)
                             }
-                            onSendTokenRequested: (senderAddress, tokenId, tokenType) => popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
+                            onSendTokenRequested: (senderAddress, gorupKey, tokenType) => popupRequestsHandler.sendModalHandler.sendToken(senderAddress, gorupKey, tokenType)
                             onBridgeTokenRequested: (tokenId, tokenType) => popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
                             onOpenSwapModalRequested: (swapFormData) => popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
                         }

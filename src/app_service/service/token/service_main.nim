@@ -1,0 +1,172 @@
+proc rebuildMarketDataInternal(self: Service) =
+  self.fetchTokensMarketValues() # TODO: if the only place where we can see these details is account's details page, we should fetch this on demand, no need to have local cache
+  self.fetchTokensPrices()
+
+proc rebuildMarketData*(self: Service) =
+  self.rebuildMarketDataDebouncer.call()
+
+proc refreshTokens(self: Service) =
+  self.allTokenLists = getAllTokenLists()
+
+  # build groups of interest
+  self.tokensOfInterestByKey.clear()
+  self.groupsOfInterestByKey.clear()
+
+  var tokens = getTokensOfInterestForActiveNetworksMode()
+  for token in tokens:
+    let groupKey = token.groupKey
+    self.tokensOfInterestByKey[token.key] = token
+    if not self.groupsOfInterestByKey.hasKey(groupKey):
+      self.groupsOfInterestByKey[groupKey] = TokenGroupItem(
+        key: groupKey,
+        name: token.name,
+        symbol: token.symbol,
+        decimals: token.decimals,
+        logoUri: token.logoUri
+      )
+    self.groupsOfInterestByKey[groupKey].addToken(token)
+  self.groupsOfInterest = toSeq(self.groupsOfInterestByKey.values)
+
+  self.rebuildMarketData()
+  self.fetchTokensDetails() # TODO: if the only place where we can see these details is account's details page, we should fetch this on demand, no need to have local cache
+  self.fetchTokenPreferences()
+  # notify modules
+  self.events.emit(SIGNAL_TOKENS_LIST_UPDATED, Args())
+
+proc init*(self: Service) =
+  self.rebuildMarketDataDebouncer = debouncer_service.newDebouncer(
+    self.threadpool,
+    # this is the delay before the first call to the callback, this is an action that doesn't need to be called immediately, but it's pretty expensive in terms of time/performances
+    # for example `wallet-tick-reload` event is emitted for every single chain-account pair, and at the app start can be more such signals received from the statusgo side if the balance have changed.
+    # Means it the app contains more accounts the likelihood of having more `wallet-tick-reload` signals is higher, so we need to delay the rebuildMarketData call to avoid unnecessary calls.
+    delayMs = 1000,
+    checkIntervalMs = 500)
+  self.rebuildMarketDataDebouncer.registerCall0(callback = proc() = self.rebuildMarketDataInternal())
+
+  self.events.on(SignalType.Wallet.event) do(e:Args):
+    var data = WalletSignal(e)
+    case data.eventType:
+      of "wallet-tick-reload":
+        self.rebuildMarketData()
+  # update and populate internal list and then emit signal when new custom token detected?
+  self.events.on(SignalType.WalletTokensListsUpdated.event) do(e:Args):
+    self.refreshTokens()
+
+  self.events.on(SIGNAL_NETWORK_MODE_UPDATED) do(e:Args):
+    self.refreshTokens()
+
+  self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
+    self.rebuildMarketData()
+
+  self.refreshTokens()
+
+proc getCurrency*(self: Service): string =
+  return self.settingsService.getCurrency()
+
+proc getGroupsOfInterest*(self: Service): var seq[TokenGroupItem] =
+  return self.groupsOfInterest
+
+proc buildGroupsForChain*(self: Service, chainId: int): bool =
+  if chainId <= 0:
+    warn "invalid chainId", chainId = chainId
+    return false
+  var allTokens = getTokensByChain(chainId)
+  var groupsByTokenKey = initTable[string, TokenGroupItem]()
+  for token in allTokens:
+    let groupKey = token.groupKey
+    if not groupsByTokenKey.hasKey(groupKey):
+      groupsByTokenKey[groupKey] = TokenGroupItem(
+        key: groupKey,
+        name: token.name,
+        symbol: token.symbol,
+        decimals: token.decimals,
+        logoUri: token.logoUri
+      )
+    groupsByTokenKey[groupKey].addToken(token)
+  self.groupsForChain = toSeq(groupsByTokenKey.values)
+  # sort groups by name
+  self.groupsForChain.sort(
+    proc(a: TokenGroupItem, b: TokenGroupItem): int =
+      return a.name.cmp(b.name)
+  )
+  return true
+
+proc getGroupsForChain*(self: Service): var seq[TokenGroupItem] =
+  return self.groupsForChain
+
+proc getAllTokenLists*(self: Service): var seq[TokenListItem] =
+  return self.allTokenLists
+
+proc getAllCommunityTokens*(self: Service): var seq[TokenItem] =
+  const communityTokenListId = "community"
+  for tl in self.allTokenLists:
+    if tl.id == communityTokenListId:
+      return tl.tokens
+
+proc getTokenByKey*(self: Service, key: string): TokenItem =
+  if key.isEmptyOrWhitespace or not key.toLower.contains("-0x"):
+    return nil
+  if self.tokensOfInterestByKey.hasKey(key):
+    return self.tokensOfInterestByKey[key]
+  let tokens = getTokensByKeys(@[key])
+  if tokens.len > 0:
+    self.tokensOfInterestByKey[key] = tokens[0]
+    return self.tokensOfInterestByKey[key]
+  return nil
+
+proc getTokenByChainAddress*(self: Service, chainId: int, address: string): TokenItem =
+  let key = common_utils.createTokenKey(chainId, address)
+  return self.getTokenByKey(key)
+
+proc getTokensByGroupKey*(self: Service, groupKey: string): seq[TokenItem] =
+  if not self.groupsOfInterestByKey.hasKey(groupKey):
+    return @[]
+  return self.groupsOfInterestByKey[groupKey].tokens
+
+proc getTokenByGroupKeyAndChainId*(self: Service, groupKey: string, chainId: int): TokenItem =
+  let tokens = self.getTokensByGroupKey(groupKey)
+  if tokens.len > 0:
+    for token in tokens:
+      if token.chainId == chainId:
+        return token
+  return nil
+
+proc tokenAvailableForBridgingViaHop*(self: Service, tokenChainId: int, tokenAddress: string): bool =
+  let key = common_utils.createTokenKey(tokenChainId, tokenAddress)
+  if self.tokensForBridgingViaHop.hasKey(key):
+    return self.tokensForBridgingViaHop[key]
+  let available = tokenAvailableForBridgingViaHop(tokenChainId, tokenAddress)
+  self.tokensForBridgingViaHop[key] = available
+  return available
+
+proc getTokenListUpdatedAt*(self: Service): int64 =
+  return self.tokenListUpdatedAt
+
+proc getTokenDetails*(self: Service, tokenKey: string): TokenDetailsItem =
+  if not self.tokenDetailsTable.hasKey(tokenKey):
+    return TokenDetailsItem()
+  return self.tokenDetailsTable[tokenKey]
+
+proc getMarketValuesForToken*(self: Service, tokenKey: string): TokenMarketValuesItem =
+  if not self.tokenMarketValuesTable.hasKey(tokenKey):
+    return TokenMarketValuesItem()
+  return self.tokenMarketValuesTable[tokenKey]
+
+proc getPriceForToken*(self: Service, tokenKey: string): float64 =
+  if not self.tokenPriceTable.hasKey(tokenKey):
+    return 0.0
+  return self.tokenPriceTable[tokenKey]
+
+proc getTokensDetailsLoading*(self: Service): bool =
+  return self.tokensDetailsLoading
+
+proc getHasMarketValuesCache*(self: Service): bool =
+  return self.hasMarketDetailsCache and self.hasPriceValuesCache
+
+proc addNewCommunityToken*(self: Service, token: TokenItem) =
+  if self.groupsOfInterestByKey.hasKey(token.groupKey):
+    let tokens = self.groupsOfInterestByKey[token.groupKey].tokens
+    for t in tokens:
+      if t.key == token.key:
+        return
+  self.refreshTokens()

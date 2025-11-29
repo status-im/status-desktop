@@ -21,7 +21,7 @@ import ../../../core/signals/types
 import ../../../core/eventemitter
 import ../../../core/unique_event_emitter
 
-import backend/collectibles_types
+# import backend/collectibles_types
 
 type
   Controller* = ref object of RootObj
@@ -279,7 +279,7 @@ proc init*(self: Controller) =
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionUpdated(args.communityId, args.tokenPermission)
-  
+
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED) do(e: Args):
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
@@ -702,44 +702,14 @@ proc getMessagesParsedPlainText*(self: Controller, message: MessageDto, communit
 proc getColorId*(self: Controller, pubkey: string): int =
   procs_from_visual_identity_service.colorIdOf(pubkey)
 
+proc getTokenByKey*(self: Controller, tokenKey: string): TokenItem =
+  return self.tokenService.getTokenByKey(tokenKey)
+
 proc createOrEditCommunityTokenPermission*(self: Controller, tokenPermission: CommunityTokenPermissionDto) =
   self.communityService.createOrEditCommunityTokenPermission(self.sectionId, tokenPermission)
 
 proc deleteCommunityTokenPermission*(self: Controller, permissionId: string) =
   self.communityService.deleteCommunityTokenPermission(self.sectionId, permissionId)
-
-proc allAccountsTokenBalance*(self: Controller, symbol: string): float64 =
-  return self.walletAccountService.allAccountsTokenBalance(symbol)
-
-proc getTokenDecimals*(self: Controller, symbol: string): int =
-  let asset = self.tokenService.findTokenBySymbol(symbol)
-  if asset != nil:
-    return asset.decimals
-  return 0
-
-# find addresses by tokenKey from UI
-# tokenKey can be: symbol for ERC20, or chain+address[+tokenId] for ERC721
-proc getContractAddressesForToken*(self: Controller, tokenKey: string): Table[int, string] =
-  var contractAddresses = initTable[int, string]()
-  let token = self.tokenService.findTokenBySymbol(tokenKey)
-  if token != nil:
-    for addrPerChain in token.addressPerChainId:
-      # depending on areTestNetworksEnabled (in getNetworkByChainId), contractAddresses will
-      # contain mainnets or testnets only
-      let network = self.networkService.getNetworkByChainId(addrPerChain.chainId)
-      if network == nil:
-        continue
-      contractAddresses[addrPerChain.chainId] = addrPerChain.address
-  let communityToken = self.communityService.getCommunityTokenBySymbol(self.getMySectionId(), tokenKey)
-  if communityToken.address != "":
-    contractAddresses[communityToken.chainId] = communityToken.address
-  if contractAddresses.len == 0:
-    try:
-      let chainAndAddress = toContractID(tokenKey)
-      contractAddresses[chainAndAddress.chainID] = chainAndAddress.address
-    except Exception:
-      discard
-  return contractAddresses
 
 proc getCommunityTokenList*(self: Controller): seq[CommunityTokenDto] =
   return self.communityTokensService.getCommunityTokens(self.getMySectionId())

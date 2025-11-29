@@ -3,30 +3,27 @@ include  ../../common/json_utils
 
 type
   CurrencyFormatDto* = object
-    symbol*: string
-    displayDecimals*: uint
-    stripTrailingZeroes*: bool
+    key: string
+    symbol: string
+    displayDecimals: uint
+    stripTrailingZeroes: bool
 
-proc newCurrencyFormatDto*(
-  symbol: string,
-  displayDecimals: uint,
-  stripTrailingZeroes: bool,
-): CurrencyFormatDto =
-  return CurrencyFormatDto(
-    symbol: symbol,
-    displayDecimals: displayDecimals,
-    stripTrailingZeroes: stripTrailingZeroes
-  )
+proc key*(self: CurrencyFormatDto): string = return self.key
+proc symbol*(self: CurrencyFormatDto): string = return self.symbol
+proc displayDecimals*(self: CurrencyFormatDto): uint = return self.displayDecimals
+proc stripTrailingZeroes*(self: CurrencyFormatDto): bool = return self.stripTrailingZeroes
 
-proc newCurrencyFormatDto*(symbol: string = ""): CurrencyFormatDto =
+proc newCurrencyFormatDto*(key: string = "", symbol: string = ""): CurrencyFormatDto =
   return CurrencyFormatDto(
+    key: key,
     symbol: symbol,
-    displayDecimals: if len(symbol) == 0: 0 else: 8,
+    displayDecimals: if len(key) == 0: 0 else: 8, # not sure about this logic, but it was like this in the old code
     stripTrailingZeroes: true
   )
 
 proc toCurrencyFormatDto*(jsonObj: JsonNode): CurrencyFormatDto =
   result = CurrencyFormatDto()
+  discard jsonObj.getProp("key", result.key)
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("displayDecimals", result.displayDecimals)
   discard jsonObj.getProp("stripTrailingZeroes", result.stripTrailingZeroes)

@@ -1,6 +1,7 @@
 import tables
 import uuids, chronicles
 import io_interface
+import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/transaction/service as transaction_service
@@ -29,11 +30,13 @@ type
     currencyService: currency_service.Service
     transactionService: transaction_service.Service
     keycardService: keycard_service.Service
+    tokenService: token_service.Service
     connectionKeycardResponse: UUID
 
 proc newController*(
   delegate: io_interface.AccessInterface,
   events: EventEmitter,
+  tokenService: token_service.Service,
   walletAccountService: wallet_account_service.Service,
   networkService: network_service.Service,
   currencyService: currency_service.Service,
@@ -43,6 +46,7 @@ proc newController*(
   result = Controller()
   result.delegate = delegate
   result.events = events
+  result.tokenService = tokenService
   result.walletAccountService = walletAccountService
   result.networkService = networkService
   result.currencyService = currencyService
@@ -96,6 +100,12 @@ proc init*(self: Controller) =
     let args = TransactionArgs(e)
     self.delegate.transactionSendingComplete(args.sentTransaction.hash, args.status)
 
+proc getTokensByGroupKey*(self: Controller, groupKey: string): seq[token_service.TokenItem] =
+  return self.tokenService.getTokensByGroupKey(groupKey)
+
+proc getTokenByGroupKeyAndChainId*(self: Controller, groupKey: string, chainId: int): token_service.TokenItem =
+  return self.tokenService.getTokenByGroupKeyAndChainId(groupKey, chainId)
+
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
@@ -105,8 +115,8 @@ proc getChainIds*(self: Controller): seq[int] =
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()
 
-proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
-  return self.currencyService.getCurrencyFormat(symbol)
+proc getCurrencyFormat*(self: Controller, key: string): CurrencyFormatDto =
+  return self.currencyService.getCurrencyFormat(key)
 
 proc getKeycardsWithSameKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
   return self.walletAccountService.getKeycardsWithSameKeyUid(keyUid)
@@ -117,8 +127,8 @@ proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
 proc getWalletAccountByIndex*(self: Controller, accountIndex: int): WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
 
-proc getTokenBalance*(self: Controller, address: string, chainId: int, tokensKey: string): CurrencyAmount =
-  return currencyAmountToItem(self.walletAccountService.getTokenBalance(address, chainId, tokensKey), self.walletAccountService.getCurrencyFormat(tokensKey))
+proc getTokenBalance*(self: Controller, walletAccount: string, tokenKey: string): CurrencyAmount =
+  return currencyAmountToItem(self.walletAccountService.getTokenBalance(walletAccount, tokenKey), self.walletAccountService.getCurrencyFormat(tokenKey))
 
 proc authenticate*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_SEND_MODULE_IDENTIFIER,
