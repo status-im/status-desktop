@@ -2218,6 +2218,7 @@ Item {
                             tokensModel: appMain.marketStore.marketLeaderboardModel
                             totalTokensCount: appMain.marketStore.totalLeaderboardCount
                             loading: appMain.marketStore.marketLeaderboardLoading
+                            swapEnabled: featureFlagsStore.swapEnabled
                             currencySymbol: {
                                 const symbol = SQUtils.ModelUtils.getByKey(
                                                  appMain.currencyStore.currenciesModel,
