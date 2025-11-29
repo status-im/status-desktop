@@ -1459,9 +1459,9 @@
       <translation>System</translation>
     </message>
     <message>
-      <source>Minimize on close</source>
+      <source>Minimize to tray icon on close</source>
       <comment>AdvancedView</comment>
-      <translation>Minimize on close</translation>
+      <translation>Minimize to tray icon on close</translation>
     </message>
     <message>
       <source>Mainnet data verified by Nimbus</source>

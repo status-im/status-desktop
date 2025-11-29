@@ -1195,8 +1195,8 @@
         <translation>Sistema</translation>
     </message>
     <message>
-        <source>Minimize on close</source>
-        <translation>Minimizar al cerrar</translation>
+        <source>Minimize to tray icon on close</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Mainnet data verified by Nimbus</source>

@@ -38,6 +38,7 @@ SettingsContentBase {
 
     property bool isFleetSelectionEnabled
     property bool isBrowserEnabled: true
+    property bool minimizeOnCloseOptionVisible
 
     Item {
         id: advancedContainer
@@ -73,7 +74,8 @@ SettingsContentBase {
 
             StatusSettingsLineButton {
                 width: parent.width
-                text: qsTr("Minimize on close")
+                visible: root.minimizeOnCloseOptionVisible
+                text: qsTr("Minimize to tray icon on close")
                 isSwitch: true
                 checked: !localAccountSensitiveSettings.quitOnClose
                 onToggled: localAccountSensitiveSettings.quitOnClose = !checked

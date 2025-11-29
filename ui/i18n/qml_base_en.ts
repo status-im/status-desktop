@@ -1195,7 +1195,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Minimize on close</source>
+        <source>Minimize to tray icon on close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

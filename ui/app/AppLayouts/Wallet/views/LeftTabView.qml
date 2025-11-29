@@ -111,7 +111,7 @@ Rectangle {
                 removeAccountConfirmation.active = true
             }
 
-            onHideFromTotalBalanceClicked: {
+            onHideFromTotalBalanceClicked: function (hideFromTotalBalance) {
                 if (!account)
                     return
                 RootStore.updateWatchAccountHiddenFromTotalBalance(account.address, hideFromTotalBalance)
@@ -305,7 +305,7 @@ Rectangle {
                     errorMode: networkConnectionStore.accountBalanceNotAvailable
                     errorIcon.tooltip.maxWidth: 300
                     errorIcon.tooltip.text: networkConnectionStore.accountBalanceNotAvailableText
-                    onClicked: {
+                    onClicked: function(itemId, mouse) {
                         if (mouse.button === Qt.RightButton) {
                             walletAccountContextMenu.active = true
                             walletAccountContextMenu.item.account = model
