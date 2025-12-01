@@ -11,7 +11,7 @@ import StatusQ.Components
 Flow {
     id: root
 
-    spacing: Theme.halfPadding / 2
+    spacing: Theme.defaultHalfPadding/2
 
     signal addEmojiClicked(var sender, var mouse)
     signal hoverChanged(bool hovered)
@@ -19,6 +19,7 @@ Flow {
 
     property var reactionsModel
     property bool limitReached: false
+    property bool messageHighlighted
 
     QtObject {
         id: d
@@ -42,6 +43,12 @@ Flow {
             // Create a simple comma-separated list without using QLocale.createSeparatedList (not available in QML)
             return qsTr("%1 reacted with %2").arg(listOfUsers.join(", ")).arg(StatusQUtils.Emoji.fromCodePoint(emoji))
         }
+
+        // design values
+        readonly property int iconSize: 22
+        readonly property int cornerRadius: 12
+        readonly property int buttonWidth: 36
+        readonly property int buttonHeight: 32
     }
 
     Repeater {
@@ -51,24 +58,25 @@ Flow {
             id: reactionDelegate
 
             size: StatusBaseButton.Size.Small
-            implicitHeight: 32
-
-            verticalPadding: Theme.halfPadding / 2
-            leftPadding: Theme.halfPadding
-            rightPadding: Theme.halfPadding / 2
-            spacing: Theme.halfPadding / 2
+            horizontalPadding: Theme.defaultHalfPadding
+            verticalPadding: Theme.defaultHalfPadding/2
+            spacing: Theme.defaultHalfPadding
 
             background: Rectangle {
-                implicitWidth: 36
-                radius: Theme.radius
+                implicitWidth: d.buttonWidth
+                implicitHeight: d.buttonHeight
+                topLeftRadius: 0
+                topRightRadius: d.cornerRadius
+                bottomLeftRadius: d.cornerRadius
+                bottomRightRadius: d.cornerRadius
                 color: {
                     if (reactionDelegate.hovered) {
                         return Theme.palette.statusMessage.emojiReactionBackgroundHovered
                     }
                     return model.didIReactWithThisEmoji ? Theme.palette.primaryColor2 : Theme.palette.statusMessage.emojiReactionBackground
                 }
-                border.width: model.didIReactWithThisEmoji || reactionDelegate.hovered ? 1 : 0
-                border.color: reactionDelegate.hovered ? Theme.palette.statusMessage.emojiReactionBorderHovered : Theme.palette.primaryColor1
+                border.width: model.didIReactWithThisEmoji || reactionDelegate.hovered || root.messageHighlighted ? 1 : 0
+                border.color: model.didIReactWithThisEmoji ? Theme.palette.primaryColor1 : Theme.palette.statusMessage.emojiReactionBorderHovered
             }
 
             contentItem: RowLayout {
@@ -76,8 +84,8 @@ Flow {
 
                 StatusIcon {
                     objectName: "emojiReaction"
-                    Layout.preferredWidth: 16
-                    Layout.preferredHeight: 16
+                    Layout.preferredWidth: d.iconSize
+                    Layout.preferredHeight: d.iconSize
                     icon: Theme.emoji(model.emoji)
                 }
 
@@ -103,12 +111,12 @@ Flow {
     }
 
     StatusFlatButton {
-        width: 36
-        height: 32
-        horizontalPadding: Theme.halfPadding
-        verticalPadding: Theme.halfPadding/2
+        width: d.buttonWidth
+        height: d.buttonHeight
         visible: root.enabled
         icon.name: "reaction-b"
+        icon.width: d.iconSize
+        icon.height: d.iconSize
         size: StatusBaseButton.Size.Small
         icon.color: hovered && !root.limitReached ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
         tooltip.text: root.limitReached ? qsTr("Maximum number of different reactions reached") : qsTr("Add reaction")
