@@ -242,11 +242,11 @@ ifeq ($(USE_NWAKU), true)
     NIM_EXTRA_PARAMS += --passL:"-L$(LIBWAKU_LIBDIR)" --passL:"-lwaku"
 endif
 
-NIM_SDS_SOURCE_DIR ?= vendor/nim-sds/
+NIM_SDS_SOURCE_DIR ?= $(GIT_ROOT)/../nim-sds
 export NIM_SDS_SOURCE_DIR
 LIBSDS_LIBDIR := $(NIM_SDS_SOURCE_DIR)/build
 NIM_EXTRA_PARAMS += --passL:"-L$(LIBSDS_LIBDIR)" --passL:"-lsds"
-STATUSGO_MAKE_PARAMS += NIM_SDS_SOURCE_DIR="$(GIT_ROOT)/vendor/nim-sds/"
+STATUSGO_MAKE_PARAMS += NIM_SDS_SOURCE_DIR="$(NIM_SDS_SOURCE_DIR)"
 
 INCLUDE_DEBUG_SYMBOLS ?= false
 ifeq ($(INCLUDE_DEBUG_SYMBOLS),true)
