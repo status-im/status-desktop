@@ -51,7 +51,7 @@ StatusListItem {
 
     Binding on bgColor {
         when: highlighted && !root.sensor.containsMouse
-        value: root.interactive ? Theme.palette.baseColor4 : Theme.palette.primaryColor3
+        value: root.interactive ? root.Theme.palette.baseColor4 : root.Theme.palette.primaryColor3
         restoreMode: Binding.RestoreBindingOrValue
     }
 
