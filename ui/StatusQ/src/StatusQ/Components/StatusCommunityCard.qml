@@ -181,10 +181,12 @@ Rectangle {
         readonly property int bannerRadius: (root.cardSize === StatusCommunityCard.Size.Big) ? 20 : 8
         readonly property int bannerRadiusHovered: (root.cardSize === StatusCommunityCard.Size.Big) ? 30 : 16
         readonly property int cardRadius: (root.cardSize === StatusCommunityCard.Size.Big) ? 16 : 8
-        readonly property color cardColor: Theme.palette.name === "light" ? Theme.palette.indirectColor1 : Theme.palette.baseColor2
-        readonly property color fontColor: Theme.palette.directColor1
-        readonly property color loadingColor1: Theme.palette.baseColor5
-        readonly property color loadingColor2: Theme.palette.baseColor4
+        readonly property color cardColor: root.Theme.palette.name === "light"
+                                           ? root.Theme.palette.indirectColor1
+                                           : root.Theme.palette.baseColor2
+        readonly property color fontColor: root.Theme.palette.directColor1
+        readonly property color loadingColor1: root.Theme.palette.baseColor5
+        readonly property color loadingColor2: root.Theme.palette.baseColor4
         readonly property int titleFontWeight: (root.cardSize === StatusCommunityCard.Size.Big) ? Font.Bold : Font.Medium
 
         function numberFormat(number) {

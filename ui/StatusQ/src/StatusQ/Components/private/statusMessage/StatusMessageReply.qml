@@ -37,7 +37,12 @@ Item {
             antialiasing: true
 
             ShapePath {
-                strokeColor: Qt.hsla(Theme.palette.baseColor1.hslHue, Theme.palette.baseColor1.hslSaturation, Theme.palette.baseColor1.hslLightness, 0.4)
+                strokeColor: {
+                    const base = root.Theme.palette.baseColor1
+                    return Qt.hsla(base.hslHue,
+                                   base.hslSaturation,
+                                   base.hslLightness, 0.4)
+                }
                 strokeWidth: 3
                 fillColor: "transparent"
                 capStyle: ShapePath.RoundCap

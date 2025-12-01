@@ -50,13 +50,13 @@ Rectangle {
         charactersLen: 1
         color: {
             if (!root.enabled)
-                return Theme.palette.baseColor1
+                return root.Theme.palette.baseColor1
             if (isLetterIdenticon)
                 return bgColor
             if (type === StatusListItem.Type.Danger)
-                return Theme.palette.dangerColor1
+                return root.Theme.palette.dangerColor1
 
-            return Theme.palette.primaryColor1
+            return root.Theme.palette.primaryColor1
         }
         bgWidth: 40
         bgHeight: 40
@@ -65,10 +65,10 @@ Rectangle {
             if (sensor.containsMouse) {
                 return type === StatusListItem.Type.Secondary ||
                         type === StatusListItem.Type.Danger ? "transparent" :
-                                                              Theme.palette.primaryColor3
+                                                              root.Theme.palette.primaryColor3
             }
             return type === StatusListItem.Type.Danger ?
-                        Theme.palette.dangerColor3 : Theme.palette.primaryColor3
+                        root.Theme.palette.dangerColor3 : root.Theme.palette.primaryColor3
         }
         imgIsIdenticon: false
     }
