@@ -72,6 +72,7 @@ pipeline {
     PACKAGE_TYPE = "${params.PACKAGE_TYPE != 'auto' ? params.PACKAGE_TYPE : (isReleaseBranch ? 'aab' : 'apk')}"
     STATUS_ARTIFACT = "pkg/${utils.pkgFilename(ext: env.PACKAGE_TYPE, arch: 'arm64', version: env.VERSION, type: env.APP_TYPE)}"
     STATUS_BINARY = "${WORKSPACE}/mobile/bin/android/qt6/Status.${env.PACKAGE_TYPE}"
+    NIM_SDS_SOURCE_DIR = "${env.WORKSPACE_TMP}/nim-sds"
   }
 
   stages {

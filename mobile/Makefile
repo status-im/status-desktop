@@ -30,16 +30,15 @@ ifeq ($(OS),android)
 		HOST_OS="$(HOST_OS)" \
 		GO_GENERATE_CMD="go generate" \
 		SHELL=/bin/sh
-		@cp ../vendor/nim-sds/build/libsds$(LIB_EXT) $(LIB_PATH)/libsds$(LIB_EXT)
 else ifeq ($(OS),ios)
 	$(MAKE) -C ../vendor/status-go statusgo-ios-library \
 		ARCH=$(ARCH) \
 		IPHONE_SDK="$(IPHONE_SDK)" \
 		IOS_TARGET="$(IOS_TARGET)" \
 		SHELL=/bin/sh
-		@cp $(WORKSPACE)/nim-sds/build/libsds$(LIB_EXT) $(LIB_PATH)/libsds$(LIB_EXT)
 endif
 	@echo "Copying library to mobile lib directory"
+	@cp $(NIM_SDS_SOURCE_DIR)/build/libsds$(LIB_EXT) $(LIB_PATH)/libsds$(LIB_EXT)
 	@cp ../vendor/status-go/build/bin/libstatus$(LIB_EXT) $(LIB_PATH)/libstatus$(LIB_EXT)
 
 $(STATUS_Q_LIB): $(STATUS_Q_FILES) $(STATUS_Q_SCRIPT) $(STATUS_Q_UI_FILES)

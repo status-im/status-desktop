@@ -84,7 +84,7 @@ pipeline {
     /* nwaku source directory */
     NWAKU_SOURCE_DIR = "${env.WORKSPACE_TMP}/nwaku"
     /* nim-sds source directory */
-    NIM_SDS_SOURCE_DIR = "${env.WORKSPACE}/nim-sds"
+    NIM_SDS_SOURCE_DIR = "${env.WORKSPACE_TMP}/nim-sds"
     /* sets App Version in Settings */
     VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
     /* Control output the filename */
