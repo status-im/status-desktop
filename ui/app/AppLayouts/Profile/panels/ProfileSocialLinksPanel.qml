@@ -156,8 +156,8 @@ Control {
                     title: ProfileUtils.linkTypeToShortText(draggableDelegate.linkType) || model.text
                     hasIcon: true
                     icon.name: draggableDelegate.iconName
-                    icon.color: ProfileUtils.linkTypeColor(draggableDelegate.linkType)
-                    assetBgColor: ProfileUtils.linkTypeBgColor(draggableDelegate.linkType)
+                    icon.color: ProfileUtils.linkTypeColor(draggableDelegate.linkType, root.Theme.palette)
+                    assetBgColor: ProfileUtils.linkTypeBgColor(draggableDelegate.linkType, root.Theme.palette)
                     actions: [
                         StatusLinkText {
                             Layout.fillWidth: true

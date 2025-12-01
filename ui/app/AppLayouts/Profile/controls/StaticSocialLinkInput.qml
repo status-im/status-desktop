@@ -17,7 +17,7 @@ StatusInput {
     placeholderText: ProfileUtils.linkTypeToDescription(linkType)
     input.asset {
         name: root.icon
-        color: ProfileUtils.linkTypeColor(root.linkType)
+        color: ProfileUtils.linkTypeColor(root.linkType, root.Theme.palette)
         width: 20
         height: 20
     }
