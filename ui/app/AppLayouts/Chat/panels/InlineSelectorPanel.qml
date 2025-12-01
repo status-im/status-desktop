@@ -254,6 +254,8 @@ ColumnLayout {
 
                         property bool pasteOperation: false
 
+                        inputMethodHints: Qt.ImhSensitiveData | Qt.ImhNoPredictiveText
+
                         width: Math.max(Math.min(implicitWidth, membersFlick.width + 2 * Theme.padding),
                                         2 * Theme.smallPadding)
                         height: 30
@@ -327,6 +329,7 @@ ColumnLayout {
             propagateComposedEvents: true
             onPressed: {
                 edit.forceActiveFocus()
+                InputMethod.show()
                 mouse.accepted = false
             }
         }
