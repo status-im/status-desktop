@@ -47,7 +47,6 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             messaging_settings = settings.left_panel.open_messaging_settings()
             contacts_settings = messaging_settings.open_contacts_settings()
             contacts_settings.accept_contact_request(user_one.name)
-            skip_message_backup_popup_if_visible()
 
         with step(f'User {user_three.name}, get chat key'):
             switch_to_aut(aut_three, main_screen)
@@ -57,6 +56,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
 
         with step(f'User {user_two.name}, send contact request to {user_three.name}'):
             switch_to_aut(aut_two, main_screen)
+            skip_message_backup_popup_if_visible()
             settings = main_screen.left_panel.open_settings()
             messaging_settings = settings.left_panel.open_messaging_settings()
             contacts_settings = messaging_settings.open_contacts_settings()
@@ -70,7 +70,6 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             messaging_settings = settings.left_panel.open_messaging_settings()
             contacts_settings = messaging_settings.open_contacts_settings()
             contacts_settings.accept_contact_request(user_two.name)
-            skip_message_backup_popup_if_visible()
             main_screen.minimize()
 
         with step(f'User {user_two.name}, creates community and invites {user_one.name} and {user_three.name}'):
@@ -104,8 +103,8 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
         with step(f'User {user_one.name}, accept invitation from {user_two.name}'):
             switch_to_aut(aut_one, main_screen)
             messages_view = main_screen.left_panel.open_messages_screen()
-            chat = messages_view.left_panel.click_chat_by_name(user_two.name)
             skip_message_backup_popup_if_visible()
+            chat = messages_view.left_panel.click_chat_by_name(user_two.name)
             community_screen = chat.click_community_invite(community.name, 0)
 
         with step(f'User {user_one.name}, verify welcome community popup'):
@@ -118,6 +117,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
 
         with step(
                 f'User {user_one.name} send contact request to {user_three.name} from user profile from members list'):
+            switch_to_aut(aut_one, main_screen)
             community_screen = main_screen.left_panel.select_community(community.name)
             profile_popup = community_screen.right_panel.click_member(user_three.name)
             profile_popup.send_request().send(f'Hello {user_three.name}')
