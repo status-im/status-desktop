@@ -5,7 +5,7 @@ import StatusQ.Core.Theme
 import StatusQ.Components
 
 Rectangle {
-    id: statusFlatRoundButton
+    id: root
 
     property StatusAssetSettings icon: StatusAssetSettings {
         width: 24
@@ -13,25 +13,25 @@ Rectangle {
         rotation: 0
 
         color: {
-            switch(statusFlatRoundButton.type) {
+            switch(root.type) {
             case StatusFlatRoundButton.Type.Secondary:
-                return Theme.palette.directColor1;
+                return root.Theme.palette.directColor1;
             case StatusFlatRoundButton.Type.Primary:
-                return Theme.palette.primaryColor1;
+                return root.Theme.palette.primaryColor1;
             case StatusFlatRoundButton.Type.Tertiary:
-                return hovered ? Theme.palette.primaryColor1: Theme.palette.baseColor1;
+                return hovered ? root.Theme.palette.primaryColor1: root.Theme.palette.baseColor1;
             case StatusFlatRoundButton.Type.Quaternary:
-                return hovered ? Theme.palette.primaryColor1: Theme.palette.directColor1;
+                return hovered ? root.Theme.palette.primaryColor1: root.Theme.palette.directColor1;
             }
         }
 
         disabledColor: {
-            switch(statusFlatRoundButton.type) {
+            switch(root.type) {
             case StatusFlatRoundButton.Type.Secondary:
             case StatusFlatRoundButton.Type.Primary:
             case StatusFlatRoundButton.Type.Tertiary:
             case StatusFlatRoundButton.Type.Quaternary:
-                return Theme.palette.baseColor1;
+                return root.Theme.palette.baseColor1;
             }
         }
     }
@@ -65,7 +65,7 @@ Rectangle {
         id: backgroundSettings
 
         property color color: {
-            switch(statusFlatRoundButton.type) {
+            switch(root.type) {
             case StatusFlatRoundButton.Type.Primary:
             case StatusFlatRoundButton.Type.Secondary:
             case StatusFlatRoundButton.Type.Tertiary:
@@ -75,18 +75,18 @@ Rectangle {
         }
 
         property color hoverColor: {
-            switch(statusFlatRoundButton.type) {
+            switch(root.type) {
             case StatusFlatRoundButton.Type.Primary:
-                return Theme.palette.primaryColor3;
+                return root.Theme.palette.primaryColor3;
             case StatusFlatRoundButton.Type.Secondary:
             case StatusFlatRoundButton.Type.Tertiary:
             case StatusFlatRoundButton.Type.Quaternary:
-                return Theme.palette.baseColor2;
+                return root.Theme.palette.baseColor2;
             }
         }
 
         property color disabledColor: {
-            switch(statusFlatRoundButton.type) {
+            switch(root.type) {
             case StatusFlatRoundButton.Type.Primary:
             case StatusFlatRoundButton.Type.Secondary:
             case StatusFlatRoundButton.Type.Tertiary:
@@ -96,13 +96,13 @@ Rectangle {
         }
 
         property color highlightedColor: {
-            switch(statusFlatRoundButton.type) {
+            switch(root.type) {
             case StatusFlatRoundButton.Type.Primary:
-                return Theme.palette.primaryColor3;
+                return root.Theme.palette.primaryColor3;
             case StatusFlatRoundButton.Type.Secondary:
             case StatusFlatRoundButton.Type.Tertiary:
             case StatusFlatRoundButton.Type.Quaternary:
-                return Theme.palette.baseColor4;
+                return root.Theme.palette.baseColor4;
             }
         }
     }
@@ -112,7 +112,7 @@ Rectangle {
     radius: 8
 
     color: {
-        if (statusFlatRoundButton.enabled) {
+        if (root.enabled) {
             if (sensor.containsMouse) {
                 return backgroundSettings.hoverColor
             }
@@ -125,54 +125,54 @@ Rectangle {
         id: sensor
 
         anchors.fill: parent
-        cursorShape: loading ? Qt.ArrowCursor
+        cursorShape: root.loading ? Qt.ArrowCursor
                              : Qt.PointingHandCursor
-        hoverEnabled: !loading
-        enabled: !loading
+        hoverEnabled: !root.loading
+        enabled: !root.loading
 
 
         StatusIcon {
             id: statusIcon
             anchors.centerIn: parent
-            visible: !loading
+            visible: !root.loading
 
-            icon: statusFlatRoundButton.icon.name
-            source: statusFlatRoundButton.icon.source
-            rotation: statusFlatRoundButton.icon.rotation
+            icon: root.icon.name
+            source: root.icon.source
+            rotation: root.icon.rotation
 
-            width: statusFlatRoundButton.icon.width
-            height: statusFlatRoundButton.icon.height
+            width: root.icon.width
+            height: root.icon.height
 
             color: {
-                if (statusFlatRoundButton.enabled) {
-                    return statusFlatRoundButton.icon.color
+                if (root.enabled) {
+                    return root.icon.color
                 } else {
-                    return statusFlatRoundButton.icon.disabledColor
+                    return root.icon.disabledColor
                 }
             }
         } // Icon
         Loader {
-            active: loading
+            active: root.loading
             anchors.centerIn: parent
             sourceComponent: StatusLoadingIndicator {
                 color: {
-                    if (statusFlatRoundButton.enabled) {
-                        return statusFlatRoundButton.icon.color
+                    if (root.enabled) {
+                        return root.icon.color
                     } else {
-                        return statusFlatRoundButton.icon.disabledColor
+                        return root.icon.disabledColor
                     }
                 }
             } // Indicator
         } // Loader
 
-        onClicked: (mouse) => statusFlatRoundButton.clicked(mouse)
-        onPressed: (mouse) => statusFlatRoundButton.pressed(mouse)
-        onReleased: (mouse) => statusFlatRoundButton.released(mouse)
-        onPressAndHold: (mouse) => statusFlatRoundButton.pressAndHold(mouse)
+        onClicked: mouse => root.clicked(mouse)
+        onPressed: mouse => root.pressed(mouse)
+        onReleased: mouse => root.released(mouse)
+        onPressAndHold: mouse => root.pressAndHold(mouse)
     } // Sensor
 
     StatusToolTip {
         id: statusToolTip
-        visible: !!text && statusFlatRoundButton.hovered
+        visible: !!text && root.hovered
     } // Tooltip
 } // Rectangle
