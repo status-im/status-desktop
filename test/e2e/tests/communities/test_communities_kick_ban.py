@@ -1,5 +1,3 @@
-import time
-
 import pytest
 from allure_commons._allure import step
 
@@ -51,12 +49,16 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
 
         with step(f'User {user_one.name}, accept invitation from {user_two.name}'):
             switch_to_aut(aut_one, main_screen)
+            # Wait for main window to be ready after switching
+            main_screen.wait_until_appears(timeout)
             messages_view = main_screen.left_panel.open_messages_screen()
             skip_message_backup_popup_if_visible()
             assert driver.waitFor(lambda: user_two.name in messages_view.left_panel.get_chats_names,
-                                  10000)
+                                  timeout), f'Chat with {user_two.name} not found in messages list'
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
+            skip_message_backup_popup_if_visible()
             community_screen = chat.click_community_invite(community.name, 0)
+            skip_message_backup_popup_if_visible()
 
         with step(f'User {user_one.name}, verify welcome community popup'):
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
@@ -64,11 +66,13 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             assert community.introduction == welcome_popup.intro
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
-                                  10000), 'Join community button not hidden'
+                                  timeout), 'Join community button not hidden'
             main_screen.minimize()
 
         with step(f'User {user_two.name}, ban {user_one.name} from the community'):
             switch_to_aut(aut_two, main_screen)
+            # Wait for main window to be ready after switching
+            main_screen.wait_until_appears(timeout)
             community_setting = community_screen.left_panel.open_community_settings()
             members = community_setting.left_panel.open_members()
             members.ban_member(user_one.name).confirm_banning()
@@ -89,6 +93,8 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
 
         with step(f'User {user_one.name} tries to join community when being banned by {user_two.name}'):
             switch_to_aut(aut_one, main_screen)
+            # Wait for main window to be ready after switching
+            main_screen.wait_until_appears(timeout)
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
             banned_community_screen = chat.open_banned_community(community.name, 0)
             assert banned_community_screen.community_banned_member_panel.is_visible
@@ -100,6 +106,8 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
 
         with step(f'User {user_two.name}, unban {user_one.name} in banned members list'):
             switch_to_aut(aut_two, main_screen)
+            # Wait for main window to be ready after switching
+            main_screen.wait_until_appears(timeout)
             members.unban_member(user_one.name)
             # toast_messages = main_screen.wait_for_toast_notifications()
             # assert user_one.name + ToastMessages.UNBANNED_USER_TOAST.value + community.name in toast_messages, \
@@ -108,6 +116,8 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
 
         with step(f'User {user_one.name} joins community again'):
             switch_to_aut(aut_one, main_screen)
+            # Wait for main window to be ready after switching
+            main_screen.wait_until_appears(timeout)
             chat1 = messages_view.left_panel.click_chat_by_name(user_two.name)
             community_screen = chat1.open_banned_community(community.name, 0)
             # toast_messages = main_screen.wait_for_toast_notifications()
@@ -116,18 +126,23 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             main_screen.left_panel.open_community_context_menu(community.name).leave_community_option.click()
 
             messages_view1 = main_screen.left_panel.open_messages_screen()
+            skip_message_backup_popup_if_visible()
             chat = messages_view1.left_panel.click_chat_by_name(user_two.name)
-            time.sleep(1)
+            skip_message_backup_popup_if_visible()
+            # click_chat_by_name already waits for ChatView to appear, so chat is ready
             community_screen = chat.click_community_invite(community.name, 0)
+            skip_message_backup_popup_if_visible()
 
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
-                              10000), 'Join community button not hidden'
+                                  timeout), 'Join community button not hidden'
             main_screen.minimize()
 
         with step(f'User {user_two.name}, kick {user_one.name} from the community'):
             switch_to_aut(aut_two, main_screen)
+            # Wait for main window to be ready after switching
+            main_screen.wait_until_appears(timeout)
             MembersListPanel().click_all_members_button()
             kick_popup = members.open_kick_member_popup(user_one.name)
             kick_popup.confirm_kicking()
@@ -143,10 +158,16 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
 
         with step(f'User {user_one.name} can rejoin community after being kicked'):
             switch_to_aut(aut_one, main_screen)
+            # Wait for main window to be ready after switching
+            main_screen.wait_until_appears(timeout)
             messages_view = main_screen.left_panel.open_messages_screen()
+            skip_message_backup_popup_if_visible()
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
+            skip_message_backup_popup_if_visible()
+            # click_chat_by_name already waits for ChatView to appear, so chat is ready
             community_screen = chat.click_community_invite(community.name, 0)
+            skip_message_backup_popup_if_visible()
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
-                                  10000), 'Join community button not hidden'
+                                  timeout), 'Join community button not hidden'

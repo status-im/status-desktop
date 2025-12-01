@@ -56,7 +56,6 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
 
         with step(f'User {user_two.name}, send contact request to {user_three.name}'):
             switch_to_aut(aut_two, main_screen)
-            skip_message_backup_popup_if_visible()
             settings = main_screen.left_panel.open_settings()
             messaging_settings = settings.left_panel.open_messaging_settings()
             contacts_settings = messaging_settings.open_contacts_settings()
