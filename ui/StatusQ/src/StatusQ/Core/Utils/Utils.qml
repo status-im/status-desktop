@@ -196,10 +196,10 @@ QtObject {
         return XSS.filterXSS(inputText)
     }
 
-    function getMessageWithStyle(msg, hoveredLink = "", ethLinkDisabled = false) {
-        const ethLinkColor = ethLinkDisabled ? Theme.palette.directColor1 : Theme.palette.primaryColor1
-        const ethLinkHoverColor = ethLinkDisabled ? Theme.palette.baseColor1 : Theme.palette.primaryColor1
-        const ethLinkHoverBackgroundColor = ethLinkDisabled ? Theme.palette.directColor8 : Theme.palette.primaryColor3
+    function getMessageWithStyle(palette, msg, hoveredLink = "", ethLinkDisabled = false) {
+        const ethLinkColor = ethLinkDisabled ? palette.directColor1 : palette.primaryColor1
+        const ethLinkHoverColor = ethLinkDisabled ? palette.baseColor1 : palette.primaryColor1
+        const ethLinkHoverBackgroundColor = ethLinkDisabled ? palette.directColor8 : palette.primaryColor3
         return `<style type="text/css">` +
                     `img, a, del, code, blockquote { margin: 0; padding: 0; }` +
                     `code {` +
@@ -208,15 +208,15 @@ QtObject {
                         `font-size: 14;` +
                         `padding: 2px 4px;` +
                         `border-radius: 4px;` +
-                        `background-color: ${Theme.palette.baseColor2};` +
-                        `color: ${Theme.palette.directColor1};` +
+                        `background-color: ${palette.baseColor2};` +
+                        `color: ${palette.directColor1};` +
                         `white-space: pre;` +
                     `}` +
                     `p {` +
                         `line-height: 22px;` +
                     `}` +
                     `a {` +
-                        `color: ${Theme.palette.primaryColor1};` +
+                        `color: ${palette.primaryColor1};` +
                     `}` +
                     `a.eth-link {` +
                         `color: ${ethLinkColor};` +
@@ -228,13 +228,13 @@ QtObject {
                             `background-color: ${ethLinkHoverBackgroundColor};` +
                         `}` : ``) +
                     `a.mention {` +
-                        `color: ${Theme.palette.mentionColor1};` +
-                        `background-color: ${Theme.palette.mentionColor4};` +
+                        `color: ${palette.mentionColor1};` +
+                        `background-color: ${palette.mentionColor4};` +
                         `text-decoration: none;` +
                         `padding: 0px 2px;` +
                     `}` +
-                    (hoveredLink !== "" ? `a.mention[href="${hoveredLink}"] { background-color: ${Theme.palette.mentionColor2}; }` : ``) +
-                    (hoveredLink !== "" ? `a[href="${hoveredLink}"] { background-color: ${Theme.palette.primaryColor3}; }` : ``) +
+                    (hoveredLink !== "" ? `a.mention[href="${hoveredLink}"] { background-color: ${palette.mentionColor2}; }` : ``) +
+                    (hoveredLink !== "" ? `a[href="${hoveredLink}"] { background-color: ${palette.primaryColor3}; }` : ``) +
                     `del {` +
                         `text-decoration: line-through;` +
                     `}` +
@@ -242,7 +242,7 @@ QtObject {
                         `vertical-align: bottom;` +
                     `}` +
                     `span.isEdited {` +
-                        `color: ${Theme.palette.baseColor1};` +
+                        `color: ${palette.baseColor1};` +
                         `margin-left: 5px` +
                     `}` +
                 `</style>` +
@@ -290,13 +290,6 @@ QtObject {
     function deviceIcon(deviceType) {
         const isMobileDevice = deviceType === "ios" || deviceType === "android"
         return isMobileDevice ? "mobile" : "desktop"
-    }
-
-    function getYinYangColor(color) {
-        if (color.toString().toUpperCase() === Theme.palette.customisationColors.yinYang.toString().toUpperCase()) {
-            return Theme.palette.name === "light" ? "#FFFFFF" : "#09101C"
-        }
-        return ""
     }
 
     function stripHttpsAndwwwFromUrl(text) {

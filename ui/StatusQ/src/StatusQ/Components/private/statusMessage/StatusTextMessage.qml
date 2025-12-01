@@ -57,7 +57,7 @@ Item {
                 const editedMessage = formattedMessage.slice(0, index)
                                     + ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
                                     + formattedMessage.slice(index);
-                return Utils.getMessageWithStyle(Emoji.parse(editedMessage))
+                return Utils.getMessageWithStyle(root.Theme.palette, Emoji.parse(editedMessage))
             }
 
             if (root.convertToSingleLine || isQuote)
@@ -73,7 +73,8 @@ Item {
                 // short return not to add styling when no html
                 return formattedMessage
 
-            return Utils.getMessageWithStyle(formattedMessage, chatText.hoveredLink, !!root.disabledTooltipText)
+            return Utils.getMessageWithStyle(root.Theme.palette, formattedMessage,
+                                             chatText.hoveredLink, !!root.disabledTooltipText)
         }
 
         function showDisabledTooltipForAddressEnsName(link) {
