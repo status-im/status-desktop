@@ -67,6 +67,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             main_window.minimize()
 
         with step(f'User {user_three.name}, get chat key'):
+            switch_to_aut(aut_three, main_window)
             user_3_chat_key = get_chat_key(aut_three, main_window)
             main_window.minimize()
 

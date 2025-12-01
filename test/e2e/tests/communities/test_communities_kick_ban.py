@@ -7,6 +7,7 @@ import driver
 from constants import UserAccount, RandomUser, RandomCommunity, CommunityData
 from constants.community import ToastMessages
 from gui.screens.community import MembersListPanel
+from helpers.chat_helper import skip_message_backup_popup_if_visible
 from scripts.utils.generators import random_text_message
 import configs.testpath
 from gui.main_window import MainWindow
@@ -38,6 +39,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
 
         with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
             accept_contact_request_from_settings(aut_two, main_screen, user_one.name)
+            skip_message_backup_popup_if_visible()
 
         with step(f'User {user_two.name}, create community and invite {user_one.name}'):
             main_screen.left_panel.create_community(community_data=community)
@@ -50,6 +52,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
         with step(f'User {user_one.name}, accept invitation from {user_two.name}'):
             switch_to_aut(aut_one, main_screen)
             messages_view = main_screen.left_panel.open_messages_screen()
+            skip_message_backup_popup_if_visible()
             assert driver.waitFor(lambda: user_two.name in messages_view.left_panel.get_chats_names,
                                   10000)
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)

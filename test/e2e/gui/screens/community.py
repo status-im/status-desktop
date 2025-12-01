@@ -339,9 +339,19 @@ class CommunityLeftPanel(QObject):
 
     @allure.step('Open join community popup')
     def open_welcome_community_popup(self):
-        self._join_community_button.wait_until_appears(timeout_msec=10000)
-        self._join_community_button.click()
-        return WelcomeCommunityPopup().wait_until_appears()
+        attempts = 4
+        last_exception = None
+        for attempt in range(1, attempts + 1):
+            try:
+                self._join_community_button.wait_until_appears(timeout_msec=10000)
+                self._join_community_button.click()
+                return WelcomeCommunityPopup().wait_until_appears()
+            except Exception as e:
+                last_exception = e
+                if attempt < attempts:
+                    continue
+                else:
+                    raise Exception(f"Failed to open welcome community popup after {attempts} attempts: {last_exception}") from last_exception
 
     @allure.step('Find category')
     def find_category_in_list(
