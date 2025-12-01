@@ -50,8 +50,6 @@ Flow {
             id: reactionDelegate
 
             size: StatusBaseButton.Size.Small
-            implicitHeight: 32
-
             verticalPadding: Theme.halfPadding / 2
             leftPadding: Theme.halfPadding
             rightPadding: Theme.halfPadding / 2
@@ -59,7 +57,11 @@ Flow {
 
             background: Rectangle {
                 implicitWidth: 36
-                radius: Theme.radius
+                implicitHeight: 32
+                topLeftRadius: 0
+                topRightRadius: 12
+                bottomLeftRadius: 12
+                bottomRightRadius: 12
                 color: {
                     if (reactionDelegate.hovered) {
                         return Theme.palette.statusMessage.emojiReactionBackgroundHovered

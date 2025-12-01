@@ -169,9 +169,9 @@ ThemePalette {
     }
 
     statusMessage: QtObject {
-        property color emojiReactionBackground: "#e2e6e9"
-        property color emojiReactionBackgroundHovered: "#E7EAEE"
-        property color emojiReactionBorderHovered: "#A1ABBD"
+        property color emojiReactionBackground: baseColor4
+        property color emojiReactionBackgroundHovered: primaryColor2
+        property color emojiReactionBorderHovered: primaryColor3
     }
 
     customisationColors: QtObject {
