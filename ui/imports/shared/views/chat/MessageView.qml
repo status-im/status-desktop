@@ -653,13 +653,13 @@ Loader {
                             isLetterIdenticon: name === ""
                             imgIsIdenticon: false
                             charactersLen: 1
-                            color: Theme.palette.userCustomizationColors[deletedMessage.colorId]
+                            color: root.Theme.palette.userCustomizationColors[deletedMessage.colorId]
                             letterSize: 14
                         }
 
                         name: root.deletedByContactIcon || ""
                         pubkey: root.deletedBy
-                        colorId: deletedMessage.colorId
+                        color: root.Theme.palette.userCustomizationColors[deletedMessage.colorId]
                     }
                 }
 
@@ -923,7 +923,7 @@ Loader {
                         height: 40
                         name: root.senderIcon || ""
                         pubkey: root.senderId
-                        colorId: Utils.colorIdForPubkey(root.senderId)
+                        color: root.Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(root.senderId)]
                     }
                     sender.badgeImage: Assets.svg("discord-bridge")
                 }
@@ -973,7 +973,7 @@ Loader {
                         name: quotedMessageAuthorDetailsThumbnailImage
                         assetSettings.isImage: quotedMessageAuthorDetailsThumbnailImage
                         pubkey: sender.id
-                        colorId: Utils.colorIdForPubkey(sender.id)
+                        color: root.Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(sender.id)]
                     }
                 }
 

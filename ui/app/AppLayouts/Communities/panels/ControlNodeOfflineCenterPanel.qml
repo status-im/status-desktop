@@ -69,7 +69,7 @@ ColumnLayout {
                             width: 40
                             height: 40
                             name: model.profileImage || ""
-                            colorId: model.colorId
+                            color: root.Theme.palette.userCustomizationColors[model.colorId]
                         }
                     }
                 }
