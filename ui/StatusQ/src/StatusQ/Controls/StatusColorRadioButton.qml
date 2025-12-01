@@ -2,10 +2,9 @@ import QtQuick
 import QtQuick.Controls
 
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils
 
 RadioButton {
-    id: control
+    id: root
 
     property string radioButtonColor: ""
     property string selectionColor: StatusColors.colors['white']
@@ -19,16 +18,22 @@ RadioButton {
 
     QtObject {
         id: d
-        readonly property string yinYangColor: Utils.getYinYangColor(radioButtonColor)
+        readonly property string yinYangColor: {
+            if (root.radioButtonColor.toString().toUpperCase() === root.Theme.palette.customisationColors.yinYang.toString().toUpperCase()) {
+                return root.Theme.palette.name === "light" ? "#FFFFFF" : "#09101C"
+            }
+            return ""
+
+        }
     }
 
     indicator: Rectangle {
-        implicitWidth: control.diameter
-        implicitHeight: control.diameter
+        implicitWidth: root.diameter
+        implicitHeight: root.diameter
         radius: width/2
         color: radioButtonColor
         border.width: 1
-        border.color: Theme.palette.directColor7
+        border.color: root.Theme.palette.directColor7
 
         Item {
             id: dualColor
@@ -48,9 +53,9 @@ RadioButton {
 
         Rectangle {
             anchors.centerIn: parent
-            width: control.selectorDiameter
-            height: control.selectorDiameter
-            visible: control.checked
+            width: root.selectorDiameter
+            height: root.selectorDiameter
+            visible: root.checked
             radius: width/2
             color: selectionColor
             border.color: StatusColors.colors['grey3']
@@ -59,7 +64,7 @@ RadioButton {
     }
 
     HoverHandler {
-        enabled: control.enabled
+        enabled: root.enabled
         cursorShape: Qt.PointingHandCursor
     }
 }

@@ -67,7 +67,8 @@ Rectangle {
 
         StyledText {
             id: replyText
-            text: StatusQUtils.Utils.getMessageWithStyle(StatusQUtils.Emoji.parse(StatusQUtils.Utils.linkifyAndXSS(message)), false)
+            text: StatusQUtils.Utils.getMessageWithStyle(
+                      root.Theme.palette, StatusQUtils.Emoji.parse(StatusQUtils.Utils.linkifyAndXSS(message)), false)
             anchors.fill: parent
             elide: Text.ElideRight
             font.pixelSize: Theme.additionalTextSize
