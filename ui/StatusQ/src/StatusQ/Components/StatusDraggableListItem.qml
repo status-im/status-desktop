@@ -72,7 +72,7 @@ import StatusQ.Core.Theme
                     draggable: linksView.count > 1
                     title: ProfileUtils.linkTypeToText(model.linkType) || model.text
                     icon.name: model.icon
-                    icon.color: ProfileUtils.linkTypeColor(model.linkType)
+                    icon.color: ProfileUtils.linkTypeColor(model.linkType, Theme.palette)
                     actions: [
                         StatusLinkText {
                             Layout.fillWidth: true

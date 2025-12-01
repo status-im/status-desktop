@@ -48,9 +48,9 @@ Item {
             width: GridView.view.cellWidth - Theme.padding
             height: GridView.view.cellHeight - Theme.padding
             title: !!ProfileUtils.linkTypeToText(linkType) ? ProfileUtils.linkTypeToText(linkType) : model.text
-            asset.bgColor: ProfileUtils.linkTypeBgColor(linkType)
+            asset.bgColor: ProfileUtils.linkTypeBgColor(linkType, root.Theme.palette)
             asset.name: ProfileUtils.linkTypeToIcon(linkType)
-            asset.color: ProfileUtils.linkTypeColor(linkType)
+            asset.color: ProfileUtils.linkTypeColor(linkType, root.Theme.palette)
             asset.width: 20
             asset.height: 20
             asset.bgWidth: 32
