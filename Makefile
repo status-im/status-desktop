@@ -243,6 +243,7 @@ ifeq ($(USE_NWAKU), true)
 endif
 
 NIM_SDS_SOURCE_DIR ?= vendor/nim-sds/
+export NIM_SDS_SOURCE_DIR
 LIBSDS_LIBDIR := $(NIM_SDS_SOURCE_DIR)/build
 NIM_EXTRA_PARAMS += --passL:"-L$(LIBSDS_LIBDIR)" --passL:"-lsds"
 STATUSGO_MAKE_PARAMS += NIM_SDS_SOURCE_DIR="$(GIT_ROOT)/vendor/nim-sds/"
