@@ -86,8 +86,8 @@ StatusStackModal {
                 width: ListView.view.width
                 title: ProfileUtils.linkTypeToText(model.type) || qsTr("Custom link")
                 asset.name: model.icon
-                asset.color: ProfileUtils.linkTypeColor(model.type)
-                asset.bgColor: ProfileUtils.linkTypeBgColor(model.type)
+                asset.color: ProfileUtils.linkTypeColor(model.type, root.Theme.palette)
+                asset.bgColor: ProfileUtils.linkTypeBgColor(model.type, root.Theme.palette)
                 onClicked: {
                     customTitle.reset()
                     linkTarget.reset()
