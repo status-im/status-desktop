@@ -29,6 +29,7 @@ FocusScope {
     property var tabComponent
     property var determineRealURL: function(url) {}
     readonly property int tabHeight: d.tabHeight
+    property int contentTopMargin: 0
 
     signal openNewTabTriggered()
 
@@ -88,6 +89,7 @@ FocusScope {
         currentIndex: tabBar.currentIndex
 
         anchors.top: tabBar.bottom
+        anchors.topMargin: root.contentTopMargin
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right

@@ -279,6 +279,7 @@ StatusSectionLayout {
             anchors.left: parent.left
             anchors.right: parent.right
             z: 50
+            contentTopMargin: browserHeader.height
             tabComponent: webEngineView
             currentWebEngineProfile: _internal.currentWebView.profile
             thirdpartyServicesEnabled: root.thirdpartyServicesEnabled
