@@ -12,7 +12,7 @@ QtObject {
     property string pubkey
     property bool interactive: true
 
-    property int colorId // TODO: default value Utils.colorIdForPubkey(pubkey)
+    property color color
 
     property StatusAssetSettings assetSettings: StatusAssetSettings {
         width: root.width
@@ -20,7 +20,7 @@ QtObject {
         name: root.name
         isLetterIdenticon: (name === "")
         imgIsIdenticon: root.isIdenticon
-        color: Theme.palette.userCustomizationColors[root.colorId]
+        color: root.color
         charactersLen: 2
     }
 }

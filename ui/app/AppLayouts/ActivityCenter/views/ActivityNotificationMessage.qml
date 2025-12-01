@@ -42,7 +42,7 @@ ActivityNotificationBase {
             height: 40
             name: contactDetails ? contactDetails.thumbnailImage : ""
             pubkey: contactId
-            colorId: Utils.colorIdForPubkey(contactId)
+            color: Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(contactId)]
         }
         contentType: notification && notification.message ? notification.message.contentType : StatusMessage.ContentType.Unknown
         album: notification && notification.message ? notification.message.albumMessageImages.split(" ") : []
