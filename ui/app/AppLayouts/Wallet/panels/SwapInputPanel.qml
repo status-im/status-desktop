@@ -177,7 +177,7 @@ Control {
     background: Shape {
         id: shape
 
-        property int radius: Theme.radius
+        property int radius: root.Theme.radius
         property int leftTopRadius: radius
         property int rightTopRadius: radius
         property int leftBottomRadius: radius
@@ -189,8 +189,8 @@ Control {
 
         ShapePath {
             id: path
-            fillColor: Theme.palette.indirectColor3
-            strokeColor: amountToSendInput.cursorVisible ? Theme.palette.directColor7 : Theme.palette.directColor8
+            fillColor: root.Theme.palette.indirectColor3
+            strokeColor: amountToSendInput.cursorVisible ? root.Theme.palette.directColor7 : root.Theme.palette.directColor8
             strokeWidth: 1
             capStyle: ShapePath.RoundCap
 

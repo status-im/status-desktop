@@ -146,7 +146,7 @@ StatusDropdown {
         }
 
         function resolveColor(color, colorId) {
-            return !!color ? color : Theme.palette.userCustomizationColors[colorId]
+            return !!color ? color : root.Theme.palette.userCustomizationColors[colorId]
         }
     }
 
