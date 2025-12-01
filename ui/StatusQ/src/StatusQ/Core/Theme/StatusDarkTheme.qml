@@ -169,7 +169,7 @@ ThemePalette {
     }
 
     statusMessage: QtObject {
-        property color emojiReactionBackground: baseColor4
+        property color emojiReactionBackground: baseColor2
         property color emojiReactionBackgroundHovered: primaryColor3
         property color emojiReactionBorderHovered: primaryColor2
     }
