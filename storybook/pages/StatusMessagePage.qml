@@ -314,3 +314,4 @@ SplitView {
 
 // category: Components
 // status: good
+// https://www.figma.com/design/SGyfSjxs5EbzimHDXTlj8B/Qt-Responsive---v?node-id=3232-99870&t=Is21W638A25DzExb-0

@@ -392,6 +392,7 @@ Control {
                             enabled: !root.disableEmojis
                             reactionsModel: root.reactionsModel
                             limitReached: !!root.reactionsModel && root.reactionsModel.ModelCount.count >= root.maxEmojiReactionsPerMessage
+                            messageHighlighted: root.hovered || root.isActiveMessage
 
                             onHoverChanged: (hovered) => root.hoverChanged(messageId, hovered)
 
