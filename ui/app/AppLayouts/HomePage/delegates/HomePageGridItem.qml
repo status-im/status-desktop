@@ -106,7 +106,7 @@ AbstractButton {
                 Layout.preferredWidth: root.icon.width
                 Layout.preferredHeight: root.icon.height
 
-                color: mainBgRect.color
+                color: hovered ? Qt.lighter(Theme.palette.baseColor4, 1.5) : Theme.palette.baseColor4
                 radius: width/2
 
                 Loader {

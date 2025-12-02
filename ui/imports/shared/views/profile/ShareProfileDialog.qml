@@ -65,7 +65,7 @@ StatusDialog {
                         name: root.displayName
                         usesDefaultName: root.usesDefaultName
                         image: root.largeImage
-                        userColor: Utils.colorForColorId(root.colorId)
+                        userColor: Utils.colorForColorId(Theme.palette, root.colorId)
 
                         interactive: false
                         imageWidth: 78

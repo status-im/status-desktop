@@ -177,7 +177,8 @@ Item {
 
                 const floatingHeaderBackground = findChild(controlUnderTest, "headerBackground")
                 verify(!!floatingHeaderBackground)
-                compare(floatingHeaderBackground.color.toString().toUpperCase(), Utils.getColorForId(accountToTest.colorId).toString().toUpperCase())
+                compare(floatingHeaderBackground.color.toString().toUpperCase(),
+                        Utils.getColorForId(controlUnderTest.Theme.palette, accountToTest.colorId).toString().toUpperCase())
 
                 const headerContentItemText = findChild(controlUnderTest, "textContent")
                 verify(!!headerContentItemText)

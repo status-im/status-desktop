@@ -2,7 +2,6 @@ pragma Singleton
 
 import QtQml
 import QtQuick
-import QtQuick.Window
 
 import StatusQ.Core.Theme
 

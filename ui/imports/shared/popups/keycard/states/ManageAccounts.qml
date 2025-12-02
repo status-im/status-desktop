@@ -46,7 +46,7 @@ Item {
             if (d.observedAccount.colorId.length === 0) {
                 let color = Theme.palette.customisationColorsArray[Math.floor(Math.random() * Theme.palette.customisationColorsArray.length)]
                 let emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall) // TODO: Reuse status-go RandomWalletEmoji
-                d.observedAccount.colorId = Utils.getIdForColor(color)
+                d.observedAccount.colorId = Utils.getIdForColor(root.Theme.palette, color)
                 d.observedAccount.emoji = emoji
             }
 
@@ -213,7 +213,7 @@ Item {
             input.acceptReturn: true
             input.isIconSelectable: true
             input.leftPadding: Theme.padding
-            input.asset.color: Utils.getColorForId(d.observedAccount.colorId)
+            input.asset.color: Utils.getColorForId(Theme.palette, d.observedAccount.colorId)
             input.asset.emoji: d.observedAccount.emoji
 
             onTextChanged: {
@@ -247,7 +247,7 @@ Item {
             model: Theme.palette.customisationColorsArray
 
             onSelectedColorChanged: {
-                d.observedAccount.colorId = Utils.getIdForColor(selectedColor)
+                d.observedAccount.colorId = Utils.getIdForColor(Theme.palette, selectedColor)
             }
         }
 

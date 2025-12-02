@@ -181,7 +181,7 @@ ItemDelegate {
             isOwner: root.memberRole === Constants.memberRole.owner
             status: root.onlineStatus
             icon.name: root.iconName
-            icon.color: Utils.colorForPubkey(root.pubKey)
+            icon.color: Utils.colorForPubkey(Theme.palette, root.pubKey)
         }
     }
 

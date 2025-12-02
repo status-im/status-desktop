@@ -223,7 +223,7 @@ Item {
                 amISender: false
                 sender.displayName: root.ensUsernamesStore.preferredUsername
                 sender.profileImage.assetSettings.isImage: true
-                sender.profileImage.assetSettings.color: Utils.colorForPubkey(root.ensUsernamesStore.pubkey)
+                sender.profileImage.assetSettings.color: Utils.colorForPubkey(root.Theme.palette, root.ensUsernamesStore.pubkey)
                 sender.profileImage.name: root.ensUsernamesStore.icon
             }
         }

@@ -49,7 +49,7 @@ StatusListItem {
         name: root.keyPairImage? root.keyPairImage : root.keyPairIcon
         isImage: !!root.keyPairImage
         color: root.keyPairType === Constants.keycard.keyPairType.profile?
-                   Utils.colorForPubkey(d.myPublicKey) :
+                   Utils.colorForPubkey(Theme.palette, d.myPublicKey) :
                    root.keycardLocked? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
         letterSize: Math.max(4, asset.width / 2.4)
         charactersLen: 2
@@ -60,7 +60,7 @@ StatusListItem {
     tagsModel: root.keyPairAccounts
 
     tagsDelegate: StatusListItemTag {
-        bgColor: Utils.getColorForId(model.account.colorId)
+        bgColor: Utils.getColorForId(Theme.palette, model.account.colorId)
         bgRadius: 6
         height: Theme.bigPadding
         closeButtonVisible: false

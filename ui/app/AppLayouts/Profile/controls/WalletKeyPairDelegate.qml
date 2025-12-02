@@ -50,14 +50,14 @@ Rectangle {
             statusListItemSubTitle.textFormat: Qt.RichText
             titleTextIcon: !!root.keyPair && keyPair.migratedToKeycard ? "keycard": ""
             subTitle: Utils.getKeypairLocation(root.keyPair, false)
-            statusListItemSubTitle.color: Utils.getKeypairLocationColor(root.keyPair)
+            statusListItemSubTitle.color: Utils.getKeypairLocationColor(Theme.palette, root.keyPair)
             color: Theme.palette.transparent
             asset {
                 width: !!root.keyPair && keyPair.icon? root.Theme.bigPadding : 40
                 height: !!root.keyPair && keyPair.icon? root.Theme.bigPadding : 40
                 name: !!root.keyPair? !!root.keyPair.image? root.keyPair.image : root.keyPair.icon : ""
                 isImage: !!root.keyPair && !!keyPair.image
-                color: d.isProfileKeypair ? Utils.colorForPubkey(root.userProfilePublicKey) : root.Theme.palette.primaryColor1
+                color: d.isProfileKeypair ? Utils.colorForPubkey(Theme.palette, root.userProfilePublicKey) : root.Theme.palette.primaryColor1
                 letterSize: Math.max(4, asset.width / 2.4)
                 charactersLen: 2
                 isLetterIdenticon: !!root.keyPair && !keyPair.icon && !asset.name.toString()

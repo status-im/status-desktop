@@ -71,6 +71,7 @@ Item {
                                    appMain.privacyStore.thirdpartyServicesEnabled: true
         onOpenUrl: (link) => Global.requestOpenLink(link)
         keychain: appMain.keychain
+        palette: appMain.Theme.palette
     }
 
     // Global cross-domain stores (just references from `rootStore`)
@@ -1796,6 +1797,9 @@ Item {
                             searchPhrase: homePage.searchPhrase
 
                             profileId: appMain.profileStore.pubKey
+
+                            // no automatic propagation to QtObject, needs to be specified explicitely
+                            Theme.style: appMain.Theme.style
                         }
 
                         homePageEntriesModel: homePageAdaptor.homePageEntriesModel
@@ -3009,5 +3013,11 @@ Item {
             if (isAddress)
                 WalletStores.RootStore.addressWasShown(text)
         }
+    }
+
+    Binding {
+        target: WalletStores.RootStore
+        property: "palette"
+        value: appMain.Theme.palette
     }
 }

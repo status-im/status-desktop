@@ -57,7 +57,7 @@ FocusScope {
         readonly property int bottomDirtyToastMargin: 36
 
         // Read-only flag that turns true when the row component enters a “compact” layout automatically on resize.
-        readonly property bool compactRowMode: sectionTitleText.implicitWidth + titleFirstRowItem.implicitWidth + 2 * Theme.padding > root.contentWidth
+        readonly property bool compactRowMode: sectionTitleText.implicitWidth + titleFirstRowItem.implicitWidth + 2 * root.Theme.padding > root.contentWidth
     }
 
     Loader {

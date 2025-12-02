@@ -222,7 +222,7 @@ Pane {
                 name: d.mainDisplayName
                 usesDefaultName: contactDetails.usesDefaultName
                 image: contactDetails.largeImage
-                userColor: Utils.colorForColorId(contactDetails.colorId)
+                userColor: Utils.colorForColorId(Theme.palette, contactDetails.colorId)
 
                 interactive: false
                 imageWidth: 90

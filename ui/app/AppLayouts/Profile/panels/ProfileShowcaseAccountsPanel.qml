@@ -26,7 +26,7 @@ ProfileShowcasePanel {
         hasEmoji: model && !!model.emoji
         hasIcon: !hasEmoji
         icon.name: hasEmoji ? model.emoji : "filled-account"
-        icon.color: model && model.colorId ? Utils.getColorForId(model.colorId) : Theme.palette.primaryColor3
+        icon.color: model && model.colorId ? Utils.getColorForId(Theme.palette, model.colorId) : Theme.palette.primaryColor3
         highlighted: model ? model.address === root.currentWallet : false
     }
     filter: FastExpressionFilter {

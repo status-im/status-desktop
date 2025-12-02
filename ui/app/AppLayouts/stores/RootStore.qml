@@ -15,6 +15,7 @@ QtObject {
     id: root
 
     required property Keychain keychain
+    required property ThemePalette palette
 
     // Global properties that have to remain on `RootStore` (the module instances must be private properties and just used to initialize the
     // rest and specific stores
@@ -58,6 +59,7 @@ QtObject {
     readonly property MessagingStores.MessagingRootStore messagingRootStore: MessagingStores.MessagingRootStore {}
     readonly property ProfileStores.ProfileSectionStore profileSectionStore: ProfileStores.ProfileSectionStore {
         localBackupEnabled: root.localBackupEnabled
+        palette: root.palette
     }
 
     readonly property AccountSettingsStore accountSettingsStore: AccountSettingsStore {}

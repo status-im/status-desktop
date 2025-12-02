@@ -4,6 +4,7 @@ import utils
 
 import StatusQ
 import StatusQ.Models
+import StatusQ.Core.Theme
 
 import QtModelsToolkit
 import SortFilterProxyModel
@@ -23,6 +24,8 @@ QtObject {
 
     property var selectedAccount
 
+    required property ThemePalette palette
+
     // TODO(alaibe): there should be no access to wallet section, create collectible in profile
     property var overview: walletSectionOverview
     property var accounts: Global.appIsReady? accountsModule.accounts : null
@@ -33,13 +36,13 @@ QtObject {
             FastExpressionRole {
                 name: "color"
 
-                function getColor(colorId) {
-                    return Utils.getColorForId(colorId)
+                function getColor(palette, colorId) {
+                    return Utils.getColorForId(palette, colorId)
                 }
 
                 // Direct call for singleton function is not handled properly by
                 // SortFilterProxyModel that's why helper function is used instead.
-                expression: { return getColor(model.colorId) }
+                expression: { return getColor(root.palette, model.colorId) }
                 expectedRoles: ["colorId"]
             }
         ]

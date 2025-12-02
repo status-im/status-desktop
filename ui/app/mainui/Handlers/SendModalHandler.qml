@@ -841,6 +841,8 @@ QtObject {
 
             SignSendAdaptor {
                 id: signSendAdaptor
+
+                palette: root.popupParent.Theme.palette
                 accountKey: simpleSendModal.selectedAccountAddress
                 accountsModel: root.walletAccountsModel
                 recipientModel: handler.recipientViewAdaptor.recipientsModel
@@ -871,7 +873,7 @@ QtObject {
                     accountName: signSendAdaptor.selectedAccount.name
                     accountAddress: signSendAdaptor.selectedAccount.address
                     accountEmoji: signSendAdaptor.selectedAccount.emoji
-                    accountColor: Utils.getColorForId(signSendAdaptor.selectedAccount.colorId)
+                    accountColor: Utils.getColorForId(Theme.palette, signSendAdaptor.selectedAccount.colorId)
 
                     recipientAddress: signSendAdaptor.recipientAddress
                     recipientName: signSendAdaptor.recipientName

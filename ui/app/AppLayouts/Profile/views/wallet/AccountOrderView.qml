@@ -93,7 +93,7 @@ ColumnLayout {
                 icon.width: 40
                 icon.height: 40
                 icon.name: model.emoji
-                icon.color: Utils.getColorForId(model.colorId)
+                icon.color: Utils.getColorForId(Theme.palette, model.colorId)
 
                 onDragFinished: {
                     let from = d.indexMoveFrom

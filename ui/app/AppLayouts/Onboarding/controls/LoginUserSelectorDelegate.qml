@@ -57,7 +57,7 @@ ItemDelegate {
                 // but it requires changing the DB which is probably not worth it
                 usesDefaultName: !root.image
                 image: root.image
-                userColor: Utils.colorForColorId(root.colorId)
+                userColor: Utils.colorForColorId(Theme.palette, root.colorId)
                 imageHeight: Constants.onboarding.userImageHeight
                 imageWidth: Constants.onboarding.userImageWidth
             }

@@ -49,7 +49,7 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             name: root.userDisplayName
             usesDefaultName: root.usesDefaultName
-            userColor: Utils.colorForColorId(root.userColorId)
+            userColor: Utils.colorForColorId(Theme.palette, root.userColorId)
             image: root.userImage
             interactive: false
             imageWidth: 80

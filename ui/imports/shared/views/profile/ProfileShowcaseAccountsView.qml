@@ -53,7 +53,7 @@ Item {
             implicitHeight: GridView.view.cellHeight - Theme.padding
             title: model.name
             subTitle: StatusQUtils.Utils.elideAndFormatWalletAddress(model.address)
-            asset.color: Utils.getColorForId(model.colorId)
+            asset.color: Utils.getColorForId(Theme.palette, model.colorId)
             asset.emoji: model.emoji ?? ""
             asset.name: asset.emoji || "filled-account"
             asset.isLetterIdenticon: asset.emoji

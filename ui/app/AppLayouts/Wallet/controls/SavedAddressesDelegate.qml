@@ -66,7 +66,7 @@ StatusListItem {
         width: 40
         height: 40
         name: root.avatar || ""  // Use avatar URL if available
-        color: Utils.getColorForId(root.colorId)
+        color: Utils.getColorForId(Theme.palette, root.colorId)
         isLetterIdenticon: !root.avatar  // Only use letter identicon if no avatar
         letterIdenticonBgWithAlpha: true
     }

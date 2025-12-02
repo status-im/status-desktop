@@ -36,7 +36,7 @@ StatusModal {
 //                   Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(root.itemId)] :
 //                   root.color
         // until then the following is used
-        bgColor: d.isOneToOneChat ? Utils.colorForPubkey(root.itemId) : root.color
+        bgColor: d.isOneToOneChat ? Utils.colorForPubkey(root.Theme.palette, root.itemId) : root.color
         name: root.image
         isImage: !!root.image
         charactersLen: d.isOneToOneChat ? 2 : 1

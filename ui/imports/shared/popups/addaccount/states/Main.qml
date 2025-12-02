@@ -29,7 +29,7 @@ Item {
             colorSelection.selectedColorIndex = Math.floor(Math.random() * colorSelection.model.length)
         }
         else {
-            let ind = Utils.getColorIndexForId(root.store.addAccountModule.selectedColorId)
+            let ind = Utils.getColorIndexForId(Theme.palette, root.store.addAccountModule.selectedColorId)
             colorSelection.selectedColorIndex = ind
         }
 
@@ -116,7 +116,7 @@ Item {
                 text: root.store.addAccountModule.accountName
                 input.isIconSelectable: true
                 input.leftPadding: Theme.padding
-                input.asset.color: Utils.getColorForId(root.store.addAccountModule.selectedColorId)
+                input.asset.color: Utils.getColorForId(Theme.palette, root.store.addAccountModule.selectedColorId)
                 onIconClicked: {
                     d.openEmojiPopup(true)
                 }
@@ -171,7 +171,7 @@ Item {
                 selectedColorIndex: -1
 
                 onSelectedColorChanged: {
-                    root.store.addAccountModule.selectedColorId = Utils.getIdForColor(selectedColor)
+                    root.store.addAccountModule.selectedColorId = Utils.getIdForColor(Theme.palette, selectedColor)
                 }
             }
 

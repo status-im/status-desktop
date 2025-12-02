@@ -59,7 +59,7 @@ StatusModal {
             placeholderText: qsTr("Enter an account name...")
             input.text: popup.accountName
             input.asset.emoji: popup.accountEmoji
-            input.asset.color: Utils.getColorForId(popup.accountColorId)
+            input.asset.color: Utils.getColorForId(Theme.palette, popup.accountColorId)
             input.asset.name: !popup.accountEmoji ? "filled-account": ""
 
             validationMode: StatusInput.ValidationMode.Always
@@ -89,7 +89,7 @@ StatusModal {
             anchors.horizontalCenter: parent.horizontalCenter
             model: Theme.palette.customisationColorsArray
             titleText: qsTr("COLOUR")
-            selectedColor: Utils.getColorForId(popup.accountColorId)
+            selectedColor: Utils.getColorForId(Theme.palette, popup.accountColorId)
             selectedColorIndex: {
                 for (let i = 0; i < model.length; i++) {
                     if(model[i] === popup.accountColorId)
@@ -133,7 +133,7 @@ StatusModal {
                      return
                  }
 
-                popup.renameAccountRequested(accountNameInput.text, Utils.getIdForColor(accountColorInput.selectedColor), accountNameInput.input.asset.emoji)
+                popup.renameAccountRequested(accountNameInput.text, Utils.getIdForColor(Theme.palette, accountColorInput.selectedColor), accountNameInput.input.asset.emoji)
                 popup.close()
             }
         }

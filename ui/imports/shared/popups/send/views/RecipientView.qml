@@ -158,7 +158,7 @@ Loader {
             name: !!modelData ? modelData.name : ""
             address: !!modelData ? modelData.address : ""
             emoji: !!modelData ? modelData.emoji : ""
-            walletColor: !!modelData ? Utils.getColorForId(modelData.colorId): ""
+            walletColor: !!modelData ? Utils.getColorForId(Theme.palette, modelData.colorId): ""
             currencyBalance: !!modelData ? modelData.currencyBalance : ""
             walletType: !!modelData ? modelData.walletType : ""
             migratedToKeycard: !!modelData ? modelData.migratedToKeycard ?? false : false

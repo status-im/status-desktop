@@ -78,7 +78,7 @@ QtObject {
                 `<a href="${link}">${link}</a>`
     }
 
-    function getStyledLink(linkText, linkUrl, hoveredLink, textColor = Theme.palette.directColor1, linkColor = Theme.palette.primaryColor1, underlineLink = true) {
+    function getStyledLink(linkText, linkUrl, hoveredLink, textColor, linkColor, underlineLink = true) {
         return `<style type="text/css">` +
                 `a {` +
                 `color: ${textColor};` +
@@ -350,12 +350,12 @@ QtObject {
 
     /* Validation section end */
 
-    function colorForColorId(colorId)  {
-        if (colorId < 0 || colorId >= Theme.palette.userCustomizationColors.length) {
+    function colorForColorId(palette, colorId)  {
+        if (colorId < 0 || colorId >= palette.userCustomizationColors.length) {
             console.warn("Utils.colorForColorId : colorId is out of bounds")
             return StatusColors.colors['blue']
         }
-        return Theme.palette.userCustomizationColors[colorId]
+        return palette.userCustomizationColors[colorId]
     }
 
     function getChatKeyFromShareLink(link) {
@@ -489,137 +489,137 @@ QtObject {
         return text
     }
 
-    function getHoveredColor(colorId) {
+    function getHoveredColor(palette, colorId) {
         switch(colorId.toString().toUpperCase()) {
         case Constants.walletAccountColors.primary.toUpperCase():
-            return Theme.palette.customisationColors.blue
+            return palette.customisationColors.blue
         case Constants.walletAccountColors.purple.toUpperCase():
-            return Theme.palette.customisationColors.purple
+            return palette.customisationColors.purple
         case Constants.walletAccountColors.orange.toUpperCase():
-            return Theme.palette.customisationColors.orange
+            return palette.customisationColors.orange
         case Constants.walletAccountColors.army.toUpperCase():
-            return Theme.palette.customisationColors.army
+            return palette.customisationColors.army
         case Constants.walletAccountColors.turquoise.toUpperCase():
-            return Theme.palette.customisationColors.turquoise
+            return palette.customisationColors.turquoise
         case Constants.walletAccountColors.sky.toUpperCase():
-            return Theme.palette.customisationColors.sky
+            return palette.customisationColors.sky
         case Constants.walletAccountColors.yellow.toUpperCase():
-            return Theme.palette.customisationColors.yellow
+            return palette.customisationColors.yellow
         case Constants.walletAccountColors.pink.toUpperCase():
-            return Theme.palette.customisationColors.pink
+            return palette.customisationColors.pink
         case Constants.walletAccountColors.copper.toUpperCase():
-            return Theme.palette.customisationColors.copper
+            return palette.customisationColors.copper
         case Constants.walletAccountColors.camel.toUpperCase():
-            return Theme.palette.customisationColors.camel
+            return palette.customisationColors.camel
         case Constants.walletAccountColors.magenta.toUpperCase():
-            return Theme.palette.customisationColors.magenta
+            return palette.customisationColors.magenta
         case Constants.walletAccountColors.yinYang.toUpperCase():
-            return Theme.palette.name === Constants.lightThemeName ? StatusColors.getColor('blackHovered'): StatusColors.getColor('grey4') // FIXME introduce symbolic color names
+            return palette.name === Constants.lightThemeName ? StatusColors.getColor('blackHovered'): StatusColors.getColor('grey4') // FIXME introduce symbolic color names
         case Constants.walletAccountColors.undefinedAccount.toUpperCase():
-            return Theme.palette.baseColor1
+            return palette.baseColor1
         default:
-            return getColorForId(colorId)
+            return getColorForId(palette, colorId)
         }
     }
 
-    function getIdForColor(color){
+    function getIdForColor(palette, color){
         let c = color.toString().toUpperCase()
         switch(c) {
-        case Theme.palette.customisationColors.blue.toString().toUpperCase():
+        case palette.customisationColors.blue.toString().toUpperCase():
             return Constants.walletAccountColors.primary
-        case Theme.palette.customisationColors.purple.toString().toUpperCase():
+        case palette.customisationColors.purple.toString().toUpperCase():
             return Constants.walletAccountColors.purple
-        case Theme.palette.customisationColors.orange.toString().toUpperCase():
+        case palette.customisationColors.orange.toString().toUpperCase():
             return Constants.walletAccountColors.orange
-        case Theme.palette.customisationColors.army.toString().toUpperCase():
+        case palette.customisationColors.army.toString().toUpperCase():
             return Constants.walletAccountColors.army
-        case Theme.palette.customisationColors.turquoise.toString().toUpperCase():
+        case palette.customisationColors.turquoise.toString().toUpperCase():
             return Constants.walletAccountColors.turquoise
-        case Theme.palette.customisationColors.sky.toString().toUpperCase():
+        case palette.customisationColors.sky.toString().toUpperCase():
             return Constants.walletAccountColors.sky
-        case Theme.palette.customisationColors.yellow.toString().toUpperCase():
+        case palette.customisationColors.yellow.toString().toUpperCase():
             return Constants.walletAccountColors.yellow
-        case Theme.palette.customisationColors.pink.toString().toUpperCase():
+        case palette.customisationColors.pink.toString().toUpperCase():
             return Constants.walletAccountColors.pink
-        case Theme.palette.customisationColors.copper.toString().toUpperCase():
+        case palette.customisationColors.copper.toString().toUpperCase():
             return Constants.walletAccountColors.copper
-        case Theme.palette.customisationColors.camel.toString().toUpperCase():
+        case palette.customisationColors.camel.toString().toUpperCase():
             return Constants.walletAccountColors.camel
-        case Theme.palette.customisationColors.magenta.toString().toUpperCase():
+        case palette.customisationColors.magenta.toString().toUpperCase():
             return Constants.walletAccountColors.magenta
-        case Theme.palette.customisationColors.yinYang.toString().toUpperCase():
+        case palette.customisationColors.yinYang.toString().toUpperCase():
             return Constants.walletAccountColors.yinYang
-        case Theme.palette.baseColor1.toString().toUpperCase():
+        case palette.baseColor1.toString().toUpperCase():
             return Constants.walletAccountColors.undefinedAccount
         default:
             return Constants.walletAccountColors.primary
         }
     }
 
-    function getColorForId(colorId) {
+    function getColorForId(palette, colorId) {
         if(colorId) {
             switch(colorId.toUpperCase()) {
             case Constants.walletAccountColors.primary.toUpperCase():
-                return Theme.palette.customisationColors.blue
+                return palette.customisationColors.blue
             case Constants.walletAccountColors.purple.toUpperCase():
-                return Theme.palette.customisationColors.purple
+                return palette.customisationColors.purple
             case Constants.walletAccountColors.orange.toUpperCase():
-                return Theme.palette.customisationColors.orange
+                return palette.customisationColors.orange
             case  Constants.walletAccountColors.army.toUpperCase():
-                return Theme.palette.customisationColors.army
+                return palette.customisationColors.army
             case  Constants.walletAccountColors.turquoise.toUpperCase():
-                return Theme.palette.customisationColors.turquoise
+                return palette.customisationColors.turquoise
             case  Constants.walletAccountColors.sky.toUpperCase():
-                return Theme.palette.customisationColors.sky
+                return palette.customisationColors.sky
             case  Constants.walletAccountColors.yellow.toUpperCase():
-                return Theme.palette.customisationColors.yellow
+                return palette.customisationColors.yellow
             case  Constants.walletAccountColors.pink.toUpperCase():
-                return Theme.palette.customisationColors.pink
+                return palette.customisationColors.pink
             case  Constants.walletAccountColors.copper.toUpperCase():
-                return Theme.palette.customisationColors.copper
+                return palette.customisationColors.copper
             case  Constants.walletAccountColors.camel.toUpperCase():
-                return Theme.palette.customisationColors.camel
+                return palette.customisationColors.camel
             case  Constants.walletAccountColors.magenta.toUpperCase():
-                return Theme.palette.customisationColors.magenta
+                return palette.customisationColors.magenta
             case  Constants.walletAccountColors.yinYang.toUpperCase():
-                return Theme.palette.customisationColors.yinYang
+                return palette.customisationColors.yinYang
             case  Constants.walletAccountColors.undefinedAccount.toUpperCase():
-                return Theme.palette.baseColor1
+                return palette.baseColor1
             }
         }
-        return Theme.palette.customisationColors.blue
+        return palette.customisationColors.blue
     }
 
-    function getColorIndexForId(colorId) {
+    function getColorIndexForId(palette, colorId) {
         let color = getColorForId(colorId)
-        for (let i = 0; i < Theme.palette.customisationColorsArray.length; i++) {
-            if(Theme.palette.customisationColorsArray[i] === color) {
+        for (let i = 0; i < palette.customisationColorsArray.length; i++) {
+            if(palette.customisationColorsArray[i] === color) {
                 return i
             }
         }
         return 0
     }
 
-    function getContrastingColor(color) {
+    function getContrastingColor(palette, color) {
         const hexcolor = color.toString()
         const r = parseInt(hexcolor.substring(1,3), 16);
         const g = parseInt(hexcolor.substring(3,5), 16);
         const b = parseInt(hexcolor.substring(5,7), 16);
         const yiq = ((r*299)+(g*587)+(b*114))/1000;
-        return (yiq >= 128) ? Theme.palette.black : Theme.palette.white;
+        return (yiq >= 128) ? palette.black : palette.white;
     }
 
     function getPathForDisplay(path) {
         return path.split("/").join(" / ")
     }
 
-    function getKeypairLocationColor(keypair) {
+    function getKeypairLocationColor(palette, keypair) {
         return !keypair ||
                 keypair.migratedToKeycard ||
                 keypair.operability === Constants.keypair.operability.fullyOperable ||
                 keypair.operability === Constants.keypair.operability.partiallyOperable?
-                    Theme.palette.baseColor1 :
-                    Theme.palette.warningColor1
+                    palette.baseColor1 :
+                    palette.warningColor1
     }
 
     function getExplorerDomain(networkShortName, testnetMode) {
@@ -1012,9 +1012,9 @@ QtObject {
         return globalUtilsInst.getColorId(publicKey)
     }
 
-    function colorForPubkey(publicKey) {
+    function colorForPubkey(palette, publicKey) {
         const pubKeyColorId = colorIdForPubkey(publicKey)
-        return colorForColorId(pubKeyColorId)
+        return colorForColorId(palette, pubKeyColorId)
     }
 
     function getCommunityShareLink(communityId) {

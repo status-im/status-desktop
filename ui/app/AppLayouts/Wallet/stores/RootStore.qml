@@ -15,6 +15,8 @@ import StatusQ.Core.Utils as SQUtils
 QtObject {
     id: root
 
+    property ThemePalette palette
+
     property bool showSavedAddresses: false
     property bool showFollowingAddresses: false
     property string selectedAddress: ""
@@ -87,13 +89,15 @@ QtObject {
             FastExpressionRole {
                 name: "color"
 
-                function getColor(colorId) {
-                    return Utils.getColorForId(colorId)
+                function getColor(palette, colorId) {
+                    if (!palette)
+                        return "white"
+                    return Utils.getColorForId(palette, colorId)
                 }
 
                 // Direct call for singleton function is not handled properly by
                 // SortFilterProxyModel that's why helper function is used instead.
-                expression: { return getColor(model.colorId) }
+                expression: { return getColor(root.palette, model.colorId) }
                 expectedRoles: ["colorId"]
             }
         ]

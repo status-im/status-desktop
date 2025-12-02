@@ -33,13 +33,13 @@ Item {
             accountName: "Hot wallet (generated)"
             accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
             accountEmoji: "🚗"
-            accountColor: Utils.getColorForId(Constants.walletAccountColors.primary)
+            accountColor: Utils.getColorForId(Theme.palette, Constants.walletAccountColors.primary)
 
             recipientAddress: "0xA858DDc0445d8131daC4d1DE01f834ffcbA52Ef1"
             recipientName: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882"
             recipientEmoji: "😋"
             recipientEns: ""
-            recipientWalletColor: Utils.getColorForId(Constants.walletAccountColors.secondary)
+            recipientWalletColor: Utils.getColorForId(Theme.palette, Constants.walletAccountColors.secondary)
 
             networkShortName: Constants.networkShortChainNames.mainnet
             networkName: "Mainnet"

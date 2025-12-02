@@ -63,7 +63,7 @@ ColumnLayout {
                 text: !!root.account? root.account.name : ""
                 font.weight: Font.Bold
                 font.pixelSize: Theme.fontSize(28)
-                color: !!root.account? Utils.getColorForId(root.account.colorId) : Theme.palette.directColor1
+                color: !!root.account? Utils.getColorForId(Theme.palette, root.account.colorId) : Theme.palette.directColor1
             }
             StatusEmoji {
                 id: accountImage
@@ -216,7 +216,7 @@ ColumnLayout {
                 title: qsTr("Stored")
                 subTitle: Utils.getKeypairLocation(root.keyPair, true)
                 visible: !!subTitle
-                statusListItemSubTitle.color: Utils.getKeypairLocationColor(root.keyPair)
+                statusListItemSubTitle.color: Utils.getKeypairLocationColor(Theme.palette, root.keyPair)
             }
         }
     }
@@ -277,7 +277,7 @@ ColumnLayout {
             accountAddress: !!root.account ? root.account.address : ""
             accountDerivationPath: !!root.account ? root.account.path : ""
             emoji: !!root.account ? root.account.emoji : ""
-            color: !!root.account ? Utils.getColorForId(root.account.colorId) : ""
+            color: !!root.account ? Utils.getColorForId(Theme.palette, root.account.colorId) : ""
 
             function doDeletion(password) {
                 root.walletStore.deleteAccount(root.account.address, password)

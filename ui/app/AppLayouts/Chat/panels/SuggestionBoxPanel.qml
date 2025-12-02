@@ -32,7 +32,7 @@ import shared.panels
 import shared.controls.chat
 
 Rectangle {
-    id: container
+    id: root
 
     property var model
     property Item delegate
@@ -65,7 +65,7 @@ Rectangle {
     }
 
     function selectCurrentItem() {
-        container.itemSelected(listView.model.get(listView.currentIndex), filterItem.lastAtPosition, filterItem.cursorPosition)
+        root.itemSelected(listView.model.get(listView.currentIndex), filterItem.lastAtPosition, filterItem.cursorPosition)
     }
 
     onVisibleChanged: {
@@ -93,12 +93,12 @@ Rectangle {
 
     layer.enabled: true
     layer.effect: DropShadow {
-        width: container.width
-        height: container.height
-        x: container.x
-        y: container.y + 10
-        visible: container.visible
-        source: container
+        width: root.width
+        height: root.height
+        x: root.x
+        y: root.y + 10
+        visible: root.visible
+        source: root
         horizontalOffset: 0
         verticalOffset: 2
         radius: 10
@@ -108,8 +108,8 @@ Rectangle {
 
     SuggestionFilterPanel {
         id: filterItem
-        sourceModel: container.model
-        cursorPosition: container.cursorPosition
+        sourceModel: root.model
+        cursorPosition: root.cursorPosition
     }
 
     StatusListView {
@@ -119,15 +119,15 @@ Rectangle {
         anchors.fill: parent
         anchors.margins: Theme.halfPadding
         Keys.priority: Keys.AfterItem
-        Keys.forwardTo: container.inputField
+        Keys.forwardTo: root.inputField
         Keys.onPressed: function(event) {
             if (event.key === Qt.Key_Escape) {
-                container.hide();
+                root.hide();
             } else if (event.key !== Qt.Key_Up && event.key !== Qt.Key_Down) {
                 event.accepted = false;
             }
         }
-        model: container.suggestionsModel
+        model: root.suggestionsModel
 
         delegate: Rectangle {
             id: itemDelegate
@@ -147,7 +147,7 @@ Rectangle {
 
                 name: model.preferredDisplayName
                 usesDefaultName: model.usesDefaultName
-                userColor: Utils.colorForColorId(model.colorId)
+                userColor: Utils.colorForColorId(root.Theme.palette, model.colorId)
                 image: model.icon
                 interactive: false
             }
@@ -169,7 +169,7 @@ Rectangle {
                     listView.currentIndex = index
                 }
                 onClicked: {
-                    container.itemSelected(model, filterItem.lastAtPosition, filterItem.cursorPosition)
+                    root.itemSelected(model, filterItem.lastAtPosition, filterItem.cursorPosition)
                 }
             }
         }

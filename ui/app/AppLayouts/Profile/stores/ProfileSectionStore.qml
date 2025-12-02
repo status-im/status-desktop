@@ -1,5 +1,6 @@
 import QtQuick
 
+import StatusQ.Core.Theme
 import StatusQ.Core.Utils
 
 import AppLayouts.Chat.stores
@@ -12,6 +13,8 @@ import SortFilterProxyModel
 QtObject {
     id: root
     property bool localBackupEnabled: false
+
+    required property ThemePalette palette
 
     readonly property QtObject _d: QtObject {
         id: d
@@ -59,5 +62,6 @@ QtObject {
     // TODO: Move to wallet related store
     property WalletStore walletStore: WalletStore {
         walletModule: d.profileSectionModuleInst.walletModule
+        palette: root.palette
     }
 }

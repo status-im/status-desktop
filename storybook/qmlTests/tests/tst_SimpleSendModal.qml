@@ -496,9 +496,10 @@ Item {
             const accountSelectorTextContent = findChild(accountSelector, "textContent")
             verify(!!accountSelectorTextContent)
 
-            compare(accountSelectorHeaderBackground.color, Utils.getColorForId(defaultAccountItem.colorId))
+            const palette = controlUnderTest.Theme.palette
+            compare(accountSelectorHeaderBackground.color, Utils.getColorForId(palette, defaultAccountItem.colorId))
             compare(accountSelectorAssetContent.asset.emoji, defaultAccountItem.emoji)
-            compare(accountSelectorAssetContent.asset.color, Utils.getColorForId(defaultAccountItem.colorId))
+            compare(accountSelectorAssetContent.asset.color, Utils.getColorForId(palette, defaultAccountItem.colorId))
             compare(accountSelectorTextContent.text, defaultAccountItem.name)
 
             // Sticky Header should not be visible when not scrolling
@@ -587,9 +588,10 @@ Item {
             const accountSelectorTextContent = findChild(accountSelector, "textContent")
             verify(!!accountSelectorTextContent)
 
-            compare(accountSelectorHeaderBackground.color, Utils.getColorForId(selectedAccount.colorId))
+            const palette = controlUnderTest.Theme.palette
+            compare(accountSelectorHeaderBackground.color, Utils.getColorForId(palette, selectedAccount.colorId))
             compare(accountSelectorAssetContent.asset.emoji, selectedAccount.emoji)
-            compare(accountSelectorAssetContent.asset.color, Utils.getColorForId(selectedAccount.colorId))
+            compare(accountSelectorAssetContent.asset.color, Utils.getColorForId(palette, selectedAccount.colorId))
             compare(accountSelectorTextContent.text, selectedAccount.name)
 
             // Sticky Header should not be visible when not scrolling

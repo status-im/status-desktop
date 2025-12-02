@@ -20,7 +20,7 @@ Control {
             id: singleAccountGradient
             Rectangle {
                 gradient: Gradient {
-                    GradientStop { position: 0.0; color: overview && overview.colorId ? StatusColors.alphaColor(Utils.getColorForId(overview.colorId), 0.1) : "" }
+                    GradientStop { position: 0.0; color: overview && overview.colorId ? StatusColors.alphaColor(Utils.getColorForId(root.Theme.palette, overview.colorId), 0.1) : "" }
                     GradientStop { position: 1.0; color: "transparent" }
                 }
             }
@@ -39,7 +39,7 @@ Control {
                         let gap =  1/splitWords.length
                         let startPosition = gap
                         for (const word of splitWords) {
-                            stops.push(stopComponent.createObject(base, {"position":startPosition, "color": StatusColors.alphaColor(Utils.getColorForId(word), 0.1)}))
+                            stops.push(stopComponent.createObject(base, {"position":startPosition, "color": StatusColors.alphaColor(Utils.getColorForId(root.Theme.palette, word), 0.1)}))
                             startPosition += gap
                         }
                         gradient.stops = stops

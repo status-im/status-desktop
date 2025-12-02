@@ -45,7 +45,7 @@ Item {
             icon.width: 40
             icon.height: 40
             color: "transparent"
-            icon.color: Utils.colorForColorId(model.colorId)
+            icon.color: Utils.colorForColorId(Theme.palette, model.colorId)
 
             hoverEnabled: false
         }

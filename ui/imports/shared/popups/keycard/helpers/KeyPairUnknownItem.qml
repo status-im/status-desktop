@@ -45,7 +45,7 @@ Rectangle {
                 name: root.keyPairImage? root.keyPairImage : root.keyPairIcon
                 isImage: !!root.keyPairImage
                 color: root.keyPairKeyUid === userProfile.keyUid?
-                           Utils.colorForPubkey(userProfile.pubKey) :
+                           Utils.colorForPubkey(Theme.palette, userProfile.pubKey) :
                            root.keyPairCardLocked? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
                 letterSize: Math.max(4, asset.width / 2.4)
                 charactersLen: 2
