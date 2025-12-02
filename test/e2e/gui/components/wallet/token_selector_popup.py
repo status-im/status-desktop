@@ -1,5 +1,8 @@
 import random
+import time
 
+import configs
+import driver
 from gui.components.base_popup import BasePopup
 from gui.components.wallet.send_popup import *
 from gui.elements.button import Button
@@ -20,13 +23,27 @@ class TokenSelectorPopup(QObject):
 
     def select_asset_from_list(self, asset_name: str):
         self.assets_tab.click()
-        assets_list = driver.findAllObjects(self.asset_list_item.real_name)
-        assert assets_list, f'Assets are not displayed'
-        for item in assets_list:
-            if getattr(item, 'symbol', '') == asset_name:
-                QObject(item).click()
-                break
-        return self
+        # Wait for assets to appear and collect them (up to 10 seconds)
+        timeout_sec = 30
+        started_at = time.monotonic()
+        assets_list = []
+        while (time.monotonic() - started_at) < timeout_sec:
+            found_items = driver.findAllObjects(self.asset_list_item.real_name)
+            # Check if we found the target asset in newly found items
+            for item in found_items:
+                if getattr(item, 'symbol', '') == asset_name:
+                    QObject(item).click()
+                    return self
+            # Collect all found items for final check
+            if found_items:
+                assets_list = found_items
+            if not found_items:
+                time.sleep(0.2)
+            else:
+                time.sleep(0.1)  # Shorter sleep when items are appearing
+        assert assets_list, f'Assets are not displayed after {timeout_sec} seconds'
+        # If we didn't find the asset, raise an error
+        raise LookupError(f'Asset with symbol "{asset_name}" not found in the list')
 
     def open_collectibles_search_view(self):
         self.collectibles_tab.click()
