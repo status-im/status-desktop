@@ -192,6 +192,7 @@ StatusSectionLayout {
         }
     }
 
+    showHeader: false
     backgroundColor: Theme.palette.statusAppNavBar.backgroundColor
     centerPanel: Rectangle {
         id: browserWindow

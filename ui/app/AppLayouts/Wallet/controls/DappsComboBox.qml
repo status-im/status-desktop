@@ -25,6 +25,7 @@ ComboBox {
     property bool dappClickable: true
     property bool incognitoMode: false
     property var popupDirectParent: root
+    property int backgroundRadius: Theme.radius
 
     implicitHeight: 38
     implicitWidth: 38
@@ -44,6 +45,7 @@ ComboBox {
                     : Theme.palette.directColor8;
         }
         border.width: 0
+        radius: root.backgroundRadius
     }
 
     indicator: null
