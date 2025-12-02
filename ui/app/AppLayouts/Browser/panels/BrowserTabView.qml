@@ -8,6 +8,8 @@ import StatusQ.Controls
 import StatusQ.Components
 import StatusQ.Core.Utils as SQUtils
 
+import AppLayouts.Browser.controls
+
 import utils
 
 FocusScope {
@@ -42,6 +44,7 @@ FocusScope {
         readonly property int minTabButtonWidth: 118
         readonly property int maxTabButtonWidth: 236
         readonly property bool tabBarOverflowing: tabBarListView.visibleArea.widthRatio < 1
+        readonly property bool currentTabIcognito: root.getCurrentTab()?.profile?.offTheRecord ?? false
     }
 
     TabBar {
@@ -51,7 +54,9 @@ FocusScope {
         anchors.right: parent.right
         height: root.tabHeight
         background: Rectangle {
-            color: Theme.palette.statusAppNavBar.backgroundColor
+            color: d.currentTabIcognito ?
+                       Theme.palette.privacyColors.secondary:
+                       Theme.palette.statusAppNavBar.backgroundColor
         }
         contentItem: ListView {
             id: tabBarListView
@@ -155,11 +160,15 @@ FocusScope {
         color: Theme.palette.transparent
         width: d.tabHeight
         height: d.tabHeight
-        StatusFlatButton {
+        BrowserHeaderButton {
             anchors.fill: parent
             anchors.margins: 4
+            radius: Theme.radius
             icon.name: "add"
-            type: StatusBaseButton.Type.Primary
+            incognitoMode: d.currentTabIcognito
+            hoverColor: d.currentTabIcognito ?
+                                      Theme.palette.privacyColors.primary:
+                                      Theme.palette.indirectColor1
             onClicked: root.openNewTabTriggered()
         }
     }
