@@ -8,10 +8,6 @@ QtObject {
     property string defaultCurrency: walletSection.currentCurrency
     property string signingPhrase: walletSection.signingPhrase // FIXME
 
-    function getEtherscanLink(chainID) {
-        return networksModule.getBlockExplorerTxURL(chainID)
-    }
-
     function switchAccountByAddress(address) {
         browserSectionCurrentAccount.switchAccountByAddress(address)
     }
