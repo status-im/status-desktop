@@ -334,6 +334,9 @@ Rectangle {
         target: emojiPopup
 
         function onEmojiSelected(text: string, atCursor: bool) {
+            // commit any potential preedit text first
+            InputMethod.commit()
+
             insertInTextInput(atCursor ? messageInputField.cursorPosition : messageInputField.length, text)
             emojiBtn.highlighted = false
             messageInputField.forceActiveFocus();
