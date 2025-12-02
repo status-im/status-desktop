@@ -9,8 +9,6 @@ import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Core.Utils as SQUtils
 
-import SortFilterProxyModel
-
 import shared.controls
 import shared.views
 import shared.stores as SharedStores
@@ -23,6 +21,7 @@ Dialog {
     id: root
 
     required property BrowserStores.BrowserWalletStore browserWalletStore
+    required property BrowserStores.BrowserActivityStore browserActivityStore
 
     signal sendTriggered(string address)
     signal reload()
@@ -113,14 +112,14 @@ Dialog {
     }
 
     Connections {
-        target: browserActivityStore.transactionActivityStatus
+        target: root.browserActivityStore.transactionActivityStatus
         enabled: root.visible
         function onIsFilterDirtyChanged() {
-            browserActivityStore.updateTransactionFilterIfDirty()
+            root.browserActivityStore.updateTransactionFilterIfDirty()
         }
         function onFilterChainsChanged() {
-            browserActivityStore.currentActivityFiltersStore.updateCollectiblesModel()
-            browserActivityStore.currentActivityFiltersStore.updateRecipientsModel()
+            root.browserActivityStore.currentActivityFiltersStore.updateCollectiblesModel()
+            root.browserActivityStore.currentActivityFiltersStore.updateRecipientsModel()
         }
     }
 
@@ -153,7 +152,7 @@ Dialog {
                 root.browserWalletStore.switchAccountByAddress(currentAccountAddress)
                 root.accountChanged(currentAccountAddress)
 
-                browserActivityStore.activityController.setFilterAddressesJson(
+                root.browserActivityStore.activityController.setFilterAddressesJson(
                     JSON.stringify([currentAccountAddress])
                 )
 
@@ -184,11 +183,6 @@ Dialog {
         }
     }
 
-    BrowserStores.BrowserActivityStore {
-        id: browserActivityStore
-        browserWalletStore: root.browserWalletStore
-    }
-
     HistoryView {
         id: walletInfoContent
         width: parent.width
@@ -196,7 +190,7 @@ Dialog {
         anchors.topMargin: Theme.bigPadding
         anchors.bottom: parent.bottom
 
-        activityStore: browserActivityStore
+        activityStore: root.browserActivityStore
         overview: root.browserWalletStore.dappBrowserAccount
         communitiesStore: null
         currencyStore: SharedStores.CurrenciesStore {}
@@ -210,11 +204,11 @@ Dialog {
         Component.onCompleted: {
             const activeChainIds = SQUtils.ModelUtils.modelToFlatArray(networksStore.activeNetworks, "chainId")
             if (activeChainIds.length > 0) {
-                browserActivityStore.activityController.setFilterChainsJson(JSON.stringify(activeChainIds), true)
+                root.browserActivityStore.activityController.setFilterChainsJson(JSON.stringify(activeChainIds), true)
             }
 
             const currentAddress = root.browserWalletStore.dappBrowserAccount.address
-            browserActivityStore.activityController.setFilterAddressesJson(JSON.stringify([currentAddress]))
+            root.browserActivityStore.activityController.setFilterAddressesJson(JSON.stringify([currentAddress]))
         }
     }
     onClosed: {

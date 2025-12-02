@@ -43,6 +43,7 @@ StatusSectionLayout {
     required property BrowserStores.DownloadsStore downloadsStore
     required property BrowserStores.BrowserRootStore browserRootStore
     required property BrowserStores.BrowserWalletStore browserWalletStore
+    required property BrowserStores.BrowserActivityStore browserActivityStore
     required property var connectorController
 
     property bool isDebugEnabled: false
@@ -419,6 +420,7 @@ StatusSectionLayout {
             id: browserWalletMenu
             BrowserWalletMenu {
                 browserWalletStore: root.browserWalletStore
+                browserActivityStore: root.browserActivityStore
                 property point headerPoint: Qt.point(browserHeader.x, browserHeader.y)
                 x: (parent.width - width - Theme.halfPadding)
                 y: (Math.abs(browserHeader.mapFromGlobal(headerPoint).y) +

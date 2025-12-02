@@ -2075,6 +2075,9 @@ Item {
                         downloadsStore: BrowserStores.DownloadsStore {}
                         browserRootStore: BrowserStores.BrowserRootStore {}
                         browserWalletStore: BrowserStores.BrowserWalletStore {}
+                        browserActivityStore: BrowserStores.BrowserActivityStore {
+                            browserWalletStore: browserLayout.browserWalletStore
+                        }
                         connectorController: WalletStores.RootStore.dappsConnectorController
                         isDebugEnabled: appMain.advancedStore.isDebugEnabled
 

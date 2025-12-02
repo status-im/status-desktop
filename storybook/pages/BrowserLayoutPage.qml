@@ -108,6 +108,7 @@ Item {
                     dappBrowserAccount.address = address
                 }
             }
+            browserActivityStore: BrowserStores.BrowserActivityStore {}
 
             readonly property var localAccountSensitiveSettings: Settings {
                 property bool devToolsEnabled
