@@ -68,7 +68,7 @@ QtObject {
     }
 
     function getDappDetails(chainId, contractAddress) {
-        return undefined
+        return Utils.getDappDetails(chainId, contractAddress)
     }
 
     function isOwnedAccount(address) {

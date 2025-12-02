@@ -212,7 +212,7 @@ StatusListItem {
 
         readonly property bool isLightTheme: Theme.palette.name === Constants.lightThemeName
         property color animatedBgColor
-        property int txType: activityStore.getTransactionType(root.modelData)
+        readonly property int txType: activityStore.getTransactionType(root.modelData)
 
         readonly property var secondIconAsset: StatusAssetSettings {
             width: root.tokenIconAsset.width
