@@ -20,11 +20,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[Item]
 
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
+  proc setup(self: Model)
+  proc delete(self: Model)
 
   proc newModel*(): Model =
     new(result, delete)
@@ -88,3 +85,9 @@ QtObject:
     for item in self.items:
       if cmpIgnoreCase(item.getAddress(), address) == 0:
         return item
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete

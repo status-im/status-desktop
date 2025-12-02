@@ -10,8 +10,7 @@ QtObject:
       model: Model
       modelVariant: QVariant
 
-  proc delete*(self: View) =
-    self.QObject.delete
+  proc delete*(self: View)
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
@@ -51,3 +50,6 @@ QtObject:
 
   proc fetchFollowingAddresses*(self: View, userAddress: string, search: string = "", limit: int = 10, offset: int = 0) {.slot.} =
     self.delegate.fetchFollowingAddresses(userAddress, search, limit, offset)
+
+  proc delete*(self: View) =
+    self.QObject.delete
