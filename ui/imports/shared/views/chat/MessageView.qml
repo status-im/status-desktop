@@ -880,7 +880,10 @@ Loader {
                 }
 
                 ContextMenu.onRequested: pos => root.openMessageContextMenu(pos.x, pos.y)
-                onPressAndHold: mouse => root.openMessageContextMenu(mouse.x, mouse.y)
+                onPressAndHold: function (mouse) {
+                    if (mouse.wasHeld && (root.chatLogView && !root.chatLogView.moving))
+                        root.openMessageContextMenu(mouse.x, mouse.y)
+                }
 
                 messageDetails: StatusMessageDetails {
                     contentType: delegate.contentType
