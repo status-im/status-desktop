@@ -89,7 +89,7 @@ RightTabBaseView {
         emojiId: SQUtils.Emoji.iconId(overview.emoji ?? "")
         balance: LocaleUtils.currencyAmountToLocaleString(overview.currencyBalance)
         balanceLoading: overview.balanceLoading
-        color: Utils.getColorForId(overview.colorId)
+        color: Utils.getColorForId(Theme.palette, overview.colorId)
         name: overview.name
         balanceAvailable: !root.networkConnectionStore.accountBalanceNotAvailable
         networksModel: root.networksStore.activeNetworks

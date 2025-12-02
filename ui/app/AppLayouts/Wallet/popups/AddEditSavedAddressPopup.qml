@@ -44,7 +44,7 @@ StatusDialog {
             colorSelection.selectedColorIndex = Math.floor(Math.random() * colorSelection.model.length)
         }
         else {
-            let ind = Utils.getColorIndexForId(d.colorId)
+            let ind = Utils.getColorIndexForId(Theme.palette, d.colorId)
             colorSelection.selectedColorIndex = ind
         }
 
@@ -123,7 +123,7 @@ StatusDialog {
                                     title: account.name,
                                     icon: "",
                                     emoji: account.emoji,
-                                    color: Utils.getColorForId(account.colorId).toString().toUpperCase()
+                                    color: Utils.getColorForId(root.Theme.palette, account.colorId).toString().toUpperCase()
                                 })
         }
 
@@ -140,7 +140,7 @@ StatusDialog {
                                     title: savedAddress.name,
                                     icon: "",
                                     emoji: "",
-                                    color: Utils.getColorForId(savedAddress.colorId).toString().toUpperCase()
+                                    color: Utils.getColorForId(root.Theme.palette, savedAddress.colorId).toString().toUpperCase()
                                 })
         }
 
@@ -197,7 +197,7 @@ StatusDialog {
 
         function checkForAddressInputErrorsWarnings() {
             addressInput.errorMessageCmp.visible = false
-            addressInput.errorMessageCmp.color = Theme.palette.dangerColor1
+            addressInput.errorMessageCmp.color = root.Theme.palette.dangerColor1
             addressInput.errorMessageCmp.text = ""
 
             d.minAddressLengthRequestError = false
@@ -273,7 +273,7 @@ StatusDialog {
                 let accountsJson = JSON.parse(accounts)
                 d.contactsWithSameAddress = accountsJson.length
                 addressInput.errorMessageCmp.visible = d.contactsWithSameAddress > 0
-                addressInput.errorMessageCmp.color = Theme.palette.warningColor1
+                addressInput.errorMessageCmp.color = root.Theme.palette.warningColor1
                 addressInput.errorMessageCmp.text = ""
                 if (d.contactsWithSameAddress === 1)
                     addressInput.errorMessageCmp.text = qsTr("This address belongs to a contact")
@@ -288,7 +288,7 @@ StatusDialog {
                                             title: ProfileUtils.displayName(contact.localNickname, contact.name, contact.displayName, contact.alias),
                                             icon: contact.icon,
                                             emoji: "",
-                                            color: Utils.colorForColorId(contact.colorId),
+                                            color: Utils.colorForColorId(root.Theme.palette, contact.colorId),
                                             onlineStatus: contact.onlineStatus
                                         })
 
@@ -528,7 +528,7 @@ StatusDialog {
                 selectedColorIndex: -1
 
                 onSelectedColorChanged: {
-                    d.colorId = Utils.getIdForColor(selectedColor)
+                    d.colorId = Utils.getIdForColor(Theme.palette, selectedColor)
                 }
             }
         }

@@ -29,7 +29,8 @@ InformationTag {
         function getExplorerLinks(model, hoveredLink) {
             let links = []
             SQUtils.ModelUtils.forEach(model, function(network) {
-                links.push(Utils.getStyledLink(Utils.getChainExplorerName(network["shortName"]), network["blockExplorerURL"], hoveredLink))
+                links.push(Utils.getStyledLink(Utils.getChainExplorerName(network["shortName"]), network["blockExplorerURL"], hoveredLink,
+                                               root.Theme.palette.directColor1, root.Theme.palette.primaryColor1))
             })
             return Utils.getEnumerationString(links, qsTr("or"))
         }

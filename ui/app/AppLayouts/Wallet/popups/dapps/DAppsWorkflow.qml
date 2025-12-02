@@ -362,7 +362,7 @@ SQUtils.QObject {
             dappIcon: request.dappIcon
             dappName: request.dappName
 
-            accountColor: Utils.getColorForId(account.colorId)
+            accountColor: Utils.getColorForId(Theme.palette, account.colorId)
             accountName: account.name
             accountAddress: account.address
             accountEmoji: account.emoji

@@ -105,7 +105,7 @@ StatusModal {
                     Repeater {
                         model: root.accounts
                         delegate: StatusListItemTag {
-                            bgColor: Utils.getColorForId(model.account.colorId)
+                            bgColor: Utils.getColorForId(Theme.palette, model.account.colorId)
                             height: Theme.bigPadding
                             bgRadius: 6
                             tagClickable: false

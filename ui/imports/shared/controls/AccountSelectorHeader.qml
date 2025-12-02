@@ -51,14 +51,14 @@ AccountSelector {
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
-            color: Utils.getContrastingColor(d.headerStyleBackgroundColor)
+            color: Utils.getContrastingColor(Theme.palette, d.headerStyleBackgroundColor)
         }
     }
 
     QtObject {
         id: d
         readonly property color headerStyleBackgroundColor: !!currentAccount ? root.control.hovered ?
-                                        Utils.getHoveredColor(currentAccount.colorId) :
-                                        Utils.getColorForId(currentAccount.colorId) : "transparent"
+                                        Utils.getHoveredColor(root.Theme.palette, currentAccount.colorId) :
+                                        Utils.getColorForId(root.Theme.palette, currentAccount.colorId) : "transparent"
     }
 }

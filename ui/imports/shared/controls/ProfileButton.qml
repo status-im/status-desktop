@@ -49,9 +49,9 @@ StatusNavBarTabButton {
     // identicon.asset.height: identicon.asset.isImage ? 28 : (root.usesDefaultName ? Math.floor(height * 0.9) : height)
     identicon.asset.bgWidth: root.usesDefaultName ? width : 0
     identicon.asset.bgHeight: root.usesDefaultName ? height : 0
-    identicon.asset.color: root.usesDefaultName ? Theme.palette.indirectColor2 : Utils.colorForPubkey(root.pubKey)
+    identicon.asset.color: root.usesDefaultName ? Theme.palette.indirectColor2 : Utils.colorForPubkey(Theme.palette, root.pubKey)
     identicon.asset.isLetterIdenticon: root.usesDefaultName ? false : icon.name !== "" && !identicon.asset.isImage
-    identicon.asset.bgColor: root.usesDefaultName ? Utils.colorForPubkey(root.pubKey) : "transparent"
+    identicon.asset.bgColor: root.usesDefaultName ? Utils.colorForPubkey(Theme.palette, root.pubKey) : "transparent"
 
     badge.visible: true
     badge.anchors {

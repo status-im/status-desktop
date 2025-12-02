@@ -232,7 +232,7 @@ QObject {
             readonly property string id: model.subsection
             readonly property string name: model.text
             readonly property string icon: model.icon
-            readonly property color color: Theme.palette.primaryColor1
+            readonly property color color: root.Theme.palette.primaryColor1
             readonly property bool hasNotification: model.badgeCount > 0
             readonly property int notificationsCount: model.badgeCount
 
@@ -260,7 +260,7 @@ QObject {
             readonly property string name: model.name
             readonly property string icon: model.icon || model.emoji
             readonly property string lastMessageText: model.lastMessageText
-            readonly property color color: model.color || Utils.colorForColorId(model.colorId)
+            readonly property color color: model.color || Utils.colorForColorId(root.Theme.palette, model.colorId)
             readonly property bool hasNotification: model.hasUnreadMessages || model.notificationsCount
             readonly property int notificationsCount: model.notificationsCount
 
@@ -289,7 +289,7 @@ QObject {
             readonly property string name: model.name
             readonly property string icon: model.icon || model.emoji
             readonly property string lastMessageText: model.lastMessageText
-            readonly property color color: model.color || Utils.colorForColorId(model.colorId)
+            readonly property color color: model.color || Utils.colorForColorId(root.Theme.palette, model.colorId)
         }
 
         expectedRoles: ["sectionId", "chatId", "chatType", "name", "sectionName", "emoji", "icon", "color", "colorId", "lastMessageText"]
@@ -305,7 +305,7 @@ QObject {
             readonly property string id: model.mixedcaseAddress
             readonly property string name: model.name
             readonly property string icon: model.emoji
-            readonly property color color: Utils.getColorForId(model.colorId ?? Constants.walletAccountColors.primary)
+            readonly property color color: Utils.getColorForId(root.Theme.palette, model.colorId ?? Constants.walletAccountColors.primary)
             readonly property bool hasNotification: false
             readonly property int notificationsCount: 0
 
@@ -325,7 +325,7 @@ QObject {
             readonly property string id: model.url
             readonly property string name: model.name || StringUtils.extractDomainFromLink(model.url)
             readonly property string icon: model.iconUrl || "dapp"
-            readonly property color color: Theme.palette.primaryColor1
+            readonly property color color: root.Theme.palette.primaryColor1
 
             readonly property url connectorBadge: model.connectorBadge
         }

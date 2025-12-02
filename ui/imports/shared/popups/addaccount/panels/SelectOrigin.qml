@@ -39,7 +39,7 @@ StatusSelect {
             name: root.selectedOrigin.image? root.selectedOrigin.image : root.selectedOrigin.icon
             isImage: !!root.selectedOrigin.image
             color: root.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.profile?
-                       Utils.colorForPubkey(root.userProfilePublicKey) : Theme.palette.primaryColor1
+                       Utils.colorForPubkey(Theme.palette, root.userProfilePublicKey) : Theme.palette.primaryColor1
             letterSize: Math.max(4, asset.width / 2.4)
             charactersLen: 2
             isLetterIdenticon: !root.selectedOrigin.icon && !asset.name.toString()
@@ -49,7 +49,7 @@ StatusSelect {
         tagsModel : root.selectedOrigin.accounts
 
         tagsDelegate: StatusListItemTag {
-            bgColor: Utils.getColorForId(model.account.colorId)
+            bgColor: Utils.getColorForId(Theme.palette, model.account.colorId)
             height: 24
             bgRadius: 6
             tagClickable: false
@@ -109,7 +109,7 @@ StatusSelect {
         tagsModel: menu.isHeader || menu.isOption? [] : model.keyPair.accounts
 
         tagsDelegate: StatusListItemTag {
-            bgColor: Utils.getColorForId(model.account.colorId)
+            bgColor: Utils.getColorForId(Theme.palette, model.account.colorId)
             height: 24
             bgRadius: 6
             tagClickable: false

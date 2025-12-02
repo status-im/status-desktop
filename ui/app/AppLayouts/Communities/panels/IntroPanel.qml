@@ -24,10 +24,10 @@ Control {
         id: d
 
         readonly property int rowChildSpacing: 10
-        readonly property color rowIconColor: Theme.palette.primaryColor1
+        readonly property color rowIconColor: root.Theme.palette.primaryColor1
         readonly property string rowIconName: "checkmark-circle"
         readonly property int rowFontSize: 15
-        readonly property color rowTextColor: Theme.palette.directColor1
+        readonly property color rowTextColor: root.Theme.palette.directColor1
         readonly property double rowTextLineHeight: 1.2
     }
 

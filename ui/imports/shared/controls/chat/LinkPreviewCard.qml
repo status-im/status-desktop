@@ -74,7 +74,7 @@ CalloutCard {
                     imageHeight: imageWidth
                     name: root.userData.name
                     image: root.userData.image
-                    userColor: Utils.colorForPubkey(root.userData.publicKey)
+                    userColor: Utils.colorForPubkey(Theme.palette, root.userData.publicKey)
                 }
             }
             RowLayout {

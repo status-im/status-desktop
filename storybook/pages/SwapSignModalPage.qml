@@ -91,7 +91,7 @@ SplitView {
                     accountName: priv.selectedAccount.name
                     accountAddress: priv.selectedAccount.address
                     accountEmoji: priv.selectedAccount.emoji
-                    accountColor: Utils.getColorForId(priv.selectedAccount.colorId)
+                    accountColor: Utils.getColorForId(Theme.palette, priv.selectedAccount.colorId)
 
                     networkShortName: priv.selectedNetwork.shortName
                     networkName: priv.selectedNetwork.chainName

@@ -24,7 +24,7 @@ StatusMemberListItem {
     isUntrustworthy: model.isUntrustworthy || model.trustStatus === Constants.trustStatus.untrustworthy
     isContact: model.isContact
     icon.name: model.thumbnailImage || model.icon
-    icon.color: Utils.colorForColorId(model.colorId)
+    icon.color: Utils.colorForColorId(Theme.palette, model.colorId)
     status: model.onlineStatus
     color: (hovered || highlighted) ? Theme.palette.baseColor2 : "transparent"
 }

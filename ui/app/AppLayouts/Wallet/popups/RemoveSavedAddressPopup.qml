@@ -52,7 +52,7 @@ StatusDialog {
         leftComponent: StatusSmartIdenticon {
             name: root.name
             asset {
-                color: Utils.getColorForId(root.colorId)
+                color: Utils.getColorForId(root.Theme.palette, root.colorId)
                 isLetterIdenticon: true
                 letterIdenticonBgWithAlpha: true
             }

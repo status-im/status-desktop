@@ -120,7 +120,7 @@ Item {
                 objectName: "ProfileHeader_userImage"
                 name: root.displayName
                 usesDefaultName: root.usesDefaultName
-                userColor: Utils.colorForColorId(root.colorId)
+                userColor: Utils.colorForColorId(Theme.palette, root.colorId)
                 image: root.previewIcon
                 interactive: false
                 imageWidth: d.getSize(36, 64, 170)

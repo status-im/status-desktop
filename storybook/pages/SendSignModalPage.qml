@@ -137,13 +137,13 @@ SplitView {
                     accountName: priv.selectedAccount.name
                     accountAddress: priv.selectedAccount.address
                     accountEmoji: priv.selectedAccount.emoji
-                    accountColor: Utils.getColorForId(priv.selectedAccount.colorId)
+                    accountColor: Utils.getColorForId(Theme.palette, priv.selectedAccount.colorId)
 
                     recipientAddress: priv.selectedRecipient.address
                     recipientName: priv.selectedRecipient.name
                     recipientEns: priv.selectedRecipient.ens
                     recipientEmoji: priv.selectedRecipient.emoji
-                    recipientWalletColor: Utils.getColorForId(priv.selectedRecipient.colorId)
+                    recipientWalletColor: Utils.getColorForId(Theme.palette, priv.selectedRecipient.colorId)
 
                     networkShortName: priv.selectedNetwork.shortName
                     networkName: priv.selectedNetwork.chainName

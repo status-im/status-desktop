@@ -22,7 +22,7 @@ import utils
 QtObject {
     id: root
 
-    required property var popupParent
+    required property Item popupParent
 
     // Stores definition:
     required property AppStores.RootStore rootStore

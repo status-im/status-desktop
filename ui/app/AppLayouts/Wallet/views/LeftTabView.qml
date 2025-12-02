@@ -138,7 +138,7 @@ Rectangle {
             accountAddress: removeAccountConfirmation.accountAddress
             accountDerivationPath: removeAccountConfirmation.accountDerivationPath
             emoji: removeAccountConfirmation.emoji
-            color: Utils.getColorForId(removeAccountConfirmation.colorId)
+            color: Utils.getColorForId(Theme.palette, removeAccountConfirmation.colorId)
 
             function doDeletion(password) {
                 close()
@@ -293,7 +293,7 @@ Rectangle {
                     title: model.name
                     subTitle: !model.hideFromTotalBalance ? LocaleUtils.currencyAmountToLocaleString(model.currencyBalance): ""
                     asset.emoji: !!model.emoji ? model.emoji: ""
-                    asset.color: Utils.getColorForId(model.colorId)
+                    asset.color: Utils.getColorForId(Theme.palette, model.colorId)
                     asset.name: !model.emoji ? "filled-account": ""
                     asset.width: 40
                     asset.height: 40

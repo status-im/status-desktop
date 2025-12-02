@@ -21,7 +21,7 @@ StatusListItem {
         height: !!root.keyPair && root.keyPair.icon? Theme.bigPadding : 40
         name: !!root.keyPair? !!root.keyPair.image? root.keyPair.image : root.keyPair.icon : ""
         isImage: !!root.keyPair && !!root.keyPair.image
-        color: !!root.keyPair && root.keyPair.pairType === Constants.keypair.type.profile? Utils.colorForPubkey(root.userProfilePublicKey) : Theme.palette.primaryColor1
+        color: !!root.keyPair && root.keyPair.pairType === Constants.keypair.type.profile? Utils.colorForPubkey(Theme.palette, root.userProfilePublicKey) : Theme.palette.primaryColor1
         letterSize: Math.max(4, asset.width / 2.4)
         charactersLen: 2
         isLetterIdenticon: !!root.keyPair && !root.keyPair.icon && !asset.name.toString()
@@ -34,7 +34,7 @@ StatusListItem {
     }
     tagsModel: !!root.keyPair? root.keyPair.accounts: []
     tagsDelegate: StatusListItemTag {
-        bgColor: !!model.account.colorId ? Utils.getColorForId(model.account.colorId): ""
+        bgColor: !!model.account.colorId ? Utils.getColorForId(Theme.palette, model.account.colorId): ""
         bgRadius: 6
         height: Theme.bigPadding
         closeButtonVisible: false

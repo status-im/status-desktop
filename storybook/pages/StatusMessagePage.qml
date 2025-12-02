@@ -265,7 +265,8 @@ SplitView {
                         sender.isEnsVerified: isEnsVerified
                         sender.profileImage {
                             name: model.profileImage || ""
-                            colorId: index % Theme.palette.userCustomizationColors.length
+                            color: Theme.palette.userCustomizationColors[
+                                       index % Theme.palette.userCustomizationColors.length]
                         }
                         album: model.contentType === StatusMessage.ContentType.Image ? d.exampleAlbum : []
                         albumCount: model.contentType === StatusMessage.ContentType.Image ? d.exampleAlbum.length : 0

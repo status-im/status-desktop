@@ -99,7 +99,7 @@ StatusDropdown {
                 }
                 asset.width: 30
                 asset.height: 30
-                asset.color: model ? model.color ? model.color : Utils.colorForColorId(model.colorId) : ""
+                asset.color: model ? model.color ? model.color : Utils.colorForColorId(Theme.palette, model.colorId) : ""
                 asset.name: model ? model.icon : ""
                 asset.emoji: model ? model.emoji : ""
                 asset.charactersLen: 2

@@ -86,7 +86,7 @@ StatusModal {
                 textFormat: Text.RichText
                 text: qsTr("Usage data will be shared from all profiles added to device. %1 %2")
                       .arg(root.placement !== Constants.metricsEnablePlacement.privacyAndSecurity ? qsTr("Sharing usage data can be turned off anytime in Settings / Privacy and Security.") : "")
-                      .arg(root.placement === Constants.metricsEnablePlacement.privacyAndSecurity ? qsTr("For more details refer to our %1.").arg(Utils.getStyledLink("Privacy Policy", "#", hoveredLink)) : "")
+                      .arg(root.placement === Constants.metricsEnablePlacement.privacyAndSecurity ? qsTr("For more details refer to our %1.").arg(Utils.getStyledLink("Privacy Policy", "#", hoveredLink, Theme.palette.directColor1, Theme.palette.primaryColor1)) : "")
                 onLinkActivated: {
                     root.close()
                     Global.privacyPolicyRequested()

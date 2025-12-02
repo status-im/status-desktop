@@ -221,7 +221,7 @@ StatusSectionLayout {
             currentTabIncognito: _internal.currentWebView?.profile.offTheRecord ?? false
             currentFavorite: _internal.currentWebView ? root.bookmarksStore.getCurrentFavorite(_internal.currentWebView.url) : null
             dappBrowserAccName: root.browserWalletStore.dappBrowserAccount.name
-            dappBrowserAccIcon: Utils.getColorForId(root.browserWalletStore.dappBrowserAccount.colorId)
+            dappBrowserAccIcon: Utils.getColorForId(Theme.palette, root.browserWalletStore.dappBrowserAccount.colorId)
             settingMenu: settingsMenu
             currentUrl: !!_internal.currentWebView ? _internal.currentWebView.url : ""
             isLoading: (!!_internal.currentWebView && _internal.currentWebView.loading)

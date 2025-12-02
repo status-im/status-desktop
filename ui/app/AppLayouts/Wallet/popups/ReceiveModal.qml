@@ -208,7 +208,7 @@ StatusModal {
                         width: 72
                         height: 72
                         name: !root.selectedAccount.name && !root.selectedAccount.emoji? "status-logo-icon" : ""
-                        color: !root.selectedAccount.name && !root.selectedAccount.emoji? "transparent" : Utils.getColorForId(root.selectedAccount.colorId)
+                        color: !root.selectedAccount.name && !root.selectedAccount.emoji? "transparent" : Utils.getColorForId(root.Theme.palette, root.selectedAccount.colorId)
                         emoji: root.selectedAccount.emoji
                         charactersLen: 1
                         isLetterIdenticon: root.selectedAccount.name && !root.selectedAccount.emoji

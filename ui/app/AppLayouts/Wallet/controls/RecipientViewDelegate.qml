@@ -64,7 +64,7 @@ StatusListItem {
         if (!!root.walletColor)
             return root.walletColor
         if (!!root.walletColorId)
-            return Utils.getColorForId(root.walletColorId)
+            return Utils.getColorForId(Theme.palette, root.walletColorId)
         return ""
     }
     asset.name: !!root.emoji ? "filled-account" : title

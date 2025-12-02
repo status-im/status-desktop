@@ -295,7 +295,7 @@ RowLayout {
             asset.isLetterIdenticon: chatContentModule && chatContentModule.chatDetails.icon === ""
             asset.color: chatContentModule?
                             chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
-                                Utils.colorForPubkey(chatContentModule.chatDetails.id)
+                                Utils.colorForPubkey(Theme.palette, chatContentModule.chatDetails.id)
                               : chatContentModule.chatDetails.color
             : ""
             asset.emoji: emojiIcon

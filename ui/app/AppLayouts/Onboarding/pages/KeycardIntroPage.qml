@@ -130,8 +130,8 @@ KeycardBasePage {
                 title: qsTr("Insert your Keycard")
                 infoText.text: qsTr("Get help via %1 🔗").arg(Utils.getStyledLink("https://keycard.tech", "https://keycard.tech/docs/",
                                                                                 infoText.hoveredLink,
-                                                                                Theme.palette.baseColor1,
-                                                                                Theme.palette.primaryColor1))
+                                                                                root.Theme.palette.baseColor1,
+                                                                                root.Theme.palette.primaryColor1))
                 image.source: Assets.png("onboarding/keycard/insert")
             }
         },
@@ -184,7 +184,7 @@ KeycardBasePage {
             when: root.keycardState === Onboarding.KeycardState.BlockedPIN
             PropertyChanges {
                 target: root
-                title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard blocked") + "</font>"
+                title: "<font color='%1'>".arg(root.Theme.palette.dangerColor1) + qsTr("Keycard blocked") + "</font>"
                 subtitle: qsTr("The Keycard you have inserted is blocked, you will need to unblock it or insert a different one")
                 image.source: Assets.png("onboarding/keycard/error")
             }
@@ -206,7 +206,7 @@ KeycardBasePage {
             when: root.keycardState === Onboarding.KeycardState.BlockedPUK
             PropertyChanges {
                 target: root
-                title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard blocked") + "</font>"
+                title: "<font color='%1'>".arg(root.Theme.palette.dangerColor1) + qsTr("Keycard blocked") + "</font>"
                 subtitle: qsTr("The Keycard you have inserted is blocked, you will need to unblock it, factory reset or insert a different one")
                 image.source: Assets.png("onboarding/keycard/error")
             }

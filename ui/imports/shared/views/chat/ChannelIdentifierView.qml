@@ -31,7 +31,7 @@ Column {
         asset {
             width: 120
             height: 120
-            color: root.chatType === Constants.chatType.oneToOne ? Utils.colorForPubkey(root.chatId) : root.chatColor
+            color: root.chatType === Constants.chatType.oneToOne ? Utils.colorForPubkey(Theme.palette, root.chatId) : root.chatColor
             emoji: root.chatEmoji
             name: root.chatIcon
             isImage: true

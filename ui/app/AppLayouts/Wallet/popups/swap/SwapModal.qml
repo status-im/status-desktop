@@ -574,7 +574,7 @@ StatusDialog {
             accountName: d.selectedAccount.name
             accountAddress: d.selectedAccount.address
             accountEmoji: d.selectedAccount.emoji
-            accountColor: Utils.getColorForId(d.selectedAccount.colorId)
+            accountColor: Utils.getColorForId(Theme.palette, d.selectedAccount.colorId)
             accountBalanceFormatted: d.selectedAccount.accountBalance.formattedBalance
 
             networkShortName: networkFilter.singleSelectionItemData.shortName
@@ -635,7 +635,7 @@ StatusDialog {
             accountName: d.selectedAccount.name
             accountAddress: d.selectedAccount.address
             accountEmoji: d.selectedAccount.emoji
-            accountColor: Utils.getColorForId(d.selectedAccount.colorId)
+            accountColor: Utils.getColorForId(Theme.palette, d.selectedAccount.colorId)
 
             networkShortName: networkFilter.singleSelectionItemData.shortName
             networkName: networkFilter.singleSelectionItemData.chainName

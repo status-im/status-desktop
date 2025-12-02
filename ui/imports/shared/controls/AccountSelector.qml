@@ -117,7 +117,7 @@ StatusComboBox {
         name: model.name
         address: model.address
         emoji: model.emoji
-        walletColor: Utils.getColorForId(model.colorId)
+        walletColor: Utils.getColorForId(Theme.palette, model.colorId)
         currencyBalance: model.currencyBalance
         walletType: model.walletType
         migratedToKeycard: model.migratedToKeycard ?? false

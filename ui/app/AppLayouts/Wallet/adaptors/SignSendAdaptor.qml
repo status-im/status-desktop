@@ -1,5 +1,6 @@
 import QtQuick
 
+import StatusQ.Core.Theme
 import StatusQ.Core.Utils
 
 import QtModelsToolkit
@@ -11,6 +12,8 @@ import QtModelsToolkit
 QObject {
     id: root
 
+    /** Palette necessary to convert colorId to actual color **/
+    required property ThemePalette palette
     /** Account key used for filtering **/
     required property string accountKey
     /** network chainId used for filtering **/
@@ -100,7 +103,7 @@ QObject {
         }
         const colorId = selectedRecipientEntry.item.colorId
         if (!!colorId) {
-            return Utils.getColorForId(colorId)
+            return Utils.getColorForId(root.palette, colorId)
         }
         return ""
     }

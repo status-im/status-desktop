@@ -134,7 +134,7 @@ Item {
                 isBlocked: model.isBlocked
                 isOwner: model.memberRole === Constants.memberRole.owner
                 icon.name: model.icon
-                icon.color: Utils.colorForColorId(model.colorId)
+                icon.color: Utils.colorForColorId(Theme.palette, model.colorId)
                 status: model.onlineStatus
 
                 onClicked: Global.openProfilePopup(model.pubKey)

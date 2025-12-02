@@ -94,7 +94,7 @@ Item {
             icon.name: model.icon
             icon.width: 40
             icon.height: 40
-            icon.color: Utils.colorForColorId(model.colorId)
+            icon.color: Utils.colorForColorId(Theme.palette, model.colorId)
 
             onClicked: {
                 root.contactClicked(model);

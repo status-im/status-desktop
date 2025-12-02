@@ -29,7 +29,7 @@ SplitView {
         property var dummyOverview: updateDummyView(StatusColors.colors['black'])
 
         function updateDummyView(color) {
-            const clr = Utils.getIdForColor(color)
+            const clr = Utils.getIdForColor(root.Theme.palette, color)
             dummyOverview = ({
                                  name: "helloworld",
                                  address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421",

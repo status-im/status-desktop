@@ -118,7 +118,7 @@ SettingsContentBase {
                     name: model.image
                     isImage: !!model.image && model.image !== ""
                     color: model.type === Constants.settingsSection.exemptions.oneToOneChat?
-                               Utils.colorForPubkey(model.itemId) :
+                               Utils.colorForPubkey(root.Theme.palette, model.itemId) :
                                model.color
                     charactersLen: model.type === Constants.settingsSection.exemptions.oneToOneChat? 2 : 1
                     isLetterIdenticon: !model.image || model.image === ""

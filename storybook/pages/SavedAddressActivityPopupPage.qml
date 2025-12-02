@@ -33,7 +33,7 @@ SplitView {
                                    name: "Noelia Santos",
                                    address: "0xe5bd6c877cd566af2a58990ad0ed4b73fb0c6752",
                                    ens: "",
-                                   colorId: Utils.getIdForColor(Theme.palette.customisationColors.blue),
+                                   colorId: Utils.getIdForColor(Theme.palette, Theme.palette.customisationColors.blue),
                                    mixedcaseAddress: "0xe5bD6C877cd566Af2a58990Ad0eD4B73fb0c6752",
                                })
             }

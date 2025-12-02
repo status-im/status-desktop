@@ -27,20 +27,20 @@ InformationTag {
     bgBorderColor: Theme.palette.dangerColor2
 
     QtObject {
-        id: priv
+        id: d
 
-        readonly property int fontPixelSize: Theme.tertiaryTextFontSize
-        readonly property color foregroundColor: Theme.palette.dangerColor1
+        readonly property int fontPixelSize: root.Theme.tertiaryTextFontSize
+        readonly property color foregroundColor: root.Theme.palette.dangerColor1
     }
 
     asset {
         name: "warning"
-        color: priv.foregroundColor
+        color: d.foregroundColor
     }
 
     tagPrimaryLabel.text: root.text
-    tagPrimaryLabel.color: priv.foregroundColor
-    tagPrimaryLabel.font.pixelSize: priv.fontPixelSize
+    tagPrimaryLabel.color: d.foregroundColor
+    tagPrimaryLabel.font.pixelSize: d.fontPixelSize
     tagPrimaryLabel.elide: Text.ElideRight
 
     // NB: regular binding won't work as `tagPrimaryLabel` is an alias
@@ -58,9 +58,9 @@ InformationTag {
             objectName: "rightComponentButton"
             horizontalPadding: 8
             size: StatusBaseButton.Size.Tiny
-            font.pixelSize: priv.fontPixelSize
+            font.pixelSize: d.fontPixelSize
             type: StatusBaseButton.Type.Danger
-            normalColor: priv.foregroundColor
+            normalColor: d.foregroundColor
             hoverColor: Theme.palette.hoverColor(normalColor)
             textColor: Theme.palette.white
             radius: root.bgRadius

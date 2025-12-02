@@ -3,16 +3,16 @@ import StatusQ.Core
 import StatusQ.Core.Theme
 
 Rectangle {
-    id: statusRoundedIcon
+    id: root
 
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 24
         height: 24
         rotation: 0
-        color: Theme.palette.primaryColor1
+        color: root.Theme.palette.primaryColor1
         bgWidth: 40
         bgHeight: 40
-        bgColor: Theme.palette.primaryColor3
+        bgColor: root.Theme.palette.primaryColor3
         bgRadius: bgWidth / 2
     }
 
@@ -27,11 +27,11 @@ Rectangle {
         id: statusIcon
         anchors.centerIn: parent
 
-        width: statusRoundedIcon.asset.width
-        height: statusRoundedIcon.asset.height
+        width: root.asset.width
+        height: root.asset.height
 
-        color: statusRoundedIcon.asset.color
-        icon: statusRoundedIcon.asset.name || statusRoundedIcon.asset.source
-        rotation: statusRoundedIcon.asset.rotation
+        color: root.asset.color
+        icon: root.asset.name || root.asset.source
+        rotation: root.asset.rotation
     }
 }
