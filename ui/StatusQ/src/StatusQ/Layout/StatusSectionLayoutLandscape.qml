@@ -170,6 +170,7 @@ SplitView {
                 id: statusToolBar
                 anchors.top: parent.top
                 width: visible ? parent.width : 0
+                height: visible ? implicitHeight : 0
                 visible: root.showHeader
                 headerContent: LayoutItemProxy {
                     id: headerContentProxy
@@ -193,6 +194,7 @@ SplitView {
                 height: root.footer ? root.footer.height : 0
                 anchors.bottom: parent.bottom
                 target: root.footer
+                visible: !!target
             }
         }
     }
