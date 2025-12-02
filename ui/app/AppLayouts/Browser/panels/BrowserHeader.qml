@@ -42,7 +42,7 @@ Rectangle {
     QtObject {
         id: _internal
         readonly property int innerMargin: 12
-        readonly property int buttonSize: 40
+        readonly property int buttonSize: 36
     }
 
     width: parent.width
@@ -54,7 +54,7 @@ Rectangle {
     RowLayout {
         id: barRow
         width: parent.width
-        height: 56
+        height: 48
         spacing: _internal.innerMargin
 
         BrowserHeaderButton {
@@ -108,7 +108,7 @@ Rectangle {
 
         StatusTextField {
             id: addressBar
-            Layout.preferredHeight: 40
+            Layout.preferredHeight: 28
             Layout.fillWidth: true
             background: Rectangle {
                 color: root.currentTabIncognito ?
@@ -121,6 +121,7 @@ Rectangle {
             leftPadding: Theme.padding
             rightPadding: addFavoriteBtn.width + reloadBtn.width + Theme.bigPadding
             placeholderText: qsTr("Enter URL")
+            font.pixelSize: Theme.additionalTextSize
             focus: !SQUtils.Utils.isMobile
             color: root.currentTabIncognito ?
                        Theme.palette.privacyColors.tertiary:
@@ -159,6 +160,7 @@ Rectangle {
             enabled: true
             model: root.browserDappsModel
             showConnectButton: false
+            backgroundRadius: width/2
             
             onDisconnectDapp: function(dappUrl) {
                 root.disconnectDapp(dappUrl)
@@ -174,14 +176,11 @@ Rectangle {
             }
         }
 
-        Loader {
-            active: true
-            sourceComponent: BrowserHeaderButton {
-                incognitoMode: root.currentTabIncognito
-                icon.name: "homepage/wallet"
-                onPressed: {
-                    root.openWalletMenu()
-                }
+        BrowserHeaderButton {
+            incognitoMode: root.currentTabIncognito
+            icon.name: "homepage/wallet"
+            onPressed: {
+                root.openWalletMenu()
             }
         }
 
@@ -189,6 +188,7 @@ Rectangle {
             id: settingsMenuButton
 
             incognitoMode: root.currentTabIncognito
+            asset.rotation: 90
             icon.name: "more"
             Layout.rightMargin: _internal.innerMargin
             highlighted: settingMenu.opened

@@ -124,6 +124,17 @@ Dialog {
             anchors.left: parent.left
             anchors.right: copyBtn.left
             anchors.rightMargin: Theme.padding
+
+            control.popup.background: Rectangle {
+                radius: Theme.radius
+                color: root.incognitoMode ?
+                           Theme.palette.privacyColors.primary:
+                           Theme.palette.background
+                border.color: root.incognitoMode ?
+                                  Theme.palette.privacyColors.secondary:
+                                  Theme.palette.border
+            }
+
             model: root.browserWalletStore.accounts
             selectedAddress: root.browserWalletStore.dappBrowserAccount.address
             onCurrentAccountAddressChanged: {
