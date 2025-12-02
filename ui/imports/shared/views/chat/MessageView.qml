@@ -881,7 +881,7 @@ Loader {
 
                 ContextMenu.onRequested: pos => root.openMessageContextMenu(pos.x, pos.y)
                 onPressAndHold: function (mouse) {
-                    if (mouse.wasHeld)
+                    if (mouse.wasHeld && (root.chatLogView && !root.chatLogView.moving))
                         root.openMessageContextMenu(mouse.x, mouse.y)
                 }
 
