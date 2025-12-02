@@ -1755,14 +1755,12 @@ Item {
                     }
                 }
                 onCurrentIndexChanged: {
-                    if (d.activeSectionType !== Constants.appSection.profile && d.activeSectionType !== Constants.appSection.wallet) {
+                    if (d.activeSectionType === Constants.appSection.chat || d.activeSectionType === Constants.appSection.community) {
                         if (d.maybeDisplayIntroduceYourselfPopup()) {
                             // we displayed the popup, so we should not display the enable message backup popup
                             return
                         }
-                        if (d.activeSectionType === Constants.appSection.chat || d.activeSectionType === Constants.appSection.community) {
-                            popupRequestsHandler.maybeDisplayEnableMessageBackupPopup()
-                        }
+                        popupRequestsHandler.maybeDisplayEnableMessageBackupPopup()
                     }
                 }
 
