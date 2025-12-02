@@ -60,6 +60,11 @@ function extractDomainName(urlString) {
     }
 }
 
+// Convert image://favicon/URL?query to direct URL
+function normalizeFaviconUrl(url) {
+    return (url?.toString() ?? "").replace(/^image:\/\/favicon\/([^?]*).*/, "$1")
+}
+
 function validateDAppIcon(iconUrl, siteUrl) {
     const iconStr = iconUrl ? iconUrl.toString() : ""
     if (!iconStr || iconStr === "undefined") {
@@ -74,7 +79,7 @@ function validateDAppIcon(iconUrl, siteUrl) {
     const siteDomain = extractDomainName(siteUrl)
     
     if (faviconDomain.includes(siteDomain) || siteDomain.includes(faviconDomain)) {
-        return {valid: true, iconUrl: iconStr, reason: "match"}
+        return {valid: true, iconUrl: normalizeFaviconUrl(iconStr), reason: "match"}
     }
     
     return { valid: false, iconUrl: "", reason: "domain_mismatch" }
