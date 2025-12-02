@@ -121,7 +121,7 @@ FocusScope {
 
         if (createAsStartPage && root.thirdpartyServicesEnabled) {
             // webview.url = "https://dap.ps" // TODO uncomment with https://github.com/status-im/status-desktop/issues/18545
-            webview.url = Constants.externalStatusLinkWithHttps
+            webview.url = Constants.browserDefaultHomepage
         } else if (url !== undefined) {
             webview.url = url;
         } else if (localAccountSensitiveSettings.browserHomepage !== "") {
