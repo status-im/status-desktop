@@ -41,8 +41,8 @@ def test_add_5_member_role_permissions(main_screen: MainWindow):
     with step('Open form to create 6th member role permission and validate it is not allowed'):
         extra_permission_data = {
             'checkbox_state': True,
-            'first_asset': 'Bytom',
-            'amount': '6',
+            'first_asset': 'SNT',
+            'amount': '100',
             'allowed_to': 'becomeMember'
         }
         permissions_settings = permissions_intro_view.add_new_permission()
