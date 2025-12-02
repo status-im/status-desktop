@@ -151,7 +151,7 @@ StatusMenu {
     StatusMenuItem {
         id: clearSiteDataItem
         text: qsTr("Clear site data")
-        icon.name: "broom"
+        icon.name: "delete"
         icon.color: Theme.palette.primaryColor1
         onTriggered: clearSiteData()
 
@@ -164,8 +164,8 @@ StatusMenu {
     StatusMenuItem {
         id: clearCacheItem
         text: root.clearingCache ? qsTr("Clearing cache...") : qsTr("Clear cache")
-        icon.name: "refresh"
-	    icon.color: Theme.palette.primaryColor1
+        icon.name: "broom"
+        icon.color: Theme.palette.primaryColor1
         enabled: !root.clearingCache
         onTriggered: clearCache()
 
