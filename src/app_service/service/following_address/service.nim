@@ -32,9 +32,7 @@ QtObject:
     networkService: network_service.Service
     totalFollowingCount: int
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(threadpool: ThreadPool, events: EventEmitter, networkService: network_service.Service): Service =
     new(result, delete)
     result.QObject.setup
@@ -126,3 +124,7 @@ QtObject:
         error "fetchFollowingStats: error", error = response.error
     except Exception as e:
       error "fetchFollowingStats: exception", msg = e.msg
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+
