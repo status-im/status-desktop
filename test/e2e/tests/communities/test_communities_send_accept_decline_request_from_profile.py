@@ -6,6 +6,7 @@ import driver
 from gui.components.profile_popup import ProfilePopupFromMembers
 from gui.components.remove_contact_popup import RemoveContactPopup
 from gui.main_window import MainWindow
+from helpers.chat_helper import skip_message_backup_popup_if_visible
 from scripts.utils.generators import random_text_message
 import configs
 from constants import UserAccount, RandomUser, RandomCommunity
@@ -64,6 +65,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
         with step(f'User {user_two.name}, send contact request to {user_three.name}'):
             aut_two.attach()
             main_screen.prepare()
+            skip_message_backup_popup_if_visible()
             settings = main_screen.left_panel.open_settings()
             messaging_settings = settings.left_panel.open_messaging_settings()
             contacts_settings = messaging_settings.open_contacts_settings()
@@ -109,6 +111,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             aut_one.attach()
             main_screen.prepare()
             messages_view = main_screen.left_panel.open_messages_screen()
+            skip_message_backup_popup_if_visible()
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
             community_screen = chat.click_community_invite(community.name, 0)
 
