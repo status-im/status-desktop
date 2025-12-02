@@ -224,11 +224,20 @@ StatusSectionLayout {
             Layout.fillHeight: true
             Layout.rightMargin: Theme.padding
             Layout.leftMargin: Theme.padding
-            StatusTextArea { 
-                id: callResult
+            
+            StatusScrollView {
+                id: resultScrollView
                 Layout.fillWidth: true
-                text: root.store.nodeModelInst.callResult
-                readOnly: true
+                Layout.fillHeight: true
+                contentWidth: availableWidth
+                padding: 0
+                
+                StatusTextArea { 
+                    id: callResult
+                    width: resultScrollView.availableWidth
+                    text: root.store.nodeModelInst.callResult
+                    readOnly: true
+                }
             }
         }
     }
