@@ -1,0 +1,178 @@
+# This file defines the signing and packaging lanes for iOS
+# Building is done separately via make targets
+
+default_platform(:ios)
+
+# Build configuration
+APP_NAME_RELEASE = "Status.app"
+APP_NAME_PR = "StatusPR.app"
+DISPLAY_NAME_RELEASE = "Status"
+DISPLAY_NAME_PR = "Status PR"
+PROJECT_DIR = File.expand_path("../", __dir__)
+BUILD_DIR = File.join(PROJECT_DIR, "bin", "ios", "qt6")
+
+platform :ios do
+  before_all do
+    UI.message("Project directory: #{PROJECT_DIR}")
+    UI.message("Build directory: #{BUILD_DIR}")
+  end
+
+  after_all do
+    # Clean up CI keychain after signing
+    if is_ci
+      delete_keychain(name: keychain_name) rescue nil
+    end
+  end
+
+  error do
+    # Clean up CI keychain on failure too
+    if is_ci
+      delete_keychain(name: keychain_name) rescue nil
+    end
+  end
+
+  # ============================================
+  # PR Builds - Sign and package for ad-hoc distribution
+  # ============================================
+  desc "Sign and package iOS app for PRs"
+  lane :pr do
+    setup_ci_keychain
+
+    run_match(type: "adhoc")
+
+    resign_and_package(
+      app_name: APP_NAME_PR,
+      display_name: DISPLAY_NAME_PR,
+      profile_type: "adhoc"
+    )
+  end
+
+  # ============================================
+  # Release Builds - Sign and package for App Store
+  # ============================================
+  desc "Sign and package iOS app for release"
+  lane :release do
+    setup_ci_keychain
+
+    run_match(type: "appstore")
+
+    resign_and_package(
+      app_name: APP_NAME_RELEASE,
+      display_name: DISPLAY_NAME_RELEASE,
+      profile_type: "appstore"
+    )
+  end
+
+  # ============================================
+  # Helper Methods
+  # ============================================
+
+  private_lane :setup_ci_keychain do
+    if is_ci
+      create_keychain(
+        name: keychain_name,
+        password: keychain_password,
+        default_keychain: true,
+        unlock: true,
+        timeout: 3600,
+        lock_when_sleeps: false
+      )
+    end
+  end
+
+  private_lane :run_match do |options|
+    match_params = {
+      type: options[:type],
+      readonly: false,
+      # Auto-regenerate profiles when new devices are registered (for dev and adhoc)
+      force_for_new_devices: options[:type] == "adhoc"
+    }
+
+    # Only specify keychain params in CI where we create a custom keychain
+    if is_ci
+      match_params[:keychain_name] = keychain_name
+      match_params[:keychain_password] = keychain_password
+    end
+
+    match(match_params)
+  end
+
+  private_lane :resign_and_package do |options|
+    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+    app_name = options[:app_name] || "Status.app"
+    display_name = options[:display_name] || "Status"
+    profile_type = options[:profile_type]
+
+    app_path = File.join(BUILD_DIR, app_name)
+    ipa_name = app_name.sub(".app", ".ipa")
+    ipa_path = File.join(BUILD_DIR, ipa_name)
+
+    unless File.exist?(app_path)
+      UI.user_error!("#{app_name} not found at #{app_path}")
+    end
+
+    # Get signing identity and provisioning profile from match
+    signing_identity = ENV["sigh_#{app_identifier}_#{profile_type}_certificate-name"]
+    provisioning_profile = ENV["sigh_#{app_identifier}_#{profile_type}_profile-path"]
+
+    UI.message("Signing identity: #{signing_identity}")
+    UI.message("Provisioning profile: #{provisioning_profile}")
+
+    unless provisioning_profile && File.exist?(provisioning_profile)
+      UI.user_error!("Provisioning profile not found!")
+    end
+
+    unless signing_identity
+      UI.user_error!("Signing identity not found!")
+    end
+
+    UI.message("Creating unsigned IPA...")
+    FileUtils.rm_f(ipa_path)
+
+    Dir.mktmpdir do |tmpdir|
+      payload_dir = File.join(tmpdir, "Payload")
+      FileUtils.mkdir_p(payload_dir)
+      FileUtils.cp_r(app_path, payload_dir)
+
+      Dir.chdir(tmpdir) do
+        sh("zip -r '#{ipa_path}' Payload")
+      end
+    end
+
+    # Clean up any stale temp directory from previous resign attempts
+    # https://github.com/fastlane/fastlane/blob/512a047abd596a5c2c0e0156e9f52e111552a727/sigh/lib/assets/resign.sh#L177C1-L177C9
+    FileUtils.rm_rf("_floatsignTemp")
+
+    # Call resign.sh directly with /bin/bash instead of using the resign action
+    # Ruby backticks use /bin/sh which doesn't support bash process substitution < <(...)
+    # that resign.sh uses for processing nested apps/extensions
+    resign_sh = File.join(Sigh::ROOT, 'lib', 'assets', 'resign.sh')
+
+    UI.message("Resigning IPA with resign.sh directly via bash...")
+    command = [
+      resign_sh.shellescape,
+      ipa_path.shellescape,
+      signing_identity.shellescape,
+      "-p", "#{app_identifier}=#{provisioning_profile}".shellescape,
+      "-d", display_name.shellescape,
+      "-b", app_identifier.shellescape,
+      "-v",
+      ipa_path.shellescape  # output path (same as input, overwrites)
+    ].join(' ')
+
+    UI.message("Command: #{command}")
+
+    # Use sh() which properly executes via the shell, wrapped in bash -c
+    sh("/bin/bash", "-c", command)
+
+    UI.success("Signed and packaged: #{ipa_path}")
+  end
+
+  def keychain_name
+    "status_ci_#{ENV['BUILD_NUMBER'] || 'local'}.keychain"
+  end
+
+  def keychain_password
+    ENV["MATCH_PASSWORD"]
+  end
+end
