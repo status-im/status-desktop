@@ -7,25 +7,30 @@ import StatusQ
 import StatusQ.Controls
 import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils as SQUtils
 
 import shared.controls
 import shared.views
 import shared.stores as SharedStores
 import utils
 
-import AppLayouts.Browser.stores as BrowserStores
-
 // TODO: replace with StatusMenu
 Dialog {
     id: root
 
-    required property BrowserStores.BrowserWalletStore browserWalletStore
-    required property BrowserStores.BrowserActivityStore browserActivityStore
+    required property var accounts
+    required property var overview
+    required property var activityStore
+    required property var transactionActivityStatus
 
     signal sendTriggered(string address)
     signal reload()
     signal accountChanged(string newAddress)
+    signal accountSwitchRequested(string address)
+    signal filterAddressesChangeRequested(string addressesJson)
+    signal transactionFilterUpdateRequested()
+    signal collectiblesModelUpdateRequested()
+    signal recipientsModelUpdateRequested()
+    signal connectedAccountDeleted()
 
     modal: false
 
@@ -101,25 +106,26 @@ Dialog {
 
 
     Connections {
-        target: root.browserWalletStore.dappBrowserAccount
+        target: root.overview
         function onConnectedAccountDeleted() {
             root.reload()
             // This is done because when an account is deleted and the account is updated to default one,
             // only the properties are updated and we need to listen to those events and update the selected account
             accountSelectorRow.currentAddress = ""
-            accountSelector.selectedAddress = Qt.binding(function () {return root.browserWalletStore.dappBrowserAccount.address})
+            accountSelector.selectedAddress = Qt.binding(function () {return root.overview.address})
+            root.connectedAccountDeleted()
         }
     }
 
     Connections {
-        target: root.browserActivityStore.transactionActivityStatus
+        target: root.transactionActivityStatus
         enabled: root.visible
         function onIsFilterDirtyChanged() {
-            root.browserActivityStore.updateTransactionFilterIfDirty()
+            root.transactionFilterUpdateRequested()
         }
         function onFilterChainsChanged() {
-            root.browserActivityStore.currentActivityFiltersStore.updateCollectiblesModel()
-            root.browserActivityStore.currentActivityFiltersStore.updateRecipientsModel()
+            root.collectiblesModelUpdateRequested()
+            root.recipientsModelUpdateRequested()
         }
     }
 
@@ -136,8 +142,8 @@ Dialog {
             anchors.left: parent.left
             anchors.right: copyBtn.left
             anchors.rightMargin: Theme.padding
-            model: root.browserWalletStore.accounts
-            selectedAddress: root.browserWalletStore.dappBrowserAccount.address
+            model: root.accounts
+            selectedAddress: root.overview.address
             onCurrentAccountAddressChanged: {
                 if (!accountSelectorRow.currentAddress) {
                     // We just set the account for the first time. Nothing to do here
@@ -149,12 +155,9 @@ Dialog {
                 }
 
                 accountSelectorRow.currentAddress = currentAccountAddress
-                root.browserWalletStore.switchAccountByAddress(currentAccountAddress)
+                root.accountSwitchRequested(currentAccountAddress)
                 root.accountChanged(currentAccountAddress)
-
-                root.browserActivityStore.activityController.setFilterAddressesJson(
-                    JSON.stringify([currentAccountAddress])
-                )
+                root.filterAddressesChangeRequested(JSON.stringify([currentAccountAddress]))
 
                 reload()
             }
@@ -190,8 +193,8 @@ Dialog {
         anchors.topMargin: Theme.bigPadding
         anchors.bottom: parent.bottom
 
-        activityStore: root.browserActivityStore
-        overview: root.browserWalletStore.dappBrowserAccount
+        activityStore: root.activityStore
+        overview: root.overview
         communitiesStore: null
         currencyStore: SharedStores.CurrenciesStore {}
         networksStore: SharedStores.NetworksStore {}
@@ -200,16 +203,6 @@ Dialog {
         filterVisible: false
         disableShadowOnScroll: true
         hideVerticalScrollbar: false
-
-        Component.onCompleted: {
-            const activeChainIds = SQUtils.ModelUtils.modelToFlatArray(networksStore.activeNetworks, "chainId")
-            if (activeChainIds.length > 0) {
-                root.browserActivityStore.activityController.setFilterChainsJson(JSON.stringify(activeChainIds), true)
-            }
-
-            const currentAddress = root.browserWalletStore.dappBrowserAccount.address
-            root.browserActivityStore.activityController.setFilterAddressesJson(JSON.stringify([currentAddress]))
-        }
     }
     onClosed: {
         root.destroy();

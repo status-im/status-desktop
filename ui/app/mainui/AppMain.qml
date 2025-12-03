@@ -2078,6 +2078,7 @@ Item {
                         browserActivityStore: BrowserStores.BrowserActivityStore {
                             browserWalletStore: browserLayout.browserWalletStore
                         }
+                        networksStore: appMain.networksStore
                         connectorController: WalletStores.RootStore.dappsConnectorController
                         isDebugEnabled: appMain.advancedStore.isDebugEnabled
 
