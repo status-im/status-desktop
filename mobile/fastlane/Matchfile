@@ -1,0 +1,19 @@
+# Configuration for fastlane match
+# match manages iOS code signing certificates and provisioning profiles
+
+# Git repository for storing encrypted certificates and profiles
+git_url("git@github.com:status-im/status-app-ios-certs.git")
+
+storage_mode("git")
+
+app_identifier([
+  "app.status.mobile",
+  "app.status.mobile.pr"
+])
+
+# App Store Connect API Key
+api_key_path(ENV["ASC_API_KEY_JSON"]) if ENV["ASC_API_KEY_JSON"]
+
+# Keychain configuration
+keychain_name(ENV["KEYCHAIN_NAME"]) if ENV["KEYCHAIN_NAME"]
+keychain_password(ENV["KEYCHAIN_PASSWORD"]) if ENV["KEYCHAIN_PASSWORD"]
