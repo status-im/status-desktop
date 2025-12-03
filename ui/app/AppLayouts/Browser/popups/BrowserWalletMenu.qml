@@ -21,6 +21,8 @@ Dialog {
     required property var overview
     required property var activityStore
     required property var transactionActivityStatus
+    required property SharedStores.CurrenciesStore currencyStore
+    required property SharedStores.NetworksStore networksStore
 
     signal sendTriggered(string address)
     signal reload()
@@ -196,8 +198,8 @@ Dialog {
         activityStore: root.activityStore
         overview: root.overview
         communitiesStore: null
-        currencyStore: SharedStores.CurrenciesStore {}
-        networksStore: SharedStores.NetworksStore {}
+        currencyStore: root.currencyStore
+        networksStore: root.networksStore
         showAllAccounts: false
         displayValues: true
         filterVisible: false

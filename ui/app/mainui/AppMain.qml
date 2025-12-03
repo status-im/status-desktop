@@ -2079,6 +2079,7 @@ Item {
                             browserWalletStore: browserLayout.browserWalletStore
                         }
                         networksStore: appMain.networksStore
+                        currencyStore: appMain.currencyStore
                         connectorController: WalletStores.RootStore.dappsConnectorController
                         isDebugEnabled: appMain.advancedStore.isDebugEnabled
 

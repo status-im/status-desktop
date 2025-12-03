@@ -110,6 +110,7 @@ Item {
             }
             browserActivityStore: BrowserStores.BrowserActivityStore {}
             networksStore: SharedStores.NetworksStore {}
+            currencyStore: SharedStores.CurrenciesStore {}
 
             readonly property var localAccountSensitiveSettings: Settings {
                 property bool devToolsEnabled

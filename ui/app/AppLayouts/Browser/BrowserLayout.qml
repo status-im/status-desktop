@@ -46,6 +46,7 @@ StatusSectionLayout {
     required property BrowserStores.BrowserWalletStore browserWalletStore
     required property BrowserStores.BrowserActivityStore browserActivityStore
     required property SharedStores.NetworksStore networksStore
+    required property SharedStores.CurrenciesStore currencyStore
     required property var connectorController
 
     property bool isDebugEnabled: false
@@ -438,6 +439,8 @@ StatusSectionLayout {
                 overview: root.browserWalletStore.dappBrowserAccount
                 activityStore: root.browserActivityStore
                 transactionActivityStatus: root.browserActivityStore.transactionActivityStatus
+                currencyStore: root.currencyStore
+                networksStore: root.networksStore
 
                 property point headerPoint: Qt.point(browserHeader.x, browserHeader.y)
                 x: (parent.width - width - Theme.halfPadding)
