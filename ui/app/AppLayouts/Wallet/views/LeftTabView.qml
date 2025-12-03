@@ -491,7 +491,7 @@ Rectangle {
                     isRoundIcon: true
                     textColor: Theme.palette.directColor1
                     textFillWidth: true
-                    spacing: walletAccountsListView.firstItem.statusListItemTitleArea.anchors.leftMargin
+                    spacing: walletAccountsListView.firstItem?.statusListItemTitleArea.anchors.leftMargin ?? Theme.padding
                     onClicked: root.selectFollowingAddresses()
                 }
             }

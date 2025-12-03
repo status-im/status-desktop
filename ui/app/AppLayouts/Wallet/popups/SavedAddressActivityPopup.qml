@@ -139,8 +139,8 @@ StatusDialog {
             ens: d.ens
             colorId: d.colorId
             mixedcaseAddress: d.mixedcaseAddress
-                    avatar: d.avatar
-                    isFollowingAddress: d.isFollowingAddress
+            avatar: d.avatar
+            isFollowingAddress: d.isFollowingAddress
 
             statusListItemTitle.font.pixelSize: Theme.fontSize22
             statusListItemTitle.font.bold: Font.Bold
