@@ -402,22 +402,8 @@ QtObject {
     }
 
     readonly property QtObject onboarding: QtObject {
-        readonly property int loginHeight: 370
-        readonly property int logoImageWidth: 128
-        readonly property int logoImageHeight: 128
-        readonly property int biometricsImageWidth: 188
-        readonly property int biometricsImageHeight: 185
         readonly property int userImageWidth: 40
         readonly property int userImageHeight: 40
-        readonly property int titleFontSize: Theme.fontSize(17)
-        readonly property int fontSize1: Theme.fontSize(22)
-        readonly property int fontSize2: Theme.fontSize(17)
-        readonly property int fontSize3: Theme.primaryTextFontSize
-        readonly property int fontSize4: Theme.tertiaryTextFontSize
-        readonly property int loginInfoHeight1: 24
-        readonly property int loginInfoHeight2: 44
-        readonly property int loginInfoHeight3: 66
-        readonly property int radius: 8
         readonly property int defaultPinAttempts: 3
         readonly property int defaultPukAttempts: 5
     }
@@ -562,7 +548,7 @@ QtObject {
         readonly property int infoLineHeight: 22
         readonly property int infoSpacing: 5
         readonly property int itemHeight: 64
-        readonly property int leftMargin: Theme.xlPadding * 2
+        readonly property var leftMargin: Theme.xlPadding * 2
         readonly property int rightMargin: Theme.xlPadding * 2
         readonly property int topMargin: Theme.xlPadding * 2
         readonly property int bottomMargin: Theme.xlPadding * 2

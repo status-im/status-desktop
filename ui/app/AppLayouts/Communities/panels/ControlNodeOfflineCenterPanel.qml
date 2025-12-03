@@ -107,7 +107,7 @@ ColumnLayout {
                 Layout.maximumWidth: 405
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 font.weight: Font.Bold
-                font.pixelSize: Constants.onboarding.titleFontSize
+                font.pixelSize: Theme.fontSize(17)
                 text: qsTr("%1 will be right back!").arg(root.name)
                 wrapMode: Text.WordWrap
             }
@@ -116,7 +116,7 @@ ColumnLayout {
                 Layout.maximumWidth: 405
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: Constants.onboarding.titleFontSize
+                font.pixelSize: Theme.fontSize(17)
                 text: qsTr("You will automatically re-enter the community and be able to view and post as normal as soon as the community’s control node comes back online.")
                 wrapMode: Text.WordWrap
             }
