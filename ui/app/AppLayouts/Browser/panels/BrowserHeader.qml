@@ -30,7 +30,7 @@ Rectangle {
 
     signal addNewFavoriteClicked()
     signal launchInBrowser(string url)
-    signal openHistoryPopup(int xPos, int yPos)
+    signal openHistoryPopup()
     signal goForward()
     signal goBack()
     signal reload()
@@ -63,18 +63,10 @@ Rectangle {
             Layout.leftMargin: _internal.innerMargin
             incognitoMode: root.currentTabIncognito
             icon.name: "arrow-left"
-            enabled: canGoBack
-            onClicked: function(mouse) {
-                if (mouse.button === Qt.RightButton) {
-                    openHistoryPopup(backButton.x, backButton.y + backButton.height)
-                } else
-                    goBack()
-            }
-            onPressAndHold: function(mouse) {
-                if (canGoBack) {
-                    openHistoryPopup(backButton.x, backButton.y + backButton.height)
-                }
-            }
+            enabled: root.canGoBack
+            onClicked: root.goBack()
+            onContextMenuRequested: root.openHistoryPopup()
+            onPressAndHold: root.openHistoryPopup()
         }
 
         BrowserHeaderButton {
@@ -83,18 +75,10 @@ Rectangle {
             Layout.leftMargin: -_internal.innerMargin/2
             incognitoMode: root.currentTabIncognito
             icon.name: "arrow-right"
-            enabled: canGoForward
-            onClicked: function(mouse) {
-                if (mouse.button === Qt.RightButton) {
-                    openHistoryPopup(forwardButton.x, forwardButton.y + forwardButton.height)
-                } else
-                    goForward()
-            }
-            onPressAndHold: function(mouse) {
-                if (canGoForward) {
-                    openHistoryPopup(forwardButton.x, forwardButton.y + forwardButton.height)
-                }
-            }
+            enabled: root.canGoForward
+            onClicked: root.goForward()
+            onContextMenuRequested: root.openHistoryPopup()
+            onPressAndHold:root.openHistoryPopup()
         }
 
         BrowserHeaderButton {
@@ -179,9 +163,7 @@ Rectangle {
         BrowserHeaderButton {
             incognitoMode: root.currentTabIncognito
             icon.name: "homepage/wallet"
-            onPressed: {
-                root.openWalletMenu()
-            }
+            onClicked: root.openWalletMenu()
         }
 
         BrowserHeaderButton {

@@ -7,6 +7,7 @@ StatusFlatButton {
     id: root
 
     property bool incognitoMode: false
+    signal contextMenuRequested()
 
     // as per design
     implicitWidth: 36
@@ -24,4 +25,14 @@ StatusFlatButton {
     hoverColor: root.incognitoMode ?
                               Theme.palette.privacyColors.secondary:
                               Theme.palette.baseColor2
+
+    TapHandler {
+        acceptedButtons: Qt.RightButton
+        onTapped: function(eventPoint) {
+            /* prevents propagation, so that webengines
+            default context menus is not launched here */
+            eventPoint.accepted = true
+            root.contextMenuRequested()
+        }
+    }
 }
