@@ -258,6 +258,7 @@ class ThemePalette : public QObject {
     Q_PROPERTY(QColor messageHighlightColor MEMBER messageHighlightColor CONSTANT)
     Q_PROPERTY(QColor desktopBlue10 MEMBER desktopBlue10 CONSTANT)
     Q_PROPERTY(QColor blockProgressBarColor MEMBER blockProgressBarColor CONSTANT)
+    Q_PROPERTY(QColor cardColor MEMBER cardColor CONSTANT)
 
     // Style compat
     Q_PROPERTY(QColor background MEMBER background CONSTANT)
@@ -329,6 +330,7 @@ public:
     QColor messageHighlightColor;
     QColor desktopBlue10;
     QColor blockProgressBarColor;
+    QColor cardColor;
 
     QColor background, backgroundHover, border, textColor, secondaryText,
         separator, darkGrey, secondaryBackground, secondaryMenuBackground;
