@@ -6,6 +6,7 @@ import allure
 from allure_commons._allure import step
 
 import configs
+from helpers.chat_helper import skip_message_backup_popup_if_visible
 
 
 @allure.step('Switch to AUT and prepare main window')
@@ -96,4 +97,6 @@ def accept_contact_request_from_settings(aut, main_window, user_name):
     messaging_settings = settings.left_panel.open_messaging_settings()
     contacts_settings = messaging_settings.open_contacts_settings()
     contacts_settings.accept_contact_request(user_name)
+    skip_message_backup_popup_if_visible()
+
 

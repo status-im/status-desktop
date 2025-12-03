@@ -7,6 +7,8 @@ from gui.components.profile_popup import ProfilePopupFromMembers
 from gui.components.remove_contact_popup import RemoveContactPopup
 from gui.main_window import MainWindow
 from helpers.chat_helper import skip_message_backup_popup_if_visible
+from helpers.multiple_instances_helper import get_chat_key, send_contact_request_from_settings, \
+    accept_contact_request_from_settings
 from scripts.utils.generators import random_text_message
 import configs
 from constants import UserAccount, RandomUser, RandomCommunity
@@ -31,54 +33,31 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
                 main_screen.authorize_user(account)
 
         with step(f'User {user_two.name}, get chat key'):
-            aut_two.attach()
-            main_screen.prepare()
-            profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            chat_key = profile_popup.copy_chat_key
-            main_screen.left_panel.click()
+            user_two_chat_key = get_chat_key(aut_two, main_screen)
+            main_screen.minimize()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
-            aut_one.attach()
-            main_screen.prepare()
-            settings = main_screen.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contact_request_popup = contacts_settings.open_contact_request_form()
-            contact_request_popup.send(chat_key, f'Hello {user_two.name}')
+            send_contact_request_from_settings(aut_one, main_screen, user_two_chat_key, f'Hello {user_two.name}')
+            main_screen.minimize()
+
+        with step(f'User {user_three.name}, get chat key'):
+            user_three_chat_key = get_chat_key(aut_three, main_screen)
+            main_screen.minimize()
 
         with step(
                 f'User {user_two.name}, accept contact request from {user_one.name} and send contact request to {user_three.name} '):
-            aut_two.attach()
-            main_screen.prepare()
-            settings = main_screen.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contacts_settings.accept_contact_request(user_one.name)
+            accept_contact_request_from_settings(aut_two, main_screen, user_one.name)
+            send_contact_request_from_settings(aut_two, main_screen, user_three_chat_key, f'Hello {user_three.name}')
+            main_screen.minimize()
 
-        with step(f'User {user_three.name}, get chat key'):
-            aut_three.attach()
-            main_screen.prepare()
-            profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            chat_key = profile_popup.copy_chat_key
-            main_screen.left_panel.click()
+
 
         with step(f'User {user_two.name}, send contact request to {user_three.name}'):
-            aut_two.attach()
-            main_screen.prepare()
-            skip_message_backup_popup_if_visible()
-            settings = main_screen.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contact_request_popup = contacts_settings.open_contact_request_form()
-            contact_request_popup.send(chat_key, f'Hello {user_three.name}')
+            send_contact_request_from_settings(aut_two, main_screen, user_three_chat_key, f'Hello {user_three.name}')
+            main_screen.minimize()
 
         with step(f'User {user_three.name}, accept contact request from {user_two.name}'):
-            aut_three.attach()
-            main_screen.prepare()
-            settings = main_screen.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contacts_settings.accept_contact_request(user_two.name)
+            accept_contact_request_from_settings(aut_three, main_screen, user_two.name)
 
         with step(f'User {user_two.name}, creates community and invites {user_one.name} and {user_three.name}'):
             aut_two.attach()
