@@ -64,5 +64,5 @@ QString StringUtilsInternal::shortcutToText(const QVariant &shortcut)
 
     if (seq.isEmpty())
         return {};
-    return seq.toString();
+    return seq.toString(QKeySequence::NativeText);
 }
