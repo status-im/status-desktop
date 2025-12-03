@@ -6,6 +6,7 @@ import StatusQ.Core.Theme
 import StatusQ.Controls.Validators
 
 QtObject {
+    id: root
 
     readonly property QtObject appState: QtObject {
         readonly property int startup: 0
@@ -541,17 +542,17 @@ QtObject {
     readonly property QtObject settingsSection: QtObject {
         readonly property int itemSpacing: 10
         readonly property int radius: 8
-        readonly property int mainHeaderFontSize: Theme.fontSize(28) // Keep as is - special case for main header
-        readonly property int subHeaderFontSize: Theme.primaryTextFontSize
-        readonly property int importantInfoFontSize: Theme.fontSize(18)
-        readonly property int infoFontSize: Theme.primaryTextFontSize
+        readonly property int mainHeaderFontSize: root.Theme.fontSize(28) // Keep as is - special case for main header
+        readonly property int subHeaderFontSize: root.Theme.primaryTextFontSize
+        readonly property int importantInfoFontSize: root.Theme.fontSize(18)
+        readonly property int infoFontSize: root.Theme.primaryTextFontSize
         readonly property int infoLineHeight: 22
         readonly property int infoSpacing: 5
         readonly property int itemHeight: 64
-        readonly property var leftMargin: Theme.xlPadding * 2
-        readonly property int rightMargin: Theme.xlPadding * 2
-        readonly property int topMargin: Theme.xlPadding * 2
-        readonly property int bottomMargin: Theme.xlPadding * 2
+        readonly property int leftMargin: root.Theme.xlPadding * 2
+        readonly property int rightMargin: root.Theme.xlPadding * 2
+        readonly property int topMargin: root.Theme.xlPadding * 2
+        readonly property int bottomMargin: root.Theme.xlPadding * 2
 
         readonly property QtObject notificationsBubble: QtObject {
             readonly property int previewAnonymous: 0
@@ -604,14 +605,14 @@ QtObject {
             readonly property int keycardPairingCodeInputWidth: 512
             readonly property int keycardPukAdditionalSpacingOnEvery4Items: 4
             readonly property int keycardPukAdditionalSpacing: 32
-            readonly property int fontSize1: Theme.fontSize(22)
-            readonly property int fontSize2: Theme.primaryTextFontSize
-            readonly property int fontSize3: Theme.tertiaryTextFontSize
+            readonly property int fontSize1: root.Theme.fontSize(22)
+            readonly property int fontSize2: root.Theme.primaryTextFontSize
+            readonly property int fontSize3: root.Theme.tertiaryTextFontSize
             readonly property int seedPhraseCellWidth: 193
             readonly property int seedPhraseCellHeight: 60
             readonly property int seedPhraseCellNumberWidth: 24
-            readonly property int seedPhraseCellFontSize: Theme.tertiaryTextFontSize
-            readonly property int buttonFontSize: Theme.primaryTextFontSize
+            readonly property int seedPhraseCellFontSize: root.Theme.tertiaryTextFontSize
+            readonly property int buttonFontSize: root.Theme.primaryTextFontSize
             readonly property int pukCellWidth: 50
             readonly property int pukCellHeight: 60
             readonly property int popupWidth: 640
@@ -701,8 +702,8 @@ QtObject {
         readonly property int contentHeight2: 642
         readonly property int itemHeight: 64
         readonly property int importPrivateKeyWarningHeight: 86
-        readonly property int labelFontSize1: Theme.primaryTextFontSize
-        readonly property int labelFontSize2: Theme.additionalTextSize
+        readonly property int labelFontSize1: root.Theme.primaryTextFontSize
+        readonly property int labelFontSize2: root.Theme.additionalTextSize
         readonly property int footerButtonsHeight: 44
         readonly property int keyPairNameMaxLength: 20
         readonly property int keyPairAccountNameMinLength: 5
@@ -742,7 +743,7 @@ QtObject {
         readonly property int popupWidth: 480
         readonly property int contentHeight: 626
         readonly property int footerButtonsHeight: 44
-        readonly property int labelFontSize1: Theme.primaryTextFontSize
+        readonly property int labelFontSize1: root.Theme.primaryTextFontSize
         readonly property string instructionsLabelForQr: qsTr("How to display the QR code on your other device")
         readonly property string instructionsLabelForEncryptedKey: qsTr("How to copy the encrypted key from your other device")
 
@@ -1010,7 +1011,7 @@ QtObject {
 
     readonly property string dataImagePrefix: "data:image"
 
-    readonly property string mentionSpanTag: `<span style="background-color: ${Theme.palette.mentionColor2};"><a style="color:${Theme.palette.mentionColor1};text-decoration:none" href='http://'>`
+    readonly property string mentionSpanTag: `<span style="background-color: ${root.Theme.palette.mentionColor2};"><a style="color:${root.Theme.palette.mentionColor1};text-decoration:none" href='http://'>`
 
     readonly property string ens_taken: "taken"
     readonly property string ens_taken_custom: "taken-custom"
