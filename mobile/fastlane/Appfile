@@ -1,0 +1,7 @@
+# App identifiers for Status App iOS builds
+app_identifier("app.status.mobile")
+team_id("8B5X2M6H2Y")
+
+for_lane :pr do
+  app_identifier("app.status.mobile.pr")
+end

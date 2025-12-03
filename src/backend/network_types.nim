@@ -11,7 +11,7 @@ type RpcProviderAuthType* {.pure.} = enum
   BasicAuth = "basic-auth"
   TokenAuth = "token-auth"
 
-type RpcProviderDto* = ref object of RootObj
+type RpcProviderDto* = object
   id* {.serializedFieldName("id").}: int
   chainId* {.serializedFieldName("chainId").}: int
   name* {.serializedFieldName("name").}: string
@@ -42,7 +42,7 @@ proc `$`*(self: RpcProviderDto): string =
 proc `%`*(t: RpcProviderDto): JsonNode {.inline.} =
   result = parseJson(t.toJson)
 
-type NetworkDto* = ref object of RootObj
+type NetworkDto* = object
   chainId* {.serializedFieldName("chainId").}: int
   nativeCurrencyDecimals* {.serializedFieldName("nativeCurrencyDecimals").}: int
   layer* {.serializedFieldName("layer").}: int
@@ -63,8 +63,7 @@ type NetworkDto* = ref object of RootObj
   noBaseFee* {.serializedFieldName("noBaseFee").}: bool
   noPriorityFee* {.serializedFieldName("noPriorityFee").}: bool
 
-{.experimental: "notnil".}
-type NetworkDtoSafe* = NetworkDto not nil
+type NetworkDtoSafe* = NetworkDto
 
 
 proc `$`*(self: NetworkDto): string =

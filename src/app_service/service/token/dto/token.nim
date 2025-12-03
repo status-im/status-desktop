@@ -11,7 +11,7 @@ type TokenDetailsDto* = object
   description* {.serializedFieldName("Description").}: string
   assetWebsiteUrl* {.serializedFieldName("AssetWebsiteUrl").}: string
 
-type TokenDto* = ref object of RootObj
+type TokenDto* = object
   crossChainId* {.serializedFieldName("crossChainId").}: string
   address* {.serializedFieldName("address").}: string
   name* {.serializedFieldName("name").}: string
@@ -22,8 +22,7 @@ type TokenDto* = ref object of RootObj
   customToken* {.serializedFieldName("custom").}: bool
   communityData* {.serializedFieldName("communityData").}: CommunityDataDto
 
-{.experimental: "notnil".}
-type TokenDtoSafe* = TokenDto not nil
+type TokenDtoSafe* = TokenDto
 
 proc `$`*(self: CommunityDataDto): string =
   result = fmt"""CommunityDataDto[

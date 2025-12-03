@@ -51,7 +51,7 @@ proc isNative*(self: TokenItem): bool =
 
 # If `type` is not provided, it will be determined based on the address (native token for zero address or ERC20 token for other addresses)
 proc createTokenItem*(dto: TokenDto, `type`: common_types.TokenType = common_types.TokenType.ERC20): TokenItem =
-  if dto.isNil or dto.chainId <= 0 or dto.address.isEmptyOrWhitespace:
+  if dto.chainId <= 0 or dto.address.isEmptyOrWhitespace:
     raise newException(ValueError, "invalid token dto")
 
   var tokenType = `type`
