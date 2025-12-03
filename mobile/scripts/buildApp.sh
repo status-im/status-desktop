@@ -10,12 +10,23 @@ BIN_DIR=${BIN_DIR:-"$CWD/../bin/ios"}
 BUILD_DIR=${BUILD_DIR:-"$CWD/../build"}
 ANDROID_ABI=${ANDROID_ABI:-"arm64-v8a"}
 BUILD_TYPE=${BUILD_TYPE:-"apk"}
-SIGN_IOS=${SIGN_IOS:-"false"}
+
+# PR builds use StatusPR.pro with separate bundle ID (app.status.mobile.pr)
+BUILD_VARIANT=${BUILD_VARIANT:-"release"}
 
 QMAKE_BIN="${QMAKE:-qmake}"
 QMAKE_CONFIG="CONFIG+=device CONFIG+=release"
 
+if [[ "$BUILD_VARIANT" == "pr" ]]; then
+  PRO_FILE="$CWD/../wrapperApp/StatusPR.pro"
+  echo "Building PR variant (app.status.mobile.pr)"
+else
+  PRO_FILE="$CWD/../wrapperApp/Status.pro"
+  echo "Building release variant (app.status.mobile)"
+fi
+
 echo "Building wrapperApp for ${OS}, ${ANDROID_ABI}"
+echo "Using project file: $PRO_FILE"
 
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
@@ -26,9 +37,9 @@ DESKTOP_VERSION=$(eval cd "$STATUS_DESKTOP" && git describe --tags --dirty="-dir
 TIMESTAMP=$(($(date +%s) * 1000 / 60000))
 
 if [[ -n "${CHANGE_ID:-}" ]]; then
-    BUILD_VERSION="${CHANGE_ID}.${TIMESTAMP}"
+  BUILD_VERSION="${CHANGE_ID}.${TIMESTAMP}"
 else
-    BUILD_VERSION="${TIMESTAMP}"
+  BUILD_VERSION="${TIMESTAMP}"
 fi
 
 echo "Using version: $DESKTOP_VERSION; build version: $BUILD_VERSION"
@@ -42,7 +53,7 @@ if [[ "${OS}" == "android" ]]; then
   echo "Building for Android 35"
   ANDROID_PLATFORM=android-35
 
-  "$QMAKE_BIN" "$CWD/../wrapperApp/Status.pro" "$QMAKE_CONFIG" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" APP_VARIANT="${APP_VARIANT}" VERSION="$DESKTOP_VERSION" -after
+  "$QMAKE_BIN" "$PRO_FILE" "$QMAKE_CONFIG" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" APP_VARIANT="${APP_VARIANT}" VERSION="$DESKTOP_VERSION" -after
 
   # Build the app
   make -j"$(nproc)" apk_install_target
@@ -122,21 +133,30 @@ if [[ "${OS}" == "android" ]]; then
     fi
   fi
 else
-  "$QMAKE_BIN" "$CWD/../wrapperApp/Status.pro" "$QMAKE_CONFIG" -spec macx-ios-clang CONFIG+="$SDK" VERSION="$DESKTOP_VERSION" -after
+  "$QMAKE_BIN" "$PRO_FILE" "$QMAKE_CONFIG" -spec macx-ios-clang CONFIG+="$SDK" VERSION="$DESKTOP_VERSION" -after
+
+  if [[ "$BUILD_VARIANT" == "pr" ]]; then
+    TARGET_NAME="StatusPR"
+  else
+    TARGET_NAME="Status"
+  fi
 
   # Compile resources
   xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO CURRENT_PROJECT_VERSION=$BUILD_VERSION | xcbeautify
   # Compile the app
-  xcodebuild -configuration Release -target Status install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO CURRENT_PROJECT_VERSION=$BUILD_VERSION | xcbeautify
+  xcodebuild -configuration Release -target "$TARGET_NAME" install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO CURRENT_PROJECT_VERSION=$BUILD_VERSION | xcbeautify
 
-  if [[ ! -e "$BIN_DIR/Status.app/Info.plist" ]]; then
-    echo "Build failed"
+  if [[ "$BUILD_VARIANT" == "pr" ]]; then
+    APP_NAME="StatusPR.app"
+  else
+    APP_NAME="Status.app"
+  fi
+
+  if [[ ! -e "$BIN_DIR/$APP_NAME/Info.plist" ]]; then
+    echo "Build failed - $APP_NAME not found"
     exit 1
   fi
 
-  if [[ "$SIGN_IOS" == "true" ]]; then
-    "$CWD/ios/sign.sh"
-  fi
-
-  echo "Build succeeded"
+  # Note: iOS signing is handled by fastlane
+  echo "Build succeeded - unsigned app ready for fastlane signing"
 fi

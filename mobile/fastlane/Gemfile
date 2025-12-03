@@ -1,0 +1,9 @@
+source "https://rubygems.org"
+
+ruby ">= 3.0.0", "< 4.0.0"
+
+# Core dependencies
+gem "fastlane", "~> 2.225"
+
+plugins_path = File.join(File.dirname(__FILE__), 'Pluginfile')
+eval_gemfile(plugins_path) if File.exist?(plugins_path)
