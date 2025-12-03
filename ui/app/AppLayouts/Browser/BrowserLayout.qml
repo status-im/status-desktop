@@ -235,7 +235,7 @@ StatusSectionLayout {
             canGoForward: (!!_internal.currentWebView && _internal.currentWebView.canGoForward)
             browserDappsModel: browserDappsProvider.model
             browserDappsCount: browserDappsProvider.model ? browserDappsProvider.model.count : 0
-            onOpenHistoryPopup: (xPos, yPos) => historyMenu.popup(xPos, yPos)
+            onOpenHistoryPopup: () => historyMenu.open()
             onGoBack: _internal.currentWebView.goBack()
             onGoForward: _internal.currentWebView.goForward()
             onReload: _internal.currentWebView.reload()
@@ -495,6 +495,11 @@ StatusSectionLayout {
 
     StatusMenu {
         id: historyMenu
+
+        parent: browserHeader
+        x: browserHeader.x + Theme.halfPadding
+        y: browserHeader.height + 4
+
         Instantiator {
             model: _internal.currentWebView && _internal.currentWebView.history.items
             StatusMenuItem {

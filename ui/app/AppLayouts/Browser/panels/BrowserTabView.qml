@@ -166,8 +166,8 @@ FocusScope {
             icon.name: "add"
             incognitoMode: d.currentTabIcognito
             hoverColor: d.currentTabIcognito ?
-                                      Theme.palette.privacyColors.primary:
-                                      Theme.palette.indirectColor1
+                            Theme.palette.privacyColors.primary:
+                            Theme.palette.indirectColor1
             onClicked: root.openNewTabTriggered()
         }
     }
