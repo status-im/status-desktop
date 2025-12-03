@@ -132,6 +132,7 @@ std::unique_ptr<ThemePalette> createDarkThemePalette(QObject* parent)
     t->messageHighlightColor = StatusColors::getColor("blue4", 0.2);
     t->desktopBlue10 = StatusColors::getColor("darkDesktopBlue10");
     t->blockProgressBarColor = t->directColor7;
+    t->cardColor = t->baseColor2;
 
     t->background = t->baseColor3;
     t->backgroundHover = t->baseColor2;
@@ -325,6 +326,7 @@ std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
     t->messageHighlightColor = StatusColors::getColor("blue", 0.2);
     t->desktopBlue10 = StatusColors::getColor("lightDesktopBlue10");
     t->blockProgressBarColor = t->baseColor3;
+    t->cardColor = t->indirectColor1;
 
     t->background = t->white;
     t->backgroundHover = t->baseColor2;
