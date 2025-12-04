@@ -18,7 +18,7 @@ Rectangle {
     width: statusEmoji.width + Theme.halfPadding
     height: width
     color: reactedByUser ? Theme.palette.secondaryBackground :
-                           (isHovered ? Theme.palette.backgroundHover : Theme.palette.transparent)
+                           (isHovered ? Theme.palette.backgroundHover : StatusColors.colors.transparent)
     border.width: reactedByUser ? 1 : 0
     border.color: Theme.palette.primaryColor1
     radius: Theme.radius

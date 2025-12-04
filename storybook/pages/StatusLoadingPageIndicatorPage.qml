@@ -13,7 +13,7 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        color: Theme.palette.transparent
+        color: StatusColors.colors.transparent
 
         StatusLoadingPageIndicator {
             anchors.centerIn: parent

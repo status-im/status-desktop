@@ -62,7 +62,7 @@ Rectangle {
         anchors.rightMargin: Theme.padding
         anchors.bottom: parent.bottom
         clip: true
-        color: Theme.palette.transparent
+        color: StatusColors.colors.transparent
         visible: (root.contentType !== Constants.messageContentType.imageType) && (root.contentType !== Constants.messageContentType.stickerType)
 
         StyledText {
@@ -98,7 +98,7 @@ Rectangle {
         imageWidth: 64
         imageHeight: 64
         stickerData: root.stickerData
-        color: Theme.palette.transparent
+        color: StatusColors.colors.transparent
         contentType: root.contentType
     }
 

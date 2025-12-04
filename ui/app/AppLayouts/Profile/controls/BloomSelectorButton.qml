@@ -26,7 +26,7 @@ Rectangle {
 
     border.color: mouseArea.containsMouse || radioBtn.checked ? Theme.palette.primaryColor1 : Theme.palette.border
     border.width: 1
-    color: Theme.palette.transparent
+    color: StatusColors.colors.transparent
     implicitWidth: 130
     implicitHeight: 120
     radius: Theme.radius

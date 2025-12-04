@@ -44,7 +44,7 @@ Rectangle {
             when: image.status === Image.Ready
             PropertyChanges {
                 target: root
-                color: Theme.palette.transparent
+                color: StatusColors.colors.transparent
             }
             PropertyChanges {
                 target: loader

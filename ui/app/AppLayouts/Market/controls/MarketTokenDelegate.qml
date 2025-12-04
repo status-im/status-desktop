@@ -54,7 +54,7 @@ StatusItemDelegate {
     cursorShape: Qt.ArrowCursor
 
     background: Rectangle {
-        color: root.hovered ? Theme.palette.baseColor4: Theme.palette.transparent
+        color: root.hovered ? Theme.palette.baseColor4: StatusColors.colors.transparent
     }
 
     contentItem: ColumnLayout {

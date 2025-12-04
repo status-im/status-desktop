@@ -48,7 +48,7 @@ StatusDialog {
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: width
-                color: Theme.palette.white
+                color: StatusColors.colors.white
 
                 Image {
                     objectName: "profileQRCodeImage"

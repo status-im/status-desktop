@@ -36,7 +36,7 @@ StatusListItem {
         if (isInteractive && (sensor.containsMouse || root.highlighted)) {
             return Theme.palette.baseColor2
         }
-        return Theme.palette.transparent
+        return StatusColors.colors.transparent
     }
     components: [
         StatusRoundButton {

@@ -19,7 +19,7 @@ ToolTip {
     property int orientation: StatusToolTip.Orientation.Top
     property int offset: 0
     property alias arrow: arrow
-    property color color: Theme.palette.black
+    property color color: StatusColors.colors.black
 
     implicitWidth: Math.min(maxWidth,
                             Math.max(implicitBackgroundWidth + leftInset + rightInset,
@@ -74,8 +74,8 @@ ToolTip {
     }
     contentItem: StatusBaseText {
         text: root.text
-        color: Theme.palette.white
-        linkColor: Theme.palette.white
+        color: StatusColors.colors.white
+        linkColor: StatusColors.colors.white
         wrapMode: Text.Wrap
         font.pixelSize: Theme.additionalTextSize
         font.weight: Font.Medium

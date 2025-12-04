@@ -139,7 +139,7 @@ Rectangle {
     implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
     implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
 
-    color: Theme.palette.transparent
+    color: StatusColors.colors.transparent
 
     QtObject {
         id: d

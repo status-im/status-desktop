@@ -21,7 +21,7 @@ Rectangle {
     implicitHeight: 168
     border.color: Theme.palette.border
     radius: 16
-    color: Theme.palette.transparent
+    color: StatusColors.colors.transparent
 
     signal buttonClicked()
 

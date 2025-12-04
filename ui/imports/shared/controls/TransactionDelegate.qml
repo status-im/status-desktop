@@ -195,7 +195,7 @@ StatusListItem {
         bgHeight: height + 2
         bgRadius: bgWidth / 2
         bgColor: d.lightTheme && Constants.isDefaultTokenIcon(root.tokenImage) ?
-                     Theme.palette.white : "transparent"
+                     StatusColors.colors.white : "transparent"
         color: "transparent"
         isImage: !loading
         name: root.tokenImage
@@ -221,7 +221,7 @@ StatusListItem {
             bgWidth: width + 2
             bgHeight: height + 2
             bgRadius: bgWidth / 2
-            bgColor: Theme.palette.white
+            bgColor: StatusColors.colors.white
             isImage: root.tokenIconAsset.isImage
             color: root.tokenIconAsset.color
             name: d.secondIconSource
@@ -327,7 +327,7 @@ StatusListItem {
         if (bgColorAnimation.running) {
             return d.animatedBgColor
         }
-        return sensor.containsMouse ? Theme.palette.baseColor5 : Theme.palette.transparent
+        return sensor.containsMouse ? Theme.palette.baseColor5 : StatusColors.colors.transparent
     }
 
     statusListItemIcon.active: (loading || root.asset.name)

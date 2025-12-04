@@ -192,7 +192,7 @@ Item {
                 visible: progressBar.visible
                 font.pixelSize: Theme.tertiaryTextFontSize
                 verticalAlignment: Text.AlignVCenter
-                color: Theme.palette.white
+                color: StatusColors.colors.white
             }
 
             ProgressBar {
@@ -207,13 +207,13 @@ Item {
                     radius: 8
                     color: "transparent"
                     border.width: 1
-                    border.color: Theme.palette.white
+                    border.color: StatusColors.colors.white
                 }
                 contentItem: Rectangle {
                     width: progressBar.width*progressBar.position
                     implicitHeight: 8
                     radius: 8
-                    color: Theme.palette.white
+                    color: StatusColors.colors.white
                 }
             }
 

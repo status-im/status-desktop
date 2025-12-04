@@ -51,7 +51,7 @@ StatusDialog {
                 radius: Theme.radius
                 border.width: 1
                 border.color: Theme.palette.baseColor2
-                color: Theme.palette.transparent
+                color: StatusColors.colors.transparent
 
                 ColumnLayout {
                     width: parent.width
@@ -125,7 +125,7 @@ StatusDialog {
             StatusButton {
                 type: StatusBaseButton.Type.Primary
                 normalColor: Theme.palette.privacyModeColors.navBarColor
-                textColor: Theme.palette.white
+                textColor: StatusColors.colors.white
                 text: {
                     if(root.thirdPartyServicesEnabled) {
                         if(root.isOnboardingFlow) {

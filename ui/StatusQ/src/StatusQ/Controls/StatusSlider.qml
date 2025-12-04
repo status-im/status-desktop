@@ -15,7 +15,7 @@ Slider {
 
     property int handleSize: 28
     property int bgHeight: 4
-    property color handleColor: Theme.palette.white
+    property color handleColor: StatusColors.colors.white
     property color bgColor: Theme.palette.baseColor2
     property color fillColor: Theme.palette.primaryColor1
 

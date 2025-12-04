@@ -212,7 +212,7 @@ Item {
                     opacity: 0.7
                     font.weight: Font.Bold
                     font.pixelSize: Theme.fontSize(18)
-                    color: Theme.palette.white
+                    color: StatusColors.colors.white
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }

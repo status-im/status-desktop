@@ -62,7 +62,7 @@ SettingsContentBase {
                 id: showFavouritesItem
                 width: parent.width
                 leftPadding: 0
-                bgColor: Theme.palette.transparent
+                bgColor: StatusColors.colors.transparent
                 title: qsTr("Show Favorites Bar")
                 components: [
                     StatusSwitch {

@@ -10,6 +10,7 @@ namespace {
 const QVariantMap s_colors = {
     { "black"_L1,              QColor(0x00, 0x00, 0x00) },
     { "white"_L1,              QColor(0xFF, 0xFF, 0xFF) },
+    { "transparent"_L1,        QColor(0x00, 0x00, 0x00, 0x00) },
 
     { "blue"_L1,               QColor(0x43, 0x60, 0xDF) },
     { "blue2"_L1,              QColor(0x29, 0x46, 0xC4) },

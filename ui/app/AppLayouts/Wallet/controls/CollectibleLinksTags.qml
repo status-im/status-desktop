@@ -19,7 +19,7 @@ Control {
         width: 16
         height: 16
         name: ""
-        color:  Theme.palette.transparent
+        color:  StatusColors.colors.transparent
         isLetterIdenticon: false
         letterSize: charactersLen > 1 ? 8 : 11
         imgIsIdenticon: false
@@ -38,7 +38,7 @@ Control {
         radius: Theme.radius
         border.width: 1
         border.color: Theme.palette.baseColor2
-        color: mouse.containsMouse ? Theme.palette.baseColor2 : Theme.palette.transparent
+        color: mouse.containsMouse ? Theme.palette.baseColor2 : StatusColors.colors.transparent
         StatusMouseArea {
             id: mouse
             anchors.fill: parent
@@ -88,7 +88,7 @@ Control {
             visible: root.hovered
             asset.name: "external"
             asset.color: Theme.palette.directColor1
-            asset.bgColor: Theme.palette.transparent
+            asset.bgColor: StatusColors.colors.transparent
         }
     }
 }

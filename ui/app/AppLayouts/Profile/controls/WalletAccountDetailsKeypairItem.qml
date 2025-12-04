@@ -30,7 +30,7 @@ StatusListItem {
         if (sensor.containsMouse || root.highlighted) {
             return Theme.palette.baseColor2
         }
-        return Theme.palette.transparent
+        return StatusColors.colors.transparent
     }
     tagsModel: !!root.keyPair? root.keyPair.accounts: []
     tagsDelegate: StatusListItemTag {
@@ -42,7 +42,7 @@ StatusListItem {
         asset.height: Theme.bigPadding
         asset.emoji: model.account.emoji
         asset.emojiSize: Emoji.size.verySmall
-        asset.color: Theme.palette.transparent
+        asset.color: StatusColors.colors.transparent
         asset.isLetterIdenticon: true
         title: model.account.name
         titleText.font.pixelSize: Theme.tertiaryTextFontSize

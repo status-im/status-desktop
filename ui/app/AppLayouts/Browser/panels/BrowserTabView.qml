@@ -155,7 +155,7 @@ FocusScope {
     }
 
     component AddTabButton: Rectangle {
-        color: Theme.palette.transparent
+        color: StatusColors.colors.transparent
         width: d.tabHeight
         height: d.tabHeight
         BrowserHeaderButton {

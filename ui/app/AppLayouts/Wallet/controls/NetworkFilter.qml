@@ -72,7 +72,7 @@ StatusComboBox {
                 asset.bgHeight: 15
                 asset.isImage: true
                 asset.name: Assets.png("status-gradient-dot")
-                asset.color: Theme.palette.transparent
+                asset.color: StatusColors.colors.transparent
             }
         }
     }

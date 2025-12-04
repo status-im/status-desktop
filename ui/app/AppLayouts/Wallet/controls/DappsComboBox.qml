@@ -38,7 +38,7 @@ ComboBox {
                 return Theme.palette.baseColor2
 
             if (!root.hovered)
-                return Theme.palette.transparent
+                return StatusColors.colors.transparent
 
             return root.incognitoMode
                     ? Theme.palette.privacyColors.secondary

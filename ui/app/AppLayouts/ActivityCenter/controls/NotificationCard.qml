@@ -197,7 +197,7 @@ Control {
         id: bg
         anchors.fill: parent
         radius: Theme.radius
-        color: root.selected || root.hovered ? Theme.palette.baseColor5 : Theme.palette.transparent
+        color: root.selected || root.hovered ? Theme.palette.baseColor5 : StatusColors.colors.transparent
 
          // Unread indicator dot (top-right).
         Rectangle {
