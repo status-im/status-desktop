@@ -21,6 +21,7 @@ status-desktop-rcc: clean-status-desktop-rcc $(STATUS_DESKTOP_RCC)
 
 $(STATUS_GO_LIB):
 	@echo "Building status-go mobile library"
+	@mkdir -p $(LIB_PATH)
 ifeq ($(OS),android)
 	  CC="$(CC)" $(MAKE) -C ../vendor/status-go statusgo-android-library \
 		ARCH=$(ARCH) \
@@ -37,7 +38,7 @@ else ifeq ($(OS),ios)
 		SHELL=/bin/sh
 endif
 	@echo "Copying library to mobile lib directory"
-	@mkdir -p $(LIB_PATH)
+	@cp $(NIM_SDS_SOURCE_DIR)/build/libsds$(LIB_EXT) $(LIB_PATH)/libsds$(LIB_EXT)
 	@cp ../vendor/status-go/build/bin/libstatus$(LIB_EXT) $(LIB_PATH)/libstatus$(LIB_EXT)
 
 $(STATUS_Q_LIB): $(STATUS_Q_FILES) $(STATUS_Q_SCRIPT) $(STATUS_Q_UI_FILES)

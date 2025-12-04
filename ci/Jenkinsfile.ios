@@ -79,6 +79,10 @@ pipeline {
     STATUS_IOS_IPA = "${WORKSPACE}/mobile/bin/ios/qt6/Status.ipa"
     TESTFLIGHT_POLL_TIMEOUT = "${params.TESTFLIGHT_POLL_TIMEOUT}"
     TESTFLIGHT_POLL_INTERVAL = "${params.TESTFLIGHT_POLL_INTERVAL}"
+    /* nwaku source directory */
+    NWAKU_SOURCE_DIR = "${env.WORKSPACE_TMP}/nwaku"
+    /* nim-sds source directory */
+    NIM_SDS_SOURCE_DIR = "${env.WORKSPACE_TMP}/nim-sds"
   }
 
   stages {
