@@ -3293,6 +3293,31 @@
       <comment>BrowserSettingsMenu</comment>
       <translation>Zoom</translation>
     </message>
+    <message>
+      <source>Clear site data</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clear site data</translation>
+    </message>
+    <message>
+      <source>Use it to reset the current site if it doesn&#39;t load or work properly.</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Use it to reset the current site if it doesn&#39;t load or work properly.</translation>
+    </message>
+    <message>
+      <source>Clearing cache...</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clearing cache...</translation>
+    </message>
+    <message>
+      <source>Clear cache</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clear cache</translation>
+    </message>
+    <message>
+      <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</translation>
+    </message>
   </context>
   <context>
     <name>BrowserTabView</name>
@@ -9519,6 +9544,67 @@
     </message>
   </context>
   <context>
+    <name>FollowingAddressMenu</name>
+    <message>
+      <source>Address copied</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Address copied</translation>
+    </message>
+    <message>
+      <source>Copy address</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Copy address</translation>
+    </message>
+    <message>
+      <source>Show address QR</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Show address QR</translation>
+    </message>
+    <message>
+      <source>View activity</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>View activity</translation>
+    </message>
+    <message>
+      <source>Already in saved addresses</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Already in saved addresses</translation>
+    </message>
+    <message>
+      <source>Add to saved addresses</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Add to saved addresses</translation>
+    </message>
+  </context>
+  <context>
+    <name>FollowingAddresses</name>
+    <message>
+      <source>Search for name, ENS or address</source>
+      <comment>FollowingAddresses</comment>
+      <translation>Search for name, ENS or address</translation>
+    </message>
+    <message>
+      <source>Your search is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+      <comment>FollowingAddresses</comment>
+      <translation>Your search is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)</translation>
+    </message>
+    <message>
+      <source>Your search contains invalid characters (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+      <comment>FollowingAddresses</comment>
+      <translation>Your search contains invalid characters (use A-Z and 0-9, single whitespace, hyphens and underscores only)</translation>
+    </message>
+    <message>
+      <source>Your EFP onchain friends will appear here</source>
+      <comment>FollowingAddresses</comment>
+      <translation>Your EFP onchain friends will appear here</translation>
+    </message>
+    <message>
+      <source>No following addresses found. Check spelling or whether the address is correct.</source>
+      <comment>FollowingAddresses</comment>
+      <translation>No following addresses found. Check spelling or whether the address is correct.</translation>
+    </message>
+  </context>
+  <context>
     <name>GapComponent</name>
     <message>
       <source>Fetch messages</source>
@@ -12250,6 +12336,11 @@
       <source>Saved addresses</source>
       <comment>LeftTabView</comment>
       <translation>Saved addresses</translation>
+    </message>
+    <message>
+      <source>EFP onchain friends</source>
+      <comment>LeftTabView</comment>
+      <translation>EFP onchain friends</translation>
     </message>
   </context>
   <context>
@@ -22525,6 +22616,24 @@
       <source>%1 community assets are now visible</source>
       <comment>WalletAssetsStore</comment>
       <translation>%1 community assets are now visible</translation>
+    </message>
+  </context>
+  <context>
+    <name>WalletFollowingAddressesHeader</name>
+    <message>
+      <source>Add via EFP</source>
+      <comment>WalletFollowingAddressesHeader</comment>
+      <translation>Add via EFP</translation>
+    </message>
+    <message>
+      <source>EFP onchain friends</source>
+      <comment>WalletFollowingAddressesHeader</comment>
+      <translation>EFP onchain friends</translation>
+    </message>
+    <message>
+      <source>Last refreshed %1</source>
+      <comment>WalletFollowingAddressesHeader</comment>
+      <translation>Last refreshed %1</translation>
     </message>
   </context>
   <context>
