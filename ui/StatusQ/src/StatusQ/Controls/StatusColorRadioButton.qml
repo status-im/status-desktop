@@ -7,7 +7,7 @@ RadioButton {
     id: root
 
     property string radioButtonColor: ""
-    property string selectionColor: StatusColors.colors['white']
+    property string selectionColor: StatusColors.white
     property int diameter: 44
     property int selectorDiameter: 16
 
@@ -58,7 +58,7 @@ RadioButton {
             visible: root.checked
             radius: width/2
             color: selectionColor
-            border.color: StatusColors.colors['grey3']
+            border.color: StatusColors.grey3
             border.width: 1
         }
     }

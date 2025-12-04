@@ -132,7 +132,7 @@ Rectangle {
         delegate: Rectangle {
             id: itemDelegate
             objectName: model.preferredDisplayName
-            color: ListView.isCurrentItem ? Theme.palette.backgroundHover : StatusColors.colors.transparent
+            color: ListView.isCurrentItem ? Theme.palette.backgroundHover : StatusColors.transparent
             width: ListView.view.width
             height: 42
             radius: Theme.radius

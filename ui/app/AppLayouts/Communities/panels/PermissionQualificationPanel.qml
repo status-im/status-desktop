@@ -18,7 +18,7 @@ Control {
     background: Rectangle {
         border.color: Theme.palette.border
         radius: Theme.radius
-        color: StatusColors.colors.transparent
+        color: StatusColors.transparent
     }
 
     contentItem: RowLayout {

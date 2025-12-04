@@ -113,7 +113,7 @@ Control {
                 icon.height: Theme.tertiaryTextFontSize
                 icon.width: Theme.tertiaryTextFontSize
                 icon.color: Theme.palette.directColor1
-                color: StatusColors.colors.transparent
+                color: StatusColors.transparent
                 textToCopy: root.communityName
                 onCopyClicked: (textToCopy) => ClipboardUtils.setText(textToCopy)
             }           

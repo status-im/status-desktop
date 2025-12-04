@@ -91,7 +91,7 @@ Control {
             borderColor: Theme.palette.directColor7
             borderWidth: 1
 
-            normalColor: StatusColors.colors.transparent
+            normalColor: StatusColors.transparent
             hoverColor: Theme.palette.baseColor2
 
             icon.name: "refresh"

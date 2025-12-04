@@ -148,7 +148,7 @@ Popup {
             property var myData: typeof modelData === "undefined" ? model : modelData
             property string myText: popup.getText(myData)
             visible: searchBox.text === "" || myText.includes(searchBox.text)
-            color: listView.currentIndex === index ? Theme.palette.backgroundHover : StatusColors.colors.transparent
+            color: listView.currentIndex === index ? Theme.palette.backgroundHover : StatusColors.transparent
             border.width: 0
             width: ListView.view.width
             height: visible ? 42 : 0

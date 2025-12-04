@@ -447,7 +447,7 @@ StatusDialog {
                         icon.name: "edit_pencil"
                         textColor: editSlippageButton.hovered ? Theme.palette.directColor1 : Theme.palette.directColor5
                         size: StatusBaseButton.Size.Tiny
-                        hoverColor: StatusColors.colors.transparent
+                        hoverColor: StatusColors.transparent
                         visible: !checked
                     }
                 }

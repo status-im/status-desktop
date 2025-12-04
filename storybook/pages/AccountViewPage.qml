@@ -26,7 +26,7 @@ SplitView {
         id: d
         readonly property string emptyString: ""
 
-        property var dummyOverview: updateDummyView(StatusColors.colors['black'])
+        property var dummyOverview: updateDummyView(StatusColors.black)
 
         function updateDummyView(color) {
             const clr = Utils.getIdForColor(root.Theme.palette, color)

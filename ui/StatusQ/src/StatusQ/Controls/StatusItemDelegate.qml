@@ -41,7 +41,7 @@ ItemDelegate {
             text: root.text
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
-            color: root.highlighted ? StatusColors.colors.white : root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
+            color: root.highlighted ? StatusColors.white : root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
 
             Binding on horizontalAlignment {
                 when: root.centerTextHorizontally

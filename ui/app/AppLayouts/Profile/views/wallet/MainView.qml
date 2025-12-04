@@ -193,7 +193,7 @@ Column {
     //              !d.allNonProfileKeypairsMigratedToAKeycard
     //     height: 102
     //     width: parent.width
-    //     color: StatusColors.colors.transparent
+    //     color: StatusColors.transparent
     //     radius: 8
     //     border.width: 1
     //     border.color: Theme.palette.baseColor5
@@ -223,7 +223,7 @@ Column {
                  d.unimportedNonProfileKeypairs > 0
         height: 102
         width: parent.width
-        color: StatusColors.colors.transparent
+        color: StatusColors.transparent
         radius: 8
         border.width: 1
         border.color: Theme.palette.baseColor5

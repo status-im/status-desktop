@@ -62,7 +62,7 @@ Item {
             visible: root.mentionsCount > 0
             text: d.limitNumberTo99(root.mentionsCount)
             type: StatusBaseButton.Type.Primary
-            textColor: StatusColors.colors.white
+            textColor: StatusColors.white
             icon.name: "username"
 
             onClicked: root.mentionsButtonClicked()
@@ -74,7 +74,7 @@ Item {
             text: root.recentMessagesCount <= 0 ? "" : d.limitNumberTo99(root.recentMessagesCount)
             normalColor: Theme.palette.baseColor1
             hoverColor: Theme.palette.hoverColor(normalColor)
-            textColor: StatusColors.colors.white
+            textColor: StatusColors.white
             textPosition: StatusBaseButton.TextPosition.Left
             icon.name: "arrow-down"
 

@@ -71,9 +71,9 @@ Control {
             objectName: "previousButton"
 
             font.pixelSize: Theme.additionalTextSize
-            normalColor: StatusColors.colors.transparent
+            normalColor: StatusColors.transparent
             hoverColor: Theme.palette.primaryColor3
-            disabledColor: StatusColors.colors.transparent
+            disabledColor: StatusColors.transparent
 
             icon.name: "previous"
             enabled: root.currentPage > 1
@@ -92,9 +92,9 @@ Control {
                 objectName: "numberButton_"+ index
 
                 font.pixelSize: Theme.additionalTextSize
-                normalColor: StatusColors.colors.transparent
+                normalColor: StatusColors.transparent
                 hoverColor: Theme.palette.primaryColor3
-                disabledColor: StatusColors.colors.transparent
+                disabledColor: StatusColors.transparent
                 size: root.compactMode ? StatusBaseButton.Size.Small : StatusBaseButton.Size.Large
 
                 text: modelData
@@ -112,9 +112,9 @@ Control {
             objectName: "nextButton"
 
             font.pixelSize: Theme.additionalTextSize
-            normalColor: StatusColors.colors.transparent
+            normalColor: StatusColors.transparent
             hoverColor: Theme.palette.primaryColor3
-            disabledColor: StatusColors.colors.transparent
+            disabledColor: StatusColors.transparent
 
             icon.name: "next"
             enabled: root.currentPage < d.totalPages

@@ -38,7 +38,7 @@ RadioButton {
             height: root.size === StatusRadioButton.Size.Large ? 12 : 8
             radius: width / 2
             anchors.centerIn: parent
-            color: StatusColors.colors.white
+            color: StatusColors.white
             visible: root.checked
         }
     }

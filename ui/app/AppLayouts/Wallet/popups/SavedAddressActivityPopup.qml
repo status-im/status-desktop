@@ -101,7 +101,7 @@ StatusDialog {
 
             leftPadding: 0
             rightPadding: 0
-            border.color: StatusColors.colors.transparent
+            border.color: StatusColors.transparent
 
             usage: SavedAddressesDelegate.Usage.Item
             showButtons: true
@@ -171,7 +171,7 @@ StatusDialog {
                 Layout.fillWidth: true
                 Layout.preferredHeight: Math.max(addressText.height, copyButton.height) + Theme.bigPadding
 
-                color: StatusColors.colors.transparent
+                color: StatusColors.transparent
                 radius: Theme.radius
                 border.color: Theme.palette.baseColor2
                 border.width: 1

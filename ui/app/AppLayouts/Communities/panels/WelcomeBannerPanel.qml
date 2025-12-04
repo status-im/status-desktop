@@ -25,7 +25,7 @@ Rectangle {
     anchors.rightMargin: Theme.padding
     border.color: Theme.palette.border
     radius: 16
-    color: StatusColors.colors.transparent
+    color: StatusColors.transparent
 
     Rectangle {
         width: 70

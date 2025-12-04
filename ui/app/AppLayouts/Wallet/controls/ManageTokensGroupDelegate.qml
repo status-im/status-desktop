@@ -145,7 +145,7 @@ DropArea {
                     icon.height: Theme.primaryTextFontSize
                     icon.width: Theme.primaryTextFontSize
                     icon.color: Theme.palette.directColor1
-                    color: StatusColors.colors.transparent
+                    color: StatusColors.transparent
                     textToCopy: model.communityName
                     onCopyClicked: ClipboardUtils.setText(textToCopy)
                 }

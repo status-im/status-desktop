@@ -31,7 +31,7 @@ ColumnLayout {
         property string validationError: ""
 
         bgColor: root.color
-        contentColor: StatusColors.colors.white
+        contentColor: StatusColors.white
         text: root.color.toString()
         font.weight: Font.Normal
         icon.width: 24

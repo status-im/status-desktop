@@ -27,7 +27,7 @@ Rectangle {
     width: 272
     height: 40
     border.width: 0
-    color: hovered ? Theme.palette.backgroundHover : StatusColors.colors.transparent
+    color: hovered ? Theme.palette.backgroundHover : StatusColors.transparent
     radius: Theme.radius
 
     MouseArea {
@@ -66,7 +66,7 @@ Rectangle {
             id: fileImageComponent
             StatusIcon {
                 icon: "browser/file"
-                color: downloadComplete ? StatusColors.colors.transparent : Theme.palette.darkGrey
+                color: downloadComplete ? StatusColors.transparent : Theme.palette.darkGrey
             }
         }
     }

@@ -168,7 +168,7 @@ Control {
             borderColor: Theme.palette.directColor7
             borderWidth: 1
 
-            normalColor: StatusColors.colors.transparent
+            normalColor: StatusColors.transparent
             hoverColor: Theme.palette.baseColor2
 
             icon.name: "refresh"
@@ -241,7 +241,7 @@ Control {
             spacing: 8
             size: StatusBaseButton.Size.Small
             borderColor: Theme.palette.directColor7
-            normalColor: StatusColors.colors.transparent
+            normalColor: StatusColors.transparent
             hoverColor: Theme.palette.baseColor2
 
             font.weight: Font.Normal
