@@ -2,9 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
 
-import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Controls
 
 /*!
   /note beware, the slider processes the mouse events only in its control space. So it must be at least as high
@@ -27,36 +25,37 @@ Slider {
 
     horizontalPadding: 0
 
-    background: Rectangle {
-        id: bgRect
-
-        x: root.leftPadding
-        anchors.verticalCenter: root.verticalCenter
-
-        implicitWidth: 100
-        implicitHeight: bgHeight
-        width: root.availableWidth
-        height: implicitHeight
-        color: root.bgColor
-        radius: 2
-
-        Loader {
-            id: decorationContainer
-            anchors.top: parent.top
-            width: parent.height
-        }
-
+    background: Item {
         Rectangle {
-            width: root.visualPosition * parent.width
-            height: parent.height
-            color: root.fillColor
+            id: bgRect
+
+            anchors.verticalCenter: parent.verticalCenter
+
+            x: root.handle.width / 2
+            width: parent.width - root.handle.width
+            height: root.bgHeight
+
+            color: root.bgColor
             radius: 2
+
+            Loader {
+                id: decorationContainer
+                anchors.top: parent.top
+                width: parent.width
+            }
+
+            Rectangle {
+                width: root.visualPosition * parent.width
+                height: parent.height
+                color: root.fillColor
+                radius: 2
+            }
         }
-    } // background
+    }
 
     handle: Rectangle {
         x: root.leftPadding + root.visualPosition * (root.availableWidth - width)
-        anchors.verticalCenter: bgRect.verticalCenter
+        anchors.verticalCenter: parent.verticalCenter
         color: root.handleColor
         implicitWidth: root.handleSize
         implicitHeight: root.handleSize
