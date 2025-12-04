@@ -40,7 +40,7 @@ StatusSlider {
             model: root.model
 
             Rectangle {
-                x: (background.width - width * 0.5) / (repeater.count - 1) * index
+                x: (parent.width) / (repeater.count - 1) * index - width * 0.5
                 y: (root.bgHeight -height) / 2
                 implicitWidth: root.handleSize
                 implicitHeight: root.handleSize
