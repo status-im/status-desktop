@@ -8,11 +8,9 @@ import configs
 import constants.colors
 import driver
 from configs.timeouts import APP_LOAD_TIMEOUT_MSEC
-from constants import UserAccount, CommunityData, Color
-from constants.dock_buttons import DockButtons
+from constants import UserAccount, CommunityData
 from gui.components.activity_center import ActivityCenter
-from helpers.chat_helper import skip_message_backup_popup_if_visible
-from gui.components.introduce_yourself_popup import IntroduceYourselfPopup
+from helpers.chat_helper import skip_message_backup_popup_if_visible, skip_intro_if_visible
 from gui.components.context_menu import ContextMenu
 from gui.components.splash_screen import SplashScreen
 from gui.components.toast_message import ToastMessage
@@ -142,13 +140,8 @@ class MainLeftPanel(QObject):
         for _ in range(1, attempts + 1):
             LOG.info(f'Attempt # {_} top open Community portal')
             self.communities_portal_button.click()
-
-            introduce_yourself_popup = IntroduceYourselfPopup()
-            if introduce_yourself_popup.is_visible:
-                introduce_yourself_popup.skip_intro()
-
+            skip_intro_if_visible()
             skip_message_backup_popup_if_visible()
-            
             try:
                 portal = CommunitiesPortal().wait_until_appears()
                 return portal
@@ -195,6 +188,7 @@ class MainLeftPanel(QObject):
     def select_community(self, name: str) -> CommunityScreen:
         driver.mouseClick(self._get_community(name))
         skip_message_backup_popup_if_visible()
+        skip_intro_if_visible()
         return CommunityScreen().wait_until_appears()
 
     @allure.step('Get community logo')
