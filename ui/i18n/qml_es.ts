@@ -2697,6 +2697,26 @@ Do you wish to override the security check and continue?</source>
         <source>Settings</source>
         <translation>Ajustes</translation>
     </message>
+    <message>
+        <source>Clear site data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use it to reset the current site if it doesn&apos;t load or work properly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clearing cache...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear cache</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrowserTabView</name>
@@ -7613,13 +7633,6 @@ Por favor, agrégala e intenta de nuevo.</translation>
     </message>
 </context>
 <context>
-    <name>FeeRow</name>
-    <message>
-        <source>Max.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>FeesBox</name>
     <message>
         <source>Fees</source>
@@ -8976,10 +8989,6 @@ Are you sure you want to do this?</source>
     <message>
         <source>PIN correct</source>
         <translation>PIN correcto</translation>
-    </message>
-    <message>
-        <source>Keycard blocked</source>
-        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
@@ -12924,15 +12933,15 @@ al cargar</translation>
     <name>PaymentRequestCardDelegate</name>
     <message>
         <source>Send %1 %2 to %3</source>
-        <translation>Enviar %1 %2 a %3</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Requested by %1</source>
-        <translation>Solicitado por %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Not available in the testnet mode</source>
-        <translation>No disponible en modo testnet</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

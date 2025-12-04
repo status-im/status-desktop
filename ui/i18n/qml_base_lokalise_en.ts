@@ -3298,6 +3298,31 @@
       <comment>BrowserSettingsMenu</comment>
       <translation>Zoom</translation>
     </message>
+    <message>
+      <source>Clear site data</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clear site data</translation>
+    </message>
+    <message>
+      <source>Use it to reset the current site if it doesn&#39;t load or work properly.</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Use it to reset the current site if it doesn&#39;t load or work properly.</translation>
+    </message>
+    <message>
+      <source>Clearing cache...</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clearing cache...</translation>
+    </message>
+    <message>
+      <source>Clear cache</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clear cache</translation>
+    </message>
+    <message>
+      <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</translation>
+    </message>
   </context>
   <context>
     <name>BrowserTabView</name>
@@ -9281,14 +9306,6 @@
     </message>
   </context>
   <context>
-    <name>FeeRow</name>
-    <message>
-      <source>Max.</source>
-      <comment>FeeRow</comment>
-      <translation>Max.</translation>
-    </message>
-  </context>
-  <context>
     <name>FeesBox</name>
     <message>
       <source>Fees</source>
@@ -10928,11 +10945,6 @@
       <source>PIN correct</source>
       <comment>KeycardEnterPinPage</comment>
       <translation>PIN correct</translation>
-    </message>
-    <message>
-      <source>Keycard blocked</source>
-      <comment>KeycardEnterPinPage</comment>
-      <translation>Keycard blocked</translation>
     </message>
     <message numerus="yes">
       <source>%n attempt(s) remaining</source>
