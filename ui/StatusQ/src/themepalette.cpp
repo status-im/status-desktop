@@ -9,6 +9,9 @@ QColor alpha(QColor c, qreal alpha) {
     return c;
 }
 
+constexpr auto lightThemeName = "light";
+constexpr auto darkThemeName = "dark";
+
 } // unnamed namespace
 
 ThemePalette::ThemePalette(QObject* parent)
@@ -18,9 +21,8 @@ ThemePalette::ThemePalette(QObject* parent)
 
 QColor ThemePalette::hoverColor(const QColor& normalColor) const
 {
-    if (name == QLatin1String("light"))
-        return QColor(normalColor).darker(120);
-    return QColor(normalColor).lighter(120);
+    return name == lightThemeName ? normalColor.darker(120)
+                                  : normalColor.lighter(120);
 }
 
 void ThemePalette::buildArrays()
@@ -55,7 +57,7 @@ void ThemePalette::buildArrays()
 std::unique_ptr<ThemePalette> createDarkThemePalette(QObject* parent)
 {
     auto t = std::make_unique<ThemePalette>(parent);
-    t->name = QStringLiteral("dark");
+    t->name = darkThemeName;
 
     // Base colors
     t->baseColor1 = StatusColors::graphite5;
@@ -249,7 +251,7 @@ std::unique_ptr<ThemePalette> createDarkThemePalette(QObject* parent)
 std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
 {
     auto t = std::make_unique<ThemePalette>(parent);
-    t->name = QStringLiteral("light");
+    t->name = lightThemeName;
 
     // Base colors
     t->baseColor1 = StatusColors::grey5;
