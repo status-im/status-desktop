@@ -19,7 +19,7 @@ Rectangle {
     radius: Theme.radius
     border.width: 1
     border.color: Theme.palette.directColor8
-    color: Theme.palette.transparent
+    color: StatusColors.colors.transparent
 
     ColumnLayout {
         anchors.left: parent.left

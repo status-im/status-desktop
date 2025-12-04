@@ -62,7 +62,7 @@ InformationTag {
             type: StatusBaseButton.Type.Danger
             normalColor: d.foregroundColor
             hoverColor: Theme.palette.hoverColor(normalColor)
-            textColor: Theme.palette.white
+            textColor: StatusColors.colors.white
             radius: root.bgRadius
             text: root.buttonText
             onClicked: root.buttonClicked()

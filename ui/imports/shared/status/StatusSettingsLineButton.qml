@@ -24,7 +24,7 @@ ItemDelegate {
     hoverEnabled: enabled
 
     background: Rectangle {
-        color: hovered ? Theme.palette.backgroundHover : Theme.palette.transparent
+        color: hovered ? Theme.palette.backgroundHover : StatusColors.colors.transparent
         radius: Theme.radius
     }
 

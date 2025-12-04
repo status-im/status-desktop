@@ -154,7 +154,7 @@ Control {
 
             type: StatusBaseButton.Type.Primary
             normalColor: Theme.palette.privacyModeColors.navBarColor
-            textColor: Theme.palette.white
+            textColor: StatusColors.colors.white
 
             text: qsTr("Enable third-party services")
 

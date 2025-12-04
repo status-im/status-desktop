@@ -33,7 +33,7 @@ Control {
     background: Rectangle {
         id: backgroundItem
         radius: 6
-        color: root.hovered ? Theme.palette.primaryColor3 : Theme.palette.transparent
+        color: root.hovered ? Theme.palette.primaryColor3 : StatusColors.colors.transparent
 
         Behavior on color { ColorAnimation { duration: 200 } }
 

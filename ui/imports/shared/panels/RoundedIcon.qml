@@ -19,7 +19,7 @@ Rectangle {
     property alias iconWidth: roundedIconImage.width
     property alias iconHeight: roundedIconImage.height
     property alias rotation: roundedIconImage.rotation
-    property color iconColor: Theme.palette.transparent
+    property color iconColor: StatusColors.colors.transparent
 
     color: Theme.palette.primaryColor1
     radius: width / 2

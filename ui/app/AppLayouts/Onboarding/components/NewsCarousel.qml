@@ -44,7 +44,7 @@ Control {
             text: newsPage.primaryText
             horizontalAlignment: Text.AlignHCenter
             font.weight: Font.DemiBold
-            color: Theme.palette.white
+            color: StatusColors.colors.white
             wrapMode: Text.WordWrap
         }
 
@@ -53,7 +53,7 @@ Control {
             text: newsPage.secondaryText
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Theme.additionalTextSize
-            color: Theme.palette.white
+            color: StatusColors.colors.white
             wrapMode: Text.WordWrap
         }
 

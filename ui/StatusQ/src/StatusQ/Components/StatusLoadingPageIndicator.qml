@@ -50,7 +50,7 @@ PageIndicator {
 
                 height: parent.height
                 color: pageIndicatorDelegate.isCurrentPage ?
-                           Theme.palette.baseColor1 : Theme.palette.transparent
+                           Theme.palette.baseColor1 : StatusColors.colors.transparent
                 radius: 4
             }
         }

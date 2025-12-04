@@ -16,7 +16,7 @@ Rectangle {
     width: children[0].width + 10
     height: 32
     border.color: Theme.palette.border
-    color: Theme.palette.transparent
+    color: StatusColors.colors.transparent
 
     StyledText {
         id: suggestedChannelText

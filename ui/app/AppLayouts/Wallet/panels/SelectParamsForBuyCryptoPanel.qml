@@ -42,7 +42,7 @@ ColumnLayout {
         statusListItemTitle.color: Theme.palette.directColor1
         asset.name: !!root.selectedProvider ? root.selectedProvider.logoUrl: ""
         asset.isImage: true
-        color: Theme.palette.transparent
+        color: StatusColors.colors.transparent
         enabled: false
     }
 

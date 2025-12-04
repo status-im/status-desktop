@@ -22,7 +22,7 @@ Rectangle {
     implicitWidth: 208
     implicitHeight: layout.height
     color: radioControl.checked ? Theme.palette.secondaryBackground :
-                                  (isHovered ? Theme.palette.backgroundHover : Theme.palette.transparent)
+                                  (isHovered ? Theme.palette.backgroundHover : StatusColors.colors.transparent)
 
     radius: Theme.radius
 

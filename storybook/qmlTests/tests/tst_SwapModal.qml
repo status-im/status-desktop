@@ -248,7 +248,7 @@ Item {
                     verify(delegateUnderTest.color, Theme.palette.statusListItem.highlightColor)
                 }
                 else {
-                    verify(delegateUnderTest.color, Theme.palette.transparent)
+                    verify(delegateUnderTest.color, StatusColors.colors.transparent)
                 }
 
                 // TODO: always null not sure why

@@ -84,7 +84,7 @@ Item {
         \qmlproperty color StatusImageCrop::wallColor
         Color used outside the crop-rect. Tells user which part won't be available after cropping
     */
-    property color wallColor: Theme.palette.black
+    property color wallColor: StatusColors.colors.black
     /*!
         \qmlproperty real StatusImageCrop::wallTransparency
         Transparency outside the crop-rect 0.0 - 1.0 (inclusive). Tells user which part won't

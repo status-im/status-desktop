@@ -73,7 +73,7 @@ Rectangle {
     StatusPickerButton {
         width: 175
         bgColor: Theme.palette.primaryColor1
-        contentColor: Theme.palette.white
+        contentColor: StatusColors.colors.white
         text: qsTr("Get Status %1").arg(root.newVersion)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: newVersionAvailableText.bottom

@@ -51,7 +51,7 @@ Rectangle {
             titleTextIcon: !!root.keyPair && keyPair.migratedToKeycard ? "keycard": ""
             subTitle: Utils.getKeypairLocation(root.keyPair, false)
             statusListItemSubTitle.color: Utils.getKeypairLocationColor(Theme.palette, root.keyPair)
-            color: Theme.palette.transparent
+            color: StatusColors.colors.transparent
             asset {
                 width: !!root.keyPair && keyPair.icon? root.Theme.bigPadding : 40
                 height: !!root.keyPair && keyPair.icon? root.Theme.bigPadding : 40

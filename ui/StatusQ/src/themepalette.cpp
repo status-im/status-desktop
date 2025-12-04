@@ -5,9 +5,6 @@
 ThemePalette::ThemePalette(QObject* parent)
     : QObject(parent)
 {
-    black = QColor(0,0,0);
-    white = QColor(255,255,255);
-    transparent = QColor(0,0,0,0);
 }
 
 QColor ThemePalette::hoverColor(const QColor& normalColor) const
@@ -328,7 +325,7 @@ std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
     t->blockProgressBarColor = t->baseColor3;
     t->cardColor = t->indirectColor1;
 
-    t->background = t->white;
+    t->background = StatusColors::getColor("white");
     t->backgroundHover = t->baseColor2;
     t->border = t->baseColor2;
     t->textColor = t->directColor1;
@@ -339,17 +336,17 @@ std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
     t->secondaryMenuBackground = t->baseColor4;
 
     // Status app layout
-    t->statusAppLayout.backgroundColor = t->white;
-    t->statusAppLayout.rightPanelBackgroundColor = t->white;
+    t->statusAppLayout.backgroundColor = StatusColors::getColor("white");
+    t->statusAppLayout.rightPanelBackgroundColor = StatusColors::getColor("white");
 
     // Status app nav bar
     t->statusAppNavBar.backgroundColor = t->baseColor2;
 
     // Status toast message
-    t->statusToastMessage.backgroundColor = t->white;
+    t->statusToastMessage.backgroundColor = StatusColors::getColor("white");
 
     // Status list item
-    t->statusListItem.backgroundColor = t->white;
+    t->statusListItem.backgroundColor = StatusColors::getColor("white");
     t->statusListItem.secondaryHoverBackgroundColor = StatusColors::getColor("blue6");
     t->statusListItem.highlightColor = StatusColors::getColor("blue", 0.05);
 
@@ -365,20 +362,20 @@ std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
     t->statusNavigationListItem.selectedBackgroundColor = t->baseColor3;
 
     // Status badge
-    t->statusBadge.foregroundColor = t->white;
+    t->statusBadge.foregroundColor = StatusColors::getColor("white");
     t->statusBadge.borderColor = t->baseColor4;
     t->statusBadge.hoverBorderColor = QColor(0xDD, 0xE3, 0xF3);
 
     // Status menu
-    t->statusMenu.backgroundColor = t->white;
+    t->statusMenu.backgroundColor = StatusColors::getColor("white");
     t->statusMenu.hoverBackgroundColor = t->baseColor2;
     t->statusMenu.separatorColor = t->separator;
 
     // Status modal
-    t->statusModal.backgroundColor = t->white;
+    t->statusModal.backgroundColor = StatusColors::getColor("white");
 
     // Status rounded image
-    t->statusRoundedImage.backgroundColor = t->white;
+    t->statusRoundedImage.backgroundColor = StatusColors::getColor("white");
 
     // Status chat input
     t->statusChatInput.secondaryBackgroundColor = QColor(0xE2, 0xE6, 0xE8);
@@ -390,7 +387,7 @@ std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
     t->statusSwitchTab.textColor = t->primaryColor1;
 
     // Status select
-    t->statusSelect.menuItemBackgroundColor = t->white;
+    t->statusSelect.menuItemBackgroundColor = StatusColors::getColor("white");
     t->statusSelect.menuItemHoverBackgroundColor = t->baseColor2;
 
     // Status message

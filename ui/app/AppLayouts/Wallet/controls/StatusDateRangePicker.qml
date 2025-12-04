@@ -54,7 +54,7 @@ StatusDialog {
                 StatusFlatButton {
                     horizontalPadding: 0
                     verticalPadding: 0
-                    hoverColor: Theme.palette.transparent
+                    hoverColor: StatusColors.colors.transparent
                     text: qsTr("Now")
                     enabled: !toInput.isTodaySelected
                     onClicked: toInput.selectedDate = new Date()
@@ -96,7 +96,7 @@ StatusDialog {
                 Layout.preferredHeight: toInput.control.height
                 text: qsTr("Reset")
                 enabled: fromInput.hasChange || toInput.hasChange
-                normalColor: Theme.palette.transparent
+                normalColor: StatusColors.colors.transparent
                 borderColor: Theme.palette.baseColor2
                 onClicked: {
                     fromInput.selectedDate = new Date(root.fromTimestamp)

@@ -46,7 +46,7 @@ StatusListItem {
             return Theme.palette.baseColor2
         }
 
-        return Theme.palette.transparent
+        return StatusColors.colors.transparent
     }
     title: root.keyPairName
     statusListItemTitleAside.textFormat: Text.RichText

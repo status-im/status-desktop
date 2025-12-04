@@ -65,7 +65,7 @@ CheckBox {
                     ? d.indicatorIconHeightRegular : d.indicatorIconHeightSmall
             anchors.centerIn: parent
             anchors.horizontalCenterOffset: root.mirrored ? - 1 : 1
-            color: checkState === Qt.PartiallyChecked ? Theme.palette.directColor9 : Theme.palette.white
+            color: checkState === Qt.PartiallyChecked ? Theme.palette.directColor9 : StatusColors.colors.white
             opacity: checkState !== Qt.Unchecked ? 1 : 0
             visible: opacity > 0
             Behavior on opacity { OpacityAnimator { duration: ThemeUtils.AnimationDuration.Fast } }
