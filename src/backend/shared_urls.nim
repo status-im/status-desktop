@@ -11,16 +11,10 @@ proc shareCommunityUrlWithData*(communityId: string): RpcResponse[JsonNode] =
   return callPrivateRPC("shareCommunityURLWithData".prefix, %*[communityId])
 
 proc shareCommunityChannelUrlWithChatKey*(communityId: string, channelId: string): RpcResponse[JsonNode] =
-  return callPrivateRPC("shareCommunityChannelURLWithChatKey".prefix, %*[{
-    "communityId": communityId,
-    "channelId": channelId
-  }])
+  return callPrivateRPC("shareCommunityChannelURLWithChatKey".prefix, %*[communityId, channelId])
 
 proc shareCommunityChannelUrlWithData*(communityId: string, channelId: string): RpcResponse[JsonNode] =
-  return callPrivateRPC("shareCommunityChannelURLWithData".prefix, %*[{
-    "communityId": communityId,
-    "channelId": channelId
-  }])
+  return callPrivateRPC("shareCommunityChannelURLWithData".prefix, %*[communityId, channelId])
 
 proc shareUserUrlWithData*(pubkey: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("shareUserURLWithData".prefix, %*[pubkey])
