@@ -8,88 +8,88 @@ using namespace Qt::StringLiterals;
 namespace {
 
 const QVariantMap s_colors = {
-    { "black"_L1,              QColor(0x00, 0x00, 0x00) },
-    { "white"_L1,              QColor(0xFF, 0xFF, 0xFF) },
-    { "transparent"_L1,        QColor(0x00, 0x00, 0x00, 0x00) },
+    { "black"_L1,              StatusColors::black },
+    { "white"_L1,              StatusColors::white },
+    { "transparent"_L1,        StatusColors::transparent },
 
-    { "blue"_L1,               QColor(0x43, 0x60, 0xDF) },
-    { "blue2"_L1,              QColor(0x29, 0x46, 0xC4) },
-    { "blue3"_L1,              QColor(0x88, 0xB0, 0xFF) },
-    { "blue4"_L1,              QColor(0x86, 0x9E, 0xFF) },
-    { "blue5"_L1,              QColor(0xAA, 0xC6, 0xFF) },
-    { "blue6"_L1,              QColor(0xEC, 0xEF, 0xFC) },
-    { "blue7"_L1,              QColor(0x09, 0x10, 0x1C) },
-    { "blue8"_L1,              QColor(0x6B, 0x6F, 0x76) },
+    { "blue"_L1,               StatusColors::blue },
+    { "blue2"_L1,              StatusColors::blue2 },
+    { "blue3"_L1,              StatusColors::blue3 },
+    { "blue4"_L1,              StatusColors::blue4 },
+    { "blue5"_L1,              StatusColors::blue5 },
+    { "blue6"_L1,              StatusColors::blue6 },
+    { "blue7"_L1,              StatusColors::blue7 },
+    { "blue8"_L1,              StatusColors::blue8 },
 
-    { "brown"_L1,              QColor(0x8B, 0x31, 0x31) },
-    { "brown2"_L1,             QColor(0x9B, 0x83, 0x2F) },
-    { "brown3"_L1,             QColor(0xAD, 0x43, 0x43) },
+    { "brown"_L1,              StatusColors::brown },
+    { "brown2"_L1,             StatusColors::brown2 },
+    { "brown3"_L1,             StatusColors::brown3 },
 
-    { "cyan"_L1,               QColor(0x51, 0xD0, 0xF0) },
+    { "cyan"_L1,               StatusColors::cyan },
 
-    { "graphite"_L1,           QColor(0x21, 0x21, 0x21) },
-    { "graphite2"_L1,          QColor(0x25, 0x25, 0x25) },
-    { "graphite3"_L1,          QColor(0x2C, 0x2C, 0x2C) },
-    { "graphite4"_L1,          QColor(0x37, 0x37, 0x37) },
-    { "graphite5"_L1,          QColor(0x90, 0x90, 0x90) },
+    { "graphite"_L1,           StatusColors::graphite },
+    { "graphite2"_L1,          StatusColors::graphite2 },
+    { "graphite3"_L1,          StatusColors::graphite3 },
+    { "graphite4"_L1,          StatusColors::graphite4 },
+    { "graphite5"_L1,          StatusColors::graphite5 },
 
-    { "green"_L1,              QColor(0x4E, 0xBC, 0x60) },
-    { "green2"_L1,             QColor(0x7C, 0xDA, 0x00) },
-    { "green3"_L1,             QColor(0x60, 0xC3, 0x70) },
-    { "green4"_L1,             QColor(0x93, 0xDB, 0x33) },
-    { "green5"_L1,             QColor(0x9E, 0xA8, 0x5D) },
-    { "green6"_L1,             QColor(0xAF, 0xB5, 0x51) },
+    { "green"_L1,              StatusColors::green },
+    { "green2"_L1,             StatusColors::green2 },
+    { "green3"_L1,             StatusColors::green3 },
+    { "green4"_L1,             StatusColors::green4 },
+    { "green5"_L1,             StatusColors::green5 },
+    { "green6"_L1,             StatusColors::green6 },
 
-    { "grey"_L1,               QColor(0xF0, 0xF2, 0xF5) },
-    { "grey2"_L1,              QColor(0xF6, 0xF8, 0xFA) },
-    { "grey3"_L1,              QColor(0xE9, 0xED, 0xF1) },
-    { "grey4"_L1,              QColor(0xEE, 0xF2, 0xF5) },
-    { "grey5"_L1,              QColor(0x93, 0x9B, 0xA1) },
+    { "grey"_L1,               StatusColors::grey },
+    { "grey2"_L1,              StatusColors::grey2 },
+    { "grey3"_L1,              StatusColors::grey3 },
+    { "grey4"_L1,              StatusColors::grey4 },
+    { "grey5"_L1,              StatusColors::grey5 },
 
-    { "moss"_L1,               QColor(0x26, 0xA6, 0x9A) },
-    { "moss2"_L1,              QColor(0x10, 0xA8, 0x8E) },
+    { "moss"_L1,               StatusColors::moss },
+    { "moss2"_L1,              StatusColors::moss2 },
 
-    { "orange"_L1,             QColor(0xFE, 0x8F, 0x59) },
-    { "orange2"_L1,            QColor(0xFF, 0x9F, 0x0F) },
-    { "orange3"_L1,            QColor(0xFF, 0xA6, 0x7B) },
-    { "orange4"_L1,            QColor(0xFE, 0x8F, 0x59) },
+    { "orange"_L1,             StatusColors::orange },
+    { "orange2"_L1,            StatusColors::orange2 },
+    { "orange3"_L1,            StatusColors::orange3 },
+    { "orange4"_L1,            StatusColors::orange4 },
 
-    { "warning_orange"_L1,     QColor(0xF6, 0x79, 0x3C) },
+    { "warning_orange"_L1,     StatusColors::warning_orange },
 
-    { "purple"_L1,             QColor(0x88, 0x7A, 0xF9) },
+    { "purple"_L1,             StatusColors::purple },
 
-    { "red"_L1,                QColor(0xFF, 0x2D, 0x55) },
-    { "red2"_L1,               QColor(0xFA, 0x65, 0x65) },
-    { "red3"_L1,               QColor(0xFF, 0x5C, 0x7B) },
+    { "red"_L1,                StatusColors::red },
+    { "red2"_L1,               StatusColors::red2 },
+    { "red3"_L1,               StatusColors::red3 },
 
-    { "turquoise"_L1,          QColor(0x0D, 0xA4, 0xC9) },
-    { "turquoise2"_L1,         QColor(0x07, 0xBC, 0xE9) },
-    { "turquoise3"_L1,         QColor(0x7B, 0xE5, 0xFF) },
-    { "turquoise4"_L1,         QColor(0x0D, 0xA4, 0xC9) },
+    { "turquoise"_L1,          StatusColors::turquoise },
+    { "turquoise2"_L1,         StatusColors::turquoise2 },
+    { "turquoise3"_L1,         StatusColors::turquoise3 },
+    { "turquoise4"_L1,         StatusColors::turquoise4 },
 
-    { "violet"_L1,             QColor(0xD3, 0x7E, 0xF4) },
+    { "violet"_L1,             StatusColors::violet },
 
-    { "yellow"_L1,             QColor(0xFF, 0xCA, 0x0F) },
-    { "yellow2"_L1,            QColor(0xEA, 0xD2, 0x7B) },
+    { "yellow"_L1,             StatusColors::yellow },
+    { "yellow2"_L1,            StatusColors::yellow2 },
 
-    { "blueHijab"_L1,          QColor(0xCD, 0xF2, 0xFB) },
+    { "blueHijab"_L1,          StatusColors::blueHijab },
 
-    { "lightPattensBlue"_L1,   QColor(0xD7, 0xDE, 0xE4) },
+    { "lightPattensBlue"_L1,   StatusColors::lightPattensBlue },
 
-    { "blackHovered"_L1,       QColor(0x1D, 0x23, 0x2E) },
-    { "blueHovered"_L1,        QColor(0x36, 0x4D, 0xB2) },
-    { "purpleHovered"_L1,      QColor(0x6D, 0x62, 0xC7) },
-    { "cyanHovered"_L1,        QColor(0x41, 0xA6, 0xC0) },
-    { "violetHovered"_L1,      QColor(0xA9, 0x65, 0xC3) },
-    { "redHovered"_L1,         QColor(0xC8, 0x51, 0x51) },
-    { "yellowHovered"_L1,      QColor(0xCC, 0xA2, 0x0C) },
-    { "greenHovered"_L1,       QColor(0x63, 0xAE, 0x00) },
-    { "mossHovered"_L1,        QColor(0x1E, 0x85, 0x7B) },
-    { "brownHovered"_L1,       QColor(0x6F, 0x27, 0x27) },
-    { "brown2Hovered"_L1,      QColor(0x7C, 0x69, 0x26) },
+    { "blackHovered"_L1,       StatusColors::blackHovered },
+    { "blueHovered"_L1,        StatusColors::blueHovered },
+    { "purpleHovered"_L1,      StatusColors::purpleHovered },
+    { "cyanHovered"_L1,        StatusColors::cyanHovered },
+    { "violetHovered"_L1,      StatusColors::violetHovered },
+    { "redHovered"_L1,         StatusColors::redHovered },
+    { "yellowHovered"_L1,      StatusColors::yellowHovered },
+    { "greenHovered"_L1,       StatusColors::greenHovered },
+    { "mossHovered"_L1,        StatusColors::mossHovered },
+    { "brownHovered"_L1,       StatusColors::brownHovered },
+    { "brown2Hovered"_L1,      StatusColors::brown2Hovered },
 
-    { "lightDesktopBlue10"_L1, QColor(0xEC, 0xEF, 0xFB) },
-    { "darkDesktopBlue10"_L1,  QColor(0x27, 0x32, 0x51) }
+    { "lightDesktopBlue10"_L1, StatusColors::lightDesktopBlue10 },
+    { "darkDesktopBlue10"_L1,  StatusColors::darkDesktopBlue10 }
 };
 
 } // unnamed namespace
@@ -114,16 +114,12 @@ QColor StatusColors::getColor(const QString& name, qreal alpha)
         base = QColor::fromString(name);
     }
 
-    if (alpha > 0.0 && alpha <= 1.0)
-        base.setAlphaF(alpha);
-
-    return base;
+    return alphaColor(base, alpha);
 }
 
 QColor StatusColors::alphaColor(const QColor& color, qreal alpha)
 {
     QColor c = color;
-    if (alpha > 0.0 && alpha <= 1.0)
-        c.setAlphaF(alpha);
+    c.setAlphaF(std::clamp(alpha, 0.0, 1.0));
     return c;
 }
