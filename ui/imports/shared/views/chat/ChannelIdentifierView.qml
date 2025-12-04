@@ -12,7 +12,10 @@ import shared.panels
 Column {
     id: root
     spacing: Theme.padding
-    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.leftMargin: Theme.bigPadding
+    anchors.rightMargin: Theme.bigPadding
     topPadding: visible ? Theme.bigPadding : 0
     bottomPadding: visible? 50 : 0
 
