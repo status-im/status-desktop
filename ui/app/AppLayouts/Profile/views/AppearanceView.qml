@@ -39,7 +39,7 @@ SettingsContentBase {
 
             radius: Theme.radius
             border.color: Theme.palette.border
-            color: StatusColors.colors.transparent
+            color: StatusColors.transparent
 
             MessageView {
                 id: placeholderMessage

@@ -103,7 +103,7 @@ Item {
                     if (!inputBox.readOnly && inputValue.focus) {
                         return Theme.palette.primaryColor1
                     }
-                    return StatusColors.colors.transparent
+                    return StatusColors.transparent
                 }
             }
             onEditingFinished: inputBox.editingFinished(inputBox.text)

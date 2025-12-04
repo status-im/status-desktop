@@ -87,7 +87,7 @@ Item {
         id: controller
 
         enabledColor: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
-        frozenColor: StatusColors.getColor('grey5')
+        frozenColor: StatusColors.grey5
         errorColor: Theme.palette.dangerColor1
         warningColor: Theme.palette.warningColor1
         complainTooBigAccIndex: d.detectedStandardBasePath

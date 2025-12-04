@@ -170,8 +170,8 @@ Control {
             asset.bgWidth: asset.width
             asset.bgHeight: asset.height
             asset.name: root.badgeIconName
-            asset.bgColor: StatusColors.colors.transparent
-            asset.color: StatusColors.colors.transparent
+            asset.bgColor: StatusColors.transparent
+            asset.color: StatusColors.transparent
 
             anchors.right:  avatarImg.right
             anchors.bottom: avatarImg.bottom

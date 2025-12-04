@@ -101,7 +101,7 @@ StatusModal {
                     x: 16
                     y: 16
                     text: root.color.toString()
-                    color: StatusColors.colors.white
+                    color: StatusColors.white
                 }
             }
 

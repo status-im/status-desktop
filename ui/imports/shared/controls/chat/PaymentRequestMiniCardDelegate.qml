@@ -52,7 +52,7 @@ CalloutCard {
                     anchors.horizontalCenter: parent.right
                     asset.width: 16
                     asset.height: 16
-                    asset.bgColor: root.containsMouse ? StatusColors.colors.transparent : Theme.palette.background
+                    asset.bgColor: root.containsMouse ? StatusColors.transparent : Theme.palette.background
                     asset.bgHeight: 20
                     asset.bgWidth: 20
                     asset.isImage: true

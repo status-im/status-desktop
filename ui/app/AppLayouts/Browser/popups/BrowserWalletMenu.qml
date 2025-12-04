@@ -161,7 +161,7 @@ Dialog {
             anchors.right: sendBtn.left
             anchors.rightMargin: Theme.padding
             anchors.verticalCenter: accountSelector.verticalCenter
-            color: StatusColors.colors.transparent
+            color: StatusColors.transparent
             textToCopy: accountSelector.currentAccountAddress
             onCopyClicked: ClipboardUtils.setText(textToCopy)
         }

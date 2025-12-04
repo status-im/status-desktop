@@ -52,7 +52,7 @@ StatusDialog {
                 Rectangle {
                     implicitWidth: scrolView1.availableWidth
                     implicitHeight: listview.height
-                    color: StatusColors.colors.transparent
+                    color: StatusColors.transparent
                     border.color: Theme.palette.baseColor2
                     border.width: 1
                     radius: 8
@@ -67,7 +67,7 @@ StatusDialog {
                                 id: delegate
                                 width: parent.width
                                 account : model.account
-                                color: StatusColors.colors.transparent
+                                color: StatusColors.transparent
                                 nextIconVisible: false
                                 components: StatusBaseText {
                                     font.pixelSize: Theme.primaryTextFontSize

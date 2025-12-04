@@ -27,7 +27,7 @@ Control {
     }
 
     background: Rectangle {
-        color: StatusColors.colors.transparent
+        color: StatusColors.transparent
         radius: Theme.radius
         border.color: Theme.palette.baseColor2
     }

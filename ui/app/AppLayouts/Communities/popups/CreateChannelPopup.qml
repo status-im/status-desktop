@@ -742,7 +742,7 @@ StatusStackModal {
                         height: 44
                         anchors.bottom: parent.bottom
                         bgColor: colorPanel.colorSelected ? colorPanel.color : Theme.palette.baseColor2
-                        contentColor: colorPanel.colorSelected ? StatusColors.colors.white : Theme.palette.baseColor1
+                        contentColor: colorPanel.colorSelected ? StatusColors.white : Theme.palette.baseColor1
                         text: colorPanel.colorSelected ? colorPanel.color.toString().toUpperCase() : qsTr("Pick a colour")
                         onClicked: { d.currentPage = CreateChannelPopup.CurrentPage.ColorPicker; d.colorPickerOpened = true; }
                         onTextChanged: {

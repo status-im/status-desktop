@@ -70,7 +70,7 @@ StatusButton {
                 display: AbstractButton.IconOnly
                 text: ""
                 tooltip.text: qsTr("Uninstall")
-                textColor: StatusColors.colors.white
+                textColor: StatusColors.white
                 normalColor: Theme.palette.successColor1
                 hoverColor: Theme.palette.hoverColor(normalColor)
             }

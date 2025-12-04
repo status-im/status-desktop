@@ -92,7 +92,7 @@ Popup {
             anchors.right: parent.right
             anchors.rightMargin: 12
             radius: 8
-            color: hovered ? Theme.palette.backgroundHover : StatusColors.colors.transparent
+            color: hovered ? Theme.palette.backgroundHover : StatusColors.transparent
 
             SVGImage {
                 id: closeModalImg

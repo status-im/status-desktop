@@ -26,7 +26,7 @@ Control {
 
     background: StatusComboboxBackground {
         border.width: 1
-        color: StatusColors.colors.transparent
+        color: StatusColors.transparent
     }
 
     contentItem: Loader {

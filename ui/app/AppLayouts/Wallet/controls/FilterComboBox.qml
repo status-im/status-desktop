@@ -318,7 +318,7 @@ ComboBox {
                 height: 8
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: 1
-                color: d.allVisuallyChecked ? Theme.palette.baseColor1 : StatusColors.colors.white
+                color: d.allVisuallyChecked ? Theme.palette.baseColor1 : StatusColors.white
                 visible: menuDelegate.down || menuDelegate.checkState !== Qt.Unchecked || d.allVisuallyChecked
             }
         }

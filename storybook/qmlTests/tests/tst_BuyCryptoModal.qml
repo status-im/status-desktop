@@ -207,7 +207,7 @@ Item {
             compare(selectParamsForBuyCryptoPanelHeader.subTitle, qsTr("Select which network and asset"))
             compare(selectParamsForBuyCryptoPanelHeader.statusListItemTitle.color, Theme.palette.directColor1)
             compare(selectParamsForBuyCryptoPanelHeader.asset.name, !!controlUnderTest.selectedProviderEntry.item  ? controlUnderTest.selectedProviderEntry.item .logoUrl: "")
-            compare(selectParamsForBuyCryptoPanelHeader.color, StatusColors.colors.transparent)
+            compare(selectParamsForBuyCryptoPanelHeader.color, StatusColors.transparent)
             compare(selectParamsForBuyCryptoPanelHeader.enabled, false)
 
             const networkFilter = findChild(selectParamsPanel, "networkFilter")

@@ -353,7 +353,7 @@ QtObject {
     function colorForColorId(palette, colorId)  {
         if (colorId < 0 || colorId >= palette.userCustomizationColors.length) {
             console.warn("Utils.colorForColorId : colorId is out of bounds")
-            return StatusColors.colors['blue']
+            return StatusColors.blue
         }
         return palette.userCustomizationColors[colorId]
     }
@@ -514,7 +514,7 @@ QtObject {
         case Constants.walletAccountColors.magenta.toUpperCase():
             return palette.customisationColors.magenta
         case Constants.walletAccountColors.yinYang.toUpperCase():
-            return palette.name === Constants.lightThemeName ? StatusColors.getColor('blackHovered'): StatusColors.getColor('grey4') // FIXME introduce symbolic color names
+            return palette.name === Constants.lightThemeName ? StatusColors.blackHovered: StatusColors.grey4 // FIXME introduce symbolic color names
         case Constants.walletAccountColors.undefinedAccount.toUpperCase():
             return palette.baseColor1
         default:

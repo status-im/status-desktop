@@ -19,7 +19,7 @@ InformationTag {
     customBackground: Component {
         Rectangle {
             radius: 36
-            color: StatusColors.colors.transparent
+            color: StatusColors.transparent
             border.width: 1
             border.color: Theme.palette.baseColor2
         }

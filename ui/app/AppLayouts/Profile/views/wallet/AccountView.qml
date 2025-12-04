@@ -114,7 +114,7 @@ ColumnLayout {
         radius: Theme.radius
         border.width: 1
         border.color: Theme.palette.directColor8
-        color: StatusColors.colors.transparent
+        color: StatusColors.transparent
 
         ColumnLayout {
             width: parent.width
@@ -234,7 +234,7 @@ ColumnLayout {
         title: qsTr("Include in total balances and activity")
         objectName: "includeTotalBalanceListItem"
         visible: d.watchOnlyAccount
-        color: StatusColors.colors.transparent
+        color: StatusColors.transparent
         components: [
             StatusSwitch {
                 checked: !!root.account && !account.hideFromTotalBalance

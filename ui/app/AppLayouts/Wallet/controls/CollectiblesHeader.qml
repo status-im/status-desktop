@@ -19,7 +19,7 @@ Rectangle {
     id: collectibleHeader
     height: 64
     width: parent.width
-    color: hovered ? Theme.palette.backgroundHover : StatusColors.colors.transparent
+    color: hovered ? Theme.palette.backgroundHover : StatusColors.transparent
     border.width: 0
     radius: Theme.radius
 
@@ -96,7 +96,7 @@ Rectangle {
             ColorOverlay {
                 anchors.fill: caretImg
                 source: caretImg
-                color: StatusColors.colors.black
+                color: StatusColors.black
             }
         }
     }

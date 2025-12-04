@@ -102,7 +102,7 @@ StatusScrollView {
             StatusBaseText {
                 anchors.centerIn: parent
                 text: qsTr("White text should be legible on top of this colour")
-                color: StatusColors.colors.white
+                color: StatusColors.white
             }
         }
 

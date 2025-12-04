@@ -46,7 +46,7 @@ Switch {
             width: 20
             height: 20
             radius: 10
-            color: StatusColors.colors.white
+            color: StatusColors.white
             layer.enabled: true
             layer.effect: DropShadow {
                 width: circle.width

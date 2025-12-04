@@ -26,9 +26,9 @@ Control {
                 asset.color: Theme.palette.baseColor1
                 asset.bgColor: root.biometricsAvailable ?
                                    Theme.palette.baseColor2:
-                                   StatusColors.colors.transparent
+                                   StatusColors.transparent
                 asset.bgBorderColor: root.biometricsAvailable ?
-                                         StatusColors.colors.transparent:
+                                         StatusColors.transparent:
                                          Theme.palette.baseColor2
                 asset.bgBorderWidth: 1
             }

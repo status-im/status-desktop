@@ -14,5 +14,5 @@ Rectangle {
     radius: height / 2
     border.width: 1
     border.color: Theme.palette.directColor7
-    color: StatusColors.colors.transparent
+    color: StatusColors.transparent
 }

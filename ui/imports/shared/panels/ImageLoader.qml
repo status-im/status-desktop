@@ -44,7 +44,7 @@ Rectangle {
             when: image.status === Image.Ready
             PropertyChanges {
                 target: root
-                color: StatusColors.colors.transparent
+                color: StatusColors.transparent
             }
             PropertyChanges {
                 target: loader

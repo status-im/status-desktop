@@ -22,7 +22,7 @@ Control {
         radius: Theme.radius
         border.width: 1
         border.color: Theme.palette.baseColor2
-        color: StatusColors.colors.transparent
+        color: StatusColors.transparent
     }
 
     contentItem: ColumnLayout {

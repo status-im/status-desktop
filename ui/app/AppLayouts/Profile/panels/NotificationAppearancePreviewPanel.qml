@@ -20,7 +20,7 @@ Control {
     background: Rectangle {
         color: radioButton.checked ? Theme.palette.secondaryBackground :
                                      (isHovered ? Theme.palette.backgroundHover
-                                                : StatusColors.colors.transparent)
+                                                : StatusColors.transparent)
         radius: Theme.radius
     }
 

@@ -204,7 +204,7 @@ Item {
                         asset.name: model.imageSource
                         asset.isImage: true
                         asset.isLetterIdenticon: !asset.name
-                        asset.color: StatusColors.getColor("red2")
+                        asset.color: StatusColors.red2
                     }
 
                     TokenHolderNumberCell {

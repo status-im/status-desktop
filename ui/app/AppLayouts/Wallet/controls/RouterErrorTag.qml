@@ -79,8 +79,8 @@ Control {
 
                 checkable: true
                 size: StatusBaseButton.Size.Small
-                normalColor: StatusColors.colors.transparent
-                hoverColor: StatusColors.colors.transparent
+                normalColor: StatusColors.transparent
+                hoverColor: StatusColors.transparent
                 textColor: Theme.palette.dangerColor1
                 textHoverColor: Theme.palette.hoverColor(textColor)
                 font.pixelSize: Theme.tertiaryTextFontSize
