@@ -26,12 +26,12 @@ QtObject {
         return timestamp + Constants.time.secondsIn7Days
     }
 
-    function addressToDisplay(address, shortForm, hovered) {
+    function addressToDisplay(palette, address, shortForm, hovered) {
         let finalAddress = address
         if (shortForm) {
             finalAddress = StatusQUtils.Utils.elideText(address,6,4)
         }
-        return hovered ? Utils.richColorText(finalAddress, Theme.palette.directColor1) : finalAddress
+        return hovered ? Utils.richColorText(finalAddress, palette.directColor1) : finalAddress
     }
 
     /**
@@ -356,12 +356,12 @@ QtObject {
         }
     }
 
-    function getChangePct24HourColor(changePct24hour) {
+    function getChangePct24HourColor(palette, changePct24hour) {
         if (changePct24hour === 0)
-            return Theme.palette.baseColor1
+            return palette.baseColor1
         return changePct24hour < 0
-                ? Theme.palette.dangerColor1
-                : Theme.palette.successColor1
+                ? palette.dangerColor1
+                : palette.successColor1
     }
 
     function getUpDownTriangle(changePct24hour) {

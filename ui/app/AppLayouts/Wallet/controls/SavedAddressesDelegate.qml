@@ -56,7 +56,7 @@ StatusListItem {
         if (ens.length > 0)
             return ens
         else {
-            return WalletUtils.addressToDisplay(root.address, false, sensor.containsMouse)
+            return WalletUtils.addressToDisplay(Theme.palette, root.address, false, sensor.containsMouse)
         }
     }
 

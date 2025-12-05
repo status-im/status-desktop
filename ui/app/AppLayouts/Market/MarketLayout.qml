@@ -144,7 +144,8 @@ StatusSectionLayout {
                 changePct24Hour: qsTr("%1 %2%", "[up/down/none character depending on value sign] [localized percentage value]%")
                 .arg(WalletUtils.getUpDownTriangle(model.priceChangePercentage24h))
                 .arg(LocaleUtils.numberToLocaleString(model.priceChangePercentage24h, 2))
-                changePct24HourColor: WalletUtils.getChangePct24HourColor(model.priceChangePercentage24h)
+                changePct24HourColor: WalletUtils.getChangePct24HourColor(
+                                          Theme.palette, model.priceChangePercentage24h)
                 volume24Hour: "%1%2"
                 .arg(root.currencySymbol)
                 .arg(root.fnFormatCurrencyAmount(model.totalVolume, {noSymbol: true}))

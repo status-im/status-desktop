@@ -20,9 +20,8 @@ ProfileShowcasePanel {
     searchPlaceholderText: qsTr("Search account name or address")
     delegate: ProfileShowcasePanelDelegate {
         title: model ? model.name : ""
-        secondaryTitle: WalletUtils.addressToDisplay(model ? model.address ?? "" : "",
-                                                     true,
-                                                     containsMouse)
+        secondaryTitle: WalletUtils.addressToDisplay(Theme.palette, model ? model.address ?? "" : "",
+                                                     true, containsMouse)
         hasEmoji: model && !!model.emoji
         hasIcon: !hasEmoji
         icon.name: hasEmoji ? model.emoji : "filled-account"

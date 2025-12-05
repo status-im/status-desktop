@@ -39,8 +39,8 @@ StatusListItem {
 
         readonly property string textColor: {
             if (!root.marketDetailsAvailable)
-                return Theme.palette.successColor1
-            return WalletUtils.getChangePct24HourColor(root.marketChangePct24hour)
+                return root.Theme.palette.successColor1
+            return WalletUtils.getChangePct24HourColor(root.Theme.palette, root.marketChangePct24hour)
         }
     }
 
