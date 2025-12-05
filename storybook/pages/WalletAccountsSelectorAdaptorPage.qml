@@ -101,10 +101,9 @@ Item {
         readonly property var assetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
             walletTokensStore: TokensStore {
-                plainTokensBySymbolModel: TokensBySymbolModel {}
+                tokenGroupsModel: TokenGroupsModel {}
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-            assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
         }
         readonly property var currencyStore: CurrenciesStore{}
     }
@@ -113,7 +112,7 @@ Item {
         id: adaptor
         accounts: walletAccountsModel
         assetsModel: d.assetsStore.groupedAccountAssetsModel
-        tokensBySymbolModel: d.assetsStore.walletTokensStore.plainTokensBySymbolModel
+        tokenGroupsModel: d.assetsStore.walletTokensStore.tokenGroupsModel
         filteredFlatNetworksModel: SortFilterProxyModel {
             sourceModel: NetworksModel.flatNetworks
             filters: ValueFilter { roleName: "isTest"; value: true }
@@ -123,7 +122,7 @@ Item {
             return d.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
         }
 
-        selectedTokenKey: selectedTokenComboBox.currentValue
+        selectedGroupKey: selectedTokenComboBox.currentValue
         selectedNetworkChainId: networksComboBox.currentValue
     }
 
@@ -135,7 +134,7 @@ Item {
             id: selectedTokenComboBox
             textRole: "name"
             valueRole: "key"
-            model: d.assetsStore.walletTokensStore.plainTokensBySymbolModel
+            model: d.assetsStore.walletTokensStore.tokenGroupsModel
             currentIndex: 0
             onCountChanged: currentIndex = 0
         }

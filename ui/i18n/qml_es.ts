@@ -2693,6 +2693,26 @@ Do you wish to override the security check and continue?</source>
         <source>Settings</source>
         <translation>Ajustes</translation>
     </message>
+    <message>
+        <source>Clear site data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use it to reset the current site if it doesn&apos;t load or work properly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clearing cache...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear cache</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrowserTabView</name>
@@ -6406,30 +6426,6 @@ Recuerda tu contraseña y no la compartas con nadie.</translation>
         <translation>Habilita para permitirte destruir tokens remotamente. Útil para revocar permisos de individuos</translation>
     </message>
     <message>
-        <source>Decimals (DP)</source>
-        <translation>Decimales (DP)</translation>
-    </message>
-    <message>
-        <source>Max 10</source>
-        <translation>Máx. 10</translation>
-    </message>
-    <message>
-        <source>Please enter how many decimals your token should have</source>
-        <translation>Por favor escribe cuántos decimales debe tener tu token</translation>
-    </message>
-    <message>
-        <source>Your decimal amount is too cool (use 0-9 only)</source>
-        <translation>Tu cantidad de decimales es demasiado cool (usa solo 0-9)</translation>
-    </message>
-    <message>
-        <source>Your decimal amount contains invalid characters (use 0-9 only)</source>
-        <translation>Tu cantidad de decimales contiene caracteres inválidos (usa solo 0-9)</translation>
-    </message>
-    <message>
-        <source>Enter a number between 1 and 10</source>
-        <translation>Escribe un número entre 1 y 10</translation>
-    </message>
-    <message>
         <source>Show fees</source>
         <translation>Mostrar comisiones</translation>
     </message>
@@ -7831,6 +7827,56 @@ Por favor, agrégala e intenta de nuevo.</translation>
     <message>
         <source>Fleet</source>
         <translation>Fleet</translation>
+    </message>
+</context>
+<context>
+    <name>FollowingAddressMenu</name>
+    <message>
+        <source>Address copied</source>
+        <translation type="unfinished">Dirección copiada</translation>
+    </message>
+    <message>
+        <source>Copy address</source>
+        <translation type="unfinished">Copiar dirección</translation>
+    </message>
+    <message>
+        <source>Show address QR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View activity</source>
+        <translation type="unfinished">Ver actividad</translation>
+    </message>
+    <message>
+        <source>Already in saved addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to saved addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FollowingAddresses</name>
+    <message>
+        <source>Search for name, ENS or address</source>
+        <translation type="unfinished">Buscar por nombre, ENS o dirección</translation>
+    </message>
+    <message>
+        <source>Your search is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+        <translation type="unfinished">Tu búsqueda es demasiado genial (usa solo A-Z y 0-9, un solo espacio en blanco, guiones y guiones bajos)</translation>
+    </message>
+    <message>
+        <source>Your search contains invalid characters (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+        <translation type="unfinished">Tu búsqueda contiene caracteres inválidos (usa solo A-Z y 0-9, un solo espacio en blanco, guiones y guiones bajos)</translation>
+    </message>
+    <message>
+        <source>Your EFP onchain friends will appear here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No following addresses found. Check spelling or whether the address is correct.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10092,6 +10138,10 @@ acceso a tus fondos.</translation>
         <source>Saved addresses</source>
         <translation>Direcciones guardadas</translation>
     </message>
+    <message>
+        <source>EFP onchain friends</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LinkPreviewCard</name>
@@ -10910,6 +10960,10 @@ al cargar</translation>
     <message>
         <source>Last check %1</source>
         <translation>Última verificación %1</translation>
+    </message>
+    <message>
+        <source>Available if third-party services enabled</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12863,15 +12917,15 @@ al cargar</translation>
     <name>PaymentRequestCardDelegate</name>
     <message>
         <source>Send %1 %2 to %3</source>
-        <translation>Enviar %1 %2 a %3</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Requested by %1</source>
-        <translation>Solicitado por %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Not available in the testnet mode</source>
-        <translation>No disponible en modo testnet</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -14816,6 +14870,10 @@ al cargar</translation>
     <message>
         <source>Search for token or enter token address</source>
         <translation>Buscar token o facilitar dirección del token</translation>
+    </message>
+    <message>
+        <source>Loading more tokens...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -18576,6 +18634,21 @@ Si una transacción con un nonce más bajo está pendiente, las transacciones co
     <message>
         <source>%1 community assets are now visible</source>
         <translation>%1 activos de comunidad ahora son visibles</translation>
+    </message>
+</context>
+<context>
+    <name>WalletFollowingAddressesHeader</name>
+    <message>
+        <source>Add via EFP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EFP onchain friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last refreshed %1</source>
+        <translation type="unfinished">Última actualización %1</translation>
     </message>
 </context>
 <context>

@@ -43,14 +43,14 @@ QtObject {
     }
 
     function computeDeployAssetsFee(subscriptionId, communityId, aKey, aChainId, aAccountAddress, aName, aSymbol,
-                                    aDescription, aSupply, aInfiniteSupply, aDecimals, aArtworkSource, aArtworkCropRect) {
+                                    aDescription, aSupply, aInfiniteSupply, aArtworkSource, aArtworkCropRect) {
         if (aKey !== "")
             deleteToken(communityId, aKey)
 
         const jsonArtworkFile = Utils.getImageAndCropInfoJson(aArtworkSource, aArtworkCropRect)
         communityTokensModuleInst.computeDeployAssetsFee(subscriptionId, communityId, aAccountAddress, aName,
                                                aSymbol, aDescription, aSupply,
-                                               aInfiniteSupply, aDecimals, aChainId, jsonArtworkFile)
+                                               aInfiniteSupply, aChainId, jsonArtworkFile)
     }
 
 

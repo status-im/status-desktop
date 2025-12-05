@@ -2685,6 +2685,26 @@ Do you wish to override the security check and continue?</source>
         <source>Zoom</source>
         <translation>확대/축소</translation>
     </message>
+    <message>
+        <source>Clear site data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use it to reset the current site if it doesn&apos;t load or work properly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clearing cache...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear cache</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrowserTabView</name>
@@ -6381,30 +6401,6 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation>원격으로 토큰을 소각할 수 있게 합니다. 개인의 권한을 취소할 때 유용합니다</translation>
     </message>
     <message>
-        <source>Decimals (DP)</source>
-        <translation>소수 자릿수 (DP)</translation>
-    </message>
-    <message>
-        <source>Max 10</source>
-        <translation>최대 10</translation>
-    </message>
-    <message>
-        <source>Please enter how many decimals your token should have</source>
-        <translation>토큰의 소수 자릿수를 입력해 주세요</translation>
-    </message>
-    <message>
-        <source>Your decimal amount is too cool (use 0-9 only)</source>
-        <translation>소수점 숫자가 너무 힙해요 (0-9만 사용하세요)</translation>
-    </message>
-    <message>
-        <source>Your decimal amount contains invalid characters (use 0-9 only)</source>
-        <translation>소수 입력에 잘못된 문자가 있습니다 (0-9만 사용하세요)</translation>
-    </message>
-    <message>
-        <source>Enter a number between 1 and 10</source>
-        <translation>1에서 10 사이의 숫자를 입력하세요</translation>
-    </message>
-    <message>
         <source>Show fees</source>
         <translation>수수료 표시</translation>
     </message>
@@ -7803,6 +7799,56 @@ Please add it and try again.</source>
     <message>
         <source>Fleet</source>
         <translation>플릿</translation>
+    </message>
+</context>
+<context>
+    <name>FollowingAddressMenu</name>
+    <message>
+        <source>Address copied</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy address</source>
+        <translation type="unfinished">주소 복사</translation>
+    </message>
+    <message>
+        <source>Show address QR</source>
+        <translation type="unfinished">주소 QR 표시</translation>
+    </message>
+    <message>
+        <source>View activity</source>
+        <translation type="unfinished">활동 보기</translation>
+    </message>
+    <message>
+        <source>Already in saved addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to saved addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FollowingAddresses</name>
+    <message>
+        <source>Search for name, ENS or address</source>
+        <translation type="unfinished">이름, ENS 또는 주소 검색</translation>
+    </message>
+    <message>
+        <source>Your search is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+        <translation type="unfinished">검색어가 너무 쿨해요 (A-Z, 0-9, 공백 하나, 하이픈, 밑줄만 사용하세요)</translation>
+    </message>
+    <message>
+        <source>Your search contains invalid characters (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+        <translation type="unfinished">검색어에 유효하지 않은 문자가 있습니다 (A-Z, 0-9, 단일 공백, 하이픈, 밑줄만 사용)</translation>
+    </message>
+    <message>
+        <source>Your EFP onchain friends will appear here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No following addresses found. Check spelling or whether the address is correct.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10072,6 +10118,10 @@ access to your funds.</source>
         <source>Saved addresses</source>
         <translation>저장된 주소</translation>
     </message>
+    <message>
+        <source>EFP onchain friends</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LinkPreviewCard</name>
@@ -10880,6 +10930,10 @@ to load</source>
     <message>
         <source>Last check %1</source>
         <translation>마지막 확인 %1</translation>
+    </message>
+    <message>
+        <source>Available if third-party services enabled</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12825,15 +12879,15 @@ to load</source>
     <name>PaymentRequestCardDelegate</name>
     <message>
         <source>Send %1 %2 to %3</source>
-        <translation>%1 %2을(를) %3에게 보내기</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Requested by %1</source>
-        <translation>%1의 요청</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Not available in the testnet mode</source>
-        <translation>Testnet 모드에서는 사용할 수 없음</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -14772,6 +14826,10 @@ to load</source>
     <message>
         <source>Search for token or enter token address</source>
         <translation>토큰을 검색하거나 토큰 주소를 입력하세요</translation>
+    </message>
+    <message>
+        <source>Loading more tokens...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -18514,6 +18572,21 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>%1 community assets are now visible</source>
         <translation>%1 커뮤니티 자산이 이제 표시됩니다</translation>
+    </message>
+</context>
+<context>
+    <name>WalletFollowingAddressesHeader</name>
+    <message>
+        <source>Add via EFP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EFP onchain friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last refreshed %1</source>
+        <translation type="unfinished">마지막 새로고침 %1</translation>
     </message>
 </context>
 <context>

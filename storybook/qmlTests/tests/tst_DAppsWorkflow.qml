@@ -3,6 +3,8 @@ import QtQuick
 import QtTest
 import "helpers/wallet_connect.js" as Testing
 
+import Models
+
 import StatusQ.Core.Utils
 
 import QtQuick.Controls
@@ -311,10 +313,9 @@ Item {
 
     WalletStore.WalletAssetsStore {
         id: assetsStoreMock
-        // Silence warnings
-        assetsWithFilteredBalances: ListModel {}
-
-        readonly property var groupedAccountAssetsModel: groupedAccountsAssetsModel
+        walletTokensStore: WalletStore.TokensStore {
+            tokenGroupsModel: TokenGroupsModel {}
+        }
     }
 
     Component {

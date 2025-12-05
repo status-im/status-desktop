@@ -59,7 +59,7 @@ StatusDialog {
     - key: unique string ID of the token (asset); e.g. "ETH" or contract address
     - addressPerChain: submodel[ chainId: int, address: string ]
     **/
-    required property var flatAssetsModel
+    required property var groupedAccountAssetsModel
     /**
     Expected model structure:
     - groupName: group name (from collection or community name)
@@ -75,7 +75,7 @@ StatusDialog {
     required property var collectiblesModel
     /**
       This model is needed here not to be used in any visual item but
-      to evaluate the collectible selected by using the selectedTokenKey.
+      to evaluate the collectible selected by using the selectedGroupKey.
       To do this with the grouped and nested collectiblesModel is very
       complex and is adding unnecessary edge cases that need to be handled
       expicity.
@@ -157,8 +157,8 @@ StatusDialog {
     property string selectedAccountAddress
     /** property to set and expose currently selected network **/
     property int selectedChainId
-    /** property to set and expose currently selected token key **/
-    property string selectedTokenKey
+    /** property to set and expose currently selected group key **/
+    property string selectedGroupKey
     /** property to set and expose the raw amount to send from outside without any localization
     Crypto value in a base unit as a string integer,
     e.g. 1000000000000000000 for 1 ETH **/
@@ -183,7 +183,7 @@ StatusDialog {
     /** property to check if the form is filled correctly **/
     readonly property bool allValuesFilledCorrectly: !!root.selectedAccountAddress &&
                                                      root.selectedChainId !== 0 &&
-                                                     !!root.selectedTokenKey &&
+                                                     !!root.selectedGroupKey &&
                                                      !!root.selectedRecipientAddress &&
                                                      !!root.selectedRawAmount &&
                                                      !amountToSend.markAsInvalid &&
@@ -221,8 +221,8 @@ StatusDialog {
         // Used to get asset entry if selected token is an asset
         readonly property var selectedAssetEntry: ModelEntry {
             sourceModel: root.assetsModel
-            key: "tokensKey"
-            value: root.selectedTokenKey
+            key: "key"
+            value: root.selectedGroupKey
             cacheOnRemoval: true
             onItemChanged: d.setAssetInTokenSelector()
             onAvailableChanged: d.setAssetInTokenSelector()
@@ -238,18 +238,18 @@ StatusDialog {
         function setAssetInTokenSelector() {
             if(selectedAssetEntry.available && !!selectedAssetEntry.item) {
                 d.setTokenOnBothHeaders(selectedAssetEntry.item.symbol,
-                                        Constants.tokenIcon(selectedAssetEntry.item.symbol),
-                                        selectedAssetEntry.item.tokensKey)
+                                        selectedAssetEntry.item.logoUri,
+                                        selectedAssetEntry.item.key)
             }
         }
 
         readonly property bool isSelectedAssetAvailableInSelectedNetwork: {
             const chainId = root.selectedChainId
-            const tokensKey = root.selectedTokenKey
-            if (!tokensKey || !chainId || !root.flatAssetsModel)
+            const tokensKey = root.selectedGroupKey
+            if (!tokensKey || !chainId || !root.groupedAccountAssetsModel)
                 return false
 
-            const addressPerChain = SQUtils.ModelUtils.getByKey(root.flatAssetsModel, "key", tokensKey, "addressPerChain")
+            const addressPerChain = SQUtils.ModelUtils.getByKey(root.groupedAccountAssetsModel, "key", tokensKey, "balances")
             if (!addressPerChain)
                 return false
 
@@ -263,8 +263,8 @@ StatusDialog {
         // Used to get collectible entry if selected token is a collectible
         readonly property var selectedCollectibleEntry: ModelEntry {
             sourceModel: root.flatCollectiblesModel
-            key: "symbol"
-            value: root.selectedTokenKey
+            key: "groupingValue"
+            value: root.selectedGroupKey
             onItemChanged: d.setCollectibleInTokenSelector()
             onAvailableChanged: d.setCollectibleInTokenSelector()
         }
@@ -314,7 +314,7 @@ StatusDialog {
             if(!selectedAssetEntryValid && !selectedCollectibleEntryValid) {
                 // reset token selector in case selected tokens doesnt exist in either models
                 d.setTokenOnBothHeaders("", "", "")
-                root.selectedTokenKey = ""
+                root.selectedGroupKey = ""
                 root.selectedRawAmount = ""
                 amountToSend.clear()
             }
@@ -379,7 +379,7 @@ StatusDialog {
         property var combinedPropertyChangedHandler: [
             root.selectedAccountAddress,
             root.selectedChainId,
-            root.selectedTokenKey,
+            root.selectedGroupKey,
             root.selectedRecipientAddress,
             root.selectedRawAmount,
             root.allValuesFilledCorrectly]
@@ -412,19 +412,19 @@ StatusDialog {
         }
 
         function setSelectedCollectible(key) {
-            const tokenType = SQUtils.ModelUtils.getByKey(root.flatCollectiblesModel, "symbol", key, "tokenType")
+            const tokenType = SQUtils.ModelUtils.getByKey(root.flatCollectiblesModel, "groupingValue", key, "tokenType")
             if(tokenType === Constants.TokenType.ERC1155) {
                 root.sendType =  Constants.SendType.ERC1155Transfer
             } else if(tokenType === Constants.TokenType.ERC721) {
                 root.sendType =  Constants.SendType.ERC721Transfer
             }
-            root.selectedTokenKey = key
+            root.selectedGroupKey = key
             amountToSend.forceActiveFocus()
         }
 
         function setSelectedAsset(key) {
             root.sendType = Constants.SendType.Transfer
-            root.selectedTokenKey = key
+            root.selectedGroupKey = key
             amountToSend.forceActiveFocus()
         }
 

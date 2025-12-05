@@ -9,6 +9,8 @@ QtObject {
 
     property var ensUsernamesModel: root.ensUsernamesModule ? ensUsernamesModule.model : []
 
+    readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
+
     readonly property QtObject currentChainEnsUsernamesModel: SortFilterProxyModel {
         sourceModel: root.ensUsernamesModel
         filters: ValueFilter {
@@ -91,10 +93,22 @@ QtObject {
         return ensUsernamesModule.getCurrentCurrency()
     }
 
-    function getStatusTokenKey() {
+    function getStatusTokenKey(chainId) {
         if(!root.ensUsernamesModule)
             return ""
-        return ensUsernamesModule.getStatusTokenKey()
+        return ensUsernamesModule.getStatusTokenKeyForChainId(chainId)
+    }
+
+    function getStatusTokenGroupKey() {
+        if (root.areTestNetworksEnabled)
+            return Constants.sttGroupKey
+        return Constants.sntGroupKey
+    }
+
+    function getChainForBuyingEnsName() {
+        if (root.areTestNetworksEnabled)
+            return Constants.chains.sepoliaChainId
+        return Constants.chains.mainnetChainId
     }
 
     function removeEnsUsername(chainId, ensUsername) {

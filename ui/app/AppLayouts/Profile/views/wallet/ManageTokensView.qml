@@ -24,18 +24,19 @@ Item {
 
     required property TokensStore tokensStore
 
+    required property bool thirdpartyServicesEnabled
     required property double tokenListUpdatedAt
     required property var assetsController
     required property var collectiblesController
 
-    required property var sourcesOfTokensModel // Expected roles: key, name, updatedAt, source, version, tokensCount, image
-    required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl
+    required property var tokenListsModel // Expected roles: id, name, timestamp, source, logoUri, version, tokens
+    required property var allNetworks
 
     required property var baseWalletAssetsModel
     required property var baseWalletCollectiblesModel
 
     property string currencySymbol: "USD"
-    property var getCurrencyAmount: function (balance, symbol) {}
+    property var getCurrencyAmount: function (balance, key) {}
     property var getCurrentCurrencyAmount: function(balance){}
 
     property alias currentIndex: tabBar.currentIndex
@@ -115,8 +116,8 @@ Item {
         Component {
             id: assetsPanel
             ManageAssetsPanel {
-                getCurrencyAmount: function (balance, symbol) {
-                    return root.getCurrencyAmount(balance, symbol)
+                getCurrencyAmount: function (balance, key) {
+                    return root.getCurrencyAmount(balance, key)
                 }
                 getCurrentCurrencyAmount: function (balance) {
                     return root.getCurrentCurrencyAmount(balance)
@@ -136,8 +137,8 @@ Item {
         Component {
             id: hiddenPanel
             ManageHiddenPanel {
-                getCurrencyAmount: function (balance, symbol) {
-                    return root.getCurrencyAmount(balance, symbol)
+                getCurrencyAmount: function (balance, key) {
+                    return root.getCurrencyAmount(balance, key)
                 }
                 getCurrentCurrencyAmount: function (balance) {
                     return root.getCurrentCurrencyAmount(balance)
@@ -250,7 +251,9 @@ Item {
                 }
                 StatusListItem {
                     Layout.fillWidth: true
+                    enabled: root.thirdpartyServicesEnabled
                     title: qsTr("Auto-refresh tokens lists")
+                    subTitle: !root.thirdpartyServicesEnabled? qsTr("Available if third-party services enabled") : ""
 
                     components: [
                         StatusSwitch {
@@ -292,8 +295,8 @@ Item {
                 SupportedTokenListsPanel {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    sourcesOfTokensModel: root.sourcesOfTokensModel
-                    tokensListModel: root.tokensListModel
+                    tokenListsModel: root.tokenListsModel
+                    allNetworks: root.allNetworks
                 }
             }
         }

@@ -14,7 +14,6 @@ import app/global/app_signals
 
 import app_service/common/utils as common_utils
 import app_service/common/types as common_types
-import app_service/common/wallet_constants as wallet_constants
 import app_service/service/currency/service as currency_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
@@ -305,26 +304,31 @@ QtObject:
     if route.len > 0:
       chainId = route[0].fromChain.chainId
     let network = self.networkService.getNetworkByChainId(chainId)
-    var nativeTokenSymbol = network.nativeCurrencySymbol
-    let nativeTokenFormat = self.currencyService.getCurrencyFormat(nativeTokenSymbol)
+
+    let nativeToken = createNativeTokenItem(chainId)
+    if nativeToken.isNil:
+      raise newException(CatchableError, "no native token item found for chain id: " & $chainId)
+
+    let nativeTokenFormat = self.currencyService.getCurrencyFormat(nativeToken.key)
     let currencyFormat = self.currencyService.getCurrencyFormat(self.settingsService.getCurrency())
-    let fiatPriceForSymbol = self.tokenService.getPriceBySymbol(nativeTokenSymbol)
+    let fiatPriceForToken = self.tokenService.getPriceForToken(nativeToken.key)
+
     var totalFee: UInt256
     for p in route:
       let decimalFee = wei2Eth(p.txTotalFee)
       let decimalFeeAsFloat = parseFloat(decimalFee)
-      let fiatFeeAsFloat = decimalFeeAsFloat * fiatPriceForSymbol
+      let fiatFeeAsFloat = decimalFeeAsFloat * fiatPriceForToken
       data.costPerPath.add(CostPerPath(
         contractUniqueKey: common_utils.contractUniqueKey(p.fromChain.chainId, p.usedContractAddress),
-        costNativeCryptoCurrency: newCurrencyAmount(decimalFeeAsFloat, nativeTokenFormat.symbol, int(nativeTokenFormat.displayDecimals), nativeTokenFormat.stripTrailingZeroes),
-        costFiatCurrency: newCurrencyAmount(fiatFeeAsFloat, currencyFormat.symbol, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
+        costNativeCryptoCurrency: newCurrencyAmount(decimalFeeAsFloat, nativeToken.key, nativeToken.symbol, int(nativeTokenFormat.displayDecimals), nativeTokenFormat.stripTrailingZeroes),
+        costFiatCurrency: newCurrencyAmount(fiatFeeAsFloat, "", currencyFormat.key, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
       ))
       totalFee += p.txTotalFee
     let decimalTotalFee = wei2Eth(totalFee)
     let decimalTotalFeeAsFloat = parseFloat(decimalTotalFee)
-    data.totalCostNativeCryptoCurrency = newCurrencyAmount(decimalTotalFeeAsFloat, nativeTokenFormat.symbol, int(nativeTokenFormat.displayDecimals), nativeTokenFormat.stripTrailingZeroes)
-    let totalFiatFeeAsFloat = decimalTotalFeeAsFloat * fiatPriceForSymbol
-    data.totalCostFiatCurrency = newCurrencyAmount(totalFiatFeeAsFloat, currencyFormat.symbol, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
+    data.totalCostNativeCryptoCurrency = newCurrencyAmount(decimalTotalFeeAsFloat, nativeToken.key, nativeToken.symbol, int(nativeTokenFormat.displayDecimals), nativeTokenFormat.stripTrailingZeroes)
+    let totalFiatFeeAsFloat = decimalTotalFeeAsFloat * fiatPriceForToken
+    data.totalCostFiatCurrency = newCurrencyAmount(totalFiatFeeAsFloat, "", currencyFormat.key, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
 
   proc emitSuggestedRoutesReadySignal*(self: Service, data: SuggestedRoutesArgs) =
     if self.lastRequestForSuggestedRoutes.uuid != data.uuid:
@@ -372,13 +376,13 @@ QtObject:
     sendType: SendType,
     accountFrom: string,
     accountTo: string,
-    token: string,
+    tokenGroupKey: string,
     tokenIsOwnerToken: bool,
     amountIn: string,
-    toToken: string = "",
+    toTokenGroupKey: string = "", # if empty, it means the same token group key as the from token group key (same token)
     amountOut: string = "",
     fromChainID: int = 0,
-    toChainID: int = 0,
+    toChainID: int = 0, # if empty, it means the same chain id as the from chain id (same chain)
     slippagePercentage: float = 0.0,
     extraParamsTable: Table[string, string] = initTable[string, string]()) =
 
@@ -396,8 +400,24 @@ QtObject:
       mutableParamsTable[ExtraKeyUsername] = ens_utils.addDomain(mutableParamsTable[ExtraKeyUsername])
 
     try:
-      let err = wallet.suggestedRoutesAsync(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
-        tokenIsOwnerToken, toToken, fromChainID, toChainID, slippagePercentage, mutableParamsTable)
+      let token = self.tokenService.getTokenByGroupKeyAndChainId(tokenGroupKey, fromChainID)
+      if token.isNil:
+        raise newException(CatchableError, "no token (from) found for group key: " & tokenGroupKey & " and chain id: " & $fromChainID)
+
+      var toToken: TokenItem
+      if toTokenGroupKey.isEmptyOrWhitespace or toTokenGroupKey == tokenGroupKey:
+        toToken = token
+        if sendType == SendType.Bridge:
+          toToken = self.tokenService.getTokenByGroupKeyAndChainId(token.crossChainId, toChainID)
+          if toToken.isNil:
+            raise newException(CatchableError, "no token (to) found for group key: " & tokenGroupKey & " and chain id: " & $toChainID)
+      else:
+        toToken = self.tokenService.getTokenByGroupKeyAndChainId(toTokenGroupKey, toChainID)
+        if toToken.isNil:
+          raise newException(CatchableError, "no token (to) found for group key: " & toTokenGroupKey & " and chain id: " & $toChainID)
+
+      let err = wallet.suggestedRoutesAsync(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token.key,
+        tokenIsOwnerToken, toToken.key, fromChainID, toChainID, slippagePercentage, mutableParamsTable)
       if err.len > 0:
         raise newException(CatchableError, "err fetching the best route: " & err)
     except CatchableError as e:
@@ -410,7 +430,9 @@ QtObject:
     masterTokenParameters: JsonNode = JsonNode(), deploymentParameters: JsonNode = JsonNode()) =
     self.lastRequestForSuggestedRoutes = (uuid, sendType)
     try:
-      let feeToken = wallet_constants.nativeCurrencySymbol(chainId)
+      let feeTokenItem = createNativeTokenItem(chainId)
+      if feeTokenItem.isNil:
+        raise newException(CatchableError, "no fee token item found for chain id: " & $chainId)
       let err = wallet.suggestedRoutesAsyncForCommunities(
         uuid,
         ord(sendType),
@@ -418,7 +440,7 @@ QtObject:
         fromChainID=chainId,
         toChainID=chainId,
         communityId,
-        feeToken,
+        feeTokenItem.key,
         signerPubKey,
         tokenIds,
         walletAddresses,

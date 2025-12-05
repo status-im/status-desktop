@@ -48,7 +48,7 @@ GroupingInfo collectiblePreferencesItemTypeToGroupsInfo(CollectiblePreferencesIt
 
 TokenOrder::TokenOrder() : sortOrder(undefinedTokenOrder) {}
 
-TokenOrder::TokenOrder(const QString& symbol,
+TokenOrder::TokenOrder(const QString& key,
                        int sortOrder,
                        bool visible,
                        bool isCommunityGroup,
@@ -56,7 +56,7 @@ TokenOrder::TokenOrder(const QString& symbol,
                        bool isCollectionGroup,
                        const QString& collectionUid,
                        CollectiblePreferencesItemType type)
-    : symbol(symbol)
+    : key(key)
     , sortOrder(sortOrder)
     , visible(visible)
     , isCommunityGroup(isCommunityGroup)
@@ -78,7 +78,7 @@ QString tokenOrdersToJson(const SerializedTokenData& dataList, bool areCollectib
     for (const TokenOrder& data : dataList) {
         QJsonObject obj;
         // The  collectibles group ordering is handled in the backend.
-        obj["key"] = data.symbol;
+        obj["key"] = data.key;
         obj["position"] = data.sortOrder;
         obj["visible"] = data.visible;
 
@@ -123,7 +123,7 @@ SerializedTokenData tokenOrdersFromJson(const QString& json_string, bool areColl
         QJsonObject obj = value.toObject();
         TokenOrder data;
 
-        data.symbol = obj["key"].toString();
+        data.key = obj["key"].toString();
         data.sortOrder = obj["position"].toInt();
         data.visible = obj["visible"].toBool();
         if (areCollectibles) {
@@ -132,11 +132,11 @@ SerializedTokenData tokenOrdersFromJson(const QString& json_string, bool areColl
             auto groupingInfo = collectiblePreferencesItemTypeToGroupsInfo(data.type);
             data.isCommunityGroup = groupingInfo.isCommunity;
             if (data.isCommunityGroup) {
-                data.communityId = data.symbol;
+                data.communityId = data.key;
             }
             data.isCollectionGroup = groupingInfo.itemsAreGroups;
             if (data.isCollectionGroup) {
-                data.collectionUid = data.symbol;
+                data.collectionUid = data.key;
             }
         } else { // is asset
             // see TokenPreferences in src/backend/backend.nim
@@ -146,7 +146,7 @@ SerializedTokenData tokenOrdersFromJson(const QString& json_string, bool areColl
             }
         }
 
-        dataList.insert(data.symbol, data);
+        dataList.insert(data.key, data);
     }
 
     return dataList;

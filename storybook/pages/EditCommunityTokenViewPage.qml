@@ -35,7 +35,7 @@ SplitView {
                 isAssetView: isAssetBox.checked
                 accounts: WalletAccountsModel {}
                 tokensModel: MintedTokensModel {}
-                referenceAssetsBySymbolModel: ListModel {
+                referenceTokenGroupsModel: ListModel {
                     ListElement {
                         name: "eth"
                         symbol: "ETH"

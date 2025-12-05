@@ -2,6 +2,7 @@ import QtQuick
 import QtTest
 
 import Models
+import utils
 
 import StatusQ
 import StatusQ.Core.Utils
@@ -9,22 +10,32 @@ import StatusQ.Core.Utils
 import AppLayouts.Wallet.stores
 import AppLayouts.Wallet.adaptors
 
+import QtModelsToolkit
+import SortFilterProxyModel
+
 Item {
     id: root
     width: 600
     height: 400
+
+    readonly property string daiGroupKey: Constants.daiGroupKey
+    readonly property string sttGroupKey: Constants.sttGroupKey
 
     QtObject {
         id: d
 
         readonly property var flatNetworks: NetworksModel.flatNetworks
         readonly property var assetsStore: WalletAssetsStore {
-            id: thisWalletAssetStore
             walletTokensStore: TokensStore {
-                plainTokensBySymbolModel: TokensBySymbolModel {}
+                tokenGroupsModel: TokenGroupsModel {}
+                tokenGroupsForChainModel: TokenGroupsModel {
+                        skipInitialLoad: true
+                }
+                searchResultModel: TokenGroupsModel {
+                    skipInitialLoad: true
+                    tokenGroupsForChainModel: d.adaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel // the search should be performed over this model
+                }
             }
-            readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-            assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
         }
     }
 
@@ -32,9 +43,10 @@ Item {
         id: componentUnderTest
         TokenSelectorViewAdaptor {
             assetsModel: d.assetsStore.groupedAccountAssetsModel
+            allTokenGroupsForChainModel: d.assetsStore.walletTokensStore.tokenGroupsForChainModel
+            searchResultModel: d.assetsStore.walletTokensStore.searchResultModel
             flatNetworksModel: d.flatNetworks
             currentCurrency: "USD"
-            plainTokensBySymbolModel: TokensBySymbolModel{}
             enabledChainIds: ModelUtils.modelToFlatArray(d.flatNetworks, "chainId")
         }
     }
@@ -66,15 +78,25 @@ Item {
         function test_allTokens() {
             verify(!!controlUnderTest)
 
-            const originalCount = controlUnderTest.outputAssetsModel.count
+            // showAllTokens = false
+            let initialAssetsCount = controlUnderTest.assetsModel.ModelCount.count
+            let initialOutputAssetsCount = controlUnderTest.outputAssetsModel.ModelCount.count
 
-            // turn on showing all tokens, verify we now have more items
+            tryVerify(() => initialAssetsCount === 9)
+            tryVerify(() => initialOutputAssetsCount === 5)
+
+            // showAllTokens = true, before building groups for chain
             controlUnderTest.showAllTokens = true
-            tryVerify(() => controlUnderTest.outputAssetsModel.count > originalCount)
+            tryVerify(() => controlUnderTest.outputAssetsModel.count === 0)
 
-            // turning them back off, verify we are back to the original number of items
+            // buildGroupsForChain for chainId 1
+            const chainId = 1
+            d.assetsStore.walletTokensStore.buildGroupsForChain(chainId)
+            tryVerify(() => controlUnderTest.outputAssetsModel.count === 8)
+
+            // showAllTokens = false
             controlUnderTest.showAllTokens = false
-            tryCompare(controlUnderTest.outputAssetsModel, "count", originalCount)
+            tryVerify(() => controlUnderTest.outputAssetsModel.count === 5)
         }
 
         function test_enabledChainIds() {
@@ -84,7 +106,7 @@ Item {
             controlUnderTest.enabledChainIds = [1]
 
             // grab the "DAI" entry
-            const delegate = ModelUtils.getByKey(controlUnderTest.outputAssetsModel, "tokensKey", "DAI")
+            const delegate = ModelUtils.getByKey(controlUnderTest.outputAssetsModel, "key", daiGroupKey)
             verify(!!delegate)
             const origBalance = delegate.currencyBalance
 
@@ -103,7 +125,7 @@ Item {
             controlUnderTest.accountAddress = "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
 
             // grab the "STT" entry
-            const delegate = ModelUtils.getByKey(controlUnderTest.outputAssetsModel, "tokensKey", "STT")
+            const delegate = ModelUtils.getByKey(controlUnderTest.outputAssetsModel, "key", sttGroupKey)
             verify(!!delegate)
 
             // should have ~45.90 balance
@@ -113,10 +135,9 @@ Item {
         function test_duplicatePlainTokens() {
             verify(!!controlUnderTest)
 
-            controlUnderTest.showAllTokens = true
             let count = 0
             ModelUtils.forEach(controlUnderTest.outputAssetsModel, (modelItem) => {
-                if (modelItem.tokensKey === "DAI")
+                if (modelItem.key === daiGroupKey)
                     count++
             })
 

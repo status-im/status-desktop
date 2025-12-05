@@ -48,7 +48,7 @@ Rectangle {
 
     QtObject {
         id: d
-        readonly property bool isCollectibleViewed: !!walletStore.currentViewedHoldingID &&
+        readonly property bool isCollectibleViewed: !!walletStore.currentViewedHoldingTokenGroupKey &&
                                                     (walletStore.currentViewedHoldingType === Constants.TokenType.ERC721 ||
                                                     walletStore.currentViewedHoldingType === Constants.TokenType.ERC1155)
 
@@ -59,7 +59,7 @@ Rectangle {
         readonly property var collectibleOwnership: isCollectibleViewed && walletStore.currentViewedCollectible ?
                                                         walletStore.currentViewedCollectible.ownership : null
 
-        readonly property string userOwnedAddressForCollectible: !!walletStore.currentViewedHoldingID ? getFirstUserOwnedAddress(collectibleOwnership, root.walletStore.nonWatchAccounts) : ""
+        readonly property string userOwnedAddressForCollectible: !!walletStore.currentViewedHoldingTokenGroupKey ? getFirstUserOwnedAddress(collectibleOwnership, root.walletStore.nonWatchAccounts) : ""
 
         readonly property bool hideCollectibleTransferActions: isCollectibleViewed && !userOwnedAddressForCollectible
 

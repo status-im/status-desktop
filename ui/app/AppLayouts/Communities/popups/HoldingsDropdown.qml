@@ -319,7 +319,7 @@ StatusDropdown {
                 if (checkedKeys.includes(key)) {
 
                     const amountBasicUnit = root.usedTokens.find(entry => entry.key === key).amount
-                    const decimals = PermissionsHelpers.getTokenByKey(root.assetsModel, key).decimals
+                    const decimals = PermissionsHelpers.getTokenByKey(root.assetsModel, false, key).decimals
                     const amount = AmountsArithmetic.toNumber(amountBasicUnit, decimals)
 
                     if(d.extendedDropdownType === ExtendedDropdownContent.Type.Assets)
@@ -338,7 +338,7 @@ StatusDropdown {
                 else
                 {
                     root.collectibleKey = key
-                    const item = PermissionsHelpers.getTokenByKey(root.collectiblesModel, root.collectibleKey)
+                    const item = PermissionsHelpers.getTokenByKey(root.collectiblesModel, true, root.collectibleKey)
 
                     //When the collectible is unique, there is no need for the user to select amount
                     //Just send the add/update events
@@ -368,8 +368,8 @@ StatusDropdown {
             Component.onCompleted: {
                 if(d.extendedDeepNavigation)
                     listPanel.goForward(d.currentItemKey,
-                                        PermissionsHelpers.getTokenNameByKey(root.collectiblesModel, d.currentItemKey),
-                                        PermissionsHelpers.getTokenIconByKey(root.collectiblesModel, d.currentItemKey),
+                                        PermissionsHelpers.getTokenNameByKey(root.collectiblesModel, true, d.currentItemKey),
+                                        PermissionsHelpers.getTokenIconByKey(root.collectiblesModel, true, d.currentItemKey),
                                         d.currentSubItems)
             }
 
@@ -403,11 +403,11 @@ StatusDropdown {
             readonly property string effectiveAmount: amountValid ? amount : "0"
             property bool completed: false
 
-            tokenName: PermissionsHelpers.getTokenNameByKey(root.assetsModel, root.assetKey)
-            tokenShortName: PermissionsHelpers.getTokenShortNameByKey(root.assetsModel, root.assetKey)
-            tokenImage: PermissionsHelpers.getTokenIconByKey(root.assetsModel, root.assetKey)
-            tokenDecimals: PermissionsHelpers.getTokenDecimalsByKey(root.assetsModel, root.assetKey)
-            tokenAmount: PermissionsHelpers.getTokenRemainingSupplyByKey(root.assetsModel, root.assetKey)
+            tokenName: PermissionsHelpers.getTokenNameByKey(root.assetsModel, false, root.assetKey)
+            tokenShortName: PermissionsHelpers.getTokenShortNameByKey(root.assetsModel, false, root.assetKey)
+            tokenImage: PermissionsHelpers.getTokenIconByKey(root.assetsModel, false, root.assetKey)
+            tokenDecimals: PermissionsHelpers.getTokenDecimalsByKey(root.assetsModel, false, root.assetKey)
+            tokenAmount: PermissionsHelpers.getTokenRemainingSupplyByKey(root.assetsModel, false, root.assetKey)
             amountText: d.assetAmountText
             tokenCategoryText: qsTr("Asset")
             addOrUpdateButtonEnabled: d.assetsReady
@@ -417,6 +417,7 @@ StatusDropdown {
                 Component.onCompleted: {
                     const asset = PermissionsHelpers.getTokenByKey(
                                     root.assetsModel,
+                                    false,
                                     root.assetKey)
 
                     if (!asset)
@@ -478,11 +479,11 @@ StatusDropdown {
             readonly property string effectiveAmount: amountValid ? amount : "0"
             property bool completed: false
 
-            tokenName: PermissionsHelpers.getTokenNameByKey(root.collectiblesModel, root.collectibleKey)
+            tokenName: PermissionsHelpers.getTokenNameByKey(root.collectiblesModel, true, root.collectibleKey)
             tokenShortName: ""
-            tokenImage: PermissionsHelpers.getTokenIconByKey(root.collectiblesModel, root.collectibleKey)
-            tokenAmount: PermissionsHelpers.getTokenRemainingSupplyByKey(root.collectiblesModel, root.collectibleKey)
-            tokenDecimals: PermissionsHelpers.getTokenDecimalsByKey(root.collectiblesModel, root.assetKey)
+            tokenImage: PermissionsHelpers.getTokenIconByKey(root.collectiblesModel, true, root.collectibleKey)
+            tokenAmount: PermissionsHelpers.getTokenRemainingSupplyByKey(root.collectiblesModel, true, root.collectibleKey)
+            tokenDecimals: PermissionsHelpers.getTokenDecimalsByKey(root.collectiblesModel, true, root.assetKey)
             amountText: d.collectibleAmountText
             tokenCategoryText: qsTr("Collectible")
             addOrUpdateButtonEnabled: d.collectiblesReady
@@ -493,6 +494,7 @@ StatusDropdown {
                 Component.onCompleted: {
                     const collectible = PermissionsHelpers.getTokenByKey(
                                           root.collectiblesModel,
+                                          true,
                                           root.collectibleKey)
 
                     if (!collectible)

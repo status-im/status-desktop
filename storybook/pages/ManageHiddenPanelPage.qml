@@ -25,7 +25,6 @@ SplitView {
     orientation: Qt.Horizontal
 
     readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
-        assetsWithFilteredBalances: groupedAccountsAssetsModel
     }
 
     ManageCollectiblesModel {
@@ -38,7 +37,7 @@ SplitView {
         mapping: [
             RoleRename {
                 from: "uid"
-                to: "symbol"
+                to: "key"
             }
         ]
     }

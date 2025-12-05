@@ -166,7 +166,7 @@ StatusScrollView {
             const tokenModel = type === Constants.TokenType.ERC20
                              ? root.assetsModel : root.collectiblesModel
             const modelItem = PermissionsHelpers.getTokenByKey(
-                                tokenModel, key)
+                                tokenModel, false, key)
             const multiplierIndex = modelItem.multiplierIndex
             const amountNumber = AmountsArithmetic.toNumber(
                                    amount, multiplierIndex)

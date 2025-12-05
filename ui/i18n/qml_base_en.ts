@@ -2689,6 +2689,26 @@ Do you wish to override the security check and continue?</source>
         <source>Zoom</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Clear site data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use it to reset the current site if it doesn&apos;t load or work properly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clearing cache...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear cache</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrowserTabView</name>
@@ -6393,30 +6413,6 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Decimals (DP)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Max 10</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please enter how many decimals your token should have</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your decimal amount is too cool (use 0-9 only)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your decimal amount contains invalid characters (use 0-9 only)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter a number between 1 and 10</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show fees</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7816,6 +7812,56 @@ Please add it and try again.</source>
     <name>FleetsModal</name>
     <message>
         <source>Fleet</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FollowingAddressMenu</name>
+    <message>
+        <source>Address copied</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show address QR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View activity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Already in saved addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to saved addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FollowingAddresses</name>
+    <message>
+        <source>Search for name, ENS or address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your search is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your search contains invalid characters (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your EFP onchain friends will appear here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No following addresses found. Check spelling or whether the address is correct.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10076,6 +10122,10 @@ access to your funds.</source>
         <source>Saved addresses</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>EFP onchain friends</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LinkPreviewCard</name>
@@ -10892,6 +10942,10 @@ to load</source>
     </message>
     <message>
         <source>Last check %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Available if third-party services enabled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14794,6 +14848,10 @@ to load</source>
         <source>Search for token or enter token address</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Loading more tokens...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SearchableCollectiblesPanel</name>
@@ -18538,6 +18596,21 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>%1 community assets are now visible</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WalletFollowingAddressesHeader</name>
+    <message>
+        <source>Add via EFP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EFP onchain friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last refreshed %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

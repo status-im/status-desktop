@@ -1,7 +1,6 @@
 import json, strutils
 import core, ../app_service/common/utils
 import response_type
-import ../constants
 
 import interpret/cropped_image
 

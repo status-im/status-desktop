@@ -22,7 +22,7 @@ Item {
 
             readonly property var assetsData: [
                 {
-                    tokensKey: "stt_key",
+                    key: "stt_key",
                     communityId: "",
                     name: "Status Test Token",
                     currencyBalanceAsString: "42,23 USD",
@@ -39,7 +39,7 @@ Item {
                     sectionName: "My assets on Mainnet"
                 },
                 {
-                    tokensKey: "eth_key",
+                    key: "eth_key",
                     communityId: "",
                     name: "Ether",
                     currencyBalanceAsString: "4 276,86 USD",
@@ -56,7 +56,7 @@ Item {
                     sectionName: "My assets on Mainnet"
                 },
                 {
-                    tokensKey: "dai_key",
+                    key: "dai_key",
                     communityId: "",
                     name: "Dai Stablecoin",
                     currencyBalanceAsString: "45,92 USD",

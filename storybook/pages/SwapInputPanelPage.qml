@@ -57,9 +57,9 @@ SplitView {
         readonly property SwapInputParamsForm swapInputParamsForm: SwapInputParamsForm {
             selectedAccountAddress: ctrlAccount.currentValue ?? ""
             selectedNetworkChainId: ctrlSelectedNetworkChainId.currentValue ?? -1
-            fromTokensKey: ctrlFromTokensKey.text
+            fromGroupKey: ctrlFromTokensKey.text
             fromTokenAmount: ctrlFromTokenAmount.text
-            toTokenKey: ctrlToTokenKey.text
+            toGroupKey: ctrlToTokenKey.text
             toTokenAmount: ctrlToTokenAmount.text
         }
 
@@ -76,10 +76,9 @@ SplitView {
             walletAssetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore
                 walletTokensStore: TokensStore {
-                    plainTokensBySymbolModel: TokensBySymbolModel {}
+                    tokenGroupsModel: TokenGroupsModel {}
                 }
                 readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-                assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
             }
             currencyStore: CurrenciesStore {}
             swapFormData: d.swapInputParamsForm
@@ -108,13 +107,14 @@ SplitView {
                 currencyStore: d.adaptor.currencyStore
                 flatNetworksModel: d.adaptor.networksStore.activeNetworks
                 processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
-                plainTokensBySymbolModel: plainTokensModel
+                allTokenGroupsForChainModel: d.adaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel
+                searchResultModel: d.adaptor.walletAssetsStore.walletTokensStore.searchResultModel
 
                 selectedNetworkChainId: d.swapInputParamsForm.selectedNetworkChainId
                 selectedAccountAddress: d.swapInputParamsForm.selectedAccountAddress
-                nonInteractiveTokensKey: receivePanel.selectedHoldingId
+                nonInteractiveGroupKey: receivePanel.selectedHoldingId
 
-                tokenKey: d.swapInputParamsForm.fromTokensKey
+                groupKey: d.swapInputParamsForm.fromGroupKey
                 tokenAmount: d.swapInputParamsForm.fromTokenAmount
 
                 swapSide: SwapInputPanel.SwapSide.Pay
@@ -135,13 +135,14 @@ SplitView {
                 currencyStore: d.adaptor.currencyStore
                 flatNetworksModel: d.adaptor.networksStore.activeNetworks
                 processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
-                plainTokensBySymbolModel: plainTokensModel
+                allTokenGroupsForChainModel: d.adaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel
+                searchResultModel: d.adaptor.walletAssetsStore.walletTokensStore.searchResultModel
 
                 selectedNetworkChainId: d.swapInputParamsForm.selectedNetworkChainId
                 selectedAccountAddress: d.swapInputParamsForm.selectedAccountAddress
-                nonInteractiveTokensKey: payPanel.selectedHoldingId
+                nonInteractiveGroupKey: payPanel.selectedHoldingId
 
-                tokenKey: d.swapInputParamsForm.toTokenKey
+                groupKey: d.swapInputParamsForm.toGroupKey
                 tokenAmount: d.swapInputParamsForm.toTokenAmount
 
                 swapSide: SwapInputPanel.SwapSide.Receive

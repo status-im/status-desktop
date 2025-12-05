@@ -29,7 +29,7 @@ SplitView {
 
     QtObject {
         id: d
-        readonly property var tokenBySymbolModel: TokensBySymbolModel {}
+        readonly property var tokenBySymbolModel: TokenGroupsModel {}
 
         function launchPopup() {
             swapModal.createObject(root)
@@ -117,7 +117,7 @@ SplitView {
 
         TokensStore {
             id: tokensStore
-            plainTokensBySymbolModel: TokensBySymbolModel {}
+            tokenGroupsModel: TokenGroupsModel {}
             getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
         }
 
@@ -128,7 +128,6 @@ SplitView {
                 id: thisWalletAssetStore
                 walletTokensStore: tokensStore
                 readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-                assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
             }
             currencyStore: SharedStores.CurrenciesStore {
                 function formatBigNumber(number: string, symbol: string, noSymbolOption: bool) {

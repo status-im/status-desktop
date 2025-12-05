@@ -133,6 +133,7 @@ SplitView {
                     tokenSymbol: ctrlFromSymbol.text
                     tokenAmount: ctrlFromAmount.text
                     tokenContractAddress: "0x6B175474E89094C44Da98b954EedeAC495271d0F"
+                    tokenIcon: Constants.tokenIcon(ctrlFromSymbol.text)
 
                     accountName: priv.selectedAccount.name
                     accountAddress: priv.selectedAccount.address

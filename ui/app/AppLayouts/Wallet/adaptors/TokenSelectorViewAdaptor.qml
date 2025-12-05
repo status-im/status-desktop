@@ -36,8 +36,8 @@ QObject {
     // input API
     required property var assetsModel
 
-    // expected roles: key, name, symbol, image, communityId
-    property var plainTokensBySymbolModel // optional all tokens model, no balances
+    property var allTokenGroupsForChainModel // all token groups, loaded on demand
+    property var searchResultModel // token groups that match the search keyword
 
     // expected roles: chainId, chainName, iconUrl
     required property var flatNetworksModel
@@ -53,65 +53,40 @@ QObject {
     // Incase of SendModal we show SNT, ETH and DAI with 0 balance
     property bool showZeroBalanceForDefaultTokens: false
 
-    // output model
-    readonly property SortFilterProxyModel outputAssetsModel: SortFilterProxyModel {
+    function loadMoreItems() {
+        root.outputAssetsModel.fetchMore()
+    }
 
-        objectName: "TokenSelectorViewAdaptor_outputAssetsModel"
+    function search(keyword) {
+        let kw = keyword.trim()
+        if (kw === "") {
+            root.outputAssetsModel.search(kw)
+            d.searchKeyword = kw
+        } else {
+            d.searchKeyword = kw
+            root.outputAssetsModel.search(kw)
+        }
+    }
 
-        sourceModel: allTokensLoader.item && allTokensLoader.item.ModelCount.count > 0 ?
-                                    allTokensLoader.item :
-                                    (tokensWithBalance.ModelCount.count ? tokensWithBalance : null)
+    // output model - lazy loaded subset for display
+    readonly property var outputAssetsModel: {
+        // These dependencies ensure the binding re-evaluates when loaders change
+        allTokensLoader.item
+        searchResultTokensLoader.item
 
-        proxyRoles: [
-            FastExpressionRole {
-                name: "sectionName"
-                function getSectionName(hasBalance) {
-                    if (!hasBalance)
-                        return qsTr("Popular assets")
-
-                    if (firstEnabledChain.available)
-                        return qsTr("Your assets on %1").arg(firstEnabledChain.item.chainName)
-                }
-                expression: getSectionName(!!model.currentBalance)
-                expectedRoles: ["currentBalance"]
-            },
-            FastExpressionRole {
-                function tokenIcon(symbol) {
-                    return Constants.tokenIcon(symbol)
-                }
-                name: "iconSource"
-                expression: model.image || tokenIcon(model.symbol)
-                expectedRoles: ["image", "symbol"]
-            }
-        ]
-
-        sorters: [
-            RoleSorter {
-                roleName: "sectionName"
-                ascendingOrder: false
-            },
-            RoleSorter {
-                roleName: "currencyBalance"
-                ascendingOrder: false
-            },
-            RoleSorter {
-                roleName: "name"
-            }
-            // FIXME #15277 sort by assetsController instead, to have the sorting/order as in the main wallet view
-        ]
-        filters: [
-            ValueFilter {
-                roleName: "communityId"
-                value: ""
-                enabled: !root.showCommunityAssets
-            }
-        ]
+        return !!d.searchKeyword ? d.outputSearchResultAssetsModel : root.fullOutputAssetsModel
     }
 
     Loader {
         id: allTokensLoader
-        active: showAllTokens && !!plainTokensBySymbolModel
+        active: root.showAllTokens && !!root.allTokenGroupsForChainModel
         sourceComponent: allTokensComponent
+    }
+
+    Loader {
+        id: searchResultTokensLoader
+        active: root.showAllTokens && !!root.searchResultModel
+        sourceComponent: searchResultTokensComponent
     }
 
     SortFilterProxyModel {
@@ -126,8 +101,8 @@ QObject {
         sorters: [
             FastExpressionSorter {
                 expression: {
-                    const lhs = modelLeft.currencyBalance
-                    const rhs = modelRight.currencyBalance
+                    const lhs = modelLeft.currencyBalance?? 0
+                    const rhs = modelRight.currencyBalance?? 0
                     if (lhs < rhs)
                         return 1
                     else if (lhs > rhs)
@@ -146,7 +121,7 @@ QObject {
                 id: delegateRoot
 
                 // properties exposed as roles to the top-level model
-                readonly property string tokensKey: model.tokensKey
+                readonly property string key: model.key // refers to token group key
                 readonly property int decimals: model.decimals
                 readonly property double currentBalance: aggregator.value
                 readonly property double currencyBalance: {
@@ -172,6 +147,8 @@ QObject {
                             if (typeof balance !== 'string')
                                 return 0
                             let bigIntBalance = AmountsArithmetic.fromString(balance)
+                            if (isNaN(bigIntBalance))
+                                return 0
                             return AmountsArithmetic.toNumber(bigIntBalance, decimals)
                         }
                         expression: balanceToDouble(model.balance, delegateRoot.decimals)
@@ -228,8 +205,8 @@ QObject {
                 }
             }
 
-            exposedRoles: ["tokensKey", "balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balancesModelCount"]
-            expectedRoles: [ "tokensKey", "communityId", "balances", "decimals", "marketDetails"]
+            exposedRoles: ["key", "balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balancesModelCount"]
+            expectedRoles: ["key", "communityId", "balances", "decimals", "marketDetails"]
         }
     }
 
@@ -240,53 +217,178 @@ QObject {
         value: root.enabledChainIds.length ? root.enabledChainIds[0] : null
     }
 
+
+
+    // output model - lazy loaded full model
+    readonly property SortFilterProxyModel fullOutputAssetsModel: SortFilterProxyModel {
+
+        objectName: "TokenSelectorViewAdaptor_outputAssetsModel"
+
+        sourceModel: root.showAllTokens?
+                         allTokensLoader.item
+                       : tokensWithBalance.ModelCount.count? tokensWithBalance : null
+
+        proxyRoles: [
+            FastExpressionRole {
+                name: "sectionName"
+                function getSectionName(hasBalance) {
+                    if (!hasBalance)
+                        return qsTr("Popular assets")
+
+                    if (firstEnabledChain.available)
+                        return qsTr("Your assets on %1").arg(firstEnabledChain.item.chainName)
+                }
+                expression: getSectionName(!!model.currentBalance)
+                expectedRoles: ["currentBalance"]
+            },
+            FastExpressionRole {
+                function tokenIcon(symbol) {
+                    return Constants.tokenIcon(symbol)
+                }
+                name: "iconSource"
+                expression: model.logoUri || tokenIcon(model.symbol)
+                expectedRoles: ["logoUri", "symbol"]
+            }
+        ]
+
+        sorters: [
+            RoleSorter {
+                roleName: "sectionName"
+                ascendingOrder: false
+            },
+            RoleSorter {
+                roleName: "currencyBalance"
+                ascendingOrder: false
+            }
+        ]
+        filters: [
+            ValueFilter {
+                roleName: "communityId"
+                value: ""
+                enabled: !root.showCommunityAssets
+            }
+        ]
+
+        property bool hasMoreItems: false
+        property bool isLoadingMore: false
+
+        function search(keyword) {
+        }
+
+        function fetchMore() {
+            root.allTokenGroupsForChainModel.fetchMore()
+        }
+    }
+
     // internals
     QtObject {
         id: d
 
-        readonly property string favoritesSectionId: "section_zzz"
+        property string searchKeyword: ""
+
+        // output model - search results model
+        readonly property SortFilterProxyModel outputSearchResultAssetsModel: SortFilterProxyModel {
+
+            objectName: "TokenSelectorViewAdaptor_outputSearchResultAssetsModel"
+
+            sourceModel: searchResultTokensLoader.item
+
+            proxyRoles: [
+                FastExpressionRole {
+                    name: "sectionName"
+                    function getSectionName(hasBalance) {
+                        if (!hasBalance)
+                            return qsTr("Popular assets")
+
+                        if (firstEnabledChain.available)
+                            return qsTr("Your assets on %1").arg(firstEnabledChain.item.chainName)
+                    }
+                    expression: getSectionName(!!model.currentBalance)
+                    expectedRoles: ["currentBalance"]
+                },
+                FastExpressionRole {
+                    function tokenIcon(symbol) {
+                        return Constants.tokenIcon(symbol)
+                    }
+                    name: "iconSource"
+                    expression: model.logoUri || tokenIcon(model.symbol)
+                    expectedRoles: ["logoUri", "symbol"]
+                }
+            ]
+
+            sorters: [
+                RoleSorter {
+                    roleName: "sectionName"
+                    ascendingOrder: false
+                },
+                RoleSorter {
+                    roleName: "currencyBalance"
+                    ascendingOrder: false
+                }
+            ]
+            filters: [
+                ValueFilter {
+                    roleName: "communityId"
+                    value: ""
+                    enabled: !root.showCommunityAssets
+                }
+            ]
+
+            property bool hasMoreItems: false
+            property bool isLoadingMore: false
+
+            function search(keyword) {
+                root.searchResultModel.search(keyword)
+            }
+
+            function fetchMore() {
+                root.searchResultModel.fetchMore()
+            }
+        }
     }
+
+    Connections {
+        target: root.allTokenGroupsForChainModel
+
+        function onHasMoreItemsChanged() {
+            root.fullOutputAssetsModel.hasMoreItems = root.allTokenGroupsForChainModel.hasMoreItems
+        }
+
+        function onIsLoadingMoreChanged() {
+            root.fullOutputAssetsModel.isLoadingMore = root.allTokenGroupsForChainModel.isLoadingMore
+        }
+    }
+
+    Connections {
+        target: root.searchResultModel
+
+        function onHasMoreItemsChanged() {
+            d.outputSearchResultAssetsModel.hasMoreItems = root.searchResultModel.hasMoreItems
+        }
+
+        function onIsLoadingMoreChanged() {
+            d.outputSearchResultAssetsModel.isLoadingMore = root.searchResultModel.isLoadingMore
+        }
+    }
+
 
     Component {
         id: allTokensComponent
         LeftJoinModel {
-            id: allTokens
             rightModel: tokensWithBalance
-            leftModel: RolesRenamingModel {
-                id: renamedTokensBySymbolModel
-                sourceModel: SortFilterProxyModel {
-                    sourceModel: root.plainTokensBySymbolModel
-                    filters: [
-                        // remove tokens not available on selected network(s)
-                        FastExpressionFilter {
-                            function isPresentOnEnabledNetworks(addressPerChain) {
-                                if(!addressPerChain)
-                                    return true
-                                if (root.enabledChainIds.length === 0)
-                                    return true
-                                return !!ModelUtils.getFirstModelEntryIf(
-                                            addressPerChain,
-                                            (addPerChain) => {
-                                                return root.enabledChainIds.includes(addPerChain.chainId)
-                                            })
-                            }
-                            expression: {
-                                root.enabledChainIds
-                                return isPresentOnEnabledNetworks(model.addressPerChain)
-                            }
-                            expectedRoles: ["addressPerChain"]
-                        }
-                    ]
-                }
-                mapping: [
-                    RoleRename {
-                        from: "key"
-                        to: "tokensKey"
-                    }
-                ]
-            }
-            joinRole: "tokensKey"
-            rolesToJoin: ["tokensKey", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balances"]
+            leftModel: root.allTokenGroupsForChainModel
+            joinRole: "key"
+            rolesToJoin: ["key", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balances"]
+        }
+    }
+
+    Component {
+        id: searchResultTokensComponent
+        LeftJoinModel {
+            rightModel: tokensWithBalance
+            leftModel: root.searchResultModel
+            joinRole: "key"
+            rolesToJoin: ["key", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balances"]
         }
     }
 }

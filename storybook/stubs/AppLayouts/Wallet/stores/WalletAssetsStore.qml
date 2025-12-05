@@ -3,64 +3,108 @@ import QtQuick
 import Storybook
 import Models
 
+import StatusQ
+import StatusQ.Models
+import StatusQ.Core.Utils as SQUtils
+
+import utils
+
 import QtModelsToolkit
+import SortFilterProxyModel
 
 QtObject {
     id: root
 
     property TokensStore walletTokensStore: TokensStore {}
 
-    readonly property var groupedAccountsAssetsModel: GroupedAccountsAssetsModel {}
-    property var assetsWithFilteredBalances
-    readonly property var tokensBySymbolModel: TokensBySymbolModel {}
-    readonly property var communityModel: ListModel {
-        Component.onCompleted: append([{
-            communityId: "ddls",
-            communityName: "Doodles",
-            communityImage: ModelsData.collectibles.doodles
-        },
-        {
-            communityId: "sox",
-            communityName: "Socks",
-            communityImage: ModelsData.icons.socks
-        },
-        {
-            communityId: "ast",
-            communityName: "Astafarians",
-            communityImage: ModelsData.icons.dribble
-        }])
+    property var baseGroupedAccountAssetModel: BaseGroupedAccountsAssetsModel {}
+
+    readonly property var assetsController: QtObject {
+        property int revision
+        function filterAcceptsSymbol(symbol) {
+            return true
+        }
     }
 
-    // renaming tokens by symbol key so that can be used to join models
-    readonly property var renamedTokensBySymbolModel: RolesRenamingModel {
-        sourceModel: tokensBySymbolModel
+    readonly property var communityModel: ListModel {
+        Component.onCompleted: append([
+            {
+                id: "ddls",
+                name: "Doodles",
+                image: ModelsData.collectibles.doodles,
+                description: ""
+            },
+            {
+                id: "sox",
+                name: "Socks",
+                image: ModelsData.icons.socks,
+                description: ""
+            },
+            {
+                id: "ast",
+                name: "Astafarians",
+                image: ModelsData.icons.dribble,
+                description: ""
+            }
+        ])
+    }
+
+    readonly property var _renamedCommunitiesModel: RolesRenamingModel {
+        sourceModel: communityModel
         mapping: [
             RoleRename {
-                from: "key"
-                to: "tokensKey"
+                from: "id"
+                to: "communityId"
+            },
+            RoleRename {
+                from: "name"
+                to: "communityName"
+            },
+            RoleRename {
+                from: "image"
+                to: "communityImage"
+            },
+            RoleRename {
+                from: "description"
+                to: "communityDescription"
             }
         ]
     }
 
-    // join account assets and tokens by symbol model
-    property LeftJoinModel jointModel: LeftJoinModel {
-        leftModel: assetsWithFilteredBalances
-        rightModel: renamedTokensBySymbolModel
-        joinRole: "tokensKey"
-    }
-
-    // combining community model with assets to get community meta data
-    property LeftJoinModel groupedAccountAssetsModel: LeftJoinModel {
-        leftModel: jointModel
-        rightModel: communityModel
+    property LeftJoinModel _tokenGroupsModelWithCommunityInfo: LeftJoinModel {
+        leftModel: walletTokensStore.tokenGroupsModel
+        rightModel: _renamedCommunitiesModel
         joinRole: "communityId"
     }
 
-    readonly property var assetsController: QtObject {
-        property int revision
+    // This is the joined model that exposes all roles (matching production)
+    property LeftJoinModel groupedAccountAssetsModel: LeftJoinModel {
+        objectName: "groupedAccountAssetsModel"
+        leftModel: baseGroupedAccountAssetModel
+        rightModel: _tokenGroupsModelWithCommunityInfo
+        joinRole: "key"
+    }
 
-        function filterAcceptsSymbol(symbol) {
-            return true
-        }
+    readonly property SortFilterProxyModel bridgeableGroupedAccountAssetsModel: SortFilterProxyModel {
+        objectName: "bridgeableGroupedAccountAssetsModel"
+        sourceModel: root.groupedAccountAssetsModel
+
+        filters: [
+            FastExpressionFilter {
+                function isBSC(chainId) {
+                    return chainId === Constants.chains.binanceSmartChainMainnetChainId ||
+                            chainId === Constants.chains.binanceSmartChainTestnetChainId
+                }
+
+                // this function returns true if the token group item contains at least one token which can be bridged via Hop
+                function supportedByHopBridge(tokens) {
+                    return false
+                }
+                expression: {
+                    return supportedByHopBridge(model.tokens)
+                }
+                expectedRoles: ["tokens"]
+            }
+        ]
     }
 }
