@@ -1,5 +1,6 @@
 module StatusQ.Components.private
 
+StatusBottomSheetDragHandle 0.1 StatusBottomSheetDragHandle.qml
 StatusImageMessage 0.1 statusMessage/StatusImageMessage.qml
 StatusMessageImageAlbum 0.1 statusMessage/StatusMessageImageAlbum.qml
 StatusComboboxBackground 0.1 StatusComboboxBackground.qml

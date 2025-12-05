@@ -9,14 +9,14 @@ import StatusQ.Core.Theme
 
 /*!
    \qmltype StatusScrollView
-   \inherits Flickable
+   \inherits ScrollView
    \inqmlmodule StatusQ.Core
    \since StatusQ.Core 0.1
-   \brief ScrollView component based on a Flickable with padding and scrollbars.
+   \brief ScrollView component with padding and scrollbars.
 
-   The \c StatusScrollView can be used just like a plain ScrollView but without ability to decarate existing Flickable.
+   The \c StatusScrollView can be used just like a plain ScrollView
 
-   A presenation on using StatusScrollView can be found here:
+   A presentation on using StatusScrollView can be found here:
    https://docs.google.com/presentation/d/1ZZeg9j2fZMV-iHreu_Wsl1u6D9POH7SlUO78ZXNj-AI
 
    Simple example of how to use it:
@@ -177,7 +177,7 @@ T.ScrollView {
     implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset,
                              contentHeight + topPadding + bottomPadding)
 
-    padding: 16 // Default value to fit StatusScrollBar with a gentle margin of 1px on each side
+    padding: Theme.padding // Default value to fit StatusScrollBar with a gentle margin of 1px on each side
     clip: true
 
     Component.onCompleted: {
