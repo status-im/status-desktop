@@ -219,9 +219,6 @@ StatusListItem {
                                                      WalletLayout.RightPanelSelection.Activity,
                                                      {savedAddress: menu.address})
             }
-            // TODO: https://github.com/status-im/status-app/issues/19410
-            // ENabled after crash is solved
-            enabled: false
         }
 
         StatusMenuSeparator {}
