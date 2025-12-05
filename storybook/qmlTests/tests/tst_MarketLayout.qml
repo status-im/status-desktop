@@ -177,7 +177,8 @@ Item {
                     compare(changePct24HrText.font.pixelSize, Theme.primaryTextFontSize)
                     compare(changePct24HrText.font.weight, Font.Medium)
                     compare(changePct24HrText.color,
-                            WalletUtils.getChangePct24HourColor(modelItemUnderTest.priceChangePercentage24h))
+                            WalletUtils.getChangePct24HourColor(controlUnderTest.Theme.palette,
+                                                                modelItemUnderTest.priceChangePercentage24h))
 
                     const expectedTotalVolumeString = "%1%2"
                     .arg(controlUnderTest.currencySymbol)
