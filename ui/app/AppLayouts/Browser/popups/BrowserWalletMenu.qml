@@ -17,10 +17,11 @@ import utils
 Dialog {
     id: root
 
+    // model of wallet accounts for the dropdown
     required property var accounts
-    required property var overview
+    // currently selected wallet account
+    required property var currentAccount
     required property var activityStore
-    required property var transactionActivityStatus
     required property SharedStores.CurrenciesStore currencyStore
     required property SharedStores.NetworksStore networksStore
 
@@ -29,10 +30,6 @@ Dialog {
     signal accountChanged(string newAddress)
     signal accountSwitchRequested(string address)
     signal filterAddressesChangeRequested(string addressesJson)
-    signal transactionFilterUpdateRequested()
-    signal collectiblesModelUpdateRequested()
-    signal recipientsModelUpdateRequested()
-    signal connectedAccountDeleted()
 
     modal: false
 
@@ -108,26 +105,13 @@ Dialog {
 
 
     Connections {
-        target: root.overview
+        target: root.currentAccount
         function onConnectedAccountDeleted() {
             root.reload()
             // This is done because when an account is deleted and the account is updated to default one,
             // only the properties are updated and we need to listen to those events and update the selected account
             accountSelectorRow.currentAddress = ""
-            accountSelector.selectedAddress = Qt.binding(function () {return root.overview.address})
-            root.connectedAccountDeleted()
-        }
-    }
-
-    Connections {
-        target: root.transactionActivityStatus
-        enabled: root.visible
-        function onIsFilterDirtyChanged() {
-            root.transactionFilterUpdateRequested()
-        }
-        function onFilterChainsChanged() {
-            root.collectiblesModelUpdateRequested()
-            root.recipientsModelUpdateRequested()
+            accountSelector.selectedAddress = Qt.binding(function () {return root.currentAccount.address})
         }
     }
 
@@ -145,7 +129,7 @@ Dialog {
             anchors.right: copyBtn.left
             anchors.rightMargin: Theme.padding
             model: root.accounts
-            selectedAddress: root.overview.address
+            selectedAddress: root.currentAccount.address
             onCurrentAccountAddressChanged: {
                 if (!accountSelectorRow.currentAddress) {
                     // We just set the account for the first time. Nothing to do here
@@ -196,7 +180,7 @@ Dialog {
         anchors.bottom: parent.bottom
 
         activityStore: root.activityStore
-        overview: root.overview
+        overview: root.currentAccount
         communitiesStore: null
         currencyStore: root.currencyStore
         networksStore: root.networksStore

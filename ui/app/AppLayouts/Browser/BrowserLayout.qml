@@ -436,9 +436,8 @@ StatusSectionLayout {
             id: browserWalletMenu
             BrowserWalletMenu {
                 accounts: root.browserWalletStore.accounts
-                overview: root.browserWalletStore.dappBrowserAccount
+                currentAccount: root.browserWalletStore.dappBrowserAccount
                 activityStore: root.browserActivityStore
-                transactionActivityStatus: root.browserActivityStore.transactionActivityStatus
                 currencyStore: root.currencyStore
                 networksStore: root.networksStore
 
@@ -461,14 +460,17 @@ StatusSectionLayout {
                 onFilterAddressesChangeRequested: (addressesJson) => {
                     root.browserActivityStore.activityController.setFilterAddressesJson(addressesJson)
                 }
-                onTransactionFilterUpdateRequested: {
-                    root.browserActivityStore.updateTransactionFilterIfDirty()
-                }
-                onCollectiblesModelUpdateRequested: {
-                    root.browserActivityStore.currentActivityFiltersStore.updateCollectiblesModel()
-                }
-                onRecipientsModelUpdateRequested: {
-                    root.browserActivityStore.currentActivityFiltersStore.updateRecipientsModel()
+
+                Connections {
+                    target: root.browserActivityStore.transactionActivityStatus
+                    enabled: visible
+                    function onIsFilterDirtyChanged() {
+                        root.browserActivityStore.updateTransactionFilterIfDirty()
+                    }
+                    function onFilterChainsChanged() {
+                        root.browserActivityStore.currentActivityFiltersStore.updateCollectiblesModel()
+                        root.browserActivityStore.currentActivityFiltersStore.updateRecipientsModel()
+                    }
                 }
             }
         }
