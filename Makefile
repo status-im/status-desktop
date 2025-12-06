@@ -725,6 +725,49 @@ ifdef LINUX_GPG_PRIVATE_KEY_FILE
 	scripts/sign-linux-file.sh $(STATUS_CLIENT_TARBALL)
 endif
 
+# Flatpak build configuration
+STATUS_CLIENT_FLATPAK ?= pkg/Status.flatpak
+STATUS_CLIENT_FLATPAK_BUNDLE ?= pkg/app.status.desktop.flatpak
+FLATPAK_BUILD_DIR ?= tmp/flatpak-build
+FLATPAK_REPO_DIR ?= tmp/flatpak-repo
+FLATPAK_MANIFEST ?= app.status.desktop.yml
+
+$(STATUS_CLIENT_FLATPAK): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
+$(STATUS_CLIENT_FLATPAK): nim_status_client
+	echo -e $(BUILD_MSG) "Flatpak"
+	rm -rf $(FLATPAK_BUILD_DIR) $(FLATPAK_REPO_DIR)
+	mkdir -p pkg
+
+	# Build Flatpak using flatpak-builder
+	flatpak-builder --force-clean --disable-rofiles-fuse \
+		--repo=$(FLATPAK_REPO_DIR) \
+		$(FLATPAK_BUILD_DIR) \
+		$(FLATPAK_MANIFEST)
+
+	# Create single-file bundle
+	flatpak build-bundle $(FLATPAK_REPO_DIR) \
+		$(STATUS_CLIENT_FLATPAK_BUNDLE) \
+		app.status.desktop
+
+# if LINUX_GPG_PRIVATE_KEY_FILE is set, sign the Flatpak bundle
+ifdef LINUX_GPG_PRIVATE_KEY_FILE
+	scripts/sign-linux-file.sh $(STATUS_CLIENT_FLATPAK_BUNDLE)
+endif
+
+# Convenience target
+.PHONY: flatpak
+flatpak: $(STATUS_CLIENT_FLATPAK)
+
+# Target to build and install Flatpak locally for testing
+.PHONY: flatpak-install
+flatpak-install: $(STATUS_CLIENT_FLATPAK)
+	flatpak install --user -y $(STATUS_CLIENT_FLATPAK_BUNDLE)
+
+# Target to run Flatpak
+.PHONY: flatpak-run
+flatpak-run:
+	flatpak run app.status.desktop
+
 MACOS_OUTER_BUNDLE := tmp/macos/dist/Status.app
 MACOS_INNER_BUNDLE := $(MACOS_OUTER_BUNDLE)/Contents/Frameworks/QtWebEngineCore.framework/Versions/Current/Helpers/QtWebEngineProcess.app
 
