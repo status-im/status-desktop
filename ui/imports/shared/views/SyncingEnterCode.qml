@@ -41,7 +41,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.leftMargin: Theme.padding
             Layout.rightMargin: Theme.padding
-            Layout.alignment: Qt.AlignHCent
+            Layout.alignment: Qt.AlignHCenter
             currentIndex: 0
 
             StatusSwitchTabButton {
