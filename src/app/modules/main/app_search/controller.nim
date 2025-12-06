@@ -64,6 +64,10 @@ proc init*(self: Controller) =
     var args = ChatUpdateArgs(e)
     self.delegate.updateChatItems(args.chats)
 
+  self.events.on(SIGNAL_COMMUNITY_CHANNEL_EDITED) do(e: Args):
+    let args = CommunityChatArgs(e)
+    self.delegate.updateChatItems(@[args.chat])
+
   self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
     let args = ContactArgs(e)
     self.delegate.contactUpdated(args.contactId)
@@ -83,6 +87,10 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
     let args = CommunityChatIdArgs(e)
+    self.delegate.chatRemoved(args.chatId)
+
+  self.events.on(SIGNAL_CHAT_LEFT) do(e:Args):
+    let args = ChatArgs(e)
     self.delegate.chatRemoved(args.chatId)
 
   self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
