@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/assets/png">
+        <file>backup-popup.png</file>
         <file>browser/chooseBrowserImage@2x.png</file>
         <file>browser/pepehand.png</file>
         <file>community/airdrops8_1.png</file>

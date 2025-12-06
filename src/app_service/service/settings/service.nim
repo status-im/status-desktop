@@ -159,6 +159,9 @@ QtObject:
   # New local setting needs to be initialized from old setting value
   # TODO remove this migration in 2.37 (one release cycle interval)
   proc migrateBackupPath*(self: Service) =
+    when defined(android):
+      # On Android we cannot use arbitrary paths without requesting storage permissions
+      return
     if singletonInstance.localAccountSensitiveSettings.getLocalBackupChosenPathSetting().len == 0 and self.settings.backupPath.len > 0:
       singletonInstance.localAccountSensitiveSettings.setLocalBackupChosenPath(self.settings.backupPath)
 
