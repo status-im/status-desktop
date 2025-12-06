@@ -2,6 +2,7 @@ import nimqml, tables, strutils, stew/shims/strformat
 import stint
 
 import backend/collectibles_types as backend
+import ../shared/model_sync
 
 type
   ModelRole {.pure.} = enum
@@ -26,7 +27,7 @@ QtObject:
 
   proc countChanged(self: OwnershipModel) {.signal.}
 
-  proc getCount(self: OwnershipModel): int {.slot.} =
+  proc getCount*(self: OwnershipModel): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
@@ -62,10 +63,17 @@ QtObject:
       result = newQVariant(item.txTimestamp)
 
   proc setItems*(self: OwnershipModel, items: seq[backend.AccountBalance]) =
-    self.beginResetModel()
-    self.items = items
-    self.endResetModel()
-    self.countChanged()
+    self.setItemsWithSync(
+      self.items, items,
+      getId = proc(item: backend.AccountBalance): string = item.address,
+      getRoles = proc(old, new: backend.AccountBalance): seq[int] =
+        result = @[]
+        if old.balance != new.balance: result.add(ModelRole.Balance.int)
+        if old.txTimestamp != new.txTimestamp: result.add(ModelRole.TxTimestamp.int)
+      ,
+      useBulkOps = true,
+      countChanged = proc() = self.countChanged()
+    )
   
   proc getBalance*(self: OwnershipModel, address: string): UInt256 =
     var balance = stint.u256(0)

@@ -1,6 +1,7 @@
 import app_service/service/token/service_items
 import app_service/service/currency/dto
 import app/modules/shared_models/currency_amount
+import app/core/cow_seq
 
 type
   SourcesOfTokensModelDataSource* = tuple[
@@ -8,7 +9,7 @@ type
   ]
 type
   FlatTokenModelDataSource* = tuple[
-    getFlatTokensList: proc(): var seq[TokenItem],
+    getFlatTokensList: proc(): CowSeq[TokenItem],
     getTokenDetails: proc(symbol: string): TokenDetailsItem,
     getTokenPreferences: proc(symbol: string): TokenPreferencesItem,
     getCommunityTokenDescription: proc(chainId: int, address: string): string,
@@ -17,7 +18,7 @@ type
   ]
 type
   TokenBySymbolModelDataSource* = tuple[
-    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem],
+    getTokenBySymbolList: proc(): CowSeq[TokenBySymbolItem],
     getTokenDetails: proc(symbol: string): TokenDetailsItem,
     getTokenPreferences: proc(symbol: string): TokenPreferencesItem,
     getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string,

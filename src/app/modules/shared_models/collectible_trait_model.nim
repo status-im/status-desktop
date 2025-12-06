@@ -1,6 +1,7 @@
 import nimqml, tables, strutils, stew/shims/strformat
 
 import backend/collectibles as backend
+import ../shared/model_sync
 
 type
   ModelRole {.pure.} = enum
@@ -26,7 +27,7 @@ QtObject:
 
   proc countChanged(self: TraitModel) {.signal.}
 
-  proc getCount(self: TraitModel): int {.slot.} =
+  proc getCount*(self: TraitModel): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
@@ -65,10 +66,24 @@ QtObject:
       result = newQVariant(item.max_value)
 
   proc setItems*(self: TraitModel, items: seq[CollectibleTrait]) =
-    self.beginResetModel()
-    self.items = items
-    self.endResetModel()
-    self.countChanged()
+    self.setItemsWithSync(
+      self.items,
+      items,
+      getId = proc(item: CollectibleTrait): string =
+        # Unique ID: trait_type (traits are unique by type for a collectible)
+        item.trait_type,
+      getRoles = proc(old, new: CollectibleTrait): seq[int] =
+        var roles: seq[int]
+        if old.value != new.value:
+          roles.add(ModelRole.Value.int)
+        if old.display_type != new.display_type:
+          roles.add(ModelRole.DisplayType.int)
+        if old.max_value != new.max_value:
+          roles.add(ModelRole.MaxValue.int)
+        return roles,
+      useBulkOps = true,
+      countChanged = proc() = self.countChanged()
+    )
 
   proc delete(self: TraitModel) =
     self.QAbstractListModel.delete

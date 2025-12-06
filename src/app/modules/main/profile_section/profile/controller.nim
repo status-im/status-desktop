@@ -2,6 +2,7 @@ import io_interface
 
 import app/global/app_signals
 import app/core/eventemitter
+import app/core/cow_seq
 import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
@@ -97,5 +98,5 @@ proc getProfileShowcaseEntriesLimit*(self: Controller): int =
 proc requestCommunityInfo*(self: Controller, communityId: string) =
   self.communityService.requestCommunityInfo(communityId)
 
-proc getTokenBySymbolList*(self: Controller): var seq[TokenBySymbolItem] =
+proc getTokenBySymbolList*(self: Controller): CowSeq[TokenBySymbolItem] =
   self.tokenService.getTokenBySymbolList()

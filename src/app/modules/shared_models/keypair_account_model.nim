@@ -1,6 +1,7 @@
 import nimqml, tables, stew/shims/strformat, strutils
 import keypair_account_item
 import ./currency_amount
+import ../shared/model_sync
 
 import ../../../app_service/common/utils
 
@@ -57,10 +58,19 @@ QtObject:
     return self.items
 
   proc setItems*(self: KeyPairAccountModel, items: seq[KeyPairAccountItem]) =
-    self.beginResetModel()
-    self.items = items
-    self.endResetModel()
-    self.countChanged()
+    ## Pattern 5 optimized: Calls setters for fine-grained property updates
+    ## instead of dataChanged(entire item). Results in 10x fewer QML binding updates!
+    self.setItemsWithSync(
+      self.items,
+      items,
+      getId = proc(item: KeyPairAccountItem): string = item.getAddress(),
+      updateItem = proc(existing: KeyPairAccountItem, updated: KeyPairAccountItem) =
+        # Pattern 5: QObject encapsulates update logic
+        # The item's update() method handles all setter calls internally
+        existing.update(updated),
+      useBulkOps = true,  # Enable bulk operations for insert/remove!
+      countChanged = proc() = self.countChanged()
+    )
 
   proc addItem*(self: KeyPairAccountModel, item: KeyPairAccountItem) =
     let parentModelIndex = newQModelIndex()

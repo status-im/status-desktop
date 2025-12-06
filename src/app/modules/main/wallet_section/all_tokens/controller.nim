@@ -1,6 +1,7 @@
 import ./io_interface
 
 import app/core/eventemitter
+import app/core/cow_seq
 import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app/modules/shared_models/currency_amount
@@ -72,10 +73,10 @@ proc getHistoricalDataForToken*(self: Controller, symbol: string, currency: stri
 proc getSourcesOfTokensList*(self: Controller): var seq[SupportedSourcesItem] =
   return self.tokenService.getSourcesOfTokensList()
 
-proc getFlatTokensList*(self: Controller): var seq[TokenItem] =
+proc getFlatTokensList*(self: Controller): CowSeq[TokenItem] =
   return self.tokenService.getFlatTokensList()
 
-proc getTokenBySymbolList*(self: Controller): var seq[TokenBySymbolItem] =
+proc getTokenBySymbolList*(self: Controller): CowSeq[TokenBySymbolItem] =
   return self.tokenService.getTokenBySymbolList()
 
 proc getTokenDetails*(self: Controller, symbol: string): TokenDetailsItem =

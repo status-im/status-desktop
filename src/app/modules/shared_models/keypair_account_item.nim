@@ -148,6 +148,10 @@ QtObject:
   proc balanceChanged*(self: KeyPairAccountItem) {.signal.}
   proc getBalance*(self: KeyPairAccountItem): QVariant {.slot.} =
     return newQVariant(self.balance)
+  proc getBalanceObject*(self: KeyPairAccountItem): CurrencyAmount =
+    ## Helper to get the actual CurrencyAmount object (not wrapped in QVariant)
+    ## Used for Pattern 5 optimization to compare and update balance
+    return self.balance
   proc setBalance*(self: KeyPairAccountItem, value: CurrencyAmount) =
     self.balance = value
     self.balanceFetched = true
@@ -180,6 +184,38 @@ QtObject:
     read = hideFromTotalBalance
     notify = hideFromTotalBalanceChanged
 
+  proc update*(self: KeyPairAccountItem, other: KeyPairAccountItem) =
+    ## Update this KeyPairAccountItem from another, calling setters for changed properties
+    ## This ensures proper signal emission for fine-grained QML updates (Pattern 5)
+    if self.isNil or other.isNil: return
+    
+    if self.name != other.name:
+      self.setName(other.name)
+    if self.path != other.path:
+      self.setPath(other.path)
+    if self.address != other.address:
+      self.setAddress(other.address)
+    if self.pubKey != other.pubKey:
+      self.setPubKey(other.pubKey)
+    if self.emoji != other.emoji:
+      self.setEmoji(other.emoji)
+    if self.colorId != other.colorId:
+      self.setColorId(other.colorId)
+    if self.icon != other.icon:
+      self.setIcon(other.icon)
+    # Balance is a nested QObject - use its update method!
+    if self.balance != other.balance:
+      self.balance.update(other.balance)
+    # Note: balanceFetched doesn't have a direct setter
+    # setBalance sets it to true, so handle specially
+    if not self.balanceFetched and other.balanceFetched:
+      self.setBalance(other.balance)
+    if self.operability != other.operability:
+      self.setOperability(other.operability)
+    # Note: isDefaultAccount doesn't have a setter - skip it
+    if self.hideFromTotalBalance != other.hideFromTotalBalance:
+      self.setHideFromTotalBalance(other.hideFromTotalBalance)
+  
   proc delete*(self: KeyPairAccountItem) =
     self.QObject.delete
 

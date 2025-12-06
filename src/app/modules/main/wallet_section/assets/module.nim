@@ -2,6 +2,7 @@ import nimqml
 
 import app/global/global_singleton
 import app/core/eventemitter
+import app/core/cow_seq  # CoW container
 import app_service/service/token/service as token_service
 import app_service/service/currency/service as currency_service
 import app_service/service/wallet_account/service as wallet_account_service
@@ -32,9 +33,9 @@ proc newModule*(
   result = Module()
   result.delegate = delegate
   result.events = events
+  result.controller = newController(result, walletAccountService, networkService, tokenService, currencyService)
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = newController(result, walletAccountService, networkService, tokenService, currencyService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -71,7 +72,7 @@ method viewDidLoad*(self: Module) =
 
 method getGroupedAccountAssetsDataSource*(self: Module): GroupedAccountAssetsDataSource =
   return (
-    getGroupedAccountsAssetsList: proc(): var seq[GroupedTokenItem] = self.controller.getGroupedAccountsAssetsList()
+    getGroupedAccountsAssetsList: proc(): CowSeq[GroupedTokenItem] = self.controller.getGroupedAccountsAssetsList()
   )
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
