@@ -261,7 +261,7 @@ include(FetchContent)
 FetchContent_Declare(
   QtModelsToolkit
   GIT_REPOSITORY https://github.com/status-im/QtModelsToolkit.git
-  GIT_TAG 8a6632b94eedb6e69826c57b3dfa5b0f77708098
+  GIT_TAG af59b81bc10bc37359c2839ae202c160c8321f1a
 )
 
 FetchContent_MakeAvailable(QtModelsToolkit)
