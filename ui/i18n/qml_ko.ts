@@ -2427,6 +2427,10 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
         <translation>백업 위치</translation>
     </message>
     <message>
+        <source>Choose a folder to store your backup files in.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Choose a folder to store your backup files or use the default one.</source>
         <translation>백업 파일을 저장할 폴더를 선택하거나 기본 폴더를 사용하세요.</translation>
     </message>
@@ -2672,6 +2676,26 @@ Do you wish to override the security check and continue?</source>
     <message>
         <source>Developer Tools</source>
         <translation>개발자 도구</translation>
+    </message>
+    <message>
+        <source>Clear site data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use it to reset the current site if it doesn&apos;t load or work properly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clearing cache...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear cache</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Settings</source>
@@ -6729,6 +6753,18 @@ Remember your password and don&apos;t share it with anyone.</source>
 <context>
     <name>EnableMessageBackupPopup</name>
     <message>
+        <source>Enable on-device backup?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On-device backups are:&lt;br&gt;&lt;b&gt;Automatic&lt;/b&gt; –  created every 30 minutes&lt;br&gt;&lt;b&gt;Secure&lt;/b&gt; – encrypted with your profile’s private key&lt;br&gt;&lt;b&gt;Private&lt;/b&gt; – stored only on your device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To enable backups, choose a folder to store your backup files under the &lt;b&gt;Backup location&lt;/b&gt; setting.&lt;br&gt;&lt;br&gt;You can also &lt;b&gt;optionally&lt;/b&gt; back up your &lt;b&gt;1-on-1, group, and community messages&lt;/b&gt; by turning on the &lt;b&gt;Backup your messages&lt;/b&gt; toggle under the &lt;b&gt;Backup data&lt;/b&gt; setting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Skip</source>
         <translation>건너뛰기</translation>
     </message>
@@ -6737,12 +6773,12 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation>활성화</translation>
     </message>
     <message>
-        <source>Enable on-device message backup?</source>
-        <translation>기기 내 메시지 백업을 활성화하시겠어요?</translation>
+        <source>Go to settings</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</source>
-        <translation>기기 내 백업은:&lt;br&gt;자동 – 30분마다&lt;br&gt;안전 – 프로필 개인 키로 암호화&lt;br&gt;비공개 – 귀하의 기기에만 저장</translation>
+        <source>Enable on-device message backup?</source>
+        <translation>기기 내 메시지 백업을 활성화하시겠어요?</translation>
     </message>
     <message>
         <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>

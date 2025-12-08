@@ -3289,6 +3289,31 @@
       <translation>Developer Tools</translation>
     </message>
     <message>
+      <source>Clear site data</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clear site data</translation>
+    </message>
+    <message>
+      <source>Use it to reset the current site if it doesn&#39;t load or work properly.</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Use it to reset the current site if it doesn&#39;t load or work properly.</translation>
+    </message>
+    <message>
+      <source>Clearing cache...</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clearing cache...</translation>
+    </message>
+    <message>
+      <source>Clear cache</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clear cache</translation>
+    </message>
+    <message>
+      <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</translation>
+    </message>
+    <message>
       <source>Settings</source>
       <comment>BrowserSettingsMenu</comment>
       <translation>Settings</translation>
