@@ -35,7 +35,8 @@ android {
                         $$PWD/../lib/$$LIB_PREFIX/libnim_status_client.so \
                         $$PWD/../lib/$$LIB_PREFIX/libDOtherSide$$(LIB_SUFFIX)$$(LIB_EXT) \
                         $$PWD/../lib/$$LIB_PREFIX/libstatus.so \
-                        $$PWD/../lib/$$LIB_PREFIX/libStatusQ$$(LIB_SUFFIX)$$(LIB_EXT)
+                        $$PWD/../lib/$$LIB_PREFIX/libsds.so \
+                        $$PWD/../lib/$$LIB_PREFIX/libStatusQ$$(LIB_SUFFIX)$$(LIB_EXT) \
 
     OTHER_FILES += \
         $$ANDROID_PACKAGE_SOURCE_DIR/src/app/status/mobile/SecureAndroidAuthentication.java
@@ -51,7 +52,7 @@ ios {
     QMAKE_ASSET_CATALOGS += $$PWD/../ios/Images.xcassets
     QMAKE_IOS_LAUNCH_SCREEN = $$PWD/../ios/launch-image-universal.storyboard
 
-    LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen
+    LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lsds -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen
 
     # --- iOS frameworks required by keychain_apple.mm ---
     LIBS += -framework LocalAuthentication \
