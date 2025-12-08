@@ -28,6 +28,7 @@ ifeq ($(OS),android)
 		ANDROID_NDK_ROOT="$(ANDROID_NDK_ROOT)" \
 		ANDROID_API="$(ANDROID_API)" \
 		HOST_OS="$(HOST_OS)" \
+		USE_SYSTEM_NIM=$(USE_SYSTEM_NIM) \
 		GO_GENERATE_CMD="go generate" \
 		SHELL=/bin/sh
 else ifeq ($(OS),ios)
@@ -35,6 +36,7 @@ else ifeq ($(OS),ios)
 		ARCH=$(ARCH) \
 		IPHONE_SDK="$(IPHONE_SDK)" \
 		IOS_TARGET="$(IOS_TARGET)" \
+		USE_SYSTEM_NIM=$(USE_SYSTEM_NIM) \
 		SHELL=/bin/sh
 endif
 	@echo "Copying library to mobile lib directory"
