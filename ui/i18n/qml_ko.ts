@@ -2427,6 +2427,10 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
         <translation>백업 위치</translation>
     </message>
     <message>
+        <source>Choose a folder to store your backup files in.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Choose a folder to store your backup files or use the default one.</source>
         <translation>백업 파일을 저장할 폴더를 선택하거나 기본 폴더를 사용하세요.</translation>
     </message>
@@ -2469,10 +2473,6 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
     <message>
         <source>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored &lt;b&gt;only&lt;/b&gt; on your device).</source>
         <translation>백업은 자동(30분마다), 안전(프로필 개인 키로 암호화), 그리고 비공개(데이터는 &lt;b&gt;오직&lt;/b&gt; 귀하의 기기에만 저장됨)입니다.</translation>
-    </message>
-    <message>
-        <source>Choose a folder to store your backup files in.</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2678,18 +2678,6 @@ Do you wish to override the security check and continue?</source>
         <translation>개발자 도구</translation>
     </message>
     <message>
-        <source>Settings</source>
-        <translation>설정</translation>
-    </message>
-    <message>
-        <source>Downloads</source>
-        <translation>다운로드</translation>
-    </message>
-    <message>
-        <source>Zoom</source>
-        <translation>확대/축소</translation>
-    </message>
-    <message>
         <source>Clear site data</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2708,6 +2696,18 @@ Do you wish to override the security check and continue?</source>
     <message>
         <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>설정</translation>
+    </message>
+    <message>
+        <source>Downloads</source>
+        <translation>다운로드</translation>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation>확대/축소</translation>
     </message>
 </context>
 <context>
@@ -6729,22 +6729,6 @@ Remember your password and don&apos;t share it with anyone.</source>
 <context>
     <name>EnableMessageBackupPopup</name>
     <message>
-        <source>Skip</source>
-        <translation>건너뛰기</translation>
-    </message>
-    <message>
-        <source>Enable</source>
-        <translation>활성화</translation>
-    </message>
-    <message>
-        <source>Enable on-device message backup?</source>
-        <translation>기기 내 메시지 백업을 활성화하시겠어요?</translation>
-    </message>
-    <message>
-        <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
-        <translation>백업을 사용하면 앱을 다시 설치하거나 기기를 전환해야 할 때 1:1, 그룹 및 커뮤니티 메시지를 복원할 수 있어요. 지금 이 단계를 건너뛰고 나중에 언제든지 &lt;i&gt;설정 &gt; 기기 내 백업 &gt; 데이터 백업&lt;/i&gt;에서 활성화할 수 있어요.</translation>
-    </message>
-    <message>
         <source>Enable on-device backup?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6757,7 +6741,23 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Skip</source>
+        <translation>건너뛰기</translation>
+    </message>
+    <message>
+        <source>Enable</source>
+        <translation>활성화</translation>
+    </message>
+    <message>
         <source>Go to settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
+        <translation>백업을 사용하면 앱을 다시 설치하거나 기기를 전환해야 할 때 1:1, 그룹 및 커뮤니티 메시지를 복원할 수 있어요. 지금 이 단계를 건너뛰고 나중에 언제든지 &lt;i&gt;설정 &gt; 기기 내 백업 &gt; 데이터 백업&lt;/i&gt;에서 활성화할 수 있어요.</translation>
+    </message>
+    <message>
+        <source>Enable on-device message backup?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
