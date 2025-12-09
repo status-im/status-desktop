@@ -1,4 +1,4 @@
-# Tablet Build FURPS ([#17941](https://github.com/status-im/status-desktop/issues/17941))
+# Tablet Build FURPS ([#17941](https://github.com/status-im/status-app/issues/17941))
 
 ## Functionality
 - Partial feature parity with desktop app expected - no keycard, biometrics and dapps. To be added later.

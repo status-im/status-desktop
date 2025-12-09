@@ -25,7 +25,7 @@ FROM ubuntu:22.04 AS pcsc-build
 
 ARG PCSCLITE_VERSION
 
-# To fix: https://github.com/status-im/status-desktop/issues/16768
+# To fix: https://github.com/status-im/status-app/issues/16768
 # https://blog.apdu.fr/posts/2024/05/pcsc-lite-now-uses-meson-build-tool/
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
@@ -171,5 +171,5 @@ RUN curl -s https://nixos.org/releases/nix/nix-2.24.11/install | sh -s -- --no-d
 ENV PATH="/home/jenkins/.nix-profile/bin:${PATH}"
 
 LABEL maintainer="jakub@status.im"
-LABEL source="https://github.com/status-im/status-desktop"
+LABEL source="https://github.com/status-im/status-app"
 LABEL description="Build image for the Status Desktop client written in Nim."

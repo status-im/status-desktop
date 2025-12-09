@@ -1,4 +1,4 @@
-# Dapp Browser Reintroduction FURPS ([#17970](https://github.com/status-im/status-desktop/issues/17970))
+# Dapp Browser Reintroduction FURPS ([#17970](https://github.com/status-im/status-app/issues/17970))
 
 ## Functionality
 - Reintegrate a Dapp browser into the app, allowing users to open and interact with decentralized applications.

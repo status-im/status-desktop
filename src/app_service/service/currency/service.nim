@@ -123,7 +123,7 @@ QtObject:
   # TODO: left this for activity controller as it uses token symbol
   # which may not be unique needs to be refactored. Also needed for
   # hasGas api which also needs to be rethought
-  # https://github.com/status-im/status-desktop/issues/13505
+  # https://github.com/status-im/status-app/issues/13505
   proc parseCurrencyValue*(self: Service, symbol: string, amountInt: UInt256): float64 =
     let token = self.tokenService.findTokenBySymbol(symbol)
     var decimals: int = 0

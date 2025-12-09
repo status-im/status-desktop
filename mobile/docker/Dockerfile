@@ -319,7 +319,7 @@ WORKDIR /home/jenkins
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
 
 LABEL maintainer="status-team"
-LABEL source="https://github.com/status-im/status-desktop"
+LABEL source="https://github.com/status-im/status-app"
 
 # =============================================================================
 # Stage 5: Mobile Build Stage - extends nim-runtime with mobile specific deps

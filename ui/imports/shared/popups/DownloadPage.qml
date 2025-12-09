@@ -16,7 +16,7 @@ Rectangle {
     property string currentVersion: "0.0.0"
     property string newVersion: "0.0.0"
     property bool newVersionAvailable: true
-    property string downloadURL: "https://github.com/status-im/status-desktop/releases/latest"
+    property string downloadURL: "https://github.com/status-im/status-app/releases/latest"
     signal closed()
 
     anchors.fill: parent

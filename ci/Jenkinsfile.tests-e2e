@@ -283,7 +283,7 @@ def updateGitHubStatus() {
     github.statusUpdate(
       context: 'jenkins/prs/tests/e2e-new',
       commit: jenkins.getJobCommitByPath(params.BUILD_SOURCE),
-      repo_url: 'https://github.com/status-im/status-desktop'
+      repo_url: 'https://github.com/status-im/status-app'
     )
   }
 }

@@ -96,7 +96,7 @@ QtObject:
     debug "KeycardServiceV2 init"
     # Do not remove the sleep 700, this sleep prevents a crash on intel MacOS
     # with errors like bad flushGen 12 in prepareForSweep; sweepgen 0
-    # More details: https://github.com/status-im/status-desktop/pull/15194
+    # More details: https://github.com/status-im/status-app/pull/15194
     if status_const.IS_MACOS and status_const.IS_INTEL:
       sleep 700
     self.initializeRPC()

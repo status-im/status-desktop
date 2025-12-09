@@ -165,6 +165,6 @@ class HomeScreen(QObject):
 
     @allure.step('Wait for home UI to be fully loaded')
     def wait_for_home_ui_loaded(self):
-        # TODO: https://github.com/status-im/status-desktop/issues/18325
+        # TODO: https://github.com/status-im/status-app/issues/18325
         time.sleep(0.5)
         return self

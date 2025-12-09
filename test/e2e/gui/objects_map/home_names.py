@@ -28,7 +28,7 @@ home_regular_dock_button_messages = {"container": statusDesktop_mainWindow, "obj
 home_regular_dock_button_communities = {"container": statusDesktop_mainWindow, "objectName": "regularDockButtonCommunities Portal", "type": "HomePageDockButton", "visible": True}
 home_regular_dock_button_settings = {"container": statusDesktop_mainWindow, "objectName": "regularDockButtonSettings", "type": "HomePageDockButton", "visible": True}
 
-# TODO: Methods for pinned dock buttons https://github.com/status-im/status-desktop/issues/18239
+# TODO: Methods for pinned dock buttons https://github.com/status-im/status-app/issues/18239
 home_pinned_dock_button_ = {"container": statusDesktop_mainWindow, "objectName": "pinnedDockButton", "type": "HomePageDockButton", "visible": True}
 
 # Generic Dock Button Locators
