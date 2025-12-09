@@ -78,7 +78,7 @@ StatusDropdown {
             // after status app upgrades to
             // a Qt version that has ListView scrolling with mouse wheel and
             // touchpad fixed.
-            // https://github.com/status-im/status-desktop/issues/15595
+            // https://github.com/status-im/status-app/issues/15595
             // Layout.maximumHeight: 290
             Layout.fillHeight: true
 

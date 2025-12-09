@@ -1,26 +1,31 @@
-# Contributing to Status Desktop
+# Contributing to the Status App
 
 ## Table of Contents
-- [🛠️ Developing](#️-developing)
-- [🪲 Desktop Status App Community Testing](#-desktop-status-app-community-testing)
-  - [Important Backup Information](#1-important)
-  - [Download the Release Candidate Build](#2-download-the-release-candidate-build)
-  - [Install the Release Candidate](#3-install-the-release-candidate)
-  - [Create a Test Profile First](#4-create-a-test-profile-first)
-  - [Test Regular Usage Flows](#5-test-regular-usage-flows)
-  - [Collaborate on Testing](#6-collaborate-on-testing-release-candidates)
-  - [Reporting Bugs](#7-reporting-bugs)
-  - [Recovering Your Real Status Account](#8-recovering-your-real-status-account)
+- [Contributing to the Status App](#contributing-to-the-status-app)
+  - [Table of Contents](#table-of-contents)
+  - [🛠️ Developing](#️-developing)
+  - [🪲 Status App Community Testing](#-status-app-community-testing)
+    - [Disclaimer](#disclaimer)
+    - [**🛠️ Testing Instructions for Status Release Candidate Build**](#️-testing-instructions-for-status-release-candidate-build)
+      - [1. Important!](#1-important)
+      - [2. Download the Release Candidate Build](#2-download-the-release-candidate-build)
+      - [3. Install the Release Candidate](#3-install-the-release-candidate)
+      - [4. Create a Test Profile First](#4-create-a-test-profile-first)
+      - [5. Test Regular Usage Flows](#5-test-regular-usage-flows)
+      - [6. Collaborate on Testing Release Candidates:](#6-collaborate-on-testing-release-candidates)
+      - [7. Reporting Bugs](#7-reporting-bugs)
+      - [8. Recovering Your Real Status Account](#8-recovering-your-real-status-account)
 
 ## 🛠️ Developing
 
-- [Building from Source](BUILDING.md)
+- [Building Desktop from Source](BUILDING.md)
+- [Building Mobile from Source](/mobile/README.md)
 - Check our [Architecture Docs](docs/architecture.md).
 - Read our [QML Architecture Guidelines](guidelines/QML_ARCHITECTURE_GUIDE.md).
-- Check out [good first issues](https://github.com/status-im/status-desktop/contribute) to get involved.
-- Join the [#feedback-desktop](https://status.app/cc/G-EAAORobqgnsUPSVCLaSJr855iXTIdQiY1Q0ckBe8dWWEBpUAs9s8DTjWEpvsmpE83Izx1JWQuZrWWKUoxiXCwdtB-wPBzyvv_n9a0F61xTaPZE7BEJDC7Ly_WcmQ4tHRAKnPfXE_JUtEX_3NhnXQN0eh4ue0D77dWvaDpDrSi0U0CaGLZ-pqD_iV0z9RMFE2LKulDZdwL40etJ8lxjyTFoxS0lUhdWKinIOk8qBmJJpCmsqMrSklEU#zQ3shZeEJqTC1xhGUjxuS4rtHSrhJ8vUYp64v6qWkLpvdy9L9) channel on Status.
+- Check out [good first issues](https://github.com/status-im/status-app/contribute) to get involved.
+- Join the [#feedback-desktop](https://status.app/cc/G-EAAORobqgnsUPSVCLaSJr855iXTIdQiY1Q0ckBe8dWWEBpUAs9s8DTjWEpvsmpE83Izx1JWQuZrWWKUoxiXCwdtB-wPBzyvv_n9a0F61xTaPZE7BEJDC7Ly_WcmQ4tHRAKnPfXE_JUtEX_3NhnXQN0eh4ue0D77dWvaDpDrSi0U0CaGLZ-pqD_iV0z9RMFE2LKulDZdwL40etJ8lxjyTFoxS0lUhdWKinIOk8qBmJJpCmsqMrSklEU#zQ3shZeEJqTC1xhGUjxuS4rtHSrhJ8vUYp64v6qWkLpvdy9L9) and [#feedback-mobile](https://status.app/cc/G-EAAOTgmsumqFvQZ-DSRkmf6xZuG-jQBrqnB6ytivISS1qeYURpfrzeMMePtpp7Inw_qy_cLdpZLJNUgOmfMHIZ4n2zSTr-n9u34C4yZa7c4JGLz9U6GIfjPqa0J0Ng2GC_Pu76QxgM-1v0z8V0PxxAf3fdHNbQXy-vfqWhK2iF0E6AaaJMh3sCmp_YpfFwR0DPmDIORPwdI_5ot4VZpkSb9FCkBwJO0xKNc5zI4oYpjfAhZVAyNWIHJs0D#zQ3shZeEJqTC1xhGUjxuS4rtHSrhJ8vUYp64v6qWkLpvdy9L9) channels on Status.
 
-## 🪲 Desktop Status App Community Testing
+## 🪲 Status App Community Testing
 
 ### Disclaimer
 
@@ -39,10 +44,10 @@ If you plan to test using your **existing/real** Status profile, **make sure you
 #### 2. Download the Release Candidate Build
 
 Get the latest release candidate build (look for versions with “**<code>-rc"</code>** in the name) from: \
- 👉[ https://github.com/status-im/status-desktop/releases](https://github.com/status-im/status-desktop/releases).
+ 👉[https://github.com/status-im/status-app/releases](https://github.com/status-im/status-app/releases).
  
 Refer to the table below to see which file you should use for your operating system.
-* **Known issues:** users on **macOS with Intel chips** should **NOT** upgrade to version v2.33 or higher to test release candidate builds due to a critical bug causing app crashes (more details: [#15730](https://github.com/status-im/status-desktop/issues/15730)).
+* **Known issues:** users on **macOS with Intel chips** should **NOT** upgrade to version v2.33 or higher to test release candidate builds due to a critical bug causing app crashes (more details: [#15730](https://github.com/status-im/status-app/issues/15730)).
 
 <table>
   <tr>
@@ -90,7 +95,7 @@ Refer to the table below to see which file you should use for your operating sys
 
 Follow the [instructions here](README.md#-download--install) to know how to install. 
 
-The test build will be installed **over your current Desktop Status App**, replacing the existing installation. 
+The test build will be installed **over your current Status App**, replacing the existing installation. 
 
     ⚠️ Note: upgrading to a Release Candidate (RC) build may damage your current app state or cause unexpected behavior. Please note that while restoring your profile using a Recovery Phrase will recover all your wallets and funds (i.e. your funds will not be affected), some user data may not be recovered. Proceed with caution and ensure you read the disclaimer above before installing.
 
@@ -122,17 +127,16 @@ Use the app as you normally would.
 
 #### 6. Collaborate on Testing Release Candidates:
 
-If you have questions, need more information, or want to stay in the loop and collaborate on Release Candidate testing, please use the [#feedback-desktop channel](https://status.app/cc/G-EAAORqbagnsUXSq0S0kTT5vWNeMtMJlRbohIpODtg7tsICSoNa6JkFnm4MS_FNTp1oRn7uSMpayGwtU5RiFONi6aD9gOXhkPf9369PLVjnmkKzJ2KPSGBwWV6u58x0aOmAUOC8v56Qp6It-ufGPusaoNPzcNkD2m-vfkXTGWpFoZ0C0sSw9TMF_U_smqmfKJgQU9aFyn4TwI9eT5LnGkuOQStuKZG6sFJJQdZ5UjEQSyJNYUVVlpaMogA=#zQ3shZeEJqTC1xhGUjxuS4rtHSrhJ8vUYp64v6qWkLpvdy9L9 ) in the Status App.
+If you have questions, need more information, or want to stay in the loop and collaborate on Release Candidate testing, please use the [#feedback-desktop](https://status.app/cc/G-EAAORqbagnsUXSq0S0kTT5vWNeMtMJlRbohIpODtg7tsICSoNa6JkFnm4MS_FNTp1oRn7uSMpayGwtU5RiFONi6aD9gOXhkPf9369PLVjnmkKzJ2KPSGBwWV6u58x0aOmAUOC8v56Qp6It-ufGPusaoNPzcNkD2m-vfkXTGWpFoZ0C0sSw9TMF_U_smqmfKJgQU9aFyn4TwI9eT5LnGkuOQStuKZG6sFJJQdZ5UjEQSyJNYUVVlpaMogA=#zQ3shZeEJqTC1xhGUjxuS4rtHSrhJ8vUYp64v6qWkLpvdy9L9) and [#feedback-mobile](https://status.app/cc/G-EAAOTgmsumqFvQZ-DSRkmf6xZuG-jQBrqnB6ytivISS1qeYURpfrzeMMePtpp7Inw_qy_cLdpZLJNUgOmfMHIZ4n2zSTr-n9u34C4yZa7c4JGLz9U6GIfjPqa0J0Ng2GC_Pu76QxgM-1v0z8V0PxxAf3fdHNbQXy-vfqWhK2iF0E6AaaJMh3sCmp_YpfFwR0DPmDIORPwdI_5ot4VZpkSb9FCkBwJO0xKNc5zI4oYpjfAhZVAyNWIHJs0D#zQ3shZeEJqTC1xhGUjxuS4rtHSrhJ8vUYp64v6qWkLpvdy9L9) channels in the Status App.
 
 #### 7. Reporting Bugs
 
 If you encounter what seems to be a bug:
 
   * First, **search** the GitHub issues page to check if it's already reported: \
-🔎[ https://github.com/status-im/status-desktop/issues \
-](https://github.com/status-im/status-desktop/issues)
+🔎 [https://github.com/status-im/status-app/issues](https://github.com/status-im/status-app/issues)
   * If it’s not listed, please **open a new issue** using the bug report template: \
-🐛[ https://github.com/status-im/status-desktop/issues/new?template=bug.md](https://github.com/status-im/status-desktop/issues/new?template=bug.md)
+🐛 [https://github.com/status-im/status-app/issues/new?template=bug.md](https://github.com/status-im/status-app/issues/new?template=bug.md)
       * To help us further, provide the logs from the app along with the issue
       * You can find the logs in the following locations (get the latest one):
           * Windows: `%LOCALAPPDATA%\Status\logs` 
@@ -145,6 +149,5 @@ If you encounter an irrecoverable issue while testing with your real Status prof
 
 * **Delete the app data folder** or **fully uninstall the app** (recommended if you're unsure how to delete the app data folder manually).
 * **Reinstall** the app from the latest official release: \
- 👉[ https://github.com/status-im/status-desktop/releases \
-](https://github.com/status-im/status-desktop/releases)
+ 👉 [https://github.com/status-im/status-app/releases](https://github.com/status-im/status-app/releases)
 * **Launch** the app, select **“Recover profile”**, and use the **recovery phrase** you backed up in Step 1.

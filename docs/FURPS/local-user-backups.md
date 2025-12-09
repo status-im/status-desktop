@@ -1,4 +1,4 @@
-# Local User Backup FURPS ([#18106](https://github.com/status-im/status-desktop/issues/18106))
+# Local User Backup FURPS ([#18106](https://github.com/status-im/status-app/issues/18106))
 
 ## Functionality
 - Replace remote Waku-based storage with local file-based backup for user data (settings, contacts, chat IDs, etc.).

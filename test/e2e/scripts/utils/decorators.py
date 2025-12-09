@@ -43,7 +43,7 @@ def open_with_retries(screen_class, attempts: int = 3, delay: float = 0.5):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
             last_exception = None
-            # TODO: https://github.com/status-im/status-desktop/issues/18888
+            # TODO: https://github.com/status-im/status-app/issues/18888
             # Workaround for app freeze when opening settings
             is_settings_screen = screen_class.__name__ == 'SettingsScreen'
             

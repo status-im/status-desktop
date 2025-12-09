@@ -20,7 +20,7 @@ class AuthenticatePopup(QObject):
     @allure.step('Authenticate actions with password {0}')
     def authenticate(self, password: str):
         self._password_text_edit.type_text(password)
-        # TODO https://github.com/status-im/status-desktop/issues/15345
+        # TODO https://github.com/status-im/status-app/issues/15345
         self._primary_button.click()
 
     @allure.step('Check if authenticate button is present')

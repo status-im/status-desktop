@@ -169,7 +169,7 @@ class AccountPopup(QObject):
 
     @allure.step('Click confirmation (add account / save changes) button')
     def save_changes(self):
-        # TODO https://github.com/status-im/status-desktop/issues/15345
+        # TODO https://github.com/status-im/status-app/issues/15345
         self._add_save_account_confirmation_button.click()
         return self
 
@@ -269,7 +269,7 @@ class AddNewAccountPopup(QObject):
 
     @allure.step('Click continue')
     def click_continue(self):
-        # TODO https://github.com/status-im/status-desktop/issues/15345
+        # TODO https://github.com/status-im/status-app/issues/15345
         self._continue_button.click()
         return self
 
@@ -283,7 +283,7 @@ class AddNewAccountPopup(QObject):
 
     @allure.step('Enter new seed phrase')
     def enter_new_seed_phrase(self, seed_phrase_words: list):
-        # TODO https://github.com/status-im/status-desktop/issues/15345
+        # TODO https://github.com/status-im/status-app/issues/15345
         self._import_seed_phrase_button.click()
         if len(seed_phrase_words) == 12:
             self._seed_phrase_12_words_button.click()

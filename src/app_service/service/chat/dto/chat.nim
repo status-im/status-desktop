@@ -281,7 +281,7 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
       result.chatType = ChatType(chatTypeInt)
 
   # Default those properties to true as they are only provided for community chats
-  # To be refactored with https://github.com/status-im/status-desktop/issues/11694
+  # To be refactored with https://github.com/status-im/status-app/issues/11694
   result.canPostReactions = true
   result.canPost = true
   result.canView = true

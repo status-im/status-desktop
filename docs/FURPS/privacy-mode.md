@@ -1,4 +1,4 @@
-# Privacy Mode FURPS ([#17619](https://github.com/status-im/status-desktop/issues/17619))
+# Privacy Mode FURPS ([#17619](https://github.com/status-im/status-app/issues/17619))
 
 ## Functionality
 - Implement a **Privacy Mode toggle** to disable all third-party integrations globally.

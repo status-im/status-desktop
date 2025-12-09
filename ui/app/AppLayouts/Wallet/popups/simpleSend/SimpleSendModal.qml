@@ -678,7 +678,7 @@ StatusDialog {
                         }
                         markAsInvalid: amountToSend.markAsInvalid
                         /** TODO: Remove below customisations after
-                        https://github.com/status-im/status-desktop/issues/15709
+                        https://github.com/status-im/status-app/issues/15709
                         and make the button clickable **/
                         enabled: false
                         background: Rectangle {
