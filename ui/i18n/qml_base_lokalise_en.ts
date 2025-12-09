@@ -3298,6 +3298,31 @@
       <comment>BrowserSettingsMenu</comment>
       <translation>Zoom</translation>
     </message>
+    <message>
+      <source>Clear site data</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clear site data</translation>
+    </message>
+    <message>
+      <source>Use it to reset the current site if it doesn&#39;t load or work properly.</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Use it to reset the current site if it doesn&#39;t load or work properly.</translation>
+    </message>
+    <message>
+      <source>Clearing cache...</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clearing cache...</translation>
+    </message>
+    <message>
+      <source>Clear cache</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clear cache</translation>
+    </message>
+    <message>
+      <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</translation>
+    </message>
   </context>
   <context>
     <name>BrowserTabView</name>
@@ -9311,14 +9336,6 @@
     </message>
   </context>
   <context>
-    <name>FeeRow</name>
-    <message>
-      <source>Max.</source>
-      <comment>FeeRow</comment>
-      <translation>Max.</translation>
-    </message>
-  </context>
-  <context>
     <name>FeesBox</name>
     <message>
       <source>Fees</source>
@@ -10848,6 +10865,54 @@
     </message>
   </context>
   <context>
+    <name>KeycardChannelDrawer</name>
+    <message>
+      <source>Insert Keycard</source>
+      <comment>KeycardChannelDrawer</comment>
+      <translation>Insert Keycard</translation>
+    </message>
+    <message>
+      <source>Please tap your Keycard to the back of your device</source>
+      <comment>KeycardChannelDrawer</comment>
+      <translation>Please tap your Keycard to the back of your device</translation>
+    </message>
+    <message>
+      <source>Reading Keycard</source>
+      <comment>KeycardChannelDrawer</comment>
+      <translation>Reading Keycard</translation>
+    </message>
+    <message>
+      <source>Please keep your Keycard in place</source>
+      <comment>KeycardChannelDrawer</comment>
+      <translation>Please keep your Keycard in place</translation>
+    </message>
+    <message>
+      <source>Keycard Error</source>
+      <comment>KeycardChannelDrawer</comment>
+      <translation>Keycard Error</translation>
+    </message>
+    <message>
+      <source>An error occurred. Please try again.</source>
+      <comment>KeycardChannelDrawer</comment>
+      <translation>An error occurred. Please try again.</translation>
+    </message>
+    <message>
+      <source>Success</source>
+      <comment>KeycardChannelDrawer</comment>
+      <translation>Success</translation>
+    </message>
+    <message>
+      <source>Keycard operation completed successfully</source>
+      <comment>KeycardChannelDrawer</comment>
+      <translation>Keycard operation completed successfully</translation>
+    </message>
+    <message>
+      <source>Dismiss</source>
+      <comment>KeycardChannelDrawer</comment>
+      <translation>Dismiss</translation>
+    </message>
+  </context>
+  <context>
     <name>KeycardConfirmation</name>
     <message>
       <source>Warning, this Keycard stores your main Status profile and&#xA;accounts. A factory reset will permanently delete it.</source>
@@ -10958,11 +11023,6 @@
       <source>PIN correct</source>
       <comment>KeycardEnterPinPage</comment>
       <translation>PIN correct</translation>
-    </message>
-    <message>
-      <source>Keycard blocked</source>
-      <comment>KeycardEnterPinPage</comment>
-      <translation>Keycard blocked</translation>
     </message>
     <message numerus="yes">
       <source>%n attempt(s) remaining</source>

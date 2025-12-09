@@ -2700,6 +2700,26 @@ Do you wish to override the security check and continue?</source>
         <source>Zoom</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Clear site data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use it to reset the current site if it doesn&apos;t load or work properly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clearing cache...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear cache</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrowserTabView</name>
@@ -7650,13 +7670,6 @@ Please add it and try again.</source>
     </message>
 </context>
 <context>
-    <name>FeeRow</name>
-    <message>
-        <source>Max.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>FeesBox</name>
     <message>
         <source>Fees</source>
@@ -8928,6 +8941,45 @@ L2 poplatek: %2</translation>
     </message>
 </context>
 <context>
+    <name>KeycardChannelDrawer</name>
+    <message>
+        <source>Insert Keycard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please tap your Keycard to the back of your device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reading Keycard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please keep your Keycard in place</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keycard Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An error occurred. Please try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Success</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keycard operation completed successfully</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dismiss</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>KeycardConfirmation</name>
     <message>
         <source>Warning, this Keycard stores your main Status profile and
@@ -9020,10 +9072,6 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>PIN correct</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Keycard blocked</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
