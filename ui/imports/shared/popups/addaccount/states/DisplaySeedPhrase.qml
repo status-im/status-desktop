@@ -26,7 +26,6 @@ Item {
 
         StatusStepper {
             Layout.preferredWidth: Constants.addAccountPopup.stepperWidth
-            Layout.preferredHeight: Constants.addAccountPopup.stepperHeight
             Layout.topMargin: Theme.padding
             Layout.alignment: Qt.AlignCenter
             title: qsTr("Step 1 of 4")
