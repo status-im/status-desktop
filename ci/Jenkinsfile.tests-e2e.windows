@@ -237,6 +237,11 @@ pipeline {
           if (Test-Path "C:\\Users\\jenkins\\AppData\\Local\\Status") {
             Remove-Item "C:\\Users\\jenkins\\AppData\\Local\\Status" -Recurse -Force -ErrorAction SilentlyContinue
           }
+          # Clean-up registry entries
+          $registryPath = "HKCU:\\Software\\Status\\Status Desktop"
+          if (Test-Path $registryPath) {
+            Remove-Item $registryPath -Recurse -Force -ErrorAction SilentlyContinue
+          }
         '''
       }
       cleanWs(disableDeferredWipeout: true)
