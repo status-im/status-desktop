@@ -591,7 +591,7 @@ QtObject {
     }
 
     function getColorIndexForId(palette, colorId) {
-        let color = getColorForId(colorId)
+        let color = getColorForId(palette, colorId)
         for (let i = 0; i < palette.customisationColorsArray.length; i++) {
             if(palette.customisationColorsArray[i] === color) {
                 return i
