@@ -2,6 +2,7 @@ ARG QT_VERSION="6.9.2"
 ARG QT_MODULES="qtwebchannel qtwebview qtwebsockets qt5compat qtmultimedia qtwebengine qtpositioning qtserialport qtshadertools qtimageformats qtscxml qthttpserver"
 ARG LINUXDEPLOYQT_VERSION="20250615-0393b84"
 ARG PCSCLITE_VERSION="2.2.3"
+ARG NIM_VERSION="2.2.4"
 
 # QT Installation Image --------------------------------------------------------
 FROM ubuntu:22.04 AS qt-install
@@ -46,7 +47,7 @@ RUN cp builddir/pcsclite.h src/PCSC
 # Build Image ------------------------------------------------------------------
 FROM ubuntu:22.04
 
-ARG QT_VERSION LINUXDEPLOYQT_VERSION PCSCLITE_VERSION
+ARG QT_VERSION LINUXDEPLOYQT_VERSION PCSCLITE_VERSION NIM_VERSION
 
 # Adapted from a12e/docker-qt by Aurélien Brooke
 
@@ -169,6 +170,22 @@ ENV PATH="${HOME}/go/bin:${PATH}"
 RUN curl -s https://nixos.org/releases/nix/nix-2.24.11/install | sh -s -- --no-daemon
 # for nix-shell to work
 ENV PATH="/home/jenkins/.nix-profile/bin:${PATH}"
+
+# Nim
+RUN curl https://nim-lang.org/choosenim/init.sh -sSf | sh -s -- -y \
+ && /home/jenkins/.nimble/bin/choosenim ${NIM_VERSION}
+ENV PATH="/home/jenkins/.nimble/bin:${PATH}"
+
+# Switch to root to create system-wide symlinks for Nim tools
+USER root
+
+RUN ln -sf /home/jenkins/.choosenim/toolchains/nim-${NIM_VERSION}/bin/nim /usr/local/bin/nim \
+ && ln -sf /home/jenkins/.choosenim/toolchains/nim-${NIM_VERSION}/bin/nimble /usr/local/bin/nimble \
+ && ln -sf /home/jenkins/.choosenim/toolchains/nim-${NIM_VERSION}/bin/choosenim /usr/local/bin/choosenim \
+ && chmod 755 /home/jenkins/.choosenim/toolchains/nim-${NIM_VERSION}/bin/* \
+ && chown -R root:root /home/jenkins/.choosenim/toolchains/nim-${NIM_VERSION}/bin
+
+USER jenkins
 
 LABEL maintainer="jakub@status.im"
 LABEL source="https://github.com/status-im/status-app"

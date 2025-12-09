@@ -40,6 +40,7 @@ function Install-Dependencies {
     scoop install --global `
         7zip git dos2unix findutils `
         wget rcedit inno-setup `
+        nim mingw-winlibs `
         make gcc openssl-lts
 }
 
