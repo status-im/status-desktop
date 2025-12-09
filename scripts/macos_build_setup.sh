@@ -19,7 +19,7 @@ function check_version {
 
 function install_build_dependencies {
   echo "Install build dependencies"
-  brew install pkg-config libtool jq node@22 yarn protoc-gen-go aqtinstall xcbeautify
+  brew install pkg-config libtool jq node@22 yarn protoc-gen-go aqtinstall xcbeautify nim
 }
 
 function install_qt {
