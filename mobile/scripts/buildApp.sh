@@ -13,6 +13,7 @@ BUILD_TYPE=${BUILD_TYPE:-"apk"}
 
 # BUILD_VARIANT controls bundle ID: "pr" = app.status.mobile.pr, "release" = app.status.mobile
 export BUILD_VARIANT=${BUILD_VARIANT:-"release"}
+FLAG_KEYCARD_ENABLED=${FLAG_KEYCARD_ENABLED:-1}
 
 QMAKE_BIN="${QMAKE:-qmake}"
 QMAKE_CONFIG="CONFIG+=device CONFIG+=release"
@@ -38,6 +39,12 @@ fi
 
 echo "Using version: $DESKTOP_VERSION; build version: $BUILD_VERSION"
 
+# Configure qmake with keycard flag
+QMAKE_DEFINES=""
+if [[ "${FLAG_KEYCARD_ENABLED}" == "1" ]]; then
+  QMAKE_DEFINES="DEFINES+=FLAG_KEYCARD_ENABLED"
+fi
+
 if [[ "${OS}" == "android" ]]; then
   if [[ -z "${JAVA_HOME}" ]]; then
     echo "JAVA_HOME is not set. Please set JAVA_HOME to the path of your JDK 11 or later."
@@ -47,7 +54,7 @@ if [[ "${OS}" == "android" ]]; then
   echo "Building for Android 35"
   ANDROID_PLATFORM=android-35
 
-  "$QMAKE_BIN" "$PRO_FILE" "$QMAKE_CONFIG" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" APP_VARIANT="${APP_VARIANT}" VERSION="$DESKTOP_VERSION" -after
+  "$QMAKE_BIN" "$PRO_FILE" "$QMAKE_CONFIG" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" APP_VARIANT="${APP_VARIANT}" VERSION="$DESKTOP_VERSION" ${QMAKE_DEFINES} -after
 
   # Build the app
   make -j"$(nproc)" apk_install_target
@@ -127,7 +134,20 @@ if [[ "${OS}" == "android" ]]; then
     fi
   fi
 else
-  "$QMAKE_BIN" "$PRO_FILE" "$QMAKE_CONFIG" -spec macx-ios-clang CONFIG+="$SDK" VERSION="$DESKTOP_VERSION" -after
+  # Generate Info.plist based on FLAG_KEYCARD_ENABLED
+  echo "Generating Info.plist (FLAG_KEYCARD_ENABLED=${FLAG_KEYCARD_ENABLED})..."
+  if [[ "${FLAG_KEYCARD_ENABLED}" == "1" ]]; then
+    # Enable NFC/Keycard support - uncomment NFC sections
+    sed -e '/<!-- KEYCARD_NFC_START$/d' \
+        -e '/^KEYCARD_NFC_END -->$/d' \
+        "$CWD/../ios/Info.plist.template" > "$BUILD_DIR/Info.plist"
+  else
+    # Disable NFC/Keycard support - remove NFC sections entirely
+    sed '/<!-- KEYCARD_NFC_START$/,/^KEYCARD_NFC_END -->$/d' \
+        "$CWD/../ios/Info.plist.template" > "$BUILD_DIR/Info.plist"
+  fi
+
+  "$QMAKE_BIN" "$PRO_FILE" "$QMAKE_CONFIG" -spec macx-ios-clang CONFIG+="$SDK" VERSION="$DESKTOP_VERSION" ${QMAKE_DEFINES} -after
 
   if [[ "$BUILD_VARIANT" == "pr" ]]; then
     TARGET_NAME="StatusPR"
@@ -135,10 +155,21 @@ else
     TARGET_NAME="Status"
   fi
 
+  # By default the app is not signed. Set the `DEVELOPMENT_TEAM` to the team ID to automatically sign the app.
+  SIGN_ARGS="CODE_SIGN_IDENTITY=\"\" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO"
+  if [[ -n "${DEVELOPMENT_TEAM}" ]]; then
+    echo "Signing Configuration: ${SIGN_ARGS} DEVELOPMENT_TEAM=${DEVELOPMENT_TEAM}"
+    /usr/libexec/PlistBuddy -c "Set :objects:*:buildSettings:DEVELOPMENT_TEAM ${DEVELOPMENT_TEAM}" "$BUILD_DIR/Status.xcodeproj/project.pbxproj" 2>/dev/null || true
+    sed -i '' "s/DEVELOPMENT_TEAM = .*;/DEVELOPMENT_TEAM = ${DEVELOPMENT_TEAM};/g" "$BUILD_DIR/Status.xcodeproj/project.pbxproj"
+    SIGN_ARGS="CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=${DEVELOPMENT_TEAM} -allowProvisioningUpdates"
+  fi
+
   # Compile resources
-  xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO CURRENT_PROJECT_VERSION=$BUILD_VERSION | xcbeautify
+  echo "Signing Configuration: ${SIGN_ARGS}"
+  xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH" ${SIGN_ARGS} | xcbeautify
   # Compile the app
-  xcodebuild -configuration Release -target "$TARGET_NAME" install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO CURRENT_PROJECT_VERSION=$BUILD_VERSION | xcbeautify
+  echo "Signing Configuration: ${SIGN_ARGS}"
+  xcodebuild -configuration Release -target "$TARGET_NAME" install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CURRENT_PROJECT_VERSION=$BUILD_VERSION ${SIGN_ARGS} | xcbeautify
 
   if [[ ! -e "${BIN_DIR}/${TARGET_NAME}.app/Info.plist" ]]; then
     echo "Build failed -> ${BIN_DIR}/${TARGET_NAME}.app not found"
