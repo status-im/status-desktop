@@ -618,7 +618,6 @@ QtObject {
     readonly property QtObject addAccountPopup: QtObject {
         readonly property int popupWidth: 480
         readonly property int contentHeight1: 554
-        readonly property int contentHeight2: 642
         readonly property int itemHeight: 64
         readonly property int importPrivateKeyWarningHeight: 86
         readonly property int labelFontSize1: root.Theme.primaryTextFontSize
@@ -627,7 +626,6 @@ QtObject {
         readonly property int keyPairNameMaxLength: 20
         readonly property int keyPairAccountNameMinLength: 5
         readonly property int stepperWidth: 242
-        readonly property int stepperHeight: 30
 
         readonly property QtObject keyPairType: QtObject {
             readonly property int unknown: -1
