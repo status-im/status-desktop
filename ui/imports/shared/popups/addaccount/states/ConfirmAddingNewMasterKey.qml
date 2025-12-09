@@ -6,57 +6,46 @@ import StatusQ.Controls
 import StatusQ.Core.Theme
 import StatusQ.Core
 
-import utils
 
-import "../stores"
-
-Item {
+Control {
     id: root
 
-    property AddAccountStore store
+    padding: Theme.padding
 
-    implicitHeight: layout.implicitHeight
-
-    Component.onCompleted: {
-        if (root.store.addingNewMasterKeyConfirmed) {
-            havePen.checked = true
-            writeDown.checked = true
-            storeIt.checked = true
-        }
+    readonly property bool allAccepted: havePen.checked &&
+                                        writeDown.checked &&
+                                        storeIt.checked
+    function setAllAccepted() {
+        havePen.checked = true
+        writeDown.checked = true
+        storeIt.checked = true
     }
 
     QtObject {
         id: d
-        readonly property int width1: layout.width - 2 * Theme.padding
-        readonly property int width2: d.width1 - 2 * Theme.padding
-        readonly property int checkboxHeight: 24
-        readonly property real lineHeight: 1.2
 
-        readonly property bool allAccepted: havePen.checked && writeDown.checked && storeIt.checked
-        onAllAcceptedChanged: {
-            root.store.addingNewMasterKeyConfirmed = allAccepted
-        }
+        readonly property real lineHeight: 1.2
     }
 
-    ColumnLayout {
+    contentItem: ColumnLayout {
         id: layout
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width - 2 * Theme.padding
-        spacing: Theme.padding
+
+        spacing: root.Theme.padding
 
         Image {
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Theme.padding
             Layout.preferredWidth: 120
             Layout.preferredHeight: 120
+
+            sourceSize: Qt.size(width, height)
             fillMode: Image.PreserveAspectFit
             source: Assets.png("onboarding/keys")
-            mipmap: true
-            cache: false
         }
 
         StatusBaseText {
-            Layout.preferredWidth: d.width1
+            Layout.fillWidth: true
+
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
@@ -66,7 +55,8 @@ Item {
         }
 
         StatusBaseText {
-            Layout.preferredWidth: d.width1
+            Layout.fillWidth: true
+
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
@@ -78,11 +68,14 @@ Item {
 
         StatusCheckBox {
             id: havePen
+
             objectName: "AddAccountPopup-HavePenAndPaper"
-            Layout.preferredWidth: d.width2
-            Layout.preferredHeight: d.checkboxHeight
+
+            Layout.fillWidth: true
+            Layout.leftMargin: Theme.xlPadding
             Layout.topMargin: Theme.padding
             Layout.alignment: Qt.AlignHCenter
+
             spacing: Theme.padding
             font.pixelSize: Theme.primaryTextFontSize
             text: qsTr("I have a pen and paper")
@@ -90,10 +83,12 @@ Item {
 
         StatusCheckBox {
             id: writeDown
-            objectName: "AddAccountPopup-SeedPhraseWritten"
-            Layout.preferredWidth: d.width2
-            Layout.preferredHeight: d.checkboxHeight
+
+            Layout.fillWidth: true
+            Layout.leftMargin: Theme.xlPadding
             Layout.alignment: Qt.AlignHCenter
+
+            objectName: "AddAccountPopup-SeedPhraseWritten"
             spacing: Theme.padding
             font.pixelSize: Theme.primaryTextFontSize
             text: qsTr("I am ready to write down my recovery phrase")
@@ -101,25 +96,31 @@ Item {
 
         StatusCheckBox {
             id: storeIt
-            objectName: "AddAccountPopup-StoringSeedPhraseConfirmed"
-            Layout.preferredWidth: d.width2
-            Layout.preferredHeight: d.checkboxHeight
+
+            Layout.fillWidth: true
+            Layout.leftMargin: Theme.xlPadding
             Layout.alignment: Qt.AlignHCenter
+
+            objectName: "AddAccountPopup-StoringSeedPhraseConfirmed"
             spacing: Theme.padding
             font.pixelSize: Theme.primaryTextFontSize
             text: qsTr("I know where I’ll store it")
         }
 
-        Rectangle {
+        Control {
             Layout.fillWidth: true
-            Layout.preferredHeight: 60
-            Layout.topMargin: Theme.padding
-            radius: Theme.radius
-            color: Theme.palette.dangerColor3
+            Layout.maximumWidth: implicitWidth
+            Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: root.Theme.padding
 
-            StatusBaseText {
-                anchors.fill: parent
-                anchors.margins: Theme.halfPadding
+            padding: root.Theme.padding
+
+            background: Rectangle {
+                radius: root.Theme.radius
+                color: root.Theme.palette.dangerColor3
+            }
+
+            contentItem: StatusBaseText {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 font.pixelSize: Theme.primaryTextFontSize
@@ -128,6 +129,10 @@ Item {
                 lineHeight: d.lineHeight
                 text: qsTr("You can only complete this process once. Status will not store your recovery phrase and can never help you recover it.")
             }
+        }
+
+        Item {
+            Layout.fillHeight: true
         }
     }
 }
