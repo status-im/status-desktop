@@ -573,7 +573,7 @@ button in the bottom bar. `Storybook` discovers tests by naming convention
 
 - Cryptocurrency balances should be always handled as a big integer strings and
   converted to localized human-friendly form only for displaying. Some basic rationale is
-  provided in [this ticket](https://github.com/status-im/status-desktop/issues/11376).
+  provided in [this ticket](https://github.com/status-im/status-app/issues/11376).
 
 ## Useful links
 

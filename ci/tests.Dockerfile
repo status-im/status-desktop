@@ -25,7 +25,7 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor --ba
 USER jenkins
 
 LABEL maintainer="marko@status.im"
-LABEL source="https://github.com/status-im/status-desktop"
+LABEL source="https://github.com/status-im/status-app"
 LABEL description="Build image for the Status Desktop e2e tests with Squish and Qt."
 
 ENTRYPOINT [""]

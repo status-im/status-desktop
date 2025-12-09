@@ -281,7 +281,7 @@ StatusDialog {
 
                     /* TODO: keep this input as disabled until the work for adding a param to handle to
                     and from tokens inputed is supported by backend under
-                    https://github.com/status-im/status-desktop/issues/15095 */
+                    https://github.com/status-im/status-app/issues/15095 */
                     interactive: false
                 }
 
@@ -593,9 +593,9 @@ StatusDialog {
             estimatedTime: root.swapAdaptor.swapOutputData.estimatedTime
 
             serviceProviderName: Constants.swap.paraswapName
-            serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
-            serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-desktop/issues/15329
-            serviceProviderIcon: Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
+            serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-app/issues/15329
+            serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-app/issues/15329
+            serviceProviderIcon: Assets.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
             serviceProviderContractAddress: root.swapAdaptor.swapOutputData.approvalContractAddress
             serviceProviderHostname: Constants.swap.paraswapHostname
 
@@ -662,8 +662,8 @@ StatusDialog {
             slippage: root.swapInputParamsForm.selectedSlippage
 
             serviceProviderName: Constants.swap.paraswapName
-            serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
-            serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-desktop/issues/15329
+            serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-app/issues/15329
+            serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-app/issues/15329
 
             onRejected: root.addMetricsEvent("rejected sign")
             onAccepted: {

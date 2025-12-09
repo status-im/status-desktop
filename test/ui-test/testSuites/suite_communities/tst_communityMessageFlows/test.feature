@@ -122,7 +122,7 @@ Feature: Status Desktop community messages
         Then the image "<image_url>" is unfurled in the chat
         Examples:
            | image_url                                                                                      |
-           | https://github.com/status-im/status-desktop/raw/master/test/ui-test/fixtures/images/doggo.jpeg |
+           | https://github.com/status-im/status-app/raw/master/test/ui-test/fixtures/images/doggo.jpeg |
 
    Scenario: The user is able to use emoji suggestions
         Given the user types "hello :thumbs"

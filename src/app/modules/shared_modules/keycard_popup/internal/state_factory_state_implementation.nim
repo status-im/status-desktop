@@ -89,7 +89,7 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
     ## since that flow is developed and available in `master` branch, but other flows are affected by
     ## the cahnge made in that one.
     ## That flow is not a subject of MVP and will be handled after MVP accross app properly,
-    ## issue: https://github.com/status-im/status-desktop/issues/8065
+    ## issue: https://github.com/status-im/status-app/issues/8065
     if keycardFlowType == ResponseTypeValueEnterPairing and
       keycardEvent.error.len > 0:
       if keycardEvent.error == ErrorPairing:

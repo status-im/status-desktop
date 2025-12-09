@@ -30,7 +30,7 @@ Background:
             | Saved address | 0x8397bc3c5a60a1883174f722403d63a8833312b7 |Saved addressNew |
             | Ens name      | nastya.stateofus.eth                       |Ens nameNew      |
 
-           # | foo  | nastya.stateofus.eth | bar | https://github.com/status-im/status-desktop/issues/11090
+           # | foo  | nastya.stateofus.eth | bar | https://github.com/status-im/status-app/issues/11090
      # TODO: actions from burger menu
      # TODO: enhance edit actions to change networks
      # TODO: test for Share button

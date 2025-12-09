@@ -124,7 +124,7 @@ git push
 git checkout ${STATUS_DESKTOP_MAIN_BRANCH}
 git branch -D ${BRANCH_NAME}
 
-STATUS_DESKTOP_PR_LINK="https://github.com/status-im/status-desktop/compare/$STATUS_DESKTOP_MAIN_BRANCH}...${BRANCH_NAME}"
+STATUS_DESKTOP_PR_LINK="https://github.com/status-im/status-app/compare/$STATUS_DESKTOP_MAIN_BRANCH}...${BRANCH_NAME}"
 STATUS_DESKTOP_PR_LINK="${STATUS_DESKTOP_PR_LINK}?quick_pull=1&title=chore:+bump+status-go&body=update+status+go"
 
 cat << EOF

@@ -125,7 +125,7 @@ class QObject:
 
         # if timeout is not None:
         #     pass
-        # TODO: enable after fixing https://github.com/status-im/status-desktop/issues/15345
+        # TODO: enable after fixing https://github.com/status-im/status-app/issues/15345
         # if not isFrozen(timeout):
         #    pass
 

@@ -209,7 +209,7 @@ StatusSectionLayout {
             text: qsTr("Create New Community")
             type: StatusBaseButton.Type.Primary
             onClicked: {
-                // Global.openPopup(chooseCommunityCreationTypePopupComponent) // hidden as part of https://github.com/status-im/status-desktop/issues/17726
+                // Global.openPopup(chooseCommunityCreationTypePopupComponent) // hidden as part of https://github.com/status-im/status-app/issues/17726
                 root.communitiesStore.setCreateCommunityPopupSeen()
                 Global.createCommunityPopupRequested(false /*isDiscordImport*/)
             }

@@ -1,5 +1,5 @@
 
-# Architecture of Status Desktop
+# Architecture of the Status App
 
 
 ## Top level architecture
@@ -27,11 +27,11 @@ flowchart LR
       hexagon{{"Out of repo libraries"}}
       barbox[["External providers"]]
     end
-    click qml "https://github.com/status-im/status-desktop/tree/master/ui" "Link to the UI folder containing the QML code"
-    click statusq "https://github.com/status-im/status-desktop/tree/master/ui/StatusQ" "Link to the StatusQ folder"
+    click qml "https://github.com/status-im/status-app/tree/master/ui" "Link to the UI folder containing the QML code"
+    click statusq "https://github.com/status-im/status-app/tree/master/ui/StatusQ" "Link to the StatusQ folder"
     click dotherside "https://github.com/status-im/dotherside" "Link to the DOtherSide repo"
     click nimqml "https://github.com/status-im/nimqml" "Link to the NimQML repo"
-    click nim "https://github.com/status-im/status-desktop/tree/master/src" "Link to the Nim code"
+    click nim "https://github.com/status-im/status-app/tree/master/src" "Link to the Nim code"
     click statusgo "https://github.com/status-im/status-go" "Link to the Status-Go repo"
     click waku "https://github.com/waku-org" "Link to the Waku org"
     click nimstatusgo "https://github.com/status-im/nim-status-go" "Link to nim-status-go repo"

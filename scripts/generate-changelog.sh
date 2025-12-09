@@ -9,7 +9,7 @@ if [[ -n "${CHANGE_ID:-}" ]]; then
   echo "PR #${CHANGE_ID} - ${SHORT_COMMIT}"
   echo "Build: #${BUILD_NUMBER}"
   echo ""
-  echo "View PR: https://github.com/status-im/status-desktop/pull/${CHANGE_ID}"
+  echo "View PR: https://github.com/status-im/status-app/pull/${CHANGE_ID}"
 elif [[ "${BRANCH_NAME}" == release* ]]; then
   # Release branch build
   echo "Release ${VERSION}"

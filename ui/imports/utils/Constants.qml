@@ -1493,7 +1493,7 @@ QtObject {
     }
 
     readonly property QtObject swap: QtObject {
-        /* TODO: https://github.com/status-im/status-desktop/issues/15329
+        /* TODO: https://github.com/status-im/status-app/issues/15329
         This is only added temporarily until we have an api from the backend in order to get
         this list dynamically */
         readonly property string paraswapName: "Velora"

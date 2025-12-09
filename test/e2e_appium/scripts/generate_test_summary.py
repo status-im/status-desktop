@@ -93,7 +93,7 @@ def main():
         "parallel_execution": args.parallel_execution or "false",
         "pytest_args": args.pytest_args or "unknown",
         "build_run_id": args.build_run_id,
-        "repo_url": args.repo_url or "https://github.com/status-im/status-desktop",
+        "repo_url": args.repo_url or "https://github.com/status-im/status-app",
     }
 
     summary = generate_summary(results, config)

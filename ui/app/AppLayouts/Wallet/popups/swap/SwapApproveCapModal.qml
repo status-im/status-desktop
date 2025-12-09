@@ -45,7 +45,7 @@ SignTransactionModalBase {
     property string serviceProviderName: Constants.swap.paraswapName
     property string serviceProviderHostname: Constants.swap.paraswapHostname
     property string serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl
-    property string serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
+    property string serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-app/issues/15329
     property string serviceProviderContractAddress: Constants.swap.paraswapV6_2ContractAddress
     property string serviceProviderIcon: Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
 
