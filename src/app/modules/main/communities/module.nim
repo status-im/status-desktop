@@ -12,6 +12,7 @@ import ./models/discord_channels_model
 import ./models/discord_file_list_model
 import ./models/discord_import_task_item
 import ./models/discord_import_tasks_model
+import app/core/cow_seq
 import app/modules/shared_models/[section_model, section_item, token_permissions_model, token_permission_item,
   token_list_item, token_list_model, token_criteria_item, token_criteria_model, token_permission_chat_list_model, keypair_model]
 import app/global/global_singleton
@@ -566,7 +567,7 @@ proc buildTokensAndCollectiblesFromWallet(self: Module) =
 
   # Common ERC20 tokens
   let allNetworks = self.controller.getCurrentNetworksChainIds()
-  let erc20Tokens = self.controller.getTokenBySymbolList().filter(t => (block:
+  let erc20Tokens = self.controller.getTokenBySymbolList().asSeq().filter(t => (block:
     let filteredChains = t.addressPerChainId.filter(apC => allNetworks.contains(apc.chainId))
     return filteredChains.len != 0
     ))

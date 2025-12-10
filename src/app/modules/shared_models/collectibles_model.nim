@@ -3,6 +3,7 @@ import chronicles
 
 import ./collectibles_entry
 import backend/collectibles as backend_collectibles
+import ../shared/model_sync
 
 type
   CollectibleRole* {.pure.} = enum
@@ -198,10 +199,34 @@ QtObject:
       result = newQVariant()
 
   proc resetCollectibleItems(self: Model, newItems: seq[CollectiblesEntry] = @[]) =
-    self.beginResetModel()
-    self.items = newItems
-    self.endResetModel()
-    self.countChanged()
+    self.setItemsWithSync(
+      self.items, newItems,
+      getId = proc(item: CollectiblesEntry): string = item.getIDAsString(),
+      getRoles = proc(old, new: CollectiblesEntry): seq[int] =
+        # Pattern 5: Check all fields for changes
+        result = @[]
+        if old.getChainID() != new.getChainID(): result.add(CollectibleRole.ChainId.int)
+        if old.getContractAddress() != new.getContractAddress(): result.add(CollectibleRole.ContractAddress.int)
+        if old.getTokenIDAsString() != new.getTokenIDAsString(): result.add(CollectibleRole.TokenId.int)
+        if old.getName() != new.getName(): result.add(CollectibleRole.Name.int)
+        if old.getImageURL() != new.getImageURL(): result.add(CollectibleRole.ImageUrl.int)
+        if old.getMediaURL() != new.getMediaURL(): result.add(CollectibleRole.MediaUrl.int)
+        if old.getMediaType() != new.getMediaType(): result.add(CollectibleRole.MediaType.int)
+        if old.getBackgroundColor() != new.getBackgroundColor(): result.add(CollectibleRole.BackgroundColor.int)
+        if old.getCollectionIDAsString() != new.getCollectionIDAsString(): result.add(CollectibleRole.CollectionUid.int)
+        if old.getCollectionName() != new.getCollectionName(): result.add(CollectibleRole.CollectionName.int)
+        if old.getCollectionSlug() != new.getCollectionSlug(): result.add(CollectibleRole.CollectionSlug.int)
+        if old.getCollectionImageURL() != new.getCollectionImageURL(): result.add(CollectibleRole.CollectionImageUrl.int)
+        if old.getCommunityId() != new.getCommunityId(): result.add(CollectibleRole.CommunityId.int)
+        if old.getCommunityPrivilegesLevel() != new.getCommunityPrivilegesLevel(): result.add(CollectibleRole.CommunityPrivilegesLevel.int)
+        if old.getTokenType() != new.getTokenType(): result.add(CollectibleRole.TokenType.int)
+        if old.getSoulbound() != new.getSoulbound(): result.add(CollectibleRole.Soulbound.int)
+        # Ownership role will update via nested model's own signals
+      ,
+      updateItem = proc(old, new: CollectiblesEntry) = old.update(new),
+      useBulkOps = true,
+      countChanged = proc() = self.countChanged()
+    )
 
   proc appendCollectibleItems(self: Model, newItems: seq[CollectiblesEntry]) =
     if len(newItems) == 0:
@@ -233,44 +258,8 @@ QtObject:
     self.countChanged()
   
   proc updateCollectibleItems(self: Model, newItems: seq[CollectiblesEntry]) =
-    if len(self.items) == 0:
-      # Current list is empty, just replace with new list
-      self.resetCollectibleItems(newItems)
-      return
-    
-    if len(newItems) == 0:
-      # New list is empty, just remove all items
-      self.resetCollectibleItems()
-      return
-
-    var newTable = initTable[string, int](len(newItems))
-    for i in 0 ..< len(newItems):
-      newTable[newItems[i].getIDAsString()] = i
-
-    # Needs to be built in sequential index order
-    var oldIndicesToRemove: seq[int] = @[]
-    for idx in 0 ..< len(self.items):
-      let uid = self.items[idx].getIDAsString()
-      if not newTable.hasKey(uid):
-        # Item in old list but not in new -> Must remove
-        oldIndicesToRemove.add(idx)
-      else:
-        # Item both in old and new lists -> Nothing to do in the current list,
-        # remove from the new list so it only holds new items.
-        newTable.del(uid)
-
-    if len(oldIndicesToRemove) > 0:
-      var removedItems = 0
-      for idx in oldIndicesToRemove:
-        let updatedIdx = idx - removedItems
-        self.removeCollectibleItem(updatedIdx)
-        removedItems += 1
-      self.countChanged()
-
-    var newItemsToAdd: seq[CollectiblesEntry] = @[]
-    for uid, idx in newTable:
-      newItemsToAdd.add(newItems[idx])
-    self.appendCollectibleItems(newItemsToAdd)
+    # Now using model_sync for efficient diff calculation
+    self.resetCollectibleItems(newItems)
 
   proc getItems*(self: Model): seq[CollectiblesEntry] =
     return self.items

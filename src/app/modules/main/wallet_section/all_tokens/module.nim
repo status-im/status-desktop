@@ -5,6 +5,7 @@ import ../io_interface as delegate_interface
 
 import app/global/global_singleton
 import app/core/eventemitter
+import app/core/cow_seq
 import app/modules/shared_models/currency_amount
 import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
@@ -107,7 +108,7 @@ method getSourcesOfTokensModelDataSource*(self: Module): SourcesOfTokensModelDat
 
 method getFlatTokenModelDataSource*(self: Module): FlatTokenModelDataSource =
   return (
-    getFlatTokensList: proc(): var seq[TokenItem] = self.controller.getFlatTokensList(),
+    getFlatTokensList: proc(): CowSeq[TokenItem] = self.controller.getFlatTokensList(),
     getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
     getTokenPreferences: proc(symbol: string): TokenPreferencesItem = self.controller.getTokenPreferences(symbol),
     getCommunityTokenDescription: proc(chainId: int, address: string): string = self.controller.getCommunityTokenDescription(chainId, address),
@@ -117,7 +118,7 @@ method getFlatTokenModelDataSource*(self: Module): FlatTokenModelDataSource =
 
 method getTokenBySymbolModelDataSource*(self: Module): TokenBySymbolModelDataSource =
   return (
-    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem] = self.controller.getTokenBySymbolList(),
+    getTokenBySymbolList: proc(): CowSeq[TokenBySymbolItem] = self.controller.getTokenBySymbolList(),
     getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
     getTokenPreferences: proc(symbol: string): TokenPreferencesItem = self.controller.getTokenPreferences(symbol),
     getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string = self.controller.getCommunityTokenDescription(addressPerChain),

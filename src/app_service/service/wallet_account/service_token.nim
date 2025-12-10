@@ -29,9 +29,13 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
         # for a new account the balances per address per chain will simply be appended later
         var tokensToBeDeleted: seq[string] = @[]
         for tokenkey, token in groupedAccountsTokensBalances:
-          token.balancesPerAccount = token.balancesPerAccount.filter(balanceItem => balanceItem.account != accountAddress)
-          if token.balancesPerAccount.len == 0:
+          # With value types, we need to create a mutable copy, modify it, and update the table
+          var mutableToken = token
+          mutableToken.balancesPerAccount = mutableToken.balancesPerAccount.filter(balanceItem => balanceItem.account != accountAddress)
+          if mutableToken.balancesPerAccount.len == 0:
             tokensToBeDeleted.add(tokenkey)
+          else:
+            groupedAccountsTokensBalances[tokenkey] = mutableToken
 
         for t in tokensToBeDeleted:
           groupedAccountsTokensBalances.del(t)
@@ -60,9 +64,12 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
                 let token_by_symbol_key = if communityId.isEmptyOrWhitespace: symbol
                                           else: address
                 if groupedAccountsTokensBalances.hasKey(token_by_symbol_key):
-                  groupedAccountsTokensBalances[token_by_symbol_key].balancesPerAccount.add(BalanceItem(account: accountAddress,
+                  # With value types, we need to get, modify, and set back
+                  var existingToken = groupedAccountsTokensBalances[token_by_symbol_key]
+                  existingToken.balancesPerAccount.add(BalanceItem(account: accountAddress,
                     chainId: chainId,
                     balance: rawBalance))
+                  groupedAccountsTokensBalances[token_by_symbol_key] = existingToken
                 else:
                   groupedAccountsTokensBalances[token_by_symbol_key] = GroupedTokenItem(
                     tokensKey: token_by_symbol_key,
@@ -76,7 +83,7 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
     if not allTokensHaveError:
       self.hasBalanceCache = true
       self.groupedAccountsTokensTable = groupedAccountsTokensBalances
-      self.groupedAccountsTokensList = accountTokens
+      self.groupedAccountsTokensList = toCowSeq(accountTokens)
   except Exception as e:
     error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
 
@@ -114,7 +121,9 @@ proc getTotalCurrencyBalance*(self: Service, addresses: seq[string], chainIds: s
       totalBalance = totalBalance + (self.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)*price)
   return totalBalance
 
-proc getGroupedAccountsAssetsList*(self: Service): var seq[GroupedTokenItem] =
+proc getGroupedAccountsAssetsList*(self: Service): CowSeq[GroupedTokenItem] =
+  ## Returns a CowSeq that shares memory until mutation (O(1) copy)
+  ## Models get their own isolated copy via Copy-on-Write
   return self.groupedAccountsTokensList
 
 proc getTokensMarketValuesLoading*(self: Service): bool =

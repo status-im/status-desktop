@@ -125,17 +125,17 @@ QtObject:
   # hasGas api which also needs to be rethought
   # https://github.com/status-im/status-desktop/issues/13505
   proc parseCurrencyValue*(self: Service, symbol: string, amountInt: UInt256): float64 =
-    let token = self.tokenService.findTokenBySymbol(symbol)
+    let tokenOpt = self.tokenService.findTokenBySymbol(symbol)
     var decimals: int = 0
-    if token != nil:
-      decimals = token.decimals
+    if tokenOpt.isSome:
+      decimals = tokenOpt.get().decimals
     return u256ToFloat(decimals, amountInt)
 
   proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64 =
-    let token = self.tokenService.getTokenBySymbolByTokensKey(tokensKey)
+    let tokenOpt = self.tokenService.getTokenBySymbolByTokensKey(tokensKey)
     var decimals: int = 0
-    if token != nil:
-      decimals = token.decimals
+    if tokenOpt.isSome:
+      decimals = tokenOpt.get().decimals
     return u256ToFloat(decimals, amountInt)
 
   proc delete*(self: Service) =

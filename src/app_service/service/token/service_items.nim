@@ -22,7 +22,7 @@ proc `$`*(self: SupportedSourcesItem): string =
     ]"""
 
 type
-  TokenItem* = ref object of RootObj
+  TokenItem* = object  # Value type for CoW isolation
     # key is created using chainId and Address
     key*: string
     name*: string
@@ -51,7 +51,19 @@ proc `$`*(self: TokenItem): string =
     communityId: {self.communityId}
     ]"""
 
-type AddressPerChain* = ref object of RootObj
+proc `==`*(a, b: TokenItem): bool =
+  a.key == b.key and
+  a.name == b.name and
+  a.symbol == b.symbol and
+  a.sources == b.sources and
+  a.chainID == b.chainID and
+  a.address == b.address and
+  a.decimals == b.decimals and
+  a.image == b.image and
+  a.`type` == b.`type` and
+  a.communityId == b.communityId
+
+type AddressPerChain* = object  # Value type for CoW isolation
     chainId*: int
     address*: string
 
@@ -61,8 +73,24 @@ proc `$`*(self: AddressPerChain): string =
     address: {self.address}
     ]"""
 
+proc `==`*(a, b: AddressPerChain): bool =
+  a.chainId == b.chainId and
+  a.address == b.address
+
 type
-  TokenBySymbolItem* = ref object of TokenItem
+  TokenBySymbolItem* = object  # Value type for CoW isolation
+    # Flattened from TokenItem (can't use inheritance with value types)
+    key*: string
+    name*: string
+    symbol*: string
+    sources*: seq[string]
+    chainID*: int
+    address*: string
+    decimals*: int
+    image*: string
+    `type`*: common_types.TokenType
+    communityId*: string
+    # TokenBySymbolItem-specific field
     addressPerChainId*: seq[AddressPerChain]
 
 proc `$`*(self: TokenBySymbolItem): string =
@@ -77,6 +105,19 @@ proc `$`*(self: TokenBySymbolItem): string =
     `type`: {self.`type`},
     communityId: {self.communityId}
     ]"""
+
+proc `==`*(a, b: TokenBySymbolItem): bool =
+  a.key == b.key and
+  a.name == b.name and
+  a.symbol == b.symbol and
+  a.sources == b.sources and
+  a.chainID == b.chainID and
+  a.address == b.address and
+  a.decimals == b.decimals and
+  a.image == b.image and
+  a.`type` == b.`type` and
+  a.communityId == b.communityId and
+  a.addressPerChainId == b.addressPerChainId
 
 # In case of community tokens only the description will be available
 type TokenDetailsItem* = ref object of RootObj

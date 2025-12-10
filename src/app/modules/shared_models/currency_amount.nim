@@ -49,26 +49,67 @@ QtObject:
       stripTrailingZeroes: {self.stripTrailingZeroes}
       )"""
 
+  proc amountChanged*(self: CurrencyAmount) {.signal.}
   proc getAmount*(self: CurrencyAmount): float {.slot.} =
     return self.amount
-
+  proc setAmount*(self: CurrencyAmount, value: float) {.slot.} =
+    if self.amount != value:
+      self.amount = value
+      self.amountChanged()
   QtProperty[float] amount:
     read = getAmount
+    write = setAmount
+    notify = amountChanged
 
+  proc symbolChanged*(self: CurrencyAmount) {.signal.}
   proc getSymbol*(self: CurrencyAmount): string {.slot.} =
     return self.symbol
+  proc setSymbol*(self: CurrencyAmount, value: string) {.slot.} =
+    if self.symbol != value:
+      self.symbol = value
+      self.symbolChanged()
   QtProperty[string] symbol:
     read = getSymbol
+    write = setSymbol
+    notify = symbolChanged
 
+  proc displayDecimalsChanged*(self: CurrencyAmount) {.signal.}
   proc getDisplayDecimals*(self: CurrencyAmount): int {.slot.} =
     return self.displayDecimals
+  proc setDisplayDecimals*(self: CurrencyAmount, value: int) {.slot.} =
+    if self.displayDecimals != value:
+      self.displayDecimals = value
+      self.displayDecimalsChanged()
   QtProperty[int] displayDecimals:
     read = getDisplayDecimals
+    write = setDisplayDecimals
+    notify = displayDecimalsChanged
 
+  proc stripTrailingZeroesChanged*(self: CurrencyAmount) {.signal.}
   proc isStripTrailingZeroesActive*(self: CurrencyAmount): bool {.slot.} =
     return self.stripTrailingZeroes
+  proc setStripTrailingZeroes*(self: CurrencyAmount, value: bool) {.slot.} =
+    if self.stripTrailingZeroes != value:
+      self.stripTrailingZeroes = value
+      self.stripTrailingZeroesChanged()
   QtProperty[bool] stripTrailingZeroes:
     read = isStripTrailingZeroesActive
+    write = setStripTrailingZeroes
+    notify = stripTrailingZeroesChanged
+
+  proc update*(self: CurrencyAmount, other: CurrencyAmount) =
+    ## Update this CurrencyAmount from another, calling setters for changed properties
+    ## This ensures proper signal emission for fine-grained QML updates
+    if self.isNil or other.isNil: return
+    
+    if self.amount != other.amount:
+      self.setAmount(other.amount)
+    if self.symbol != other.symbol:
+      self.setSymbol(other.symbol)
+    if self.displayDecimals != other.displayDecimals:
+      self.setDisplayDecimals(other.displayDecimals)
+    if self.stripTrailingZeroes != other.stripTrailingZeroes:
+      self.setStripTrailingZeroes(other.stripTrailingZeroes)
 
   # Needed to expose object to QML, see issue #8913
   proc toJsonNode*(self: CurrencyAmount): JsonNode =
