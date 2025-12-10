@@ -58,6 +58,9 @@ QtObject:
   proc resetRpcStats(self: View) {.slot.} =
     self.delegate.resetRpcStats()
 
+  proc refetchTxHistory*(self: View) {.slot.} =
+    self.delegate.refetchTxHistory()
+
   proc delete*(self: View) =
     self.QObject.delete
 

@@ -1363,6 +1363,18 @@
         <source>Change</source>
         <translation>변경</translation>
     </message>
+    <message>
+        <source>Refetch transaction history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refetch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation type="unfinished">완료</translation>
+    </message>
 </context>
 <context>
     <name>AirdropRecipientsSelector</name>
@@ -8195,12 +8207,8 @@ L2 수수료: %2</translation>
 <context>
     <name>HistoryBetaTag</name>
     <message>
-        <source>or</source>
-        <translation>또는</translation>
-    </message>
-    <message>
-        <source>Activity is in beta. If transactions are missing, check %1.</source>
-        <translation>활동은 베타입니다. 거래가 누락되었다면 %1을(를) 확인하세요.</translation>
+        <source>Activity is in beta. For any issues, go to Settings → Advanced → Refetch transaction history.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
