@@ -113,7 +113,7 @@ Rectangle {
             const linkTag = message.substring(index, endIndex)
             const linkText = linkTag.replace(/(<([^>]+)>)/ig,"").trim()
             const atSymbol = linkText.startsWith("@") ? '' : '@'
-            const mentionTag = Constants.mentionSpanTag + atSymbol + linkText + '</span> '
+            const mentionTag = d.mentionSpanTag + atSymbol + linkText + '</span> '
             mentionsMap.set(mentionLink, mentionTag)
             index += linkTag.length
         }
@@ -175,6 +175,8 @@ Rectangle {
 
         readonly property point emojiPopupPosition: getCommonPopupRelativePosition(emojiPopup, emojiBtn)
         readonly property point stickersPopupPosition: getCommonPopupRelativePosition(stickersPopup, stickersBtn)
+
+        readonly property string mentionSpanTag: `<span style="background-color: ${root.Theme.palette.mentionColor2};"><a style="color:${root.Theme.palette.mentionColor1};text-decoration:none" href='http://'>`
 
         readonly property StateGroup emojiPopupTakeover: StateGroup {
             states: State {
@@ -274,7 +276,7 @@ Rectangle {
             }
 
             const hasEmoji = StatusQUtils.Emoji.hasEmoji(messageInputField.text)
-            const spanPlusAlias = `${Constants.mentionSpanTag}@${aliasName}</a></span> `;
+            const spanPlusAlias = `${d.mentionSpanTag}@${aliasName}</a></span> `;
 
             let rightIndex = hasEmoji ? lastCursorPosition + 2 : lastCursorPosition
             messageInputField.remove(lastAtPosition, rightIndex)

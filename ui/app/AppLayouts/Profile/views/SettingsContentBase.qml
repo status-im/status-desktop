@@ -182,16 +182,10 @@ FocusScope {
 
     SettingsDirtyToastMessage {
         id: settingsDirtyToastMessage
+
         anchors.bottom: scrollView.bottom
         anchors.bottomMargin: d.bottomDirtyToastMargin
-
-        // Left anchors and margin added bc of the implementation of the `SettingsContentBase` parent margin and to avoid
-        // this toast to be wrongly centered
-        // Constants.settingsSection.leftMargin is the margin set up to the parent when using `SettingsContentBase` inside central
-        // panel property of `StatusSectionLayout` and needs to be taken into account to counteract it
-        // when trying to align horizontally the save toast component
-        anchors.left: root.left
-        anchors.leftMargin: -Constants.settingsSection.leftMargin / 2 + (root.width / 2 - width / 2)
+        anchors.horizontalCenter: parent.horizontalCenter
 
         active: root.dirty
         flickable: root.autoscrollWhenDirty ? scrollView.flickable : null
