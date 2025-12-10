@@ -39,6 +39,14 @@ SettingsContentBase {
     property bool isFleetSelectionEnabled
     property bool isBrowserEnabled: true
     property bool minimizeOnCloseOptionVisible
+    property bool refetchTxHistoryClicked: false
+    onVisibleChanged: {
+        // Reset the refetchTx button state when the user leaves the screen
+        if (visible) {
+            return
+        }
+        root.refetchTxHistoryClicked = false
+    }
 
     Item {
         id: advancedContainer
@@ -79,6 +87,32 @@ SettingsContentBase {
                 isSwitch: true
                 checked: !localAccountSensitiveSettings.quitOnClose
                 onToggled: localAccountSensitiveSettings.quitOnClose = !checked
+            }
+
+            RowLayout {
+                anchors.margins: Theme.padding
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                spacing: Theme.padding
+
+                height: 64
+
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    text: qsTr("Refetch transaction history")
+                    elide: Text.ElideRight
+                }
+
+                StatusButton {
+                    text: !root.refetchTxHistoryClicked ? qsTr("Refetch") : qsTr("Done")
+                    enabled: !root.refetchTxHistoryClicked
+                    icon.name: !root.refetchTxHistoryClicked ? "" : "tiny/checkmark"
+                    onClicked: {
+                        root.advancedStore.refetchTxHistory()
+                        root.refetchTxHistoryClicked = true
+                    }
+                }
             }
 
             StatusSettingsLineButton {

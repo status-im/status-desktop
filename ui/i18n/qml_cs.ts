@@ -1369,6 +1369,18 @@
         <source>Change</source>
         <translation>Změnit</translation>
     </message>
+    <message>
+        <source>Refetch transaction history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refetch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation type="unfinished">Hotovo</translation>
+    </message>
 </context>
 <context>
     <name>AirdropRecipientsSelector</name>
@@ -8250,12 +8262,8 @@ L2 poplatek: %2</translation>
 <context>
     <name>HistoryBetaTag</name>
     <message>
-        <source>or</source>
-        <translation>nebo</translation>
-    </message>
-    <message>
-        <source>Activity is in beta. If transactions are missing, check %1.</source>
-        <translation>Aktivita je v beta verzi. Pokud chybí transakce, zkontrolujte %1.</translation>
+        <source>Activity is in beta. For any issues, go to Settings → Advanced → Refetch transaction history.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
