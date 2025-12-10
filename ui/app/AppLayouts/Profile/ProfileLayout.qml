@@ -201,8 +201,8 @@ StatusSectionLayout {
         readonly property var currentItem: (currentIndex >= 0 && currentIndex < children.length) ? children[currentIndex].item : null
 
         anchors.fill: parent
-        anchors.leftMargin: Constants.settingsSection.leftMargin
-        anchors.rightMargin: Constants.settingsSection.rightMargin
+        anchors.leftMargin: root.Theme.xlPadding * 2
+        anchors.rightMargin: root.Theme.xlPadding * 2
 
         currentIndex: leftPanel.settingsSubsection
         onCurrentIndexChanged: {

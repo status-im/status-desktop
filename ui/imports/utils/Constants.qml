@@ -468,10 +468,6 @@ QtObject {
         readonly property int infoLineHeight: 22
         readonly property int infoSpacing: 5
         readonly property int itemHeight: 64
-        readonly property int leftMargin: root.Theme.xlPadding * 2
-        readonly property int rightMargin: root.Theme.xlPadding * 2
-        readonly property int topMargin: root.Theme.xlPadding * 2
-        readonly property int bottomMargin: root.Theme.xlPadding * 2
 
         readonly property QtObject notificationsBubble: QtObject {
             readonly property int previewAnonymous: 0
@@ -530,8 +526,6 @@ QtObject {
             readonly property int seedPhraseCellWidth: 193
             readonly property int seedPhraseCellHeight: 60
             readonly property int seedPhraseCellNumberWidth: 24
-            readonly property int seedPhraseCellFontSize: root.Theme.tertiaryTextFontSize
-            readonly property int buttonFontSize: root.Theme.primaryTextFontSize
             readonly property int pukCellWidth: 50
             readonly property int pukCellHeight: 60
             readonly property int popupWidth: 640
@@ -604,17 +598,6 @@ QtObject {
 
     readonly property int maxSocialLinkTextLength: 24
 
-    readonly property QtObject localPairingEventType: QtObject {
-        readonly property int eventUnknown: -1
-        readonly property int eventConnectionError: 0
-        readonly property int eventConnectionSuccess: 1
-        readonly property int eventTransferError: 2
-        readonly property int eventTransferSuccess: 3
-        readonly property int eventReceivedAccount: 4
-        readonly property int eventProcessSuccess: 5
-        readonly property int eventProcessError: 6
-    }
-
     readonly property QtObject addAccountPopup: QtObject {
         readonly property int popupWidth: 480
         readonly property int contentHeight1: 554
@@ -660,7 +643,6 @@ QtObject {
         readonly property int popupWidth: 480
         readonly property int contentHeight: 626
         readonly property int footerButtonsHeight: 44
-        readonly property int labelFontSize1: root.Theme.primaryTextFontSize
         readonly property string instructionsLabelForQr: qsTr("How to display the QR code on your other device")
         readonly property string instructionsLabelForEncryptedKey: qsTr("How to copy the encrypted key from your other device")
 
@@ -938,8 +920,6 @@ QtObject {
     readonly property int maxNumberOfPins: 3
 
     readonly property string dataImagePrefix: "data:image"
-
-    readonly property string mentionSpanTag: `<span style="background-color: ${root.Theme.palette.mentionColor2};"><a style="color:${root.Theme.palette.mentionColor1};text-decoration:none" href='http://'>`
 
     readonly property string ens_taken: "taken"
     readonly property string ens_taken_custom: "taken-custom"

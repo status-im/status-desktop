@@ -28,7 +28,7 @@ Item {
         StatusBaseText {
             Layout.fillWidth: true
             text: qsTr("Import method")
-            font.pixelSize: Constants.keypairImportPopup.labelFontSize1
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.baseColor1
         }
 
