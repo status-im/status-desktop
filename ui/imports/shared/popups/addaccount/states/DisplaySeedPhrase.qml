@@ -29,7 +29,6 @@ Item {
             Layout.topMargin: Theme.padding
             Layout.alignment: Qt.AlignCenter
             title: qsTr("Step 1 of 4")
-            titleFontSize: Constants.addAccountPopup.labelFontSize1
             totalSteps: 4
             completedSteps: 1
             leftPadding: 0
@@ -40,7 +39,6 @@ Item {
             Layout.preferredWidth: parent.width
             Layout.alignment: Qt.AlignCenter
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: Constants.addAccountPopup.labelFontSize1
             color: Theme.palette.directColor1
             text: qsTr("Write down your 12-word recovery phrase to keep offline")
         }
@@ -64,7 +62,6 @@ Item {
             Layout.alignment: Qt.AlignCenter
             horizontalAlignment: Text.AlignHCenter
             visible: !root.store.seedPhraseRevealed
-            font.pixelSize: Constants.addAccountPopup.labelFontSize1
             textFormat: Text.RichText
             wrapMode: Text.WordWrap
             color: Theme.palette.dangerColor1

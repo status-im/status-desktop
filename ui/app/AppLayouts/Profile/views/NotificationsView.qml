@@ -27,6 +27,10 @@ SettingsContentBase {
     QtObject {
         id: d
 
+        readonly property int infoFontSize: root.Theme.primaryTextFontSize
+        readonly property int infoLineHeight: 22
+        readonly property int infoSpacing: 5
+
         readonly property var notificationsSettings: root.notificationsStore.notificationsSettings
     }
 
@@ -166,13 +170,13 @@ SettingsContentBase {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: Constants.settingsSection.infoSpacing
+                spacing: d.infoSpacing
 
                 StatusBaseText {
                     Layout.preferredWidth: parent.width
                     text: qsTr("Enable Notifications in macOS Settings")
-                    font.pixelSize: Constants.settingsSection.infoFontSize
-                    lineHeight: Constants.settingsSection.infoLineHeight
+                    font.pixelSize: d.infoFontSize
+                    lineHeight: d.infoLineHeight
                     lineHeightMode: Text.FixedHeight
                     color: Theme.palette.primaryColor1
                 }
@@ -180,8 +184,8 @@ SettingsContentBase {
                 StatusBaseText {
                     Layout.preferredWidth: parent.width
                     text: qsTr("To receive Status notifications, make sure you've enabled them in your computer's settings under <b>System Preferences > Notifications</b>")
-                    font.pixelSize: Constants.settingsSection.infoFontSize
-                    lineHeight: Constants.settingsSection.infoLineHeight
+                    font.pixelSize: d.infoFontSize
+                    lineHeight: d.infoLineHeight
                     lineHeightMode: Text.FixedHeight
                     color: Theme.palette.baseColor1
                     wrapMode: Text.WordWrap
@@ -210,7 +214,6 @@ SettingsContentBase {
             Layout.preferredWidth: root.contentWidth
             Layout.leftMargin: Theme.padding
             text: qsTr("Messages")
-            font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.baseColor1
         }
 
@@ -285,7 +288,6 @@ SettingsContentBase {
             Layout.preferredWidth: root.contentWidth
             Layout.leftMargin: Theme.padding
             text: qsTr("Others")
-            font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.baseColor1
         }
 
@@ -331,7 +333,6 @@ SettingsContentBase {
             Layout.preferredWidth: root.contentWidth
             Layout.leftMargin: Theme.padding
             text: qsTr("Notification Content")
-            font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.directColor1
         }
 
@@ -409,7 +410,6 @@ SettingsContentBase {
             Layout.preferredWidth: root.contentWidth
             Layout.leftMargin: Theme.padding
             text: qsTr("Volume")
-            font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.directColor1
         }
 
@@ -482,7 +482,6 @@ SettingsContentBase {
             Layout.preferredWidth: root.contentWidth
             Layout.leftMargin: Theme.padding
             text: qsTr("Exemptions")
-            font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.directColor1
         }
 
@@ -498,7 +497,6 @@ SettingsContentBase {
             Layout.preferredWidth: root.contentWidth
             Layout.leftMargin: Theme.padding
             text: qsTr("Most recent")
-            font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.baseColor1
         }
 

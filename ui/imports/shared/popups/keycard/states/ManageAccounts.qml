@@ -113,7 +113,6 @@ Item {
             id: stepper
             Layout.preferredWidth: Constants.keycard.general.keycardNameInputWidth
             Layout.alignment: Qt.AlignCenter
-            titleFontSize: Constants.keycard.general.fontSize2
         }
 
         StatusBaseText {

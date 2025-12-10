@@ -35,7 +35,6 @@ Item {
             Layout.topMargin: Theme.padding
             Layout.alignment: Qt.AlignCenter
             title: qsTr("Step 4 of 4")
-            titleFontSize: Constants.addAccountPopup.labelFontSize1
             totalSteps: 4
             completedSteps: 4
             leftPadding: 0
@@ -46,7 +45,6 @@ Item {
             Layout.preferredWidth: parent.width
             Layout.alignment: Qt.AlignCenter
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: Constants.addAccountPopup.labelFontSize1
             color: Theme.palette.directColor1
             text: qsTr("Complete back up")
         }

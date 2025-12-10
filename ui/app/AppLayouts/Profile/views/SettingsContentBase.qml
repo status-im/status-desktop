@@ -99,7 +99,7 @@ FocusScope {
                 Layout.fillWidth: !root.stickTitleRowComponentLoader
                 text: root.sectionTitle
                 font.weight: Font.Bold
-                font.pixelSize: Constants.settingsSection.mainHeaderFontSize
+                font.pixelSize: root.Theme.fontSize(28) // Keep as is - special case for main header
                 color: Theme.palette.directColor1
 
                 elide: Text.ElideRight

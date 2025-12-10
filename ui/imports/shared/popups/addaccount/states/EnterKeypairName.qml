@@ -55,7 +55,7 @@ Item {
 
         StatusBaseText {
             text: qsTr("For your future reference. This is only visible to you.")
-            font.pixelSize: Constants.addAccountPopup.labelFontSize2
+            font.pixelSize: Theme.additionalTextSize
             color: Theme.palette.baseColor1
         }
     }

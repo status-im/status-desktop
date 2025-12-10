@@ -64,7 +64,6 @@ StatusMenu {
 
                 StatusLinkText {
                     visible: !root.store.addAccountModule.scanningForActivityIsOngoing
-                    font.pixelSize: Constants.addAccountPopup.labelFontSize1
                     text: qsTr("Scan addresses for activity")
                     color: Theme.palette.primaryColor1
                     onClicked: {
@@ -81,7 +80,6 @@ StatusMenu {
                     visible: root.store.addAccountModule.scanningForActivityIsOngoing
                     color: root.store.derivedAddressModel.loadedCount === 0?
                                Theme.palette.baseColor1 : Theme.palette.successColor1
-                    font.pixelSize: Constants.addAccountPopup.labelFontSize1
                     text: root.store.derivedAddressModel.loadedCount === 0?
                               qsTr("Scanning for activity...")
                             : qsTr("Activity fetched for %1 / %2 addresses").arg(root.store.derivedAddressModel.loadedCount).arg(root.store.derivedAddressModel.count)
@@ -136,7 +134,6 @@ StatusMenu {
                         elide: Text.ElideMiddle
                         color: model.addressDetails.alreadyCreated ? Theme.palette.baseColor1 :
                                                                      Theme.palette.directColor1
-                        font.pixelSize: Constants.addAccountPopup.labelFontSize1
                         text: model.addressDetails.address
                     }
 
@@ -149,7 +146,6 @@ StatusMenu {
                     }
 
                     StatusTextWithLoadingState {
-                        font.pixelSize: Constants.addAccountPopup.labelFontSize1
                         text: {
                             if (!root.store.addAccountModule.scanningForActivityIsOngoing) {
                                 return ""
@@ -180,7 +176,6 @@ StatusMenu {
 
                     StatusBaseText {
                         color: Theme.palette.baseColor1
-                        font.pixelSize: Constants.addAccountPopup.labelFontSize1
                         text: model.addressDetails.order
                     }
 
