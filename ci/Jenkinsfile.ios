@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.30'
+library 'status-jenkins-lib@v1.9.31'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -42,7 +42,7 @@ pipeline {
       artifactNumToKeepStr: '3',
     ))
     /* Allows combined build to copy */
-    copyArtifactPermission('/status-desktop/*')
+    copyArtifactPermission('/status-app/*')
     /* Abort old PR builds. */
     disableConcurrentBuilds(abortPrevious: isPRBuild)
     disableRestartFromStage()

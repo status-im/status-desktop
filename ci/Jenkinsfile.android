@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.30'
+library 'status-jenkins-lib@v1.9.31'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -16,7 +16,7 @@ pipeline {
       args '--entrypoint="" ' +
            '--volume=/nix:/nix ' +
            '--volume=/etc/nix:/etc/nix '
-      customWorkspace "/home/jenkins/workspace/status-desktop-android/${env.BUILD_NUMBER}"
+      customWorkspace "/home/jenkins/workspace/status-app-android/${env.BUILD_NUMBER}"
     }
   }
 
@@ -49,7 +49,7 @@ pipeline {
       artifactNumToKeepStr: '3',
     ))
     /* Allows combined build to copy */
-    copyArtifactPermission('/status-desktop/*')
+    copyArtifactPermission('/status-app/*')
     /* Abort old PR builds. */
     disableConcurrentBuilds(abortPrevious: isPRBuild)
     disableRestartFromStage()

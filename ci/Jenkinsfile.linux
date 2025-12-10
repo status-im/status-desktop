@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.30'
+library 'status-jenkins-lib@v1.9.31'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -65,7 +65,7 @@ pipeline {
       artifactNumToKeepStr: '1',
     ))
     /* Allows combined build to copy */
-    copyArtifactPermission('/status-desktop/*')
+    copyArtifactPermission('/status-app/*')
     /* Abort old PR builds. */
     disableConcurrentBuilds(
       abortPrevious: isPRBuild
@@ -155,7 +155,7 @@ pipeline {
       when { expression { utils.isPRBuild() && !(params.USE_NWAKU ?: false) } }
       steps { script {
         build(
-          job: 'status-desktop/e2e/prs',
+          job: 'status-app/e2e/prs',
           wait: false,
           parameters: jenkins.mapToParams([
             GIT_REF: env.CHANGE_BRANCH ?: env.BRANCH_NAME,
