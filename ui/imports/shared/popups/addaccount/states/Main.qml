@@ -166,7 +166,6 @@ Item {
                 Layout.fillWidth: true
                 model: Theme.palette.customisationColorsArray
                 title.color: Theme.palette.directColor1
-                title.font.pixelSize: Constants.addAccountPopup.labelFontSize1
                 title.text: qsTr("Colour")
                 selectedColorIndex: -1
 

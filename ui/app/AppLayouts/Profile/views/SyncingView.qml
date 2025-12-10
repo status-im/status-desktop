@@ -84,7 +84,6 @@ SettingsContentBase {
             Layout.leftMargin: Theme.padding
             Layout.rightMargin: Theme.padding
             text: qsTr("Devices")
-            font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.baseColor1
         }
 

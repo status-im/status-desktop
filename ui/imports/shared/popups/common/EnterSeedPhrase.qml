@@ -27,7 +27,6 @@ ColumnLayout {
         Layout.rightMargin: Theme.padding
 
         text: root.store.isAddAccountPopup? qsTr("Enter recovery phrase") : qsTr("Enter private key for %1 key pair").arg(root.store.selectedKeypair.name)
-        font.pixelSize: Constants.addAccountPopup.labelFontSize1
         elide: Text.ElideRight
     }
 
@@ -124,7 +123,7 @@ ColumnLayout {
             Layout.bottomMargin: Theme.padding
 
             text: qsTr("For your future reference. This is only visible to you.")
-            font.pixelSize: Constants.addAccountPopup.labelFontSize2
+            font.pixelSize: Theme.additionalTextSize
             color: Theme.palette.baseColor1
             wrapMode: Text.Wrap
         }

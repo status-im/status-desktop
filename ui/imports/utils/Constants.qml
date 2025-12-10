@@ -461,12 +461,6 @@ QtObject {
     readonly property QtObject settingsSection: QtObject {
         readonly property int itemSpacing: 10
         readonly property int radius: 8
-        readonly property int mainHeaderFontSize: root.Theme.fontSize(28) // Keep as is - special case for main header
-        readonly property int subHeaderFontSize: root.Theme.primaryTextFontSize
-        readonly property int importantInfoFontSize: root.Theme.fontSize(18)
-        readonly property int infoFontSize: root.Theme.primaryTextFontSize
-        readonly property int infoLineHeight: 22
-        readonly property int infoSpacing: 5
         readonly property int itemHeight: 64
 
         readonly property QtObject notificationsBubble: QtObject {
@@ -603,8 +597,6 @@ QtObject {
         readonly property int contentHeight1: 554
         readonly property int itemHeight: 64
         readonly property int importPrivateKeyWarningHeight: 86
-        readonly property int labelFontSize1: root.Theme.primaryTextFontSize
-        readonly property int labelFontSize2: root.Theme.additionalTextSize
         readonly property int footerButtonsHeight: 44
         readonly property int keyPairNameMaxLength: 20
         readonly property int keyPairAccountNameMinLength: 5

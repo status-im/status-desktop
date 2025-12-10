@@ -36,8 +36,6 @@ Control {
     property int totalSteps: 1
     property int completedSteps: 1
 
-    property int titleFontSize: Theme.tertiaryTextFontSize
-
     horizontalPadding: Theme.bigPadding
     verticalPadding: Theme.padding
 
@@ -57,7 +55,6 @@ Control {
             Layout.fillWidth: true
             horizontalAlignment: Qt.AlignHCenter
             color: Theme.palette.baseColor1
-            font.pixelSize: root.titleFontSize
             wrapMode: Text.Wrap
         }
 
