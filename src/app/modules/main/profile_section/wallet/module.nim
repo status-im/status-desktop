@@ -130,3 +130,6 @@ method getRpcStats*(self: Module): string =
 
 method resetRpcStats*(self: Module) =
   self.controller.resetRpcStats()
+
+method refetchTxHistory*(self: Module) =
+  self.controller.refetchTxHistory()

@@ -39,3 +39,6 @@ proc getRpcStats*(self: Controller): string =
 
 proc resetRpcStats*(self: Controller) =
   self.nodeService.resetRpcStats()
+
+proc refetchTxHistory*(self: Controller) =
+  self.walletAccountService.refetchTxHistory()

@@ -290,3 +290,6 @@ proc reevaluateRouterPath*(routerInputParamsUuid: string, pathName: string, chai
   let rpcResponse = core.callPrivateRPC("wallet_reevaluateRouterPath", payload)
   if isErrorResponse(rpcResponse):
     return rpcResponse.error.message
+
+rpc(refetchTxHistory, "wallet"):
+  discard

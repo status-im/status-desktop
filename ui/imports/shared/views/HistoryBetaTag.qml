@@ -20,21 +20,6 @@ InformationTag {
 
     required property var flatNetworks
 
-    QtObject {
-        id: d
-
-        readonly property int networksCount: root.flatNetworks.ModelCount.count
-
-        // Return pairs
-        function getExplorerLinks(model, hoveredLink) {
-            let links = []
-            SQUtils.ModelUtils.forEach(model, function(network) {
-                links.push(Utils.getStyledLink(Utils.getChainExplorerName(network["shortName"]), network["blockExplorerURL"], hoveredLink))
-            })
-            return Utils.getEnumerationString(links, qsTr("or"))
-        }
-    }
-
     implicitHeight: 56
 
     spacing: Theme.halfPadding
@@ -43,10 +28,7 @@ InformationTag {
     bgBorderColor: Theme.palette.primaryColor2
     tagPrimaryLabel.textFormat: Text.RichText
     tagPrimaryLabel.font.pixelSize: Theme.additionalTextSize
-    tagPrimaryLabel.text: {
-        d.networksCount
-        return qsTr("Activity is in beta. If transactions are missing, check %1.").arg(d.getExplorerLinks(root.flatNetworks, tagPrimaryLabel.hoveredLink))
-    }
+    tagPrimaryLabel.text: qsTr("Activity is in beta. For any issues, go to Settings → Advanced → Refetch transaction history.")
     tagPrimaryLabel.wrapMode: Text.WordWrap
     tagPrimaryLabel.onLinkActivated: root.linkActivated(link)
     // NB: regular binding won't work as `tagPrimaryLabel` is an alias

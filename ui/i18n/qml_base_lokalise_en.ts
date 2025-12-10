@@ -1678,6 +1678,21 @@
       <comment>AdvancedView</comment>
       <translation>Change</translation>
     </message>
+    <message>
+      <source>Refetch transaction history</source>
+      <comment>AdvancedView</comment>
+      <translation>Refetch transaction history</translation>
+    </message>
+    <message>
+      <source>Refetch</source>
+      <comment>AdvancedView</comment>
+      <translation>Refetch</translation>
+    </message>
+    <message>
+      <source>Done</source>
+      <comment>AdvancedView</comment>
+      <translation>Done</translation>
+    </message>
   </context>
   <context>
     <name>AirdropRecipientsSelector</name>
@@ -10051,14 +10066,9 @@
   <context>
     <name>HistoryBetaTag</name>
     <message>
-      <source>or</source>
+      <source>Activity is in beta. For any issues, go to Settings → Advanced → Refetch transaction history.</source>
       <comment>HistoryBetaTag</comment>
-      <translation>or</translation>
-    </message>
-    <message>
-      <source>Activity is in beta. If transactions are missing, check %1.</source>
-      <comment>HistoryBetaTag</comment>
-      <translation>Activity is in beta. If transactions are missing, check %1.</translation>
+      <translation>Activity is in beta. For any issues, go to Settings → Advanced → Refetch transaction history.</translation>
     </message>
   </context>
   <context>

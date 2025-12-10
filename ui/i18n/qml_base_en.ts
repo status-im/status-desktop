@@ -1370,6 +1370,18 @@
         <source>Change</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Refetch transaction history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refetch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AirdropRecipientsSelector</name>
@@ -8229,11 +8241,7 @@ L2 fee: %2</source>
 <context>
     <name>HistoryBetaTag</name>
     <message>
-        <source>or</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Activity is in beta. If transactions are missing, check %1.</source>
+        <source>Activity is in beta. For any issues, go to Settings → Advanced → Refetch transaction history.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
