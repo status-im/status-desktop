@@ -161,7 +161,10 @@ Item {
             }
             StatusBaseText {
                 id: title
+
                 wrapMode: Text.WordWrap
+                font.pixelSize: Constants.keycard.general.fontSize1
+                font.weight: Font.Bold
             }
         }
 
@@ -560,8 +563,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Plug in Keycard reader...")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -585,8 +586,6 @@ Item {
                     }
                     return qsTr("Insert Keycard...")
                 }
-                font.weight: Font.Bold
-                font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -604,7 +603,6 @@ Item {
                 text: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.wronglyInsertedCard?
                           qsTr("Check the card, it might be wrongly inserted") :
                           ""
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
             }
         },
@@ -614,8 +612,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Keycard inserted...")
-                font.weight: Font.Bold
-                font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -692,8 +688,7 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize2
-                font.weight: Font.Bold
+                font.pixelSize: Theme.primaryTextFontSize
                 color: Theme.palette.baseColor1
             }
             PropertyChanges {
@@ -729,8 +724,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("PCSC not available")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.dangerColor1
             }
             PropertyChanges {
@@ -746,7 +739,6 @@ Item {
             PropertyChanges {
                 target: message
                 text: qsTr("The Smartcard reader (PCSC service), required\nfor using Keycard, is not currently working.\nEnsure PCSC is installed and running and try again")
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.dangerColor1
             }
         },
@@ -756,8 +748,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("This is not a Keycard")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.dangerColor1
             }
             PropertyChanges {
@@ -780,7 +770,6 @@ Item {
             PropertyChanges {
                 target: message
                 text: qsTr("The card inserted is not a recognised Keycard,\nplease remove and try and again")
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.dangerColor1
             }
         },
@@ -790,8 +779,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Unlock this Keycard")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -813,7 +800,6 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
             }
         },
@@ -823,8 +809,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Wrong Keycard inserted")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.dangerColor1
             }
             PropertyChanges {
@@ -852,7 +836,6 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.dangerColor1
             }
         },
@@ -862,8 +845,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("This Keycard has empty metadata")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -880,7 +861,6 @@ Item {
 
                     return qsTr("This Keycard already stores keys\nbut doesn't store any metadata")
                 }
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
             }
         },
@@ -890,8 +870,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Keycard is empty")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -908,7 +886,6 @@ Item {
 
                     return qsTr("There is no key pair on this Keycard")
                 }
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
             }
         },
@@ -918,8 +895,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("This Keycard already stores keys")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -945,7 +920,6 @@ Item {
 
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
             }
         },
@@ -961,8 +935,6 @@ Item {
                       root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase ||
                       root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard?
                           qsTr("Keycard locked and already stores keys") : qsTr("Keycard locked")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase ||
@@ -998,7 +970,6 @@ Item {
                         return qsTr("Max pairing slots reached for the entered keycard")
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase ||
@@ -1012,8 +983,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Your Keycard is already unlocked!")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -1037,7 +1006,7 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Keycard recognized")
-                font.pixelSize: Constants.keycard.general.fontSize2
+                font.pixelSize: Theme.primaryTextFontSize
                 font.weight: Font.Normal
                 color: Theme.palette.baseColor1
             }
@@ -1109,8 +1078,6 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -1145,7 +1112,6 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
             }
         },
@@ -1193,8 +1159,6 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -1218,8 +1182,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Accounts on this Keycard")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -1233,7 +1195,6 @@ Item {
                         root.sharedKeycardModule.keyPairHelper.accounts.count > root.sharedKeycardModule.remainingAccountCapacity()?
                           qsTr("Adding these accounts will exceed the limit of 20.\nRemove some already added accounts to be able to import a new ones.")
                         : ""
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.dangerColor1
             }
         },
@@ -1243,8 +1204,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Ready to authenticate...")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -1268,8 +1227,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Biometric scan failed")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -1289,8 +1246,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Biometric scan failed")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -1310,14 +1265,11 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Biometric pin invalid")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.dangerColor1
             }
             PropertyChanges {
                 target: message
                 text: qsTr("The PIN length doesn't match Keycard's PIN length")
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
             }
         },
@@ -1327,8 +1279,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Remove Keycard")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -1352,8 +1302,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Oops this is the same Keycard!")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -1369,7 +1317,6 @@ Item {
             PropertyChanges {
                 target: message
                 text: qsTr("You need to remove this Keycard and insert\nan empty new or factory reset Keycard")
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
             }
         },
@@ -1380,8 +1327,6 @@ Item {
                 target: title
                 text: qsTr("Copy “%1” to inserted keycard")
                 .arg(root.sharedKeycardModule.keyPairForProcessing.name)
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -1408,8 +1353,6 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
@@ -1443,8 +1386,6 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
                 horizontalAlignment: Text.AlignHCenter
             }
@@ -1474,7 +1415,6 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
                 Layout.leftMargin: 2 * Theme.xlPadding
                 Layout.rightMargin: 2* Theme.xlPadding
@@ -1496,8 +1436,6 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
                 horizontalAlignment: Text.AlignHCenter
             }
@@ -1518,7 +1456,6 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
                 Layout.leftMargin: 2 * Theme.xlPadding
                 Layout.rightMargin: 2* Theme.xlPadding
@@ -1531,8 +1468,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Biometrics")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 color: Theme.palette.directColor1
                 horizontalAlignment: Text.AlignHCenter
             }
@@ -1544,7 +1479,6 @@ Item {
             PropertyChanges {
                 target: message
                 text: qsTr("Would you like to use Touch ID\nto login to Status?")
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
                 horizontalAlignment: Text.AlignHCenter
                 Layout.preferredWidth: layout.width - 4 * Theme.xlPadding

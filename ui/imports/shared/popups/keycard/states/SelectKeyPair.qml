@@ -54,7 +54,6 @@ Item {
             id: subTitle
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Select which key pair you’d like to move to this Keycard")
-            font.pixelSize: Constants.keycard.general.fontSize2
             color: Theme.palette.baseColor1
             wrapMode: Text.WordWrap
         }
@@ -71,7 +70,6 @@ Item {
             Layout.leftMargin: Theme.padding
             Layout.alignment: Qt.AlignLeft
             text: qsTr("Profile key pair")
-            font.pixelSize: Constants.keycard.general.fontSize2
             color: Theme.palette.baseColor1
             wrapMode: Text.WordWrap
         }
@@ -103,7 +101,6 @@ Item {
             Layout.leftMargin: Theme.padding
             Layout.alignment: Qt.AlignLeft
             text: qsTr("Other key pairs")
-            font.pixelSize: Constants.keycard.general.fontSize2
             color: Theme.palette.baseColor1
             wrapMode: Text.WordWrap
         }
