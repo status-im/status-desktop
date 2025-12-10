@@ -515,8 +515,6 @@ QtObject {
             readonly property int keycardPukAdditionalSpacingOnEvery4Items: 4
             readonly property int keycardPukAdditionalSpacing: 32
             readonly property int fontSize1: root.Theme.fontSize(22)
-            readonly property int fontSize2: root.Theme.primaryTextFontSize
-            readonly property int fontSize3: root.Theme.tertiaryTextFontSize
             readonly property int seedPhraseCellWidth: 193
             readonly property int seedPhraseCellHeight: 60
             readonly property int seedPhraseCellNumberWidth: 24

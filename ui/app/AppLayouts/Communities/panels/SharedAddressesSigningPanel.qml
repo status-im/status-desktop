@@ -85,7 +85,6 @@ ColumnLayout {
         StatusBaseText {
             Layout.preferredWidth: parent.width
             elide: Text.ElideRight
-            font.pixelSize: Constants.keycard.general.fontSize2
             text: qsTr("To share %n address(s) with <b>%1</b>, authenticate the associated key pairs...", "", d.selectedSharedAddressesCount).arg(root.communityName)
         }
 
@@ -97,8 +96,6 @@ ColumnLayout {
             StatusBaseText {
                 Layout.fillWidth: true
                 text: qsTr("Stored on device")
-                font.pixelSize: Constants.keycard.general.fontSize2
-                color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
             }
         }
@@ -191,7 +188,6 @@ ColumnLayout {
 
             StatusBaseText {
                 text: qsTr("Stored on keycard")
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
             }
@@ -294,7 +290,6 @@ ColumnLayout {
                       d.thereAreMoreThanOneNonProfileRegularKeypairs?
                           qsTr("Authenticate via “%1” key pair").arg(userProfile.name)
                         : qsTr("The following key pairs will be authenticated via “%1” key pair").arg(userProfile.name)
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WrapAnywhere
             }

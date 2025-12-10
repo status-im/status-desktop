@@ -100,6 +100,9 @@ Item {
             id: title
             Layout.alignment: Qt.AlignCenter
             font.weight: Font.Bold
+
+            font.pixelSize: Constants.keycard.general.fontSize1
+            color: Theme.palette.directColor1
         }
 
         StatusBaseText {
@@ -107,6 +110,9 @@ Item {
             Layout.alignment: Qt.AlignCenter
             wrapMode: Text.WordWrap
             visible: text !== ""
+
+            font.pixelSize: Theme.tertiaryTextFontSize
+            color: Theme.palette.baseColor1
         }
 
         StatusPinInput {
@@ -156,6 +162,9 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             visible: text !== ""
+
+            font.pixelSize: Theme.tertiaryTextFontSize
+            color: Theme.palette.dangerColor1
         }
 
         StatusBaseText {
@@ -164,6 +173,8 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             visible: text !== ""
+
+            font.pixelSize: Theme.tertiaryTextFontSize
         }
 
         Loader {
@@ -235,8 +246,6 @@ Item {
                     }
                     return qsTr("Enter this Keycard’s PIN")
                 }
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: subTitle
@@ -262,8 +271,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Enter Keycard PIN")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: subTitle
@@ -272,8 +279,6 @@ Item {
             PropertyChanges {
                 target: info
                 text: qsTr("PIN incorrect")
-                color: Theme.palette.dangerColor1
-                font.pixelSize: Constants.keycard.general.fontSize3
             }
             PropertyChanges {
                 target: message
@@ -281,7 +286,6 @@ Item {
                 color: root.remainingAttempts === 1?
                            Theme.palette.dangerColor1 :
                            Theme.palette.baseColor1
-                font.pixelSize: Constants.keycard.general.fontSize3
             }
         },
         State {
@@ -295,20 +299,14 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Your saved PIN is out of date")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: subTitle
                 text: qsTr("Enter your new PIN to proceed")
-                font.pixelSize: Constants.keycard.general.fontSize3
-                color: Theme.palette.baseColor1
             }
             PropertyChanges {
                 target: info
                 text: qsTr("PIN incorrect")
-                color: Theme.palette.dangerColor1
-                font.pixelSize: Constants.keycard.general.fontSize3
             }
             PropertyChanges {
                 target: message
@@ -316,7 +314,6 @@ Item {
                 color: root.remainingAttempts === 1?
                            Theme.palette.dangerColor1 :
                            Theme.palette.baseColor1
-                font.pixelSize: Constants.keycard.general.fontSize3
             }
         },
         State {
@@ -335,8 +332,6 @@ Item {
                     }
                     return qsTr("Choose a Keycard PIN")
                 }
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: subTitle
@@ -350,8 +345,6 @@ Item {
                     }
                     return d.message1
                 }
-                color: Theme.palette.dangerColor1
-                font.pixelSize: Constants.keycard.general.fontSize3
             }
             PropertyChanges {
                 target: message
@@ -374,8 +367,6 @@ Item {
                     }
                     return qsTr("Repeat Keycard PIN")
                 }
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: subTitle
@@ -389,8 +380,6 @@ Item {
                     }
                     return d.message1
                 }
-                color: Theme.palette.dangerColor1
-                font.pixelSize: Constants.keycard.general.fontSize3
             }
             PropertyChanges {
                 target: message
@@ -426,8 +415,6 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: subTitle
@@ -463,8 +450,6 @@ Item {
                     }
                     return ""
                 }
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: subTitle

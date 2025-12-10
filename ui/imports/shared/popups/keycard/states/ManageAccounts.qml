@@ -118,7 +118,10 @@ Item {
         StatusBaseText {
             id: title
             Layout.alignment: Qt.AlignCenter
+
             font.weight: Font.Bold
+            font.pixelSize: Constants.keycard.general.fontSize1
+            color: Theme.palette.directColor1
         }
 
         Rectangle {
@@ -143,7 +146,6 @@ Item {
                     StatusBaseText {
                         text: d.observedImportingAccountShortAddress
                         wrapMode: Text.WordWrap
-                        font.pixelSize: Constants.keycard.general.fontSize2
                         color: Theme.palette.baseColor1
                     }
 
@@ -151,7 +153,6 @@ Item {
                         text: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
                                   root.sharedKeycardModule.keyPairHelper.observedAccount.path : ""
                         wrapMode: Text.WordWrap
-                        font.pixelSize: Constants.keycard.general.fontSize2
                         color: Theme.palette.baseColor1
                     }
                 }
@@ -165,7 +166,6 @@ Item {
                     StatusBaseText {
                         text: qsTr("Balance: %1").arg(LocaleUtils.currencyAmountToLocaleString(root.sharedKeycardModule.keyPairHelper.observedAccount.balance))
                         wrapMode: Text.WordWrap
-                        font.pixelSize: Constants.keycard.general.fontSize2
                         color: Theme.palette.baseColor1
                     }
 
@@ -175,7 +175,6 @@ Item {
                         StatusBaseText {
                             text: qsTr("View on Etherscan")
                             wrapMode: Text.WordWrap
-                            font.pixelSize: Constants.keycard.general.fontSize2
                             color: Theme.palette.baseColor1
                         }
 
@@ -242,7 +241,6 @@ Item {
             id: colorSelection
             Layout.alignment: Qt.AlignCenter
             title.text: qsTr("Colour")
-            title.font.pixelSize: Constants.keycard.general.fontSize2
             model: Theme.palette.customisationColorsArray
 
             onSelectedColorChanged: {
@@ -253,7 +251,6 @@ Item {
         StatusBaseText {
             Layout.alignment: Qt.AlignLeft
             text: qsTr("Preview")
-            font.pixelSize: Constants.keycard.general.fontSize2
             color: Theme.palette.baseColor1
         }
 
@@ -315,8 +312,6 @@ Item {
 
                     return qsTr("Name accounts")
                 }
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: accountDetails

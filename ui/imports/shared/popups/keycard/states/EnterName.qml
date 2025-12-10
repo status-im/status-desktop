@@ -64,6 +64,9 @@ Item {
             id: title
             Layout.alignment: Qt.AlignCenter
             font.weight: Font.Bold
+
+            font.pixelSize: Constants.keycard.general.fontSize1
+            color: Theme.palette.directColor1
         }
 
         StatusInput {
@@ -97,7 +100,6 @@ Item {
         StatusBaseText {
             Layout.alignment: Qt.AlignLeft
             text: qsTr("Preview")
-            font.pixelSize: Constants.keycard.general.fontSize2
             color: Theme.palette.baseColor1
         }
 
@@ -127,8 +129,6 @@ Item {
 
                     return qsTr("Name this Keycard")
                 }
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: keycardName

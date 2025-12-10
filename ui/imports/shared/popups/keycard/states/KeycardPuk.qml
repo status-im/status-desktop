@@ -51,7 +51,10 @@ Item {
         StatusBaseText {
             id: title
             Layout.alignment: Qt.AlignCenter
+
             font.weight: Font.Bold
+            font.pixelSize: Constants.keycard.general.fontSize1
+            color: Theme.palette.directColor1
         }
 
         StatusPinInput {
@@ -95,6 +98,9 @@ Item {
             Layout.alignment: Qt.AlignCenter
             wrapMode: Text.WordWrap
             visible: text !== ""
+
+            color: Theme.palette.dangerColor1
+            font.pixelSize: Theme.tertiaryTextFontSize
         }
 
         StatusBaseText {
@@ -102,6 +108,8 @@ Item {
             Layout.alignment: Qt.AlignCenter
             wrapMode: Text.WordWrap
             visible: text !== ""
+
+            font.pixelSize: Theme.tertiaryTextFontSize
         }
 
         Item {
@@ -123,8 +131,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Enter PUK")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: info
@@ -146,14 +152,10 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Enter PUK")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: info
                 text: qsTr("The PUK is incorrect, try entering it again")
-                color: Theme.palette.dangerColor1
-                font.pixelSize: Constants.keycard.general.fontSize3
             }
             PropertyChanges {
                 target: message
@@ -161,7 +163,6 @@ Item {
                 color: root.remainingAttempts === 1?
                            Theme.palette.dangerColor1 :
                            Theme.palette.baseColor1
-                font.pixelSize: Constants.keycard.general.fontSize3
             }
         },
         State {
@@ -175,8 +176,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Choose a Keycard PUK")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: info
@@ -198,14 +197,10 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Repeat your Keycard PUK")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: info
                 text: ""
-                color: Theme.palette.dangerColor1
-                font.pixelSize: Constants.keycard.general.fontSize3
             }
             PropertyChanges {
                 target: message

@@ -75,7 +75,6 @@ Item {
             Layout.preferredWidth: code0.width
             Layout.alignment: Qt.AlignCenter
             text: qsTr("Pairing code")
-            font.pixelSize: Constants.keycard.general.fontSize2
             color: Theme.palette.directColor1
         }
 
@@ -128,7 +127,6 @@ Item {
             Layout.preferredWidth: code1.width
             Layout.alignment: Qt.AlignCenter
             text: qsTr("Confirm pairing code")
-            font.pixelSize: Constants.keycard.general.fontSize2
             color: Theme.palette.directColor1
         }
 
@@ -176,7 +174,7 @@ Item {
             id: errorTxt
             Layout.alignment: Qt.AlignHCenter
             Layout.fillHeight: true
-            font.pixelSize: Constants.keycard.general.fontSize3
+            font.pixelSize: Theme.tertiaryTextFontSize
             color: Theme.palette.dangerColor1
         }
     }

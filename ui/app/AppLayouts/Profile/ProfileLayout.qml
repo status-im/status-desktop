@@ -694,7 +694,6 @@ StatusSectionLayout {
 
             StatusBaseText {
                 anchors.fill: parent
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
                 text: qsTr("The Keycard module is still busy, please try again")
             }

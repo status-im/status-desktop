@@ -81,7 +81,6 @@ Item {
 
                 return qsTr("A factory reset will delete the key on this Keycard.\nAre you sure you want to do this?")
             }
-            font.pixelSize: Constants.keycard.general.fontSize2
             color: Theme.palette.dangerColor1
         }
 
@@ -92,7 +91,6 @@ Item {
             Layout.fillWidth: true
             leftSide: false
             spacing: Theme.smallPadding
-            font.pixelSize: Constants.keycard.general.fontSize2
             text: qsTr("I understand the key pair on this Keycard will be deleted")
 
             onCheckedChanged: {
