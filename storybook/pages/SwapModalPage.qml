@@ -11,14 +11,16 @@ import StatusQ.Core.Backpressure
 import StatusQ.Core.Utils
 
 import utils
-import Storybook
-import Models
 
 import mainui
 import AppLayouts.Wallet.popups.swap
 import AppLayouts.Wallet.stores
 import AppLayouts.stores as AppLayoutStores
 import shared.stores as SharedStores
+
+import Storybook
+import Models
+import Mocks
 
 SplitView {
     id: root
@@ -115,10 +117,10 @@ SplitView {
             signalName: "authenticateAndTransferSignal"
         }
 
-        TokensStore {
+        TokensStoreMock {
             id: tokensStore
             tokenGroupsModel: TokenGroupsModel {}
-            getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
+            _displayAssetsBelowBalanceThresholdDisplayAmountFunc: () => 0
         }
 
         SwapModalAdaptor {

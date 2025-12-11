@@ -167,7 +167,7 @@ StatusDialog {
                 return
             }
 
-            let entry = SQUtils.ModelUtils.getByKey(
+            const entry = SQUtils.ModelUtils.getByKey(
                             assetsAdaptor.outputAssetsModel, "key",
                             d.selectedHolding.key)
             if(!entry){

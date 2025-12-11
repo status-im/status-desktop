@@ -9,6 +9,7 @@ import shared.stores as SharedStores
 import utils
 
 import Models
+import Mocks
 
 Item {
     id: root
@@ -17,7 +18,7 @@ Item {
     AssetsDetailView {
         anchors.fill: parent
 
-        tokensStore: WalletStores.TokensStore {}
+        tokensStore: TokensStoreMock {}
         currencyStore: SharedStores.CurrenciesStore {}
         networkConnectionStore: SharedStores.NetworkConnectionStore {}
 

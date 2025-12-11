@@ -1,8 +1,5 @@
 import QtQuick
 
-import Storybook
-import Models
-
 import StatusQ
 import StatusQ.Models
 import StatusQ.Core.Utils as SQUtils
@@ -12,10 +9,16 @@ import utils
 import QtModelsToolkit
 import SortFilterProxyModel
 
+import AppLayouts.Wallet.stores
+
+import Storybook
+import Models
+import Mocks
+
 QtObject {
     id: root
 
-    property TokensStore walletTokensStore: TokensStore {}
+    property var walletTokensStore: TokensStoreMock {}
 
     property var baseGroupedAccountAssetModel: BaseGroupedAccountsAssetsModel {}
 

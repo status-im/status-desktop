@@ -16,10 +16,11 @@ import AppLayouts.Wallet.controls
 
 import AppLayouts.Wallet.popups.swap
 
-import Models
-import Storybook
-
 import SortFilterProxyModel
+
+import Storybook
+import Models
+import Mocks
 
 SplitView {
     id: root
@@ -75,7 +76,7 @@ SplitView {
             }
             walletAssetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore
-                walletTokensStore: TokensStore {
+                walletTokensStore: TokensStoreMock {
                     tokenGroupsModel: TokenGroupsModel {}
                 }
                 readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}

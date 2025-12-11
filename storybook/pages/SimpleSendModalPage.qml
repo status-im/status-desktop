@@ -11,14 +11,16 @@ import StatusQ.Core.Utils
 import StatusQ.Core.Theme
 import StatusQ.Core.Backpressure
 
-import Models
-import Storybook
-
 import AppLayouts.Wallet.popups.simpleSend
 import AppLayouts.Wallet.stores
+import Mocks
 import AppLayouts.Wallet.adaptors
 
 import utils
+
+import Storybook
+import Models
+import Mocks
 
 SplitView {
     id: root
@@ -34,9 +36,9 @@ SplitView {
         }
 
         readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
-            walletTokensStore: TokensStore {
+            walletTokensStore: TokensStoreMock {
                 tokenGroupsModel: TokenGroupsModel{}
-                getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
+                _displayAssetsBelowBalanceThresholdDisplayAmountFunc: () => 0
             }
         }
 

@@ -7,13 +7,14 @@ import StatusQ.Core.Utils
 import AppLayouts.Wallet.stores
 import AppLayouts.Wallet.adaptors
 
-import Models
-
 import shared.stores
 import utils
 
 import QtModelsToolkit
 import SortFilterProxyModel
+
+import Models
+import Mocks
 
 Item {
     id: root
@@ -109,7 +110,7 @@ Item {
         readonly property var flatNetworks: NetworksModel.flatNetworks
         readonly property var assetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
-            walletTokensStore: TokensStore {
+            walletTokensStore: TokensStoreMock {
                 tokenGroupsModel: TokenGroupsModel {}
             }
         }

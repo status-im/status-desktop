@@ -2,8 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import Models
-
 import SortFilterProxyModel
 
 import shared.controls
@@ -13,6 +11,9 @@ import AppLayouts.Wallet.stores
 import AppLayouts.Wallet.adaptors
 
 import utils
+
+import Models
+import Mocks
 
 SplitView {
     id: root
@@ -25,7 +26,7 @@ SplitView {
         readonly property var flatNetworks: NetworksModel.flatNetworks
         readonly property var assetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
-            walletTokensStore: TokensStore {
+            walletTokensStore: TokensStoreMock {
                 tokenGroupsModel: TokenGroupsModel {}
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}

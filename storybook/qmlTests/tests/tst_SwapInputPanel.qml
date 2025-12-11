@@ -14,10 +14,11 @@ import AppLayouts.Wallet
 
 import shared.stores
 
-import Models
-import Storybook
-
 import QtModelsToolkit
+
+import Storybook
+import Models
+import Mocks
 
 Item {
     id: root
@@ -36,7 +37,7 @@ Item {
                 readonly property var accounts: WalletAccountsModel {}
             }
             walletAssetsStore: WalletAssetsStore {
-                walletTokensStore: TokensStore {
+                walletTokensStore: TokensStoreMock {
                     tokenGroupsModel: TokenGroupsModel {}
                     tokenGroupsForChainModel: TokenGroupsModel {
                             skipInitialLoad: true
