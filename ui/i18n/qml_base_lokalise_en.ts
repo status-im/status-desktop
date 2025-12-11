@@ -21096,6 +21096,21 @@
       <comment>ThirdpartyServicesPopup</comment>
       <translation>Enable third-party services</translation>
     </message>
+    <message>
+      <source>Browser (browse web-pages, connect dApps)</source>
+      <comment>ThirdpartyServicesPopup</comment>
+      <translation>Browser (browse web-pages, connect dApps)</translation>
+    </message>
+    <message>
+      <source>Sync with NTP (Network Time Protocol) servers</source>
+      <comment>ThirdpartyServicesPopup</comment>
+      <translation>Sync with NTP (Network Time Protocol) servers</translation>
+    </message>
+    <message>
+      <source>Missed messages if your device time isn’t synced to network time</source>
+      <comment>ThirdpartyServicesPopup</comment>
+      <translation>Missed messages if your device time isn’t synced to network time</translation>
+    </message>
   </context>
   <context>
     <name>ThumbnailsDropdownContent</name>

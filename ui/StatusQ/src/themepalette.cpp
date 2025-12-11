@@ -212,10 +212,12 @@ std::unique_ptr<ThemePalette> createDarkThemePalette(QObject* parent)
     t->statusMessage.emojiReactionBackgroundHovered = t->primaryColor3;
     t->statusMessage.emojiReactionBorderHovered = t->primaryColor2;
 
-    // Privacy mode colors
-    t->privacyModeColors.navBarColor = QColor(0x5A, 0x33, 0xCA); // #5A33CA
-    t->privacyModeColors.navButtonColor = alpha(StatusColors::white, 0.4);
-    t->privacyModeColors.navButtonHighlightedColor = StatusColors::white;
+    // Privacy colors
+    t->privacyColors.primary = QColor(0x34, 0x1D, 0x65);
+    t->privacyColors.secondary = QColor(0x5B, 0x43, 0x8E);
+    t->privacyColors.tertiary = StatusColors::white;
+    t->privacyColors.tertiaryOpaque = alpha(StatusColors::white, 0.3);
+    t->privacyColors.iconColor = alpha(StatusColors::white, 0.5);
 
     // Customisation colors
     t->customisationColors.blue      = QColor(0x22, 0x3B, 0xC4); // #223BC4
@@ -406,10 +408,12 @@ std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
     t->statusMessage.emojiReactionBackgroundHovered = t->primaryColor2;
     t->statusMessage.emojiReactionBorderHovered = t->primaryColor3;
 
-    // Privacy mode colors
-    t->privacyModeColors.navBarColor = QColor(0x5A, 0x33, 0xCA); // #5A33CA
-    t->privacyModeColors.navButtonColor = alpha(StatusColors::white, 0.4);
-    t->privacyModeColors.navButtonHighlightedColor = StatusColors::white;
+    // Privacy colors
+    t->privacyColors.primary = QColor(0xBE, 0xBB, 0xF9);
+    t->privacyColors.secondary = QColor(0xD6, 0xD7, 0xF7);
+    t->privacyColors.tertiary = QColor(0x20, 0x1C, 0x76);
+    t->privacyColors.tertiaryOpaque = alpha(QColor(0x20, 0x1C, 0x76), 0.3);
+    t->privacyColors.iconColor = QColor(0x64, 0x70, 0x84);
 
     // Customisation colors
     t->customisationColors.blue      = QColor(0x2A, 0x4A, 0xF5); // #2A4AF5
@@ -461,7 +465,7 @@ void registerThemePaletteType()
     qmlRegisterUncreatableType<StatusSelect>("StatusQ.Core.Theme", 1, 0, "StatusSelect", "");
     qmlRegisterUncreatableType<StatusMessage>("StatusQ.Core.Theme", 1, 0, "StatusMessage", "");
     qmlRegisterUncreatableType<CustomisationColors>("StatusQ.Core.Theme", 1, 0, "CustomisationColors", "");
-    qmlRegisterUncreatableType<PrivacyModeColors>("StatusQ.Core.Theme", 1, 0, "PrivacyModeColors", "");
+    qmlRegisterUncreatableType<PrivacyColors>("StatusQ.Core.Theme", 1, 0, "PrivacyColors", "");
 
     qmlRegisterUncreatableType<ThemePalette>("StatusQ.Core.Theme", 1, 0, "ThemePalette", "");
 }

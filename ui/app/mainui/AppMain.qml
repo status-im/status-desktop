@@ -831,7 +831,8 @@ Item {
         id: d
 
         readonly property int activeSectionType: appMain.rootStore.activeSectionType
-        readonly property bool isBrowserEnabled: appMain.featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
+        readonly property bool isBrowserEnabled: appMain.featureFlagsStore.browserEnabled &&
+                                                 localAccountSensitiveSettings.isBrowserEnabled
 
         function openHomePage() {
             appMain.rootStore.setActiveSectionBySectionType(Constants.appSection.homePage)
@@ -854,7 +855,9 @@ Item {
         }
 
         function openLinkInBrowser(link: string) {
-            if (!appMain.rootStore.openLinksInStatus || !d.isBrowserEnabled) {
+            if (!appMain.rootStore.openLinksInStatus ||
+                    !d.isBrowserEnabled ||
+                    !appMain.rootStore.thirdpartyServicesEnabled) {
                 Qt.openUrlExternally(link)
                 return
             }

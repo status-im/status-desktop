@@ -17311,6 +17311,18 @@ access to your webcam</source>
         <source>Enable services and restart the app</source>
         <translation>서비스 활성화 및 앱 재시작</translation>
     </message>
+    <message>
+        <source>Browser (browse web-pages, connect dApps)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sync with NTP (Network Time Protocol) servers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missed messages if your device time isn’t synced to network time</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ThumbnailsDropdownContent</name>
