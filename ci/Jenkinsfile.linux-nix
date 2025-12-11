@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-library 'status-jenkins-lib@v1.9.30'
+library 'status-jenkins-lib@fixes-after-status-desktop-rename'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
