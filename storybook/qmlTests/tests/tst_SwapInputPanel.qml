@@ -7,6 +7,7 @@ import StatusQ.Controls
 import StatusQ.Core.Utils
 
 import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
 import AppLayouts.Wallet.panels
 import AppLayouts.Wallet.popups.swap
 import AppLayouts.Wallet.adaptors
@@ -36,7 +37,7 @@ Item {
                 readonly property var accounts: WalletAccountsModel {}
             }
             walletAssetsStore: WalletAssetsStore {
-                walletTokensStore: TokensStore {
+                walletTokensStore: WalletStoreMocks.TokensStore {
                     tokenGroupsModel: TokenGroupsModel {}
                     tokenGroupsForChainModel: TokenGroupsModel {
                             skipInitialLoad: true

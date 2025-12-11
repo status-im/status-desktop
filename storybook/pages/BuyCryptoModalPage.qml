@@ -10,6 +10,7 @@ import StatusQ.Core.Backpressure
 
 import AppLayouts.Wallet.popups.buy
 import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
 import AppLayouts.Wallet.adaptors
 
 import shared.stores
@@ -53,7 +54,7 @@ SplitView {
         readonly property var currencyStore: CurrenciesStore {}
         readonly property var assetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
-            walletTokensStore: TokensStore {
+            walletTokensStore: WalletStoreMocks.TokensStore {
                 tokenGroupsModel: TokenGroupsModel {}
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}

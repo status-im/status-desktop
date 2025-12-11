@@ -21,6 +21,25 @@ import SortFilterProxyModel
 Control {
     id: root
 
+    /**
+        Expected model structure:
+
+        key                     [string] - refers to token group key
+        name                    [string] - name
+        symbol                  [string] - symbol
+        decimals                [int] - decimals
+        logoUri                 [string] - icon
+        currencyBalanceAsString [string] - formatted balance
+        sectionName (optional)  [string] - text to be rendered as a section
+        balances            [model]  - contains a single entry for (token, accountAddress) pair
+            account         [string] - wallet account address
+            groupKey        [string] - group key that the token belongs to (cross chain id or token key if cross chain id is empty)
+            tokenKey        [string] - token unique key (chain - address)
+            chainId         [int]    - token's chain id
+            tokenAddress    [string] - token's address (contract)
+            balance         [string] - raw balance that the `account` has for token with `tokenKey`
+            balanceAsString [string] - display value for balance that the `account` has for token with `tokenKey`
+    **/
     property var model
     property string highlightedKey
     property string nonInteractiveKey

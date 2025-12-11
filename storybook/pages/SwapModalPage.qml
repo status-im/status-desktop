@@ -17,6 +17,7 @@ import Models
 import mainui
 import AppLayouts.Wallet.popups.swap
 import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
 import AppLayouts.stores as AppLayoutStores
 import shared.stores as SharedStores
 
@@ -115,10 +116,10 @@ SplitView {
             signalName: "authenticateAndTransferSignal"
         }
 
-        TokensStore {
+        WalletStoreMocks.TokensStore {
             id: tokensStore
             tokenGroupsModel: TokenGroupsModel {}
-            getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
+            _displayAssetsBelowBalanceThresholdDisplayAmountFunc: () => 0
         }
 
         SwapModalAdaptor {

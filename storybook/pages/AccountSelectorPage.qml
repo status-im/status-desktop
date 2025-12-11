@@ -10,6 +10,7 @@ import shared.controls
 import shared.stores
 
 import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
 import AppLayouts.Wallet.adaptors
 
 import utils
@@ -25,7 +26,7 @@ SplitView {
         readonly property var flatNetworks: NetworksModel.flatNetworks
         readonly property var assetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
-            walletTokensStore: TokensStore {
+            walletTokensStore: WalletStoreMocks.TokensStore {
                 tokenGroupsModel: TokenGroupsModel {}
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}

@@ -11,6 +11,7 @@ import shared.stores
 import shared.stores.send
 
 import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
 import AppLayouts.Wallet.panels
 import AppLayouts.Wallet.controls
 
@@ -75,7 +76,7 @@ SplitView {
             }
             walletAssetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore
-                walletTokensStore: TokensStore {
+                walletTokensStore: WalletStoreMocks.TokensStore {
                     tokenGroupsModel: TokenGroupsModel {}
                 }
                 readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}

@@ -3,6 +3,7 @@ import QtQuick.Layouts
 
 import AppLayouts.Wallet.views
 import AppLayouts.Wallet.stores as WalletStores
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
 
 import shared.stores as SharedStores
 
@@ -17,7 +18,7 @@ Item {
     AssetsDetailView {
         anchors.fill: parent
 
-        tokensStore: WalletStores.TokensStore {}
+        tokensStore: WalletStoreMocks.TokensStore {}
         currencyStore: SharedStores.CurrenciesStore {}
         networkConnectionStore: SharedStores.NetworkConnectionStore {}
 

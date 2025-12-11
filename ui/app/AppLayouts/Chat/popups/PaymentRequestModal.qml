@@ -46,11 +46,8 @@ StatusDialog {
     property int selectedNetworkChainId: Constants.chains.mainnetChainId
     property string selectedAccountAddress
     property string selectedTokenGroupKey: defaultTokenGroupKey
-    readonly property string selectedTokenKey: {
-        // selected token key is automatically evaluated based on the selected group key and selected chain
-        const token = SQUtils.ModelUtils.getByKey(d.selectedHolding.item.tokens, "chainId", root.selectedNetworkChainId)
-        return token.key
-    }
+    // selected token key is automatically evaluated based on the selected group key and selected chain
+    readonly property string selectedTokenKey: SQUtils.ModelUtils.getByKey(d.selectedHolding.item.tokens, "chainId", root.selectedNetworkChainId, "key")
     readonly property string symbol: d.selectedHolding.item.symbol
 
 

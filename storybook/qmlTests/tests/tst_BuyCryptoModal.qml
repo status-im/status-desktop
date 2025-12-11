@@ -14,6 +14,7 @@ import utils
 
 import AppLayouts.Wallet.popups.buy
 import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
 
 import shared.stores
 
@@ -92,7 +93,7 @@ Item {
             }
             readonly property var assetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore
-                walletTokensStore: TokensStore {
+                walletTokensStore: WalletStoreMocks.TokensStore {
                     tokenGroupsModel: TokenGroupsModel {}
                 }
             }

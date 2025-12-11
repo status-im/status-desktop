@@ -12,10 +12,13 @@ import utils
 import QtModelsToolkit
 import SortFilterProxyModel
 
+import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
+
 QtObject {
     id: root
 
-    property TokensStore walletTokensStore: TokensStore {}
+    property var walletTokensStore: WalletStoreMocks.TokensStore {}
 
     property var baseGroupedAccountAssetModel: BaseGroupedAccountsAssetsModel {}
 

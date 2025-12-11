@@ -16,6 +16,7 @@ import AppLayouts.Wallet.services.dapps.types
 import AppLayouts.Profile.stores
 import AppLayouts.Wallet.panels
 import AppLayouts.Wallet.stores as WalletStore
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
 import AppLayouts.Wallet.popups.dapps
 
 import shared.stores
@@ -313,7 +314,7 @@ Item {
 
     WalletStore.WalletAssetsStore {
         id: assetsStoreMock
-        walletTokensStore: WalletStore.TokensStore {
+        walletTokensStore: WalletStoreMocks.TokensStore {
             tokenGroupsModel: TokenGroupsModel {}
         }
     }
@@ -581,7 +582,7 @@ Item {
             session.params.request.expiryTimestamp = (Date.now() - 10000) / 1000
 
             verify(session.params.request.expiryTimestamp < Date.now() / 1000, "expected expiryTimestamp to be in the past")
-            
+
             mockActiveSession(handler.accountsModel, handler.networksModel, sdk, topic)
             sdk.sessionRequestEvent(session)
 
