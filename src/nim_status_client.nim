@@ -214,6 +214,7 @@ proc mainProc() =
 
   let singleInstance = newSingleInstance($toMD5(DATADIR), openUri)
   let urlSchemeEvent = newStatusUrlSchemeEventObject()
+  urlSchemeEvent.setInstance()
   # init url manager before app controller
   statusFoundation.initUrlSchemeManager(urlSchemeEvent, singleInstance, openUri)
 
