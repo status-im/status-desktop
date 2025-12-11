@@ -8913,10 +8913,6 @@ Tarifa L2: %2</translation>
 <context>
     <name>KeycardChannelDrawer</name>
     <message>
-        <source>Insert Keycard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Please tap your Keycard to the back of your device</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8946,6 +8942,10 @@ Tarifa L2: %2</translation>
     </message>
     <message>
         <source>Dismiss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ready to scan</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
