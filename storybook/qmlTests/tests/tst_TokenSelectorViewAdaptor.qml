@@ -1,7 +1,6 @@
 import QtQuick
 import QtTest
 
-import Models
 import utils
 
 import StatusQ
@@ -12,6 +11,9 @@ import AppLayouts.Wallet.adaptors
 
 import QtModelsToolkit
 import SortFilterProxyModel
+
+import Models
+import Mocks
 
 Item {
     id: root
@@ -26,7 +28,7 @@ Item {
 
         readonly property var flatNetworks: NetworksModel.flatNetworks
         readonly property var assetsStore: WalletAssetsStore {
-            walletTokensStore: TokensStore {
+            walletTokensStore: TokensStoreMock {
                 tokenGroupsModel: TokenGroupsModel {}
                 tokenGroupsForChainModel: TokenGroupsModel {
                         skipInitialLoad: true

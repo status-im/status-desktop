@@ -3,13 +3,9 @@ import QtQuick
 import QtTest
 import "helpers/wallet_connect.js" as Testing
 
-import Models
-
 import StatusQ.Core.Utils
 
 import QtQuick.Controls
-
-import Storybook
 
 import AppLayouts.Wallet.services.dapps
 import AppLayouts.Wallet.services.dapps.types
@@ -21,6 +17,10 @@ import AppLayouts.Wallet.popups.dapps
 import shared.stores
 
 import utils
+
+import Storybook
+import Models
+import Mocks
 
 Item {
     id: root
@@ -313,7 +313,7 @@ Item {
 
     WalletStore.WalletAssetsStore {
         id: assetsStoreMock
-        walletTokensStore: WalletStore.TokensStore {
+        walletTokensStore: TokensStoreMock {
             tokenGroupsModel: TokenGroupsModel {}
         }
     }
@@ -581,7 +581,7 @@ Item {
             session.params.request.expiryTimestamp = (Date.now() - 10000) / 1000
 
             verify(session.params.request.expiryTimestamp < Date.now() / 1000, "expected expiryTimestamp to be in the past")
-            
+
             mockActiveSession(handler.accountsModel, handler.networksModel, sdk, topic)
             sdk.sessionRequestEvent(session)
 

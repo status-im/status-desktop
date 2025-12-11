@@ -9,13 +9,15 @@ import StatusQ.Core.Utils
 import StatusQ.Core.Theme
 import StatusQ.Core.Backpressure
 
-import Models
 import utils
 
 import AppLayouts.Wallet.popups.buy
 import AppLayouts.Wallet.stores
 
 import shared.stores
+
+import Models
+import Mocks
 
 Item {
     id: root
@@ -92,7 +94,7 @@ Item {
             }
             readonly property var assetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore
-                walletTokensStore: TokensStore {
+                walletTokensStore: TokensStoreMock {
                     tokenGroupsModel: TokenGroupsModel {}
                 }
             }

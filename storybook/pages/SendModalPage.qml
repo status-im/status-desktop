@@ -96,9 +96,31 @@ SplitView {
         function resetData() {}
 
         walletAssetStore: root.walletAssetStore
-        tokensStore.showCommunityAssetsInSend: showCommunityAssetsCheckBox.checked
-        tokensStore.displayAssetsBelowBalance: balanceThresholdCheckbox.checked
-        tokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => Number(balanceThresholdValue.text)
+        Component.onCompleted: {
+            if (tokensStore) {
+                tokensStore.showCommunityAssetsInSend = showCommunityAssetsCheckBox.checked
+                tokensStore.displayAssetsBelowBalance = balanceThresholdCheckbox.checked
+                tokensStore._displayAssetsBelowBalanceThresholdDisplayAmountFunc = () => Number(balanceThresholdValue.text)
+            }
+        }
+    }
+
+    Connections {
+        target: showCommunityAssetsCheckBox
+        function onCheckedChanged() {
+            if (txStore.tokensStore) {
+                txStore.tokensStore.showCommunityAssetsInSend = showCommunityAssetsCheckBox.checked
+            }
+        }
+    }
+
+    Connections {
+        target: balanceThresholdCheckbox
+        function onCheckedChanged() {
+            if (txStore.tokensStore) {
+                txStore.tokensStore.displayAssetsBelowBalance = balanceThresholdCheckbox.checked
+            }
+        }
     }
 
     NetworksStore {

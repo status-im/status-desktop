@@ -2,9 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import Storybook
-import Models
-
 import StatusQ
 import StatusQ.Core.Backpressure
 
@@ -13,6 +10,10 @@ import AppLayouts.Wallet.stores
 import AppLayouts.Wallet.adaptors
 
 import shared.stores
+
+import Storybook
+import Models
+import Mocks
 
 SplitView {
     id: root
@@ -53,7 +54,7 @@ SplitView {
         readonly property var currencyStore: CurrenciesStore {}
         readonly property var assetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
-            walletTokensStore: TokensStore {
+            walletTokensStore: TokensStoreMock {
                 tokenGroupsModel: TokenGroupsModel {}
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}

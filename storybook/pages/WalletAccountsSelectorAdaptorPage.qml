@@ -4,13 +4,15 @@ import QtQuick.Layouts
 import SortFilterProxyModel
 
 import AppLayouts.Wallet.stores
+import Mocks
 import AppLayouts.Wallet.adaptors
-
-import Storybook
-import Models
 
 import shared.stores
 import utils
+
+import Storybook
+import Models
+import Mocks
 
 Item {
     id: root
@@ -100,7 +102,7 @@ Item {
 
         readonly property var assetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
-            walletTokensStore: TokensStore {
+            walletTokensStore: TokensStoreMock {
                 tokenGroupsModel: TokenGroupsModel {}
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
