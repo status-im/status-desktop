@@ -53,13 +53,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-          <meta-data
+            <meta-data
                 android:name="android.app.lib_name"
                 android:value="@string/app_name" />
 
-          <meta-data
+            <meta-data
                 android:name="android.app.arguments"
                 android:value="" />
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="status-app" />
+            </intent-filter>
         </activity>
 
         <provider
