@@ -41,14 +41,12 @@ Item {
             spacing: Theme.xlPadding
             width: scrollView.availableWidth
 
-            StatusBaseText {
+            TitleText {
                 id: title
 
                 Layout.fillWidth: true
 
                 visible: text !== ""
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
             }

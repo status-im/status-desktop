@@ -58,14 +58,11 @@ Item {
         spacing: Theme.padding
         clip: true
 
-        StatusBaseText {
+        TitleText {
             id: title
             Layout.preferredHeight: Constants.keycard.general.titleHeight
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Confirm recovery phrase words")
-            font.pixelSize: Constants.keycard.general.fontSize1
-            font.weight: Font.Bold
-            color: Theme.palette.directColor1
         }
 
         StatusInput {

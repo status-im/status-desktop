@@ -24,15 +24,12 @@ Item {
         anchors.rightMargin: Theme.xlPadding
         spacing: Theme.padding
 
-        StatusBaseText {
+        TitleText {
             id: title
             Layout.preferredHeight: Constants.keycard.general.titleHeight
             Layout.alignment: Qt.AlignCenter
 
             wrapMode: Text.WordWrap
-            font.pixelSize: Constants.keycard.general.fontSize1
-            font.weight: Font.Bold
-            color: Theme.palette.directColor1
         }
 
         StatusBaseText {

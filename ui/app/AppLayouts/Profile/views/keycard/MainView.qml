@@ -236,7 +236,6 @@ ColumnLayout {
 
             StatusBaseText {
                 anchors.fill: parent
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
                 text: dialog.accountsWarning? Constants.walletConstants.maxNumberOfAccountsContent : Constants.walletConstants.maxNumberOfKeypairsContent
             }

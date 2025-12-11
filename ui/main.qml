@@ -700,27 +700,4 @@ Window {
     MobileUI {
         id: mobileUI
     }
-
-    // Right now Constants holds not only true constant values but also expressions
-    // depending on dynamic theme system. In order to keep those expressions working
-    // as expected, explicit propagation of style must be established. This is workaround
-    // that should be fixed in the future by removing dependency on Theme attached
-    // property from Constants.
-    Binding {
-        target: Constants
-        property: "Theme.style"
-        value: applicationWindow.Theme.style
-    }
-
-    Binding {
-        target: Constants
-        property: "Theme.padding"
-        value: applicationWindow.Theme.padding
-    }
-
-    Binding {
-        target: Constants
-        property: "Theme.fontSizeOffset"
-        value: applicationWindow.Theme.fontSizeOffset
-    }
 }

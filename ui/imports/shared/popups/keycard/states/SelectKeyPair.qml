@@ -40,13 +40,10 @@ Item {
             id: keyPairsButtonGroup
         }
 
-        StatusBaseText {
+        TitleText {
             id: title
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Select a key pair")
-            font.pixelSize: Constants.keycard.general.fontSize1
-            font.weight: Font.Bold
-            color: Theme.palette.directColor1
             wrapMode: Text.WordWrap
         }
 

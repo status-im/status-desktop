@@ -96,13 +96,9 @@ Item {
             Layout.preferredWidth: Constants.keycard.shared.imageWidth
         }
 
-        StatusBaseText {
+        TitleText {
             id: title
             Layout.alignment: Qt.AlignCenter
-            font.weight: Font.Bold
-
-            font.pixelSize: Constants.keycard.general.fontSize1
-            color: Theme.palette.directColor1
         }
 
         StatusBaseText {
