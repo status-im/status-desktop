@@ -159,12 +159,10 @@ Item {
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCode ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard
             }
-            StatusBaseText {
+            TitleText {
                 id: title
 
                 wrapMode: Text.WordWrap
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
             }
         }
 

@@ -2,8 +2,8 @@ pragma Singleton
 
 import QtQml
 
-import StatusQ.Core.Theme
 import StatusQ.Controls.Validators
+import StatusQ.Core.Theme
 
 QtObject {
     id: root
@@ -514,7 +514,6 @@ QtObject {
             readonly property int keycardPairingCodeInputWidth: 512
             readonly property int keycardPukAdditionalSpacingOnEvery4Items: 4
             readonly property int keycardPukAdditionalSpacing: 32
-            readonly property int fontSize1: root.Theme.fontSize(22)
             readonly property int seedPhraseCellWidth: 193
             readonly property int seedPhraseCellHeight: 60
             readonly property int seedPhraseCellNumberWidth: 24
@@ -574,8 +573,8 @@ QtObject {
         readonly property string alphanumericalWithSpaceRegExp: qsTr("Special characters are not allowed")
         readonly property string asciiRegExp: qsTr("Only letters, numbers and ASCII characters allowed")
         readonly property string emojRegExp: qsTr("Name is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)")
-        readonly property var wholeNumbers: qsTr("Whole numbers only")
-        readonly property var positiveRealNumbers: qsTr("Positive real numbers only")
+        readonly property string wholeNumbers: qsTr("Whole numbers only")
+        readonly property string positiveRealNumbers: qsTr("Positive real numbers only")
     }
 
     readonly property QtObject socialLinkType: QtObject {
