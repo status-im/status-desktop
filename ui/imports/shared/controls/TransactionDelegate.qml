@@ -9,7 +9,6 @@ import StatusQ.Controls
 import StatusQ.Core.Utils as SQUtils
 
 import AppLayouts.Wallet
-import AppLayouts.Wallet.stores as WalletStores
 
 import utils
 import shared
@@ -31,7 +30,7 @@ import shared.stores as SharedStores
         modelData: model.activityEntry
         flatNetworks: root.flatNetworks
         currenciesStore: root.currencyStore
-        walletRootStore: WalletStores.RootStore
+        activityStore: root.activityStore
         loading: isModelDataValid
     }
    \endqml
@@ -52,7 +51,7 @@ StatusListItem {
     required property var flatNetworks
 
     required property SharedStores.CurrenciesStore currenciesStore
-    required property WalletStores.RootStore walletRootStore
+    required property var activityStore
 
     readonly property bool isModelDataValid: modelData !== undefined && !!modelData
 
@@ -70,8 +69,8 @@ StatusListItem {
     readonly property string networkName: isModelDataValid ? SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainId, "chainName") : ""
     readonly property string networkNameIn: isMultiTransaction ? SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainIdIn, "chainName") : ""
     readonly property string networkNameOut: isMultiTransaction ? SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainIdOut, "chainName") : ""
-    readonly property string addressNameTo: isModelDataValid ? walletRootStore.getNameForAddress(modelData.recipient) : ""
-    readonly property string addressNameFrom: isModelDataValid ? walletRootStore.getNameForAddress(modelData.sender) : ""
+    readonly property string addressNameTo: isModelDataValid ? activityStore.getNameForAddress(modelData.recipient) : ""
+    readonly property string addressNameFrom: isModelDataValid ? activityStore.getNameForAddress(modelData.sender) : ""
     readonly property bool isNFT: isModelDataValid && modelData.isNFT
     readonly property bool isCommunityAssetViaAirdrop: isModelDataValid && !!communityId && d.txType === Constants.TransactionType.Mint
     readonly property string communityId: isModelDataValid && modelData.communityId ? modelData.communityId : ""
@@ -85,10 +84,10 @@ StatusListItem {
             return null
         }
         if (modelData.txType === Constants.TransactionType.Approve) {
-            return walletRootStore.getDappDetails(modelData.chainId, modelData.approvalSpender)
+            return activityStore.getDappDetails(modelData.chainId, modelData.approvalSpender)
         }
         if (modelData.txType === Constants.TransactionType.Swap) {
-            return walletRootStore.getDappDetails(modelData.chainId, modelData.interactedContractAddress)
+            return activityStore.getDappDetails(modelData.chainId, modelData.interactedContractAddress)
         }
         return null
     }
@@ -213,7 +212,7 @@ StatusListItem {
 
         readonly property bool isLightTheme: Theme.palette.name === Constants.lightThemeName
         property color animatedBgColor
-        property int txType: walletRootStore.getTransactionType(root.modelData)
+        readonly property int txType: activityStore.getTransactionType(root.modelData)
 
         readonly property var secondIconAsset: StatusAssetSettings {
             width: root.tokenIconAsset.width

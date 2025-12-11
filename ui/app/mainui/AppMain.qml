@@ -2066,7 +2066,6 @@ Item {
 
                     sourceComponent: appMain.rootStore.thirdpartyServicesEnabled ? browserLayout: browserPrivacyWall
 
-
                     Component {
                         id: browserPrivacyWall
 
@@ -2091,6 +2090,11 @@ Item {
                             downloadsStore: BrowserStores.DownloadsStore {}
                             browserRootStore: BrowserStores.BrowserRootStore {}
                             browserWalletStore: BrowserStores.BrowserWalletStore {}
+                            browserActivityStore: BrowserStores.BrowserActivityStore {
+                                browserWalletStore: browserLayout.browserWalletStore
+                            }
+                            currencyStore: appMain.currencyStore
+                            networksStore: appMain.networksStore
                             connectorController: WalletStores.RootStore.dappsConnectorController
                             isDebugEnabled: appMain.advancedStore.isDebugEnabled
 

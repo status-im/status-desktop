@@ -231,7 +231,7 @@ proc newModule*[T](
   result.browserSectionModule = browser_section_module.newModule(
     result, events, bookmarkService, settingsService, networkService,
     dappPermissionsService, walletAccountService,
-    tokenService, currencyService
+    tokenService, currencyService, savedAddressService
   )
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService, stickersService,

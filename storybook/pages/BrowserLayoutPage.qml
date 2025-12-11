@@ -15,7 +15,7 @@ import utils
 import AppLayouts.Browser
 import AppLayouts.Browser.stores as BrowserStores
 import AppLayouts.Wallet.stores
-import shared.stores
+import shared.stores as SharedStores
 import shared.stores.send
 
 Item {
@@ -108,6 +108,9 @@ Item {
                     dappBrowserAccount.address = address
                 }
             }
+            browserActivityStore: BrowserStores.BrowserActivityStore {}
+            networksStore: SharedStores.NetworksStore {}
+            currencyStore: SharedStores.CurrenciesStore {}
 
             readonly property var localAccountSensitiveSettings: Settings {
                 property bool devToolsEnabled

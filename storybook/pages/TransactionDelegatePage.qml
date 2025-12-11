@@ -94,7 +94,7 @@ SplitView {
                         }
                     }
                     flatNetworks: NetworksModel.flatNetworks
-                    walletRootStore: WalletStores.RootStore
+                    activityStore: WalletStores.RootStore
                 }
             }
         }
