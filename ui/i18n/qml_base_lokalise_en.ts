@@ -10847,11 +10847,6 @@
   <context>
     <name>KeycardChannelDrawer</name>
     <message>
-      <source>Insert Keycard</source>
-      <comment>KeycardChannelDrawer</comment>
-      <translation>Insert Keycard</translation>
-    </message>
-    <message>
       <source>Please tap your Keycard to the back of your device</source>
       <comment>KeycardChannelDrawer</comment>
       <translation>Please tap your Keycard to the back of your device</translation>
@@ -10890,6 +10885,11 @@
       <source>Dismiss</source>
       <comment>KeycardChannelDrawer</comment>
       <translation>Dismiss</translation>
+    </message>
+    <message>
+      <source>Ready to scan</source>
+      <comment>KeycardChannelDrawer</comment>
+      <translation>Ready to scan</translation>
     </message>
   </context>
   <context>
