@@ -129,7 +129,7 @@ std::unique_ptr<ThemePalette> createDarkThemePalette(QObject* parent)
     t->miscColor12 = StatusColors::green6;
 
     // Other
-    t->neutral95 = QColor(0x06, 0x0F, 0x1F);
+    t->neutral95 = QColor(0x06, 0x0F, 0x1F); // #060F1F
     t->dropShadow = alpha(StatusColors::black, 0.08);
     t->dropShadow2 = alpha(StatusColors::blue8, 0.02);
     t->dropShadow3 = alpha(StatusColors::blue8, 0.05);
@@ -181,7 +181,7 @@ std::unique_ptr<ThemePalette> createDarkThemePalette(QObject* parent)
     // Status badge
     t->statusBadge.foregroundColor = t->baseColor3;
     t->statusBadge.borderColor = t->baseColor5;
-    t->statusBadge.hoverBorderColor = QColor(0x35, 0x3A, 0x4D);
+    t->statusBadge.hoverBorderColor = QColor(0x35, 0x3A, 0x4D); // #353A4D
 
     // Status menu
     t->statusMenu.backgroundColor = t->baseColor3;
@@ -195,7 +195,7 @@ std::unique_ptr<ThemePalette> createDarkThemePalette(QObject* parent)
     t->statusRoundedImage.backgroundColor = t->baseColor3;
 
     // Status chat input
-    t->statusChatInput.secondaryBackgroundColor = QColor(0x41, 0x41, 0x41);
+    t->statusChatInput.secondaryBackgroundColor = QColor(0x41, 0x41, 0x41); // #414141
 
     // Status switch tab
     t->statusSwitchTab.buttonBackgroundColor = t->primaryColor1;
@@ -213,33 +213,33 @@ std::unique_ptr<ThemePalette> createDarkThemePalette(QObject* parent)
     t->statusMessage.emojiReactionBorderHovered = t->primaryColor2;
 
     // Privacy mode colors
-    t->privacyModeColors.navBarColor = QColor(0x5A, 0x33, 0xCA);
+    t->privacyModeColors.navBarColor = QColor(0x5A, 0x33, 0xCA); // #5A33CA
     t->privacyModeColors.navButtonColor = alpha(StatusColors::white, 0.4);
     t->privacyModeColors.navButtonHighlightedColor = StatusColors::white;
 
     // Customisation colors
-    t->customisationColors.blue      = QColor(0x22, 0x3B, 0xC4);
-    t->customisationColors.purple    = QColor(0x5A, 0x33, 0xCA);
-    t->customisationColors.orange    = QColor(0xCC, 0x64, 0x38);
-    t->customisationColors.army      = QColor(0x1A, 0x4E, 0x52);
-    t->customisationColors.turquoise = QColor(0x22, 0x61, 0x7C);
-    t->customisationColors.sky       = QColor(0x14, 0x75, 0xAC);
-    t->customisationColors.yellow    = QColor(0xC5, 0x8D, 0x30);
-    t->customisationColors.pink      = QColor(0xC5, 0x59, 0x72);
-    t->customisationColors.copper    = QColor(0xA2, 0x4E, 0x45);
-    t->customisationColors.camel     = QColor(0x9F, 0x72, 0x52);
-    t->customisationColors.magenta   = QColor(0xBD, 0x1E, 0x56);
-    t->customisationColors.yinYang   = QColor(0xFF, 0xFF, 0xFF);
-    t->customisationColors.purple2   = QColor(0x71, 0x40, 0xFD);
+    t->customisationColors.blue      = QColor(0x22, 0x3B, 0xC4); // #223BC4
+    t->customisationColors.purple    = QColor(0x5A, 0x33, 0xCA); // #5A33CA
+    t->customisationColors.orange    = QColor(0xCC, 0x64, 0x38); // #CC6438
+    t->customisationColors.army      = QColor(0x1A, 0x4E, 0x52); // #1A4E52
+    t->customisationColors.turquoise = QColor(0x22, 0x61, 0x7C); // #22617C
+    t->customisationColors.sky       = QColor(0x14, 0x75, 0xAC); // #1475AC
+    t->customisationColors.yellow    = QColor(0xC5, 0x8D, 0x30); // #C58D30
+    t->customisationColors.pink      = QColor(0xC5, 0x59, 0x72); // #C55972
+    t->customisationColors.copper    = QColor(0xA2, 0x4E, 0x45); // #A24E45
+    t->customisationColors.camel     = QColor(0x9F, 0x72, 0x52); // #9F7252
+    t->customisationColors.magenta   = QColor(0xBD, 0x1E, 0x56); // #BD1E56
+    t->customisationColors.yinYang   = QColor(0xFF, 0xFF, 0xFF); // #FFFFFF
+    t->customisationColors.purple2   = QColor(0x71, 0x40, 0xFD); // #7140FD
 
     // User customization colors
     t->userCustomizationColors = {
-        QColor(0xAA, 0xC6, 0xFF), QColor(0x88, 0x7A, 0xF9),
-        QColor(0x51, 0xD0, 0xF0), QColor(0xD3, 0x7E, 0xF4),
-        QColor(0xFA, 0x65, 0x65), QColor(0xFF, 0xCA, 0x0F),
-        QColor(0x93, 0xDB, 0x33), QColor(0x10, 0xA8, 0x8E),
-        QColor(0xAD, 0x43, 0x43), QColor(0xEA, 0xD2, 0x7B),
-        QColor(0xC0, 0xC0, 0xC0), QColor(0xA9, 0xA9, 0xA9)  // silver, darkgrey
+        QColor(0xAA, 0xC6, 0xFF), QColor(0x88, 0x7A, 0xF9), // #AAC6FF, #887AF9
+        QColor(0x51, 0xD0, 0xF0), QColor(0xD3, 0x7E, 0xF4), // #51D0F0, #D37EF4
+        QColor(0xFA, 0x65, 0x65), QColor(0xFF, 0xCA, 0x0F), // #FA6565, #FFCA0F
+        QColor(0x93, 0xDB, 0x33), QColor(0x10, 0xA8, 0x8E), // #93DB33, #10A88E
+        QColor(0xAD, 0x43, 0x43), QColor(0xEA, 0xD2, 0x7B), // #AD4343, #EAD27B
+        QColor(0xC0, 0xC0, 0xC0), QColor(0xA9, 0xA9, 0xA9)  // silver, darkgrey // #C0C0C0, #A9A9A9
     };
 
     t->buildArrays();
@@ -323,7 +323,7 @@ std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
     t->miscColor12 = StatusColors::green5;
 
     // Other
-    t->neutral95 = QColor(0x0D, 0x16, 0x25);
+    t->neutral95 = QColor(0x0D, 0x16, 0x25); // #0D1625
     t->dropShadow = QColor::fromRgbF(0.0, 34.0/255.0, 51.0/255.0, 0.03);
     t->dropShadow2 = alpha(StatusColors::blue7, 0.02);
     t->dropShadow3 = alpha(StatusColors::black, 0.15);
@@ -375,7 +375,7 @@ std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
     // Status badge
     t->statusBadge.foregroundColor = StatusColors::white;
     t->statusBadge.borderColor = t->baseColor4;
-    t->statusBadge.hoverBorderColor = QColor(0xDD, 0xE3, 0xF3);
+    t->statusBadge.hoverBorderColor = QColor(0xDD, 0xE3, 0xF3); // #DDE3F3
 
     // Status menu
     t->statusMenu.backgroundColor = StatusColors::white;
@@ -389,7 +389,7 @@ std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
     t->statusRoundedImage.backgroundColor = StatusColors::white;
 
     // Status chat input
-    t->statusChatInput.secondaryBackgroundColor = QColor(0xE2, 0xE6, 0xE8);
+    t->statusChatInput.secondaryBackgroundColor = QColor(0xE2, 0xE6, 0xE8); // #E2E6E8
 
     // Status switch tab
     t->statusSwitchTab.buttonBackgroundColor = t->primaryColor1;
@@ -407,33 +407,33 @@ std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
     t->statusMessage.emojiReactionBorderHovered = t->primaryColor3;
 
     // Privacy mode colors
-    t->privacyModeColors.navBarColor = QColor(0x5A, 0x33, 0xCA);
+    t->privacyModeColors.navBarColor = QColor(0x5A, 0x33, 0xCA); // #5A33CA
     t->privacyModeColors.navButtonColor = alpha(StatusColors::white, 0.4);
     t->privacyModeColors.navButtonHighlightedColor = StatusColors::white;
 
     // Customisation colors
-    t->customisationColors.blue      = QColor(0x2A, 0x4A, 0xF5);
-    t->customisationColors.purple    = QColor(0x71, 0x40, 0xFD);
-    t->customisationColors.orange    = QColor(0xFF, 0x7D, 0x46);
-    t->customisationColors.army      = QColor(0x21, 0x62, 0x66);
-    t->customisationColors.turquoise = QColor(0x2A, 0x79, 0x9B);
-    t->customisationColors.sky       = QColor(0x19, 0x92, 0xD7);
-    t->customisationColors.yellow    = QColor(0xF6, 0xAF, 0x3C);
-    t->customisationColors.pink      = QColor(0xF6, 0x6F, 0x8F);
-    t->customisationColors.copper    = QColor(0xCB, 0x62, 0x56);
-    t->customisationColors.camel     = QColor(0xC7, 0x8F, 0x67);
-    t->customisationColors.magenta   = QColor(0xEC, 0x26, 0x6C);
-    t->customisationColors.yinYang   = QColor(0x09, 0x10, 0x1C);
-    t->customisationColors.purple2   = QColor(0x5A, 0x33, 0xCA);
+    t->customisationColors.blue      = QColor(0x2A, 0x4A, 0xF5); // #2A4AF5
+    t->customisationColors.purple    = QColor(0x71, 0x40, 0xFD); // #7140FD
+    t->customisationColors.orange    = QColor(0xFF, 0x7D, 0x46); // #FF7D46
+    t->customisationColors.army      = QColor(0x21, 0x62, 0x66); // #216266
+    t->customisationColors.turquoise = QColor(0x2A, 0x79, 0x9B); // #2A799B
+    t->customisationColors.sky       = QColor(0x19, 0x92, 0xD7); // #1992D7
+    t->customisationColors.yellow    = QColor(0xF6, 0xAF, 0x3C); // #F6AF3C
+    t->customisationColors.pink      = QColor(0xF6, 0x6F, 0x8F); // #F66F8F
+    t->customisationColors.copper    = QColor(0xCB, 0x62, 0x56); // #CB6256
+    t->customisationColors.camel     = QColor(0xC7, 0x8F, 0x67); // #C78F67
+    t->customisationColors.magenta   = QColor(0xEC, 0x26, 0x6C); // #EC266C
+    t->customisationColors.yinYang   = QColor(0x09, 0x10, 0x1C); // #09101C
+    t->customisationColors.purple2   = QColor(0x5A, 0x33, 0xCA); // #5A33CA
 
     // User customization colors
     t->userCustomizationColors = {
-        QColor(0x29, 0x46, 0xC4), QColor(0x88, 0x7A, 0xF9),
-        QColor(0x51, 0xD0, 0xF0), QColor(0xD3, 0x7E, 0xF4),
-        QColor(0xFA, 0x65, 0x65), QColor(0xFF, 0xCA, 0x0F),
-        QColor(0x7C, 0xDA, 0x00), QColor(0x26, 0xA6, 0x9A),
-        QColor(0x8B, 0x31, 0x31), QColor(0x9B, 0x83, 0x2F),
-        QColor(0xC0, 0xC0, 0xC0), QColor(0xA9, 0xA9, 0xA9)
+        QColor(0x29, 0x46, 0xC4), QColor(0x88, 0x7A, 0xF9), // #2946C4, #887AF9
+        QColor(0x51, 0xD0, 0xF0), QColor(0xD3, 0x7E, 0xF4), // #51D0F0, #D37EF4
+        QColor(0xFA, 0x65, 0x65), QColor(0xFF, 0xCA, 0x0F), // #FA6565, #FFCA0F
+        QColor(0x7C, 0xDA, 0x00), QColor(0x26, 0xA6, 0x9A), // #7CDA00, #26A69A
+        QColor(0x8B, 0x31, 0x31), QColor(0x9B, 0x83, 0x2F), // #8B3131, #9B832F
+        QColor(0xC0, 0xC0, 0xC0), QColor(0xA9, 0xA9, 0xA9) // #C0C0C0, #A9A9A9
     };
 
     t->buildArrays();
