@@ -67,8 +67,10 @@ StatusDialog {
                         model: ListModel   {
                             ListElement { text: qsTr("Wallet (Swap, Send, Token data, etc.)") }
                             ListElement { text: qsTr("Market (Token data, prices, and news, etc.)") }
+                            ListElement { text: qsTr("Browser (browse web-pages, connect dApps)") }
                             ListElement { text: qsTr("Token-gated communities and admin tools") }
                             ListElement { text: qsTr("Status news, etc.") }
+                            ListElement { text: qsTr("Sync with NTP (Network Time Protocol) servers") }
                         }
                     }
 
@@ -83,6 +85,7 @@ StatusDialog {
                         model: ListModel   {
                             ListElement { text: qsTr("Missing or invalid data") }
                             ListElement { text: qsTr("Errors and unexpected behavior") }
+                            ListElement { text: qsTr("Missed messages if your device time isn’t synced to network time") }
                         }
                     }
                 }
@@ -124,8 +127,8 @@ StatusDialog {
         rightButtons: ObjectModel {
             StatusButton {
                 type: StatusBaseButton.Type.Primary
-                normalColor: Theme.palette.privacyModeColors.navBarColor
-                textColor: StatusColors.white
+                normalColor: Theme.palette.privacyColors.primary
+                textColor: Theme.palette.privacyColors.tertiary
                 text: {
                     if(root.thirdPartyServicesEnabled) {
                         if(root.isOnboardingFlow) {

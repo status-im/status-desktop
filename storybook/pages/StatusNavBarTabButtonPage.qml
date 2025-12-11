@@ -23,7 +23,7 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        color: thirdpartyServicesCtrl.checked ? Theme.palette.statusAppNavBar.backgroundColor: Theme.palette.privacyModeColors.navBarColor
+        color: thirdpartyServicesCtrl.checked ? Theme.palette.statusAppNavBar.backgroundColor: Theme.palette.privacyColors.primary
 
         Column {
             id: column

@@ -148,23 +148,15 @@ public:
         camel, magenta, yinYang, purple2;
 };
 
-class PrivacyModeColors {
-    Q_GADGET
-    Q_PROPERTY(QColor navBarColor MEMBER navBarColor CONSTANT)
-    Q_PROPERTY(QColor navButtonColor MEMBER navButtonColor CONSTANT)
-    Q_PROPERTY(QColor navButtonHighlightedColor MEMBER navButtonHighlightedColor CONSTANT)
-public:
-    QColor navBarColor, navButtonColor, navButtonHighlightedColor;
-};
-
 class PrivacyColors {
     Q_GADGET
     Q_PROPERTY(QColor primary MEMBER primary CONSTANT)
     Q_PROPERTY(QColor secondary MEMBER secondary CONSTANT)
     Q_PROPERTY(QColor tertiary MEMBER tertiary CONSTANT)
     Q_PROPERTY(QColor tertiaryOpaque MEMBER tertiaryOpaque CONSTANT)
+    Q_PROPERTY(QColor iconColor MEMBER iconColor CONSTANT)
 public:
-    QColor primary, secondary, tertiary, tertiaryOpaque;
+    QColor primary, secondary, tertiary, tertiaryOpaque, iconColor;
 };
 
 // Main ThemePalette class
@@ -288,7 +280,7 @@ class ThemePalette : public QObject {
     Q_PROPERTY(StatusSelect statusSelect MEMBER statusSelect CONSTANT)
     Q_PROPERTY(StatusMessage statusMessage MEMBER statusMessage CONSTANT)
     Q_PROPERTY(CustomisationColors customisationColors MEMBER customisationColors CONSTANT)
-    Q_PROPERTY(PrivacyModeColors privacyModeColors MEMBER privacyModeColors CONSTANT)
+    Q_PROPERTY(PrivacyColors privacyColors MEMBER privacyColors CONSTANT)
 
 public:
     explicit ThemePalette(QObject* parent = nullptr);
@@ -346,7 +338,6 @@ public:
     StatusSelect statusSelect;
     StatusMessage statusMessage;
     CustomisationColors customisationColors;
-    PrivacyModeColors privacyModeColors;
     PrivacyColors privacyColors;
 };
 
