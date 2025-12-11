@@ -42,7 +42,7 @@ pipeline {
       artifactNumToKeepStr: '3',
     ))
     /* Allows combined build to copy */
-    copyArtifactPermission('/status-desktop/*')
+    copyArtifactPermission('/status-app/*')
     /* Abort old PR builds. */
     disableConcurrentBuilds(abortPrevious: isPRBuild)
     disableRestartFromStage()

@@ -296,7 +296,7 @@ def getDefaultBuildSource() {
 }
 
 def getDefaultTestScopeFlag() {
-  if (JOB_NAME == "status-desktop/systems/windows/x86_64/tests-e2e") {
+  if (JOB_NAME == "status-app/systems/windows/x86_64/tests-e2e") {
     return ''
   } else {
     return '-m=critical'
