@@ -1,15 +1,16 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Core
 import StatusQ.Components
-import StatusQ.Core.Theme
 
 Item {
     id: root
 
-    Column {
-        anchors.centerIn: parent
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 50
+
         spacing: 30
 
         Grid {
@@ -43,10 +44,21 @@ Item {
 
         StatusStepper {
             id: stepper
-            width: 400
+
+            Layout.fillWidth: true
             title: "Account %1 of %2".arg(completedSteps).arg(totalSteps)
             totalSteps: ctrlTotalSteps.value
             completedSteps: ctrlCompletedSteps.value
+
+            Rectangle {
+                anchors.fill: parent
+                color: "transparent"
+                border.color: "lightgray"
+            }
+        }
+
+        Item {
+            Layout.fillHeight: true
         }
     }
 }

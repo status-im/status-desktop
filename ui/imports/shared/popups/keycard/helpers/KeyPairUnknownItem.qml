@@ -65,7 +65,6 @@ Rectangle {
             Layout.leftMargin: Theme.padding
             Layout.alignment: Qt.AlignLeft
             text: qsTr("Active Accounts")
-            font.pixelSize: Constants.keycard.general.fontSize2
             color: Theme.palette.baseColor1
             wrapMode: Text.WordWrap
         }
@@ -101,7 +100,6 @@ Rectangle {
                             StatusBaseText {
                                 text: LocaleUtils.currencyAmountToLocaleString(model.account.balance)
                                 wrapMode: Text.WordWrap
-                                font.pixelSize: Constants.keycard.general.fontSize2
                                 color: Theme.palette.baseColor1
                             }
                         }
@@ -119,7 +117,6 @@ Rectangle {
                             StatusBaseText {
                                 text: model.account.path
                                 wrapMode: Text.WordWrap
-                                font.pixelSize: Constants.keycard.general.fontSize2
                                 color: Theme.palette.baseColor1
                             }
                         }
@@ -131,7 +128,6 @@ Rectangle {
                                 id: address
                                 text: StatusQUtils.Utils.elideText(model.account.address, 6, 4)
                                 wrapMode: Text.WordWrap
-                                font.pixelSize: Constants.keycard.general.fontSize2
                                 color: Theme.palette.directColor1
                             }
 

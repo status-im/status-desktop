@@ -42,13 +42,11 @@ GridLayout {
 
     StatusBaseText {
         Layout.fillWidth: true
-        font.pixelSize: Constants.addAccountPopup.labelFontSize1
         text: qsTr("Derivation Path")
     }
 
     StatusBaseText {
         Layout.preferredWidth: d.oneHalfWidth
-        font.pixelSize: Constants.addAccountPopup.labelFontSize1
         text: qsTr("Account")
     }
 
@@ -66,7 +64,7 @@ GridLayout {
 
     StatusBaseText {
         Layout.preferredWidth: d.oneHalfWidth
-        font.pixelSize: Constants.addAccountPopup.labelFontSize2
+        font.pixelSize: Theme.additionalTextSize
         color: Theme.palette.baseColor1
         text: {
             if (root.store.addAccountModule.derivationPath.startsWith(Constants.addAccountPopup.predefinedPaths.ethereum)) {

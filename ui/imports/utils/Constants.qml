@@ -2,8 +2,8 @@ pragma Singleton
 
 import QtQml
 
-import StatusQ.Core.Theme
 import StatusQ.Controls.Validators
+import StatusQ.Core.Theme
 
 QtObject {
     id: root
@@ -30,87 +30,6 @@ QtObject {
 
         // Used for new chain advertisment
         readonly property var newChains: [binanceSmartChainMainnetChainId, binanceSmartChainTestnetChainId]
-    }
-
-    readonly property QtObject startupFlow: QtObject {
-        readonly property string general: "General"
-        readonly property string firstRunNewUserNewKeys: "FirstRunNewUserNewKeys"
-        readonly property string firstRunNewUserNewKeycardKeys: "FirstRunNewUserNewKeycardKeys"
-        readonly property string firstRunNewUserImportSeedPhrase: "FirstRunNewUserImportSeedPhrase"
-        readonly property string firstRunNewUserImportSeedPhraseIntoKeycard: "FirstRunNewUserImportSeedPhraseIntoKeycard"
-        readonly property string firstRunOldUserSyncCode: "FirstRunOldUserSyncCode"
-        readonly property string firstRunOldUserKeycardImport: "FirstRunOldUserKeycardImport"
-        readonly property string firstRunOldUserImportSeedPhrase: "FirstRunOldUserImportSeedPhrase"
-        readonly property string appLogin: "AppLogin"
-        readonly property string lostKeycardReplacement: "LostKeycardReplacement"
-        readonly property string lostKeycardConvertToRegularAccount: "LostKeycardConvertToRegularAccount"
-    }
-
-    readonly property QtObject startupState: QtObject {
-        readonly property string noState: "NoState"
-        readonly property string allowNotifications: "AllowNotifications"
-        readonly property string welcome: "Welcome"
-        readonly property string welcomeNewStatusUser: "WelcomeNewStatusUser"
-        readonly property string welcomeOldStatusUser: "WelcomeOldStatusUser"
-        readonly property string recoverOldUser: "RecoverOldUser"
-        readonly property string userProfileCreate: "UserProfileCreate"
-        readonly property string userProfileChatKey: "UserProfileChatKey"
-        readonly property string userProfileCreateSameChatKey: "UserProfileCreateSameChatKey"
-        readonly property string userProfileCreatePassword: "UserProfileCreatePassword"
-        readonly property string userProfileConfirmPassword: "UserProfileConfirmPassword"
-        readonly property string userProfileImportSeedPhrase: "UserProfileImportSeedPhrase"
-        readonly property string userProfileEnterSeedPhrase: "UserProfileEnterSeedPhrase"
-        readonly property string userProfileWrongSeedPhrase: "UserProfileWrongSeedPhrase"
-        readonly property string biometrics: "Biometrics"
-        readonly property string keycardNoPCSCService: "KeycardNoPCSCService"
-        readonly property string keycardPluginReader: "KeycardPluginReader"
-        readonly property string keycardInsertKeycard: "KeycardInsertKeycard"
-        readonly property string keycardInsertedKeycard: "KeycardInsertedKeycard"
-        readonly property string keycardReadingKeycard: "KeycardReadingKeycard"
-        readonly property string keycardRecognizedKeycard: "KeycardRecognizedKeycard"
-        readonly property string keycardWrongKeycard: "KeycardWrongKeycard"
-        readonly property string keycardCreatePin: "KeycardCreatePin"
-        readonly property string keycardRepeatPin: "KeycardRepeatPin"
-        readonly property string keycardPinSet: "KeycardPinSet"
-        readonly property string keycardEnterPin: "KeycardEnterPin"
-        readonly property string keycardWrongPin: "KeycardWrongPin"
-        readonly property string keycardEnterPuk: "KeycardEnterPuk"
-        readonly property string keycardWrongPuk: "KeycardWrongPuk"
-        readonly property string keycardDisplaySeedPhrase: "KeycardDisplaySeedPhrase"
-        readonly property string keycardEnterSeedPhraseWords: "KeycardEnterSeedPhraseWords"
-        readonly property string keycardNotEmpty: "KeycardNotEmpty"
-        readonly property string keycardNotKeycard: "KeycardNotKeycard"
-        readonly property string keycardEmpty: "KeycardEmpty"
-        readonly property string keycardLocked: "KeycardLocked"
-        readonly property string keycardRecover: "KeycardRecover"
-        readonly property string keycardMaxPairingSlotsReached: "KeycardMaxPairingSlotsReached"
-        readonly property string keycardMaxPinRetriesReached: "KeycardMaxPinRetriesReached"
-        readonly property string keycardMaxPukRetriesReached: "KeycardMaxPukRetriesReached"
-        readonly property string login: "Login"
-        readonly property string loginNoPCSCService: "LoginNoPCSCService"
-        readonly property string loginPlugin: "LoginPlugin"
-        readonly property string loginKeycardInsertKeycard: "LoginKeycardInsertKeycard"
-        readonly property string loginKeycardInsertedKeycard: "LoginKeycardInsertedKeycard"
-        readonly property string loginKeycardReadingKeycard: "LoginKeycardReadingKeycard"
-        readonly property string loginKeycardRecognizedKeycard: "LoginKeycardRecognizedKeycard"
-        readonly property string loginKeycardEnterPin: "LoginKeycardEnterPin"
-        readonly property string loginKeycardEnterPassword: "LoginKeycardEnterPassword"
-        readonly property string loginKeycardPinVerified: "LoginKeycardPinVerified"
-        readonly property string loginKeycardWrongKeycard: "LoginKeycardWrongKeycard"
-        readonly property string loginKeycardWrongPin: "LoginKeycardWrongPin"
-        readonly property string loginKeycardMaxPinRetriesReached: "LoginKeycardMaxPinRetriesReached"
-        readonly property string loginKeycardMaxPukRetriesReached: "LoginKeycardMaxPukRetriesReached"
-        readonly property string loginKeycardMaxPairingSlotsReached: "LoginKeycardMaxPairingSlotsReached"
-        readonly property string loginKeycardEmpty: "LoginKeycardEmpty"
-        readonly property string loginNotKeycard: "LoginNotKeycard"
-        readonly property string loginKeycardConvertedToRegularAccount: "LoginKeycardConvertedToRegularAccount"
-        readonly property string profileFetching: "ProfileFetching"
-        readonly property string profileFetchingSuccess: "ProfileFetchingSuccess"
-        readonly property string profileFetchingTimeout: "ProfileFetchingTimeout"
-        readonly property string profileFetchingAnnouncement: "ProfileFetchingAnnouncement"
-        readonly property string lostKeycardOptions: "LostKeycardOptions"
-        readonly property string syncDeviceWithSyncCode: "SyncDeviceWithSyncCode"
-        readonly property string syncDeviceResult: "SyncDeviceResult"
     }
 
     readonly property QtObject predefinedKeycardData: QtObject {
@@ -542,17 +461,7 @@ QtObject {
     readonly property QtObject settingsSection: QtObject {
         readonly property int itemSpacing: 10
         readonly property int radius: 8
-        readonly property int mainHeaderFontSize: root.Theme.fontSize(28) // Keep as is - special case for main header
-        readonly property int subHeaderFontSize: root.Theme.primaryTextFontSize
-        readonly property int importantInfoFontSize: root.Theme.fontSize(18)
-        readonly property int infoFontSize: root.Theme.primaryTextFontSize
-        readonly property int infoLineHeight: 22
-        readonly property int infoSpacing: 5
         readonly property int itemHeight: 64
-        readonly property int leftMargin: root.Theme.xlPadding * 2
-        readonly property int rightMargin: root.Theme.xlPadding * 2
-        readonly property int topMargin: root.Theme.xlPadding * 2
-        readonly property int bottomMargin: root.Theme.xlPadding * 2
 
         readonly property QtObject notificationsBubble: QtObject {
             readonly property int previewAnonymous: 0
@@ -605,14 +514,9 @@ QtObject {
             readonly property int keycardPairingCodeInputWidth: 512
             readonly property int keycardPukAdditionalSpacingOnEvery4Items: 4
             readonly property int keycardPukAdditionalSpacing: 32
-            readonly property int fontSize1: root.Theme.fontSize(22)
-            readonly property int fontSize2: root.Theme.primaryTextFontSize
-            readonly property int fontSize3: root.Theme.tertiaryTextFontSize
             readonly property int seedPhraseCellWidth: 193
             readonly property int seedPhraseCellHeight: 60
             readonly property int seedPhraseCellNumberWidth: 24
-            readonly property int seedPhraseCellFontSize: root.Theme.tertiaryTextFontSize
-            readonly property int buttonFontSize: root.Theme.primaryTextFontSize
             readonly property int pukCellWidth: 50
             readonly property int pukCellHeight: 60
             readonly property int popupWidth: 640
@@ -669,8 +573,8 @@ QtObject {
         readonly property string alphanumericalWithSpaceRegExp: qsTr("Special characters are not allowed")
         readonly property string asciiRegExp: qsTr("Only letters, numbers and ASCII characters allowed")
         readonly property string emojRegExp: qsTr("Name is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)")
-        readonly property var wholeNumbers: qsTr("Whole numbers only")
-        readonly property var positiveRealNumbers: qsTr("Positive real numbers only")
+        readonly property string wholeNumbers: qsTr("Whole numbers only")
+        readonly property string positiveRealNumbers: qsTr("Positive real numbers only")
     }
 
     readonly property QtObject socialLinkType: QtObject {
@@ -685,30 +589,15 @@ QtObject {
 
     readonly property int maxSocialLinkTextLength: 24
 
-    readonly property QtObject localPairingEventType: QtObject {
-        readonly property int eventUnknown: -1
-        readonly property int eventConnectionError: 0
-        readonly property int eventConnectionSuccess: 1
-        readonly property int eventTransferError: 2
-        readonly property int eventTransferSuccess: 3
-        readonly property int eventReceivedAccount: 4
-        readonly property int eventProcessSuccess: 5
-        readonly property int eventProcessError: 6
-    }
-
     readonly property QtObject addAccountPopup: QtObject {
         readonly property int popupWidth: 480
         readonly property int contentHeight1: 554
-        readonly property int contentHeight2: 642
         readonly property int itemHeight: 64
         readonly property int importPrivateKeyWarningHeight: 86
-        readonly property int labelFontSize1: root.Theme.primaryTextFontSize
-        readonly property int labelFontSize2: root.Theme.additionalTextSize
         readonly property int footerButtonsHeight: 44
         readonly property int keyPairNameMaxLength: 20
         readonly property int keyPairAccountNameMinLength: 5
         readonly property int stepperWidth: 242
-        readonly property int stepperHeight: 30
 
         readonly property QtObject keyPairType: QtObject {
             readonly property int unknown: -1
@@ -743,7 +632,6 @@ QtObject {
         readonly property int popupWidth: 480
         readonly property int contentHeight: 626
         readonly property int footerButtonsHeight: 44
-        readonly property int labelFontSize1: root.Theme.primaryTextFontSize
         readonly property string instructionsLabelForQr: qsTr("How to display the QR code on your other device")
         readonly property string instructionsLabelForEncryptedKey: qsTr("How to copy the encrypted key from your other device")
 
@@ -1021,8 +909,6 @@ QtObject {
     readonly property int maxNumberOfPins: 3
 
     readonly property string dataImagePrefix: "data:image"
-
-    readonly property string mentionSpanTag: `<span style="background-color: ${root.Theme.palette.mentionColor2};"><a style="color:${root.Theme.palette.mentionColor1};text-decoration:none" href='http://'>`
 
     readonly property string ens_taken: "taken"
     readonly property string ens_taken_custom: "taken-custom"

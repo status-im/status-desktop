@@ -38,7 +38,6 @@ Item {
             StatusBaseText {
                 width: parent.width
                 text: root.store.isAddAccountPopup? qsTr("Private key") : qsTr("Enter recovery phrase for %1 key pair").arg(root.store.selectedKeypair.name)
-                font.pixelSize: Constants.addAccountPopup.labelFontSize1
                 elide: Text.ElideRight
             }
 
@@ -119,7 +118,7 @@ Item {
             visible: !d.addressResolved
             multiline: true
             leftPadding: Theme.padding
-            font.pixelSize: Constants.addAccountPopup.labelFontSize2
+            font.pixelSize: Theme.additionalTextSize
             text: qsTr("New addresses cannot be derived from an account imported from a private key. Import using a recovery phrase if you wish to derive addresses.")
             input.edit.enabled: false
             input.enabled: false
@@ -188,7 +187,7 @@ Item {
 
             StatusBaseText {
                 text: qsTr("For your future reference. This is only visible to you.")
-                font.pixelSize: Constants.addAccountPopup.labelFontSize2
+                font.pixelSize: Theme.additionalTextSize
                 color: Theme.palette.baseColor1
             }
         }

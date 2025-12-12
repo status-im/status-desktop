@@ -24,10 +24,11 @@ Item {
         anchors.rightMargin: Theme.xlPadding
         spacing: Theme.padding
 
-        StatusBaseText {
+        TitleText {
             id: title
             Layout.preferredHeight: Constants.keycard.general.titleHeight
             Layout.alignment: Qt.AlignCenter
+
             wrapMode: Text.WordWrap
         }
 
@@ -56,14 +57,10 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Write down your recovery phrase")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: message
                 text: qsTr("The next screen contains your recovery phrase.<br/><b>Anyone</b> who sees it can use it to access to your funds.")
-                font.pixelSize: Constants.keycard.general.fontSize2
                 wrapMode: Text.WordWrap
                 textFormat: Text.RichText
                 color: Theme.palette.dangerColor1

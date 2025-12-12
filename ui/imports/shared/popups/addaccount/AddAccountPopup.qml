@@ -164,8 +164,14 @@ StatusModal {
             Component {
                 id: confirmAddingNewMasterKeyComponent
                 ConfirmAddingNewMasterKey {
-                    height: Constants.addAccountPopup.contentHeight1
-                    store: root.store
+                    onAllAcceptedChanged: {
+                        root.store.addingNewMasterKeyConfirmed = allAccepted
+                    }
+
+                    Component.onCompleted: {
+                        if (root.store.addingNewMasterKeyConfirmed)
+                            setAllAccepted()
+                    }
                 }
             }
 

@@ -53,7 +53,7 @@ ColumnLayout {
     StyledText {
         visible: d.noKeycardsSet
         Layout.alignment: Qt.AlignCenter
-        font.pixelSize: Constants.settingsSection.importantInfoFontSize
+        font.pixelSize: Theme.fontSize(18)
         color: Theme.palette.directColor1
         text: qsTr("Secure your funds. Keep your profile safe.")
     }
@@ -236,7 +236,6 @@ ColumnLayout {
 
             StatusBaseText {
                 anchors.fill: parent
-                font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
                 text: dialog.accountsWarning? Constants.walletConstants.maxNumberOfAccountsContent : Constants.walletConstants.maxNumberOfKeypairsContent
             }

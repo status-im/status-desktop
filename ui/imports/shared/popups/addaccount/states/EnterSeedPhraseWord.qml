@@ -94,11 +94,9 @@ Item {
 
         StatusStepper {
             Layout.preferredWidth: Constants.addAccountPopup.stepperWidth
-            Layout.preferredHeight: Constants.addAccountPopup.stepperHeight
             Layout.topMargin: Theme.padding
             Layout.alignment: Qt.AlignCenter
             title: qsTr("Step %1 of 4").arg(d.step)
-            titleFontSize: Constants.addAccountPopup.labelFontSize1
             totalSteps: 4
             completedSteps: d.step
             leftPadding: 0
@@ -109,7 +107,6 @@ Item {
             Layout.preferredWidth: parent.width
             Layout.alignment: Qt.AlignCenter
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: Constants.addAccountPopup.labelFontSize1
             color: Theme.palette.directColor1
             text: qsTr("Confirm word #%1 of your recovery phrase").arg(root.store.currentState.stateType === Constants.addAccountPopup.state.enterSeedPhraseWord1?
                                                                        root.store.seedPhraseWord1WordNumber + 1 :

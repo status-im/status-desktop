@@ -37,7 +37,6 @@ Column {
         visible: !root.store.editMode
 
         StatusBaseText {
-            font.pixelSize: Constants.addAccountPopup.labelFontSize1
             textFormat: Text.RichText
             text: {
                 let t = qsTr("Derivation path")

@@ -28,7 +28,7 @@ Row {
 
     StatusBaseText {
         width: icon.visible? parent.width - icon.width : parent.width
-        font.pixelSize: Constants.addAccountPopup.labelFontSize2
+        font.pixelSize: Theme.additionalTextSize
         wrapMode: Text.WordWrap
         text: {
             if (root.defaultMessageCondition) {

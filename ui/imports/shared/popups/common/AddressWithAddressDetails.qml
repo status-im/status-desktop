@@ -23,7 +23,6 @@ Column {
 
     StatusBaseText {
         text: root.addressText
-        font.pixelSize: Constants.addAccountPopup.labelFontSize1
     }
 
     StatusInput {

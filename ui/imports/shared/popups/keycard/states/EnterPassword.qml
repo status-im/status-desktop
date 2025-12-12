@@ -65,11 +65,10 @@ Item {
             Layout.preferredWidth: Constants.keycard.shared.imageWidth
         }
 
-        StatusBaseText {
+        TitleText {
             id: title
             Layout.alignment: Qt.AlignCenter
             Layout.maximumWidth: parent.width
-            font.weight: Font.Bold
         }
 
         StatusBaseText {
@@ -127,8 +126,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Enter your password")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: message
@@ -150,8 +147,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Enter your password")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: message
@@ -174,8 +169,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Stored password doesn't match")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: message
@@ -199,8 +192,6 @@ Item {
             PropertyChanges {
                 target: title
                 text: qsTr("Stored password doesn't match")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: message

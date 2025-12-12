@@ -29,7 +29,6 @@ GridLayout {
 
     StatusBaseText {
         Layout.fillWidth: true
-        font.pixelSize: Constants.addAccountPopup.labelFontSize1
         text: qsTr("Derivation Path")
     }
 
@@ -38,7 +37,6 @@ GridLayout {
         enabled: !root.store.selectedOrigin.migratedToKeycard &&
                  root.store.derivedAddressModel.count > 0 &&
                  root.store.addAccountModule.suggestedDerivationPath !== root.store.addAccountModule.derivationPath
-        font.pixelSize: Constants.addAccountPopup.labelFontSize1
         text: qsTr("Reset")
         color: enabled? Theme.palette.primaryColor1 : Theme.palette.baseColor1
 
@@ -49,7 +47,6 @@ GridLayout {
 
     StatusBaseText {
         Layout.preferredWidth: d.oneHalfWidth
-        font.pixelSize: Constants.addAccountPopup.labelFontSize1
         text: qsTr("Account")
     }
 
@@ -187,7 +184,7 @@ GridLayout {
             Layout.fillWidth: true
             visible: !errorMessageText.visible && !warningMessageText.visible
 
-            font.pixelSize: Constants.addAccountPopup.labelFontSize2
+            font.pixelSize: Theme.additionalTextSize
             color: Theme.palette.baseColor1
             text: root.store.translation(root.store.selectedRootPath, true)
         }
@@ -227,7 +224,6 @@ GridLayout {
         visible: root.store.derivationPathOutOfTheDefaultStatusDerivationTree
         Layout.fillWidth: true
         Layout.columnSpan: 3
-        font.pixelSize: Constants.addAccountPopup.labelFontSize1
         text: qsTr("I understand that this non-Ethereum derivation path is incompatible with Keycard")
         onToggled: {
             root.store.derivationPathOutOfTheDefaultStatusDerivationTreeConfirmed = checked
