@@ -16,6 +16,7 @@ import Storybook
 
 import AppLayouts.Wallet.popups.simpleSend
 import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
 import AppLayouts.Wallet.adaptors
 
 import utils
@@ -34,9 +35,9 @@ SplitView {
         }
 
         readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
-            walletTokensStore: TokensStore {
+            walletTokensStore: WalletStoreMocks.TokensStore {
                 tokenGroupsModel: TokenGroupsModel{}
-                getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
+                _displayAssetsBelowBalanceThresholdDisplayAmountFunc: () => 0
             }
         }
 

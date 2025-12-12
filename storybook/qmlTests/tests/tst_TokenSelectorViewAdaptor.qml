@@ -8,6 +8,7 @@ import StatusQ
 import StatusQ.Core.Utils
 
 import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
 import AppLayouts.Wallet.adaptors
 
 import QtModelsToolkit
@@ -26,7 +27,7 @@ Item {
 
         readonly property var flatNetworks: NetworksModel.flatNetworks
         readonly property var assetsStore: WalletAssetsStore {
-            walletTokensStore: TokensStore {
+            walletTokensStore: WalletStoreMocks.TokensStore {
                 tokenGroupsModel: TokenGroupsModel {}
                 tokenGroupsForChainModel: TokenGroupsModel {
                         skipInitialLoad: true

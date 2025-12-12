@@ -8,6 +8,7 @@ import shared.stores
 import SortFilterProxyModel
 
 import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
 
 // TODO: This store, as all other stores should be empty QtObject {}.
 // All mocking should be done in place in Storybook pages and unit tests.
@@ -24,7 +25,7 @@ QtObject {
 
     readonly property CurrenciesStore currencyStore: CurrenciesStore {}
 
-    readonly property TokensStore tokensStore: TokensStore {}
+    readonly property var tokensStore: WalletStoreMocks.TokensStore {}
 
     readonly property var accounts: WalletSendAccountsModel {
         Component.onCompleted: selectedSenderAccountAddress = accounts.get(0).address

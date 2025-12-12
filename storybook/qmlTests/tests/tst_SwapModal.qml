@@ -1,4 +1,4 @@
-﻿import QtQuick
+import QtQuick
 import QtTest
 
 import StatusQ.Core
@@ -15,6 +15,7 @@ import utils
 import shared.stores
 import AppLayouts.Wallet.popups.swap
 import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.storesmocks as WalletStoreMocks
 import AppLayouts.Wallet
 import AppLayouts.Wallet.adaptors
 
@@ -52,7 +53,7 @@ Item {
         currencyStore: CurrenciesStore {}
         walletAssetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
-            walletTokensStore: TokensStore {
+            walletTokensStore: WalletStoreMocks.TokensStore {
                 tokenGroupsModel: TokenGroupsModel {}
                 tokenGroupsForChainModel: TokenGroupsModel {
                     skipInitialLoad: true
@@ -61,7 +62,7 @@ Item {
                     skipInitialLoad: true
                     tokenGroupsForChainModel: thisWalletAssetStore.walletTokensStore.tokenGroupsForChainModel
                 }
-                getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
+                _displayAssetsBelowBalanceThresholdDisplayAmountFunc: () => 0
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
         }
