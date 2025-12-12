@@ -128,11 +128,24 @@ proc getTokenByChainAddress*(self: Service, chainId: int, address: string): Toke
 
 proc getTokensByGroupKey*(self: Service, groupKey: string): seq[TokenItem] =
   if not self.groupsOfInterestByKey.hasKey(groupKey):
-    let groupsByKey = self.getAllTokenGroupsForActiveNetworksModeByKeys()
-    if groupsByKey.hasKey(groupKey):
-      self.groupsOfInterestByKey[groupKey] = groupsByKey[groupKey]
-      return self.groupsOfInterestByKey[groupKey].tokens
-    return @[]
+    # If the group key is not at the same time a token key (e.g. "usd-coin") it was already added to the
+    # groupsOfInterestByKey table at the app start or when tokens were refreshed the last time.
+    # That means that the group key is definitelly a token key, so we need to add it to the groupsOfInterestByKey table.
+    if not common_utils.isTokenKey(groupKey):
+      return @[]
+    let token = self.getTokenByKey(groupKey)
+    if token.isNil:
+      return @[]
+    let group = TokenGroupItem(
+      key: token.groupKey,
+      name: token.name,
+      symbol: token.symbol,
+      decimals: token.decimals,
+      logoUri: token.logoUri,
+      tokens: @[token]
+    )
+    self.groupsOfInterestByKey[token.groupKey] = group
+    return @[token]
   return self.groupsOfInterestByKey[groupKey].tokens
 
 proc getTokenByGroupKeyAndChainId*(self: Service, groupKey: string, chainId: int): TokenItem =
