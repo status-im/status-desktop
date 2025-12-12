@@ -8,6 +8,10 @@
 #include <StatusQ/pushnotification_android.h>
 #endif
 
+#ifdef Q_OS_IOS
+#include <StatusQ/pushnotification_ios.h>
+#endif
+
 extern "C" {
 
 Q_DECL_EXPORT void statusq_registerQmlTypes() {
@@ -29,6 +33,9 @@ Q_DECL_EXPORT void statusq_initPushNotifications(
 #ifdef Q_OS_ANDROID
     qDebug() << "[StatusQ C API] Initializing Android push notifications...";
     PushNotificationAndroid::instance()->initialize(tokenCallback, receivedCallback);
+#elif defined(Q_OS_IOS)
+    qDebug() << "[StatusQ C API] Initializing iOS push notifications...";
+    PushNotificationIOS::instance()->initialize(tokenCallback, receivedCallback);
 #else
     Q_UNUSED(tokenCallback);
     Q_UNUSED(receivedCallback);
@@ -41,6 +48,9 @@ Q_DECL_EXPORT void statusq_requestNotificationPermission()
 #ifdef Q_OS_ANDROID
     qDebug() << "[StatusQ C API] Requesting notification permission...";
     PushNotificationAndroid::instance()->requestNotificationPermission();
+#elif defined(Q_OS_IOS)
+    qDebug() << "[StatusQ C API] Requesting notification permission...";
+    PushNotificationIOS::instance()->requestNotificationPermission();
 #else
     qDebug() << "[StatusQ C API] Permission request not needed on this platform";
 #endif
@@ -50,12 +60,14 @@ Q_DECL_EXPORT bool statusq_hasNotificationPermission()
 {
 #ifdef Q_OS_ANDROID
     return PushNotificationAndroid::instance()->hasNotificationPermission();
+#elif defined(Q_OS_IOS)
+    return PushNotificationIOS::instance()->hasNotificationPermission();
 #else
     return true; // Other platforms don't require permission
 #endif
 }
 
-Q_DECL_EXPORT void statusq_showAndroidNotification(
+Q_DECL_EXPORT void statusq_showMobileNotification(
     const char* title,
     const char* message,
     const char* identifier)
@@ -71,12 +83,32 @@ Q_DECL_EXPORT void statusq_showAndroidNotification(
         QString::fromUtf8(message),
         QString::fromUtf8(identifier)
     );
+#elif defined(Q_OS_IOS)
+    if (!title || !message || !identifier) {
+        qWarning() << "[StatusQ C API] Invalid notification parameters";
+        return;
+    }
+
+    PushNotificationIOS::instance()->showNotification(
+        QString::fromUtf8(title),
+        QString::fromUtf8(message),
+        QString::fromUtf8(identifier)
+    );
 #else
     Q_UNUSED(title);
     Q_UNUSED(message);
     Q_UNUSED(identifier);
     qDebug() << "[StatusQ C API] showNotification not available on this platform";
 #endif
+}
+
+// Deprecated: Use statusq_showMobileNotification instead
+Q_DECL_EXPORT void statusq_showAndroidNotification(
+    const char* title,
+    const char* message,
+    const char* identifier)
+{
+    statusq_showMobileNotification(title, message, identifier);
 }
 
 } // extern "C"

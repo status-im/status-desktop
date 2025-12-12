@@ -67,6 +67,13 @@
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
 
+    <!-- Push Notifications Background Modes -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>remote-notification</string>
+        <string>fetch</string>
+    </array>
+
 <!-- KEYCARD_NFC_START
 	<key>NFCReaderUsageDescription</key>
 	<string>Status uses NFC to communicate with your Keycard hardware wallet for secure key management and transaction signing.</string>

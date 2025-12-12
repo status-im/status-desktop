@@ -2,7 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- No NFC capability - allows building without paid Apple Developer account -->
+    <!-- Push Notifications Entitlement -->
+    <!-- NOTE: This works with a FREE Apple Developer account! -->
+    <key>aps-environment</key>
+    <string>development</string>
+    
+    <!-- Keychain Sharing (if needed for shared credentials) -->
+    <key>keychain-access-groups</key>
+    <array>
+        <string>$(AppIdentifierPrefix)app.status.mobile</string>
+    </array>
+    
+    <!-- App Groups (if needed for shared data) -->
+    <key>com.apple.security.application-groups</key>
+    <array>
+        <string>group.app.status.mobile</string>
+    </array>
+    
+    <!-- NOTE: NO NFC entitlement here - NFC requires paid Apple Developer account -->
+    <!-- This version can be used with a free account for testing -->
 </dict>
 </plist>
-
