@@ -32,7 +32,7 @@ StatusDialog {
         StatusImage {
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: Math.min(496, parent.width)
-            source: Theme.png("backup-popup")
+            source: Assets.png("backup-popup")
             mipmap: true
         }
 
