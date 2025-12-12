@@ -31,7 +31,7 @@ Control {
         function getImagePath(currentIndex) {
             const imageName = root.model.get(currentIndex).image
             const platformPostfix = isSmallPortraitScreen ? "-small": ""
-            const imagePath =  "%1-%2%3".arg(imageName).arg(Theme.palette.name).arg(platformPostfix)
+            const imagePath =  "%1-%2%3".arg(imageName).arg(root.Theme.palette.name).arg(platformPostfix)
             return Assets.png(imagePath)
         }
     }
@@ -103,6 +103,7 @@ Control {
 
             fillMode: Image.PreserveAspectFit
             asynchronous: true
+            source: d.getImagePath(pageIndicator.currentIndex)
 
             // cross-fade sequence
             SequentialAnimation {
@@ -124,8 +125,12 @@ Control {
             }
 
             Component.onCompleted: {
-                placeholderImage.source = d.getImagePath(pageIndicator.currentIndex)
-                initialized = true
+                /* In case there is only one image in the list no animation
+                handling needed and default boinding will do the job */
+                if(pageIndicator.count > 1) {
+                    placeholderImage.source = d.getImagePath(pageIndicator.currentIndex)
+                    initialized = true
+                }
             }
         }
 
@@ -153,8 +158,8 @@ Control {
             Layout.alignment: Qt.AlignHCenter
 
             type: StatusBaseButton.Type.Primary
-            normalColor: Theme.palette.privacyModeColors.navBarColor
-            textColor: StatusColors.white
+            normalColor: Theme.palette.privacyColors.primary
+            textColor: Theme.palette.privacyColors.tertiary
 
             text: qsTr("Enable third-party services")
 

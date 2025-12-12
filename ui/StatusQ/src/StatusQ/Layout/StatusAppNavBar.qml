@@ -30,7 +30,7 @@ Rectangle {
     implicitWidth: 78
 
     color: root.thirdpartyServicesEnabled ? Theme.palette.statusAppNavBar.backgroundColor :
-                                            Theme.palette.privacyModeColors.navBarColor
+                                            Theme.palette.privacyColors.primary
 
     QtObject {
         id: d

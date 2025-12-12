@@ -18,10 +18,10 @@ StatusIconTabButton {
     identicon.asset.color: (statusNavBarTabButton.hovered || highlighted || statusNavBarTabButton.checked) ?
                                statusNavBarTabButton.thirdpartyServicesEnabled ?
                                    Theme.palette.primaryColor1 :
-                                   Theme.palette.privacyModeColors.navButtonHighlightedColor :
+                                   Theme.palette.privacyColors.tertiary :
                                  statusNavBarTabButton.thirdpartyServicesEnabled ?
                                     Theme.palette.baseColor1 :
-                                    Theme.palette.privacyModeColors.navButtonColor
+                                    Theme.palette.privacyColors.iconColor
 
     StatusToolTip {
         id: statusTooltip

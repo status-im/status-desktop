@@ -17417,6 +17417,18 @@ access to your webcam</source>
         <source>Enable third-party services</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Browser (browse web-pages, connect dApps)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sync with NTP (Network Time Protocol) servers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missed messages if your device time isn’t synced to network time</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ThumbnailsDropdownContent</name>
