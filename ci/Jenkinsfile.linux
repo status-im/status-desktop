@@ -10,11 +10,11 @@ pipeline {
     /* Image with Ubuntu 22.04 and QT 6.9.2 */
     docker {
       label 'linuxcontainer'
-      image 'harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2'
-      /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
+      image 'harbor.status.im/status-im/status-desktop-build:1.0.7-qt6.9.2'
+      /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt and flatpak-builder */
+      /* flatpak-builder requires --privileged to mount /proc inside bwrap sandbox */
       args '--entrypoint="" ' +
-           '--cap-add=SYS_ADMIN ' +
-           '--security-opt=apparmor:unconfined ' +
+           '--privileged ' +
            '--device=/dev/fuse ' +
            '--volume=/nix:/nix ' +
            '--volume=/etc/nix:/etc/nix '
@@ -57,7 +57,7 @@ pipeline {
   options {
     timestamps()
     /* Prevent Jenkins jobs from running forever */
-    timeout(time: 30, unit: 'MINUTES')
+    timeout(time: 45, unit: 'MINUTES')
     /* manage how many builds we keep */
     buildDiscarder(logRotator(
       numToKeepStr: '10',
@@ -89,8 +89,14 @@ pipeline {
     VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
     /* Control output the filename */
     APP_TYPE = "${utils.getAppType() + (params.USE_NWAKU ? '-experimental' : '')}"
+    /* AppImage/Tarball output files */
     STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
     STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
+    /* Flatpak output files */
+    STATUS_CLIENT_FLATPAK = "pkg/${utils.pkgFilename(ext: 'flatpak', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
+    /* Flatpak build directories */
+    FLATPAK_BUILD_DIR = "${env.WORKSPACE_TMP}/flatpak-build"
+    FLATPAK_REPO_DIR = "${env.WORKSPACE_TMP}/flatpak-repo"
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
@@ -129,26 +135,43 @@ pipeline {
       }
     }
 
-    stage('Package') {
+    stage('Tarball') {
       steps { script {
         linux.bundle('tgz-linux')
       } }
     }
 
+    stage('Flatpak') {
+      steps { script {
+        sh 'scripts/build-flatpak.sh'
+      } }
+    }
+
     stage('Parallel Upload') {
       parallel {
-        stage('Upload') {
+        stage('Upload Tarball') {
           steps { script {
             env.PKG_URL = s5cmd.upload(env.STATUS_CLIENT_TARBALL)
-            jenkins.setBuildDesc(AppImage: env.PKG_URL)
+          } }
+        }
+        stage('Upload Flatpak') {
+          steps { script {
+            env.FLATPAK_URL = s5cmd.upload(env.STATUS_CLIENT_FLATPAK)
           } }
         }
         stage('Archive') {
           steps { script {
             archiveArtifacts("${env.STATUS_CLIENT_TARBALL}*")
+            archiveArtifacts("${env.STATUS_CLIENT_FLATPAK}*")
           } }
         }
       }
+    }
+
+    stage('Post Upload') {
+      steps { script {
+        jenkins.setBuildDesc(Tarball: env.PKG_URL, Flatpak: env.FLATPAK_URL)
+      } }
     }
 
     stage('E2E') {
@@ -168,10 +191,7 @@ pipeline {
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
-    cleanup {
-      cleanWs(disableDeferredWipeout: true)
-      dir(env.WORKSPACE_TMP) { deleteDir() }
-    }
+    cleanup { cleanWs(disableDeferredWipeout: true) }
   }
 }
 
@@ -190,3 +210,4 @@ def getJobPathTokens() {
 def getNWakuMode() {
     return getJobPathTokens().contains('package-nwaku')
 }
+
