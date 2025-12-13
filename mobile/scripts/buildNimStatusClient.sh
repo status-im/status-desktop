@@ -49,8 +49,10 @@ APP_CONFIG_DEFINES=(
 )
 
 # build status-client with feature flags
+# Note: Using --mm:refc instead of --mm:orc to match desktop build and avoid
+# strict nil checking issues with seq[ref] types in Nim 2.2's ORC implementation
 env $FEATURE_FLAGS ./vendor/nimbus-build-system/scripts/env.sh nim c "${PLATFORM_SPECIFIC[@]}" "${APP_CONFIG_DEFINES[@]}" ${QML_SERVER_DEFINES}  \
-    --mm:orc \
+    --mm:refc \
     -d:useMalloc \
     --opt:size \
     -d:lto \
