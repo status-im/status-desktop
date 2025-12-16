@@ -94,7 +94,7 @@ Control {
                 font.pixelSize: root.size === TokenSelectorButton.Size.Normal ? 28 : 22
                 lineHeightMode: Text.FixedHeight
                 lineHeight: root.size === TokenSelectorButton.Size.Normal ? 38 : 30
-                color: root.hovered ? StatusColors.getColor("blue") : StatusColors.getColor("darkBlue")
+                color: root.hovered ? StatusColors.getColor("blue", 1) : StatusColors.getColor("darkBlue", 1)
 
                 elide: Text.ElideRight
                 text: root.name
@@ -112,6 +112,8 @@ Control {
         cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
         anchors.fill: parent
 
-        onClicked: root.clicked()
+        onClicked: {
+            root.clicked()
+        }
     }
 }

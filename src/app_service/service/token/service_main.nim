@@ -72,6 +72,14 @@ proc init*(self: Service) =
 
   self.refreshTokens()
 
+proc getMandatoryTokenGroupKeys*(self: Service): seq[string] =
+  let tokenKeys = getMandatoryTokenKeys()
+  let tokens = getTokensByKeys(tokenKeys)
+  var groupKeysMap: Table[string, bool] = initTable[string, bool]()
+  for token in tokens:
+    groupKeysMap[token.groupKey] = true
+  return toSeq(groupKeysMap.keys)
+
 proc getCurrency*(self: Service): string =
   return self.settingsService.getCurrency()
 
@@ -104,6 +112,20 @@ proc getGroupsForChain*(self: Service): var seq[TokenGroupItem] =
 
 proc getAllTokenLists*(self: Service): var seq[TokenListItem] =
   return self.allTokenLists
+
+################################################################################
+## This is a very special function that should not be used anywhere else,
+## it covers the backward compatibility with the old payment requests.
+##
+## Itterates over all tokens for the given chain and returns the first token
+## that matches the symbol or name (cause some tokens have different symbols for EVM/BSC chains), case insensitive.
+proc getTokenBySymbolOnChain*(self: Service, symbol: string, chainId: int): TokenItem =
+  let tokens = getTokensByChain(chainId)
+  for token in tokens:
+    if cmpIgnoreCase(token.symbol, symbol) == 0 or cmpIgnoreCase(token.name, symbol) == 0:
+      return token
+  return nil
+################################################################################
 
 proc getAllCommunityTokens*(self: Service): var seq[TokenItem] =
   const communityTokenListId = "community"
@@ -147,6 +169,20 @@ proc getTokensByGroupKey*(self: Service, groupKey: string): seq[TokenItem] =
     self.groupsOfInterestByKey[token.groupKey] = group
     return @[token]
   return self.groupsOfInterestByKey[groupKey].tokens
+
+## Note: use this function in a very rare case, when you're sure the token is not present in the models.
+## Returns a token that matches the key, or the first token in the group that matches the key.
+proc getTokenByKeyOrGroupKeyFromAllTokens*(self: Service, key: string): TokenItem =
+  if common_utils.isTokenKey(key):
+    return self.getTokenByKey(key)
+  var tokens = self.getTokensByGroupKey(key)
+  if tokens.len > 0:
+    return tokens[0]
+  tokens = getAllTokens()
+  let matchedTokens = tokens.filter(t => t.groupKey == key)
+  if matchedTokens.len > 0:
+    return matchedTokens[0]
+  return nil
 
 proc getTokenByGroupKeyAndChainId*(self: Service, groupKey: string, chainId: int): TokenItem =
   let tokens = self.getTokensByGroupKey(groupKey)

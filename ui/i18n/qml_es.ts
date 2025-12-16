@@ -8167,6 +8167,13 @@ Tarifa L2: %2</translation>
     </message>
 </context>
 <context>
+    <name>GroupsModel</name>
+    <message>
+        <source>Popular assets on %1</source>
+        <translation type="unfinished">Activos populares en %1</translation>
+    </message>
+</context>
+<context>
     <name>HelpUsImproveStatusPage</name>
     <message>
         <source>Help us improve Status</source>
@@ -12931,13 +12938,6 @@ al cargar</translation>
     </message>
 </context>
 <context>
-    <name>PaymentRequestAdaptor</name>
-    <message>
-        <source>Popular assets on %1</source>
-        <translation>Activos populares en %1</translation>
-    </message>
-</context>
-<context>
     <name>PaymentRequestCardDelegate</name>
     <message>
         <source>Send %1 %2 to %3</source>
@@ -15201,6 +15201,17 @@ al cargar</translation>
     </message>
 </context>
 <context>
+    <name>SendModalHandler</name>
+    <message>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Token that you&apos;re trying to send is not supported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SendModalHeader</name>
     <message>
         <source>Send</source>
@@ -15764,31 +15775,31 @@ al cargar</translation>
     <name>SimpleSendModal</name>
     <message>
         <source>To</source>
-        <translation>Para</translation>
+        <translation type="unfinished">Para</translation>
     </message>
     <message>
         <source>Fees</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Insufficient funds for send transaction</source>
-        <translation>Fondos insuficientes para la transacción de envío</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add ETH</source>
-        <translation>Agregar ETH</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add BNB</source>
-        <translation>Agregar BNB</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add assets</source>
-        <translation>Agregar activos</translation>
+        <translation type="unfinished">Agregar activos</translation>
     </message>
     <message>
         <source>Add %1</source>
-        <translation>Agregar %1</translation>
+        <translation type="unfinished">Agregar %1</translation>
     </message>
 </context>
 <context>

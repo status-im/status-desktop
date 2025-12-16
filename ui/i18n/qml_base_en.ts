@@ -8152,6 +8152,13 @@ L2 fee: %2</source>
     </message>
 </context>
 <context>
+    <name>GroupsModel</name>
+    <message>
+        <source>Popular assets on %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HelpUsImproveStatusPage</name>
     <message>
         <source>Help us improve Status</source>
@@ -12908,13 +12915,6 @@ to load</source>
     </message>
 </context>
 <context>
-    <name>PaymentRequestAdaptor</name>
-    <message>
-        <source>Popular assets on %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>PaymentRequestCardDelegate</name>
     <message>
         <source>Send %1 %2 to %3</source>
@@ -15174,6 +15174,17 @@ to load</source>
     </message>
     <message>
         <source>Review Send</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SendModalHandler</name>
+    <message>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Token that you&apos;re trying to send is not supported.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -9956,6 +9956,14 @@
     </message>
   </context>
   <context>
+    <name>GroupsModel</name>
+    <message>
+      <source>Popular assets on %1</source>
+      <comment>GroupsModel</comment>
+      <translation>Popular assets on %1</translation>
+    </message>
+  </context>
+  <context>
     <name>HelpUsImproveStatusPage</name>
     <message>
       <source>Help us improve Status</source>
@@ -15718,14 +15726,6 @@
     </message>
   </context>
   <context>
-    <name>PaymentRequestAdaptor</name>
-    <message>
-      <source>Popular assets on %1</source>
-      <comment>PaymentRequestAdaptor</comment>
-      <translation>Popular assets on %1</translation>
-    </message>
-  </context>
-  <context>
     <name>PaymentRequestCardDelegate</name>
     <message>
       <source>Send %1 %2 to %3</source>
@@ -18478,6 +18478,19 @@
       <source>Review Send</source>
       <comment>SendModalFooter</comment>
       <translation>Review Send</translation>
+    </message>
+  </context>
+  <context>
+    <name>SendModalHandler</name>
+    <message>
+      <source>Info</source>
+      <comment>SendModalHandler</comment>
+      <translation>Info</translation>
+    </message>
+    <message>
+      <source>Token that you&#39;re trying to send is not supported.</source>
+      <comment>SendModalHandler</comment>
+      <translation>Token that you&#39;re trying to send is not supported.</translation>
     </message>
   </context>
   <context>

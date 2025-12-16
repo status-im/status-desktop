@@ -1,4 +1,4 @@
-import nimqml, sequtils, strutils, chronicles
+import nimqml, sequtils, strutils, json, chronicles
 
 import io_interface, token_lists_model, token_groups_model
 
@@ -107,12 +107,23 @@ QtObject:
     read = getTokenGroupsModel
     notify = tokenGroupsModelChanged
 
-  proc buildGroupsForChain*(self: View, chainId: int, mandatoryKeysString: string) {.slot.} =
-    let mandatoryKeys = mandatoryKeysString.split("$$")
+  proc buildGroupsForChain*(self: View, chainId: int, mandatoryGroupKeysString: string) {.slot.} =
     if not self.delegate.buildGroupsForChain(chainId):
       return
-    self.tokenGroupsForChainModel.modelsUpdated(resetModelSize = true, mandatoryKeys)
+    var mandatoryGroupKeys: seq[string] = @[]
+    if mandatoryGroupKeysString.len > 0:
+      mandatoryGroupKeys = mandatoryGroupKeysString.split("$$")
+    else:
+      mandatoryGroupKeys = self.delegate.getMandatoryTokenGroupKeys()
+
+    self.tokenGroupsForChainModel.modelsUpdated(resetModelSize = true, mandatoryGroupKeys)
     self.tokenGroupsForChainModelChanged()
+
+  proc getTokenByKeyOrGroupKeyFromAllTokens*(self: View, key: string): string {.slot.} =
+    let token = self.delegate.getTokenByKeyOrGroupKeyFromAllTokens(key)
+    if token.isNil:
+      return ""
+    return $(%* token)
 
   proc modelsUpdated*(self: View) =
     self.tokenListsModel.modelsUpdated()

@@ -1,4 +1,4 @@
-import strutils, tables
+import strutils, tables, json
 
 import app_service/common/wallet_constants as common_wallet_constants
 import app_service/common/utils as common_utils
@@ -114,3 +114,19 @@ proc createStatusTokenItem*(chainId: int): TokenItem =
     tokenDto.decimals = common_wallet_constants.STATUS_DECIMALS_TESTNET
 
   return createTokenItem(tokenDto, common_types.TokenType.ERC20)
+
+proc `%`*(self: TokenItem): JsonNode =
+  return %*{
+    "key": self.key,
+    "groupKey": self.groupKey,
+    "crossChainId": self.crossChainId,
+    "address": self.address,
+    "name": self.name,
+    "symbol": self.symbol,
+    "decimals": self.decimals,
+    "chainId": self.chainId,
+    "logoUri": self.logoUri,
+    "customToken": self.customToken,
+    "communityId": self.communityData.id,
+    "type": self.`type`
+  }

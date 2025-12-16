@@ -410,7 +410,17 @@ QtObject {
         }
 
         if (!groupKey) {
-            console.error("cannot resolve group key from the provided token key", tokenKey)
+            // fallback and fetch details from the backend, this call fetch all tokens from statusgo and
+            // searchs for the token that matches the key (this is definitely the last resort)
+            const token = WalletStores.RootStore.tokensStore.getTokenByKeyOrGroupKeyFromAllTokens(tokenKey)
+            groupKey = token.groupKey
+            chainId = token.chainId
+
+            if (!groupKey) {
+                console.error("cannot resolve group key from the provided token key", tokenKey)
+                Global.openInfoPopup(qsTr("Info"), qsTr("Token that you're trying to send is not supported."))
+                return
+            }
         }
 
 
@@ -470,6 +480,8 @@ QtObject {
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
             fnResolveENS: root.fnResolveENS
             marketDataNotAvailable: handler.marketDataNotAvailable
+
+            getTokenByKeyOrGroupKeyFromAllTokens: WalletStores.RootStore.tokensStore.getTokenByKeyOrGroupKeyFromAllTokens
 
             onOpened: {
                 if(isValidParameter(root.simpleSendParams.interactive)) {

@@ -127,8 +127,8 @@ QtObject:
   proc removeLinkPreviewData*(self: View, index: int) {.slot.} =
     self.linkPreviewModel.removePreviewData(index)
 
-  proc addPaymentRequest*(self: View, receiver: string, amount: string, tokenKey: string, symbol: string) {.slot.} =
-    self.paymentRequestModel.addPaymentRequest(receiver, amount, tokenKey, symbol)
+  proc addPaymentRequest*(self: View, receiver: string, amount: string, tokenKey: string, symbol: string, logoUri: string) {.slot.} =
+    self.paymentRequestModel.addPaymentRequest(receiver, amount, tokenKey, symbol, logoUri)
 
   proc removePaymentRequestPreviewData*(self: View, index: int) {.slot.} =
     self.paymentRequestModel.removeItemWithIndex(index)

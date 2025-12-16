@@ -126,6 +126,9 @@ method getTokenMarketValuesDataSource*(self: Module): TokenMarketValuesDataSourc
 method buildGroupsForChain*(self: Module, chainId: int): bool =
   return self.controller.buildGroupsForChain(chainId)
 
+method getTokenByKeyOrGroupKeyFromAllTokens*(self: Module, key: string): TokenItem =
+  return self.controller.getTokenByKeyOrGroupKeyFromAllTokens(key)
+
 method filterChanged*(self: Module, addresses: seq[string]) =
   if addresses == self.addresses:
       return
@@ -184,3 +187,6 @@ method showCommunityAssetWhenSendingTokensChanged*(self: Module) =
 
 method tokenAvailableForBridgingViaHop*(self: Module, tokenChainId: int, tokenAddress: string): bool =
   return self.controller.tokenAvailableForBridgingViaHop(tokenChainId, tokenAddress)
+
+method getMandatoryTokenGroupKeys*(self: Module): seq[string] =
+  return self.controller.getMandatoryTokenGroupKeys()

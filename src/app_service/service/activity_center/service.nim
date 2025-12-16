@@ -334,7 +334,7 @@ QtObject:
       if response.result.kind != JNull:
         if response.result.contains("chats"):
           for jsonChat in response.result["chats"]:
-            let chat = toChatDto(jsonChat)
+            var chat = toChatDto(jsonChat)
             self.chatService.updateOrAddChat(chat)
             self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: @[chat]))
 

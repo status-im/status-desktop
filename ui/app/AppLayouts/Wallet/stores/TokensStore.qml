@@ -114,6 +114,35 @@ QtObject {
         root._allTokensModule.buildGroupsForChain(chainId, mandatoryKeys)
     }
 
+    // Due to performance reasons, use this function as the last option, when you're sure the token is not present in the models.
+    function getTokenByKeyOrGroupKeyFromAllTokens(key) {
+
+        const defaultValue = {
+            key: "",
+            groupKey: "",
+            crossChainId: "",
+            address: "",
+            name: "",
+            symbol: "",
+            decimals: 0,
+            hainId: 0,
+            logoUri: "",
+            customToken:false,
+            communityId: "",
+            type: ""
+        }
+
+        const jsonToken = root._allTokensModule.getTokenByKeyOrGroupKeyFromAllTokens(key)
+
+        try {
+            return JSON.parse(jsonToken)
+        }
+        catch (e) {
+            console.warn("error parsing token for the key: ", key)
+            return defaultValue
+        }
+    }
+
     function getHistoricalDataForToken(tokenKey, currency) {
         root._allTokensModule.getHistoricalDataForToken(tokenKey, currency)
     }

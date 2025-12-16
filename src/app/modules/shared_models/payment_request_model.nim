@@ -7,6 +7,7 @@ type
     Symbol
     Amount
     ReceiverAddress
+    LogoUri
 
 QtObject:
   type
@@ -42,6 +43,7 @@ QtObject:
       ModelRole.Symbol.int: "symbol",
       ModelRole.Amount.int: "amount",
       ModelRole.ReceiverAddress.int: "receiver",
+      ModelRole.LogoUri.int:"logoUri",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -63,6 +65,8 @@ QtObject:
       result = newQVariant(item.amount)
     of ModelRole.ReceiverAddress:
       result = newQVariant(item.receiver)
+    of ModelRole.LogoUri:
+      result = newQVariant(item.logoUri)
     else:
       result = newQVariant()
 
@@ -85,8 +89,8 @@ QtObject:
     self.items.add(paymentRequest)
     self.endInsertRows()
 
-  proc addPaymentRequest*(self: Model, receiver: string, amount: string, tokenKey: string, symbol: string) {.slot.}=
-    let paymentRequest = newPaymentRequest(receiver, amount, tokenKey, symbol)
+  proc addPaymentRequest*(self: Model, receiver: string, amount: string, tokenKey: string, symbol: string, logoUri: string) {.slot.}=
+    let paymentRequest = newPaymentRequest(receiver, amount, tokenKey, symbol, logoUri)
     self.insertItem(paymentRequest)
 
   proc clearItems*(self: Model) =

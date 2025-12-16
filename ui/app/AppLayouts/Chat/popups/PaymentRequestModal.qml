@@ -12,6 +12,7 @@ import StatusQ.Core.Utils as SQUtils
 import StatusQ.Popups.Dialog
 
 import AppLayouts.Wallet.controls
+import AppLayouts.Wallet.adaptors
 
 import shared.controls
 import shared.popups.send.views
@@ -38,7 +39,8 @@ StatusDialog {
     **/
     required property var accountsModel
     /** Expected model structure: see SearchableAssetsPanel::model **/
-    required property var assetsModel
+    required property var tokenGroupsForChainModel
+    required property var searchResultModel
     required property string currentCurrency
     property var formatCurrencyAmount: function() {}
 
@@ -46,19 +48,20 @@ StatusDialog {
     property int selectedNetworkChainId: Constants.chains.mainnetChainId
     property string selectedAccountAddress
     property string selectedTokenGroupKey: defaultTokenGroupKey
-    // selected token key is automatically evaluated based on the selected group key and selected chain
-    readonly property string selectedTokenKey: SQUtils.ModelUtils.getByKey(d.selectedHolding.item.tokens, "chainId", root.selectedNetworkChainId, "key")
-    readonly property string symbol: d.selectedHolding.item.symbol
-
+    readonly property string selectedTokenKey: d.selectedTokenKey
+    readonly property string selectedSymbol: d.selectedSymbol
+    readonly property string selectedTokenLogoUri: d.selectedTokenLogoUri
 
     readonly property string defaultTokenGroupKey: Utils.getNativeTokenGroupKey(selectedNetworkChainId)
     // output
     readonly property string amount: {
-        if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.item.marketDetails || !d.selectedHolding.item.marketDetails.currencyPrice) {
+        if (!d.isSelectedHoldingValidAsset) {
             return "0"
         }
         return amountToSendInput.amount
     }
+
+    signal buildGroupsForChain()
 
     objectName: "paymentRequestModal"
 
@@ -69,10 +72,11 @@ StatusDialog {
 
     title: qsTr("Payment request")
 
+    Component.onCompleted: {
+        root.buildGroupsForChain()
+    }
+
     onAboutToShow: {
-        if (!!root.selectedTokenGroupKey && d.selectedHolding.available) {
-            holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.key)
-        }
         if (!SQUtils.Utils.isMobile)
             amountToSendInput.forceActiveFocus()
     }
@@ -84,25 +88,56 @@ StatusDialog {
             root.selectedTokenGroupKey = root.defaultTokenGroupKey
         }
 
+        property string selectedTokenKey: ""
+        property string selectedSymbol: ""
+        property string selectedTokenLogoUri: ""
+
+        function updateSelectedTokenKey() {
+            const tokenGroup = SQUtils.ModelUtils.getByKey(holdingSelector.model, "key", root.selectedTokenGroupKey)
+            if (!tokenGroup) {
+                console.warn("cannot relove the token group for the group key", root.selectedTokenGroupKey)
+            } else {
+                const token = SQUtils.ModelUtils.getByKey(tokenGroup.tokens, "chainId", root.selectedNetworkChainId)
+                if (!token) {
+                    console.warn("cannot find the token on chain", root.selectedTokenGroupKey, "for the group", root.selectedTokenGroupKey)
+                } else {
+                    d.selectedTokenKey = token.key
+                    d.selectedSymbol = token.symbol
+                    d.selectedTokenLogoUri = token.image
+                }
+            }
+
+            holdingSelector.setSelection(tokenGroup.symbol, tokenGroup.logoUri, tokenGroup.key)
+        }
+
         readonly property ModelEntry selectedHolding: ModelEntry {
             sourceModel: holdingSelector.model
             key: "key"
             value: root.selectedTokenGroupKey
             onValueChanged: {
-                if (value !== undefined && !available) {
+                if (available) {
+                    Qt.callLater(d.updateSelectedTokenKey)
+                } else if (root.selectedTokenGroupKey !== root.defaultTokenGroupKey) {
                     Qt.callLater(d.resetSelectedToken)
-                } else {
-                    holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.key)
                 }
             }
             onAvailableChanged: {
-                if (value !== undefined && !available) {
+                if (available) {
+                    Qt.callLater(d.updateSelectedTokenKey)
+                } else if (root.selectedTokenGroupKey !== root.defaultTokenGroupKey) {
                     Qt.callLater(d.resetSelectedToken)
                 }
             }
         }
 
         readonly property bool isSelectedHoldingValidAsset: selectedHolding.available
+
+        readonly property var adaptor: PaymentRequestAdaptor {
+            tokenGroupsForChainModel: root.tokenGroupsForChainModel
+            searchResultModel: root.searchResultModel
+            selectedNetworkChainId: root.selectedNetworkChainId
+            flatNetworksModel: root.flatNetworksModel
+        }
     }
 
     footer: StatusDialogFooter {
@@ -161,8 +196,17 @@ StatusDialog {
                 anchors.right: parent.right
                 anchors.topMargin: (Theme.halfPadding / 2)
 
-                model: root.assetsModel
-                onSelected: {
+                model: d.adaptor.outputModel
+                hasMoreItems: d.adaptor.outputModel.hasMoreItems
+                isLoadingMore: d.adaptor.outputModel.isLoadingMore
+
+                onSearch: function(keyword) {
+                    d.adaptor.search(keyword)
+                }
+
+                onLoadMoreRequested: d.adaptor.loadMoreItems()
+
+                onSelected: (groupKey) => {
                     root.selectedTokenGroupKey = groupKey
                 }
             }
@@ -263,6 +307,8 @@ StatusDialog {
 
                 onClicked: {
                     root.selectedNetworkChainId = model.chainId
+                    root.buildGroupsForChain()
+                    root.selectedTokenGroupKey = root.defaultTokenGroupKey
                     networkSelector.popup.close()
                 }
             }

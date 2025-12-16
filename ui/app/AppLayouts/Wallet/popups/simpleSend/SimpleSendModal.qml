@@ -189,6 +189,9 @@ StatusDialog {
                                                      !amountToSend.markAsInvalid &&
                                                      amountToSend.valid
 
+    /** Returns token that matches provided key (key can be token or group key). **/
+    property var getTokenByKeyOrGroupKeyFromAllTokens: function(key){ return {}}
+
     /** Input function to resolve Ens Name **/
     required property var fnResolveENS
 
@@ -206,6 +209,19 @@ StatusDialog {
 
     QtObject {
         id: d
+
+        readonly property bool selectedTokenExistsInAssetsModel: {
+            const tokenGroup = SQUtils.ModelUtils.getByKey(root.assetsModel, "key", root.selectedGroupKey)
+            return !!tokenGroup
+        }
+
+        readonly property var resolvedSelectedToken: {
+            if (d.selectedTokenExistsInAssetsModel) {
+                return {}
+            }
+
+            return root.getTokenByKeyOrGroupKeyFromAllTokens(root.selectedGroupKey)
+        }
 
         readonly property real scrollViewContentY: scrollView.flickable.contentY
         onScrollViewContentYChanged: {
@@ -226,13 +242,26 @@ StatusDialog {
             cacheOnRemoval: true
             onItemChanged: d.setAssetInTokenSelector()
             onAvailableChanged: d.setAssetInTokenSelector()
+            onValueChanged: {
+                // if it's non-interactive mode and the assets model doesn't contain selectedGroupKey set the UI properly
+                if (!root.interactive && !!root.selectedGroupKey) {
+                    if (d.selectedTokenExistsInAssetsModel) {
+                        return
+                    }
+                    if (!d.resolvedSelectedToken) {
+                        console.error("cannot init the send flow for", root.selectedGroupKey)
+                        return
+                    }
+
+                    d.setTokenOnBothHeaders(d.resolvedSelectedToken.symbol, d.resolvedSelectedToken.logoUri, d.resolvedSelectedToken.key)
+                }
+            }
         }
 
         // Holds if the asset entry is valid
-        readonly property bool selectedAssetEntryValid: (selectedAssetEntry.itemRemovedFromModel ||
-                                                         selectedAssetEntry.available) &&
-                                                        isSelectedAssetAvailableInSelectedNetwork &&
-                                                        !!selectedAssetEntry.item
+        readonly property bool selectedAssetEntryValid: isSelectedAssetAvailableInSelectedNetwork &&
+                                                        ((selectedAssetEntry.itemRemovedFromModel || selectedAssetEntry.available) &&
+                                                        !!selectedAssetEntry.item || !root.interactive)
 
         // Used to set selected asset in token selector
         function setAssetInTokenSelector() {
@@ -244,6 +273,9 @@ StatusDialog {
         }
 
         readonly property bool isSelectedAssetAvailableInSelectedNetwork: {
+            if (!root.interactive) {
+                return true
+            }
             const chainId = root.selectedChainId
             const tokensKey = root.selectedGroupKey
             if (!tokensKey || !chainId || !root.groupedAccountAssetsModel)
@@ -311,6 +343,10 @@ StatusDialog {
         }
 
         readonly property var debounceResetTokenSelector: Backpressure.debounce(root, 200, function() {
+            if (!root.interactive) {
+                // non interactive flow should not be resetted, it should display what was requested
+                return
+            }
             if(!selectedAssetEntryValid && !selectedCollectibleEntryValid) {
                 // reset token selector in case selected tokens doesnt exist in either models
                 d.setTokenOnBothHeaders("", "", "")
@@ -326,12 +362,21 @@ StatusDialog {
                 root.selectedRawAmount = amountToSend.amount
         })
 
-        readonly property string selectedCryptoTokenSymbol: selectedAssetEntryValid ?
-                                                                selectedAssetEntry.item.symbol:
-                                                                selectedCollectibleEntryValid ?
-                                                                    selectedCollectibleEntry.item.symbol: ""
+        readonly property string selectedCryptoTokenSymbol: {
+            if (!d.selectedTokenExistsInAssetsModel) {
+                return d.resolvedSelectedToken.symbol
+            }
+
+            return selectedAssetEntryValid ?
+                        selectedAssetEntry.item.symbol:
+                        selectedCollectibleEntryValid ?
+                            selectedCollectibleEntry.item.symbol: ""
+        }
 
         readonly property double maxSafeCryptoValue: {
+            if (!d.selectedTokenExistsInAssetsModel) {
+                return 0
+            }
             !!d.selectedAssetEntry.item.balances ? d.selectedAssetEntry.item.balances.ModelCount.count : null
             if (selectedCollectibleEntryValid) {
                 let collectibleBalance = SQUtils.ModelUtils.getByKey(selectedCollectibleEntry.item.ownership, "accountAddress", root.selectedAccountAddress, "balance")
@@ -349,6 +394,9 @@ StatusDialog {
         }
 
         readonly property bool allowTryingToSendEnteredAmount: {
+            if (!d.selectedTokenExistsInAssetsModel) {
+                false
+            }
             if (!selectedCollectibleEntryValid && !d.selectedAssetEntryValid) {
                 return true // if no asset selected
             }
@@ -641,11 +689,20 @@ StatusDialog {
                     selectedSymbol: amountToSend.fiatMode ?
                                         root.currentCurrency:
                                         d.selectedCryptoTokenSymbol
-                    cryptoPrice: root.marketDataNotAvailable ? 0 :
-                               d.selectedAssetEntry.item.marketDetails.currencyPrice.amount
-                    multiplierIndex: !!d.selectedAssetEntryValid &&
+                    cryptoPrice: !root.interactive || root.marketDataNotAvailable ? 0
+                                                                                  : !!d.selectedAssetEntry.item &&
+                                                                                    !!d.selectedAssetEntry.item.marketDetails &&
+                                                                                    d.selectedAssetEntry.item.marketDetails.currencyPrice.amount
+                    multiplierIndex: {
+                        if (!d.selectedTokenExistsInAssetsModel) {
+                            return d.resolvedSelectedToken.decimals
+                        }
+
+                        return !!d.selectedAssetEntryValid &&
+                                     !!d.selectedAssetEntry.item &&
                                      !!d.selectedAssetEntry.item.decimals ?
                                          d.selectedAssetEntry.item.decimals : 0
+                    }
                     /** this is needed because in some cases the multiplier index is set after
                     rawAmount and this leads to incorrect parsing of amount **/
                     onMultiplierIndexChanged: d.setRawValue()
