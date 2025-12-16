@@ -113,8 +113,8 @@ platform :ios do
       type: options[:type],
       app_identifier: options[:app_identifier],
       readonly: false,
-      # Auto-regenerate development profiles when new devices are registered
-      force_for_new_devices: options[:type] == "development"
+      # Auto-regenerate profiles when new devices are registered (for dev and adhoc)
+      force_for_new_devices: options[:type] == "development" || options[:type] == "adhoc"
     }
 
     # Only specify keychain params in CI where we create a custom keychain
