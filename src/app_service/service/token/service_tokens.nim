@@ -42,7 +42,7 @@ proc getTokensOfInterestForActiveNetworksMode(): seq[TokenItem] =
     # Create a copy of the tokenResultStr to avoid exceptions in `decode`
     # Workaround for https://github.com/status-im/status-desktop/issues/17398
     let responseStr = $response
-    let parsedResponse = Json.decode(responseStr, seq[TokenDto], allowUnknownFields = true)
+    let parsedResponse = Json.decode(responseStr, seq[TokenDtoSafe], allowUnknownFields = true)
     result = parsedResponse.map(t => createTokenItem(t))
   except Exception as e:
     let errDesription = e.msg
@@ -61,7 +61,7 @@ proc getTokensForActiveNetworksMode(): seq[TokenItem] =
     # Create a copy of the tokenResultStr to avoid exceptions in `decode`
     # Workaround for https://github.com/status-im/status-desktop/issues/17398
     let responseStr = $response
-    let parsedResponse = Json.decode(responseStr, seq[TokenDto], allowUnknownFields = true)
+    let parsedResponse = Json.decode(responseStr, seq[TokenDtoSafe], allowUnknownFields = true)
     result = parsedResponse.map(t => createTokenItem(t))
   except Exception as e:
     let errDesription = e.msg
@@ -96,7 +96,7 @@ proc getTokensByChain(chainId: int): seq[TokenItem] =
     # Create a copy of the tokenResultStr to avoid exceptions in `decode`
     # Workaround for https://github.com/status-im/status-desktop/issues/17398
     let responseStr = $response
-    let parsedResponse = Json.decode(responseStr, seq[TokenDto], allowUnknownFields = true)
+    let parsedResponse = Json.decode(responseStr, seq[TokenDtoSafe], allowUnknownFields = true)
     result = parsedResponse.map(t => createTokenItem(t))
   except Exception as e:
     let errDesription = e.msg
@@ -115,7 +115,7 @@ proc getTokensByKeys(keys: seq[string]): seq[TokenItem] =
     # Create a copy of the tokenResultStr to avoid exceptions in `decode`
     # Workaround for https://github.com/status-im/status-desktop/issues/17398
     let responseStr = $response
-    let parsedResponse = Json.decode(responseStr, seq[TokenDto], allowUnknownFields = true)
+    let parsedResponse = Json.decode(responseStr, seq[TokenDtoSafe], allowUnknownFields = true)
     result = parsedResponse.map(t => createTokenItem(t))
   except Exception as e:
     let errDesription = e.msg

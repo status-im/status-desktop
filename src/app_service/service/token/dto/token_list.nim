@@ -18,4 +18,4 @@ type TokenListDto* = ref object of RootObj
   source* {.serializedFieldName("source").}: string
   version* {.serializedFieldName("version").}: VersionDto
   logoUri* {.serializedFieldName("logoUri").}: string
-  tokens* {.serializedFieldName("tokens").}: seq[TokenDto]
+  tokens* {.serializedFieldName("tokens").}: seq[TokenDtoSafe]

@@ -22,6 +22,9 @@ type TokenDto* = ref object of RootObj
   customToken* {.serializedFieldName("custom").}: bool
   communityData* {.serializedFieldName("communityData").}: CommunityDataDto
 
+{.experimental: "notnil".}
+type TokenDtoSafe* = TokenDto not nil
+
 proc `$`*(self: CommunityDataDto): string =
   result = fmt"""CommunityDataDto[
     id: {self.id},
