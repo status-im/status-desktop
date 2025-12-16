@@ -139,11 +139,20 @@ pipeline {
             }
           }
         }
+        stage('Upload to Diawi') {
+          when { expression { !utils.isReleaseBuild() } }
+          steps {
+            script {
+              def comment = "status-desktop PR build ${env.VERSION} (${env.GIT_COMMIT?.take(8) ?: 'unknown'})"
+              env.DIAWI_URL = app.uploadToDiawi(env.STATUS_IOS_APP_ARTIFACT, comment)
+              jenkins.setBuildDesc(IPA: env.DIAWI_URL)
+            }
+          }
+        }
         stage('Upload to S3') {
           steps {
             script {
               env.PKG_URL = s5cmd.upload(env.STATUS_IOS_APP_ARTIFACT)
-              jenkins.setBuildDesc(IPA: env.PKG_URL)
             }
           }
         }
