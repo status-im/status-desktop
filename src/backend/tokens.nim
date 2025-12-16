@@ -6,7 +6,13 @@ include common
 
 export response_type
 
+rpc(getMandatoryTokenKeys, "wallet"):
+  discard
+
 rpc(getAllTokenLists, "wallet"):
+  discard
+
+rpc(getAllTokens, "wallet"):
   discard
 
 rpc(getTokensOfInterestForActiveNetworksMode, "wallet"):
@@ -28,6 +34,18 @@ rpc(getTokensByKeys, "wallet"):
 rpc(tokenAvailableForBridgingViaHop, "wallet"):
   tokenChainId: int
   tokenAddress: string
+
+
+## Gets all mandatory token keys
+## `resultOut` represents a json object that contains the mandatory token keys if the call was successful, or `nil`
+## returns the error message if any, or an empty string
+proc getMandatoryTokenKeys*(resultOut: var JsonNode): string =
+  try:
+    let response = getMandatoryTokenKeys()
+    return prepareResponse(resultOut, response)
+  except Exception as e:
+    warn "error getting all mandatory token keys", err = e.msg
+    return e.msg
 
 
 ## Checks if the token is available for bridging via Hop
@@ -67,6 +85,17 @@ proc getTokensOfInterestForActiveNetworksMode*(resultOut: var JsonNode): string 
     warn "error getting all tokens of interest for the active networks mode", err = e.msg
     return e.msg
 
+
+## Gets all tokens
+## `resultOut` represents a json object that contains the tokens if the call was successful, or `nil`
+## returns the error message if any, or an empty string
+proc getAllTokens*(resultOut: var JsonNode): string =
+  try:
+    let response = getAllTokens()
+    return prepareResponse(resultOut, response)
+  except Exception as e:
+    warn "error getting all tokens", err = e.msg
+    return e.msg
 
 ## Gets all tokens for the active networks mode
 ## `resultOut` represents a json object that contains the tokens if the call was successful, or `nil`

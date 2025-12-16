@@ -73,6 +73,9 @@ proc getAllTokenLists*(self: Controller): var seq[TokenListItem] =
 proc buildGroupsForChain*(self: Controller, chainId: int): bool =
   return self.tokenService.buildGroupsForChain(chainId)
 
+proc getTokenByKeyOrGroupKeyFromAllTokens*(self: Controller, key: string): TokenItem =
+  return self.tokenService.getTokenByKeyOrGroupKeyFromAllTokens(key)
+
 proc getGroupsForChain*(self: Controller): var seq[TokenGroupItem] =
   return self.tokenService.getGroupsForChain()
 
@@ -146,3 +149,6 @@ proc toggleAutoRefreshTokensLists*(self: Controller): bool =
 
 proc tokenAvailableForBridgingViaHop*(self: Controller, tokenChainId: int, tokenAddress: string): bool =
   return self.tokenService.tokenAvailableForBridgingViaHop(tokenChainId, tokenAddress)
+
+proc getMandatoryTokenGroupKeys*(self: Controller): seq[string] =
+  return self.tokenService.getMandatoryTokenGroupKeys()

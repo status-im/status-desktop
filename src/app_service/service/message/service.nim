@@ -21,11 +21,10 @@ import ./dto/urls_unfurling_plan
 import ./dto/link_preview
 import ./message_cursor
 
-import ../../common/activity_center
-import ../../common/message as message_common
-import ../../common/conversion as service_conversion
-
-from ../../common/account_constants import ZERO_ADDRESS
+import app_service/common/activity_center
+import app_service/common/message as message_common
+import app_service/common/conversion as service_conversion
+from app_service/common/account_constants import ZERO_ADDRESS
 
 import web3/conversions
 
@@ -225,6 +224,27 @@ QtObject:
 
     return self.pinnedMsgCursor[chatId]
 
+  proc checkPaymentRequestsInMessage*(self: Service, message: var MessageDto) =
+    for paymentRequest in message.paymentRequests.mitems:
+      if paymentRequest.tokenKey.len == 0 or paymentRequest.logoUri.len == 0:
+        if paymentRequest.symbol.len > 0:
+          # due to backward compatibility, in case the tokenKey is empty, we should try to find it by symbol on the received chain.
+          let token = self.tokenService.getTokenBySymbolOnChain(paymentRequest.symbol, paymentRequest.chainId)
+          if token.isNil:
+            error "token is nil", tokenKey=paymentRequest.tokenKey, procName="checkPaymentRequestsInMessage"
+            continue
+          paymentRequest.tokenKey = token.key
+          paymentRequest.symbol = token.symbol
+          paymentRequest.logoUri = token.logoUri
+
+  proc checkPaymentRequestsInMessages*(self: Service, messages: var seq[MessageDto]) =
+    for message in messages.mitems:
+      self.checkPaymentRequestsInMessage(message)
+
+  proc checkPaymentRequestsInPinnedMessages*(self: Service, pinnedMessages: var seq[PinnedMessageDto]) =
+    for pinnedMessage in pinnedMessages.mitems:
+      self.checkPaymentRequestsInMessage(pinnedMessage.message)
+
   proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string, limit = MESSAGES_PER_PAGE): bool =
     if (chatId.len == 0):
       error "empty chat id", procName="asyncLoadMoreMessagesForChat"
@@ -357,6 +377,7 @@ QtObject:
       return
 
     self.bulkReplacePubKeysWithDisplayNames(messages)
+    self.checkPaymentRequestsInMessages(messages)
 
     for i in 0 ..< chats.len:
       let chatId = chats[i].id
@@ -405,7 +426,7 @@ QtObject:
       return self.numOfPinnedMessagesPerChat[chatId]
     return 0
 
-  proc handlePinnedMessagesUpdate(self: Service, pinnedMessages: seq[PinnedMessageUpdateDto]) =
+  proc handlePinnedMessagesUpdate(self: Service, pinnedMessages: var seq[PinnedMessageUpdateDto]) =
     for pm in pinnedMessages:
       var chatId: string = ""
       if (self.numOfPinnedMessagesPerChat.contains(pm.localChatId)):
@@ -480,6 +501,7 @@ QtObject:
         messages = map(args.messages.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
 
         self.bulkReplacePubKeysWithDisplayNames(messages)
+        self.checkPaymentRequestsInMessages(messages)
 
         self.events.emit(SIGNAL_MESSAGES_LOADED, MessagesLoadedArgs(
           chatId: args.chatId,
@@ -581,6 +603,8 @@ QtObject:
             result = x.toReactionDto()
         )
 
+      self.checkPaymentRequestsInPinnedMessages(pinnedMessages)
+
       let data = PinnedMessagesLoadedArgs(chatId: chatId, pinnedMessages: pinnedMessages, reactions: reactions)
 
       self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, data)
@@ -619,6 +643,7 @@ QtObject:
         messages = map(messagesArr.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
 
       self.bulkReplacePubKeysWithDisplayNames(messages)
+      self.checkPaymentRequestsInMessages(messages)
 
       # handling reactions
       var reactionsArr: JsonNode
@@ -660,6 +685,7 @@ QtObject:
       var messages = map(rpcResponseObj{"messages"}.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
       if messages.len > 0:
         self.bulkReplacePubKeysWithDisplayNames(messages)
+        self.checkPaymentRequestsInMessages(messages)
 
       let data = CommunityMemberMessagesArgs(communityId: communityId, messages: messages)
       self.events.emit(SIGNAL_COMMUNITY_MEMBER_ALL_MESSAGES, data)

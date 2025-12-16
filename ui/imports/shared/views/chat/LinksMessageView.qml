@@ -82,10 +82,14 @@ Flow {
             }
             symbol: model.symbol
             address: model.receiver
+            logoUri: model.logoUri
             senderName: root.senderName
             senderThumbnailImage: root.senderThumbnailImage
             senderColorId: root.senderColorId
-            onClicked: root.paymentRequestClicked(model.index)
+
+            onClicked: {
+                root.paymentRequestClicked(model.index)
+            }
         }
     }
 

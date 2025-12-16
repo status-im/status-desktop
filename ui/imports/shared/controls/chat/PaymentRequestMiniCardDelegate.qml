@@ -13,6 +13,7 @@ CalloutCard {
 
     required property string amount
     required property string symbol
+    required property string logoUri
 
     readonly property bool containsMouse: mouseArea.hovered || closeButton.hovered
 
@@ -56,7 +57,7 @@ CalloutCard {
                     asset.bgHeight: 20
                     asset.bgWidth: 20
                     asset.isImage: true
-                    asset.name: Constants.tokenIcon(root.symbol)
+                    asset.name: root.logoUri || Constants.tokenIcon(root.symbol)
                 }
             }
 

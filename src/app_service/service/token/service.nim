@@ -1,4 +1,4 @@
-import nimqml, tables, json, sequtils, chronicles, strutils, sugar, algorithm
+import nimqml, tables, json, std/sequtils, chronicles, strutils, sugar, algorithm
 
 import web3/eth_api_types
 import backend/backend as backend

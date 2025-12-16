@@ -8194,6 +8194,13 @@ L2 poplatek: %2</translation>
     </message>
 </context>
 <context>
+    <name>GroupsModel</name>
+    <message>
+        <source>Popular assets on %1</source>
+        <translation type="unfinished">Populární aktiva na %1</translation>
+    </message>
+</context>
+<context>
     <name>HelpUsImproveStatusPage</name>
     <message>
         <source>Help us improve Status</source>
@@ -13010,13 +13017,6 @@ selhalo</translation>
     </message>
 </context>
 <context>
-    <name>PaymentRequestAdaptor</name>
-    <message>
-        <source>Popular assets on %1</source>
-        <translation>Populární aktiva na %1</translation>
-    </message>
-</context>
-<context>
     <name>PaymentRequestCardDelegate</name>
     <message>
         <source>Send %1 %2 to %3</source>
@@ -15283,6 +15283,17 @@ selhalo</translation>
     <message>
         <source>Review Send</source>
         <translation>Zkontrolovat odeslání</translation>
+    </message>
+</context>
+<context>
+    <name>SendModalHandler</name>
+    <message>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Token that you&apos;re trying to send is not supported.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

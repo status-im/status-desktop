@@ -90,6 +90,8 @@ QtObject {
 
     signal openNewsMessagePopupRequested(var notification, string notificationId)
 
+    signal openInfoPopup(string title, string message)
+
     // BuyCrypto
     signal openBuyCryptoModalRequested(var formDataParams)
 

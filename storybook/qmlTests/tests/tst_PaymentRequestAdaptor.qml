@@ -108,9 +108,9 @@ Item {
                     },
                 ])
             }
-            tokenGroupsModel: ListModel {
+            tokenGroupsForChainModel: ListModel {
                 Component.onCompleted: append([{
-                    key: "ETH",
+                    key: Constants.ethGroupKey,
                     name: "Ether",
                     symbol: "ETH",
                     decimals: 18,
@@ -119,23 +119,24 @@ Item {
                     websiteUrl: "https://www.ethereum.org/",
                     tokens: [
                         { chainId: 1, address: "0x0000000000000000000000000000000000000000"},
-                        { chainId: 5, address: "0x0000000000000000000000000000000000000000"},
+                        { chainId: 10, address: "0x0000000000000000000000000000000000000000"},
                     ]
                 },
                 {
-                    key: "STT",
-                    name: "Status Test Token",
-                    symbol: "STT",
+                    key: Constants.sntGroupKey,
+                    name: "Status",
+                    symbol: "SNT",
                     decimals: 18,
                     communityId: "",
                     description: "Status Network Token (SNT) is a utility token used within the Status.im platform, which is an open-source messaging and social media platform built on the Ethereum blockchain. SNT is designed to facilitate peer-to-peer communication and interactions within the decentralized Status network.",
                     websiteUrl: "https://status.im/",
                     tokens: [
-                        {chainId: 5, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
+                        {chainId: 1, address: "0x744d70fdbe2ba4cf95131626614a1763df805b9e"},
+                        {chainId: 10, address: "0x650af3c15af43dcb218406d30784416d64cfb6b2"}
                     ]
                 },
                 {
-                    key: "DAI",
+                    key: Constants.daiGroupKey,
                     name: "Dai Stablecoin",
                     symbol: "DAI",
                     decimals: 18,
@@ -144,11 +145,11 @@ Item {
                     websiteUrl: "https://makerdao.com/",
                     tokens: [
                         { chainId: 1, address: "0x6b175474e89094c44da98b954eedeac495271d0f"},
-                        { chainId: 5, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
+                        { chainId: 42161, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
                     ]
                 },
                 {
-                    key: "0x6b175474e89094c44da98b954eedeac495271d0f",
+                    key: "1-0x0000000000000000000000000000000000000001",
                     name: "Meth",
                     symbol: "MET",
                     decimals: 0,
@@ -156,8 +157,7 @@ Item {
                     description: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. ",
                     websiteUrl: "",
                     tokens: [
-                       { chainId: 1, address: "0x6b175474e89094c44da98b954eedeac495271d0f"},
-                       { chainId: 5, address: "0x6b175474e89094c44da98b954eedeac495271d0f"}
+                       { chainId: 1, address: "0x0000000000000000000000000000000000000001"}
                     ]
                 },
                 ])
@@ -173,18 +173,22 @@ Item {
             verify(adaptor)
 
             // Community and not selected network are filtered out
-            compare(adaptor.outputModel.ModelCount.count, 2)
-            compare(adaptor.outputModel.get(0).key, "DAI")
-            compare(adaptor.outputModel.get(1).key, "ETH")
+            compare(adaptor.outputModel.ModelCount.count, 3)
+            compare(adaptor.outputModel.get(0).key, Constants.daiGroupKey)
+            compare(adaptor.outputModel.get(1).key, Constants.ethGroupKey)
+            compare(adaptor.outputModel.get(2).key, Constants.sntGroupKey)
 
             adaptor.selectedNetworkChainId = 999
             compare(adaptor.outputModel.ModelCount.count, 0)
 
-            adaptor.selectedNetworkChainId = 5
-            compare(adaptor.outputModel.ModelCount.count, 3)
-            compare(adaptor.outputModel.get(0).key, "DAI")
-            compare(adaptor.outputModel.get(1).key, "ETH")
-            compare(adaptor.outputModel.get(2).key, "STT")
+            adaptor.selectedNetworkChainId = 42161
+            compare(adaptor.outputModel.ModelCount.count, 1)
+            compare(adaptor.outputModel.get(0).key, Constants.daiGroupKey)
+
+            adaptor.selectedNetworkChainId = 10
+            compare(adaptor.outputModel.ModelCount.count, 2)
+            compare(adaptor.outputModel.get(0).key, Constants.ethGroupKey)
+            compare(adaptor.outputModel.get(1).key, Constants.sntGroupKey)
         }
     }
 }

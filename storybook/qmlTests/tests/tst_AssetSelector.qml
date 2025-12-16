@@ -27,7 +27,7 @@ Item {
                     name: "Status Test Token",
                     currencyBalanceAsString: "42,23 USD",
                     symbol: "STT",
-                    iconSource: Constants.tokenIcon("STT"),
+                    logoUri: Constants.tokenIcon("STT"),
 
                     balances: [
                         {
@@ -44,7 +44,7 @@ Item {
                     name: "Ether",
                     currencyBalanceAsString: "4 276,86 USD",
                     symbol: "ETH",
-                    iconSource: Constants.tokenIcon("ETH"),
+                    logoUri: Constants.tokenIcon("ETH"),
 
                     balances: [
                         {
@@ -61,7 +61,7 @@ Item {
                     name: "Dai Stablecoin",
                     currencyBalanceAsString: "45,92 USD",
                     symbol: "DAI",
-                    iconSource: Constants.tokenIcon("DAI"),
+                    logoUri: Constants.tokenIcon("DAI"),
                     balances: [],
 
                     sectionName: "Popular assets"

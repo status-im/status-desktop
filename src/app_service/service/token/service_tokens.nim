@@ -1,3 +1,21 @@
+proc getMandatoryTokenKeys(): seq[string] =
+  try:
+    var response: JsonNode
+    var err = status_go_tokens.getMandatoryTokenKeys(response)
+    if err.len > 0:
+      raise newException(CatchableError, "failed" & err)
+    if response.isNil or response.kind != JsonNodeKind.JArray:
+      raise newException(CatchableError, "unexpected response")
+
+    # Create a copy of the tokenResultStr to avoid exceptions in `decode`
+    # Workaround for https://github.com/status-im/status-desktop/issues/17398
+    let responseStr = $response
+    let parsedResponse = Json.decode(responseStr, seq[string], allowUnknownFields = true)
+    result = parsedResponse
+  except Exception as e:
+    let errDesription = e.msg
+    error "error: ", errDesription
+
 proc tokenAvailableForBridgingViaHop(tokenChainId: int, tokenAddress: string): bool =
   try:
     var response: JsonNode
@@ -29,6 +47,23 @@ proc getAllTokenLists(): seq[TokenListItem] =
     let errDesription = e.msg
     error "error: ", errDesription
 
+proc getAllTokens(): seq[TokenItem] =
+  try:
+    var response: JsonNode
+    var err = status_go_tokens.getAllTokens(response)
+    if err.len > 0:
+      raise newException(CatchableError, "failed" & err)
+    if response.isNil or response.kind != JsonNodeKind.JArray:
+      raise newException(CatchableError, "unexpected response")
+
+    # Create a copy of the tokenResultStr to avoid exceptions in `decode`
+    # Workaround for https://github.com/status-im/status-desktop/issues/17398
+    let responseStr = $response
+    let parsedResponse = Json.decode(responseStr, seq[TokenDto], allowUnknownFields = true)
+    result = parsedResponse.map(t => createTokenItem(t))
+  except Exception as e:
+    let errDesription = e.msg
+    error "error: ", errDesription
 
 proc getTokensOfInterestForActiveNetworksMode(): seq[TokenItem] =
   try:
@@ -77,7 +112,10 @@ proc getTokenByChainAddress(chainId: int, address: string): TokenItem =
     if response.isNil or response.kind != JsonNodeKind.JObject:
       raise newException(CatchableError, "unexpected response")
 
-    let parsedResponse = Json.decode($response, TokenDto, allowUnknownFields = true)
+    # Create a copy of the tokenResultStr to avoid exceptions in `decode`
+    # Workaround for https://github.com/status-im/status-desktop/issues/17398
+    let responseStr = $response
+    let parsedResponse = Json.decode(responseStr, TokenDto, allowUnknownFields = true)
     result = createTokenItem(parsedResponse)
   except Exception as e:
     let errDesription = e.msg

@@ -9,12 +9,15 @@ import StatusQ.Core
 import StatusQ.Core.Utils
 
 import utils
-import Storybook
-import Models
 
 import AppLayouts.Wallet.adaptors
+import AppLayouts.Wallet.stores
 import AppLayouts.Chat.popups
 import shared.stores as SharedStores
+
+import Storybook
+import Models
+import Mocks
 
 SplitView {
     id: root
@@ -55,6 +58,17 @@ SplitView {
 
         Component.onCompleted: Qt.callLater(d.launchPopup)
 
+        readonly property var tokensStore: TokensStoreMock {
+            tokenGroupsModel: TokenGroupsModel {}
+            tokenGroupsForChainModel: TokenGroupsModel {
+                skipInitialLoad: true
+            }
+            searchResultModel: TokenGroupsModel {
+                skipInitialLoad: true
+                tokenGroupsForChainModel: popupBg.tokensStore.tokenGroupsForChainModel
+            }
+        }
+
         Component {
             id: paymentRequestModalComponent
             PaymentRequestModal {
@@ -63,18 +77,14 @@ SplitView {
                 closePolicy: Popup.CloseOnEscape
                 destroyOnClose: true
 
+                readonly property SharedStores.CurrenciesStore currenciesStore: SharedStores.CurrenciesStore {}
+
                 currentCurrency: currenciesStore.currentCurrency
                 formatCurrencyAmount: currenciesStore.formatCurrencyAmount
                 flatNetworksModel: d.flatNetworks
                 accountsModel: d.accounts
-                assetsModel: paymentRequestAdaptor.outputModel
-
-                readonly property SharedStores.CurrenciesStore currenciesStore: SharedStores.CurrenciesStore {}
-                readonly property var paymentRequestAdaptor: PaymentRequestAdaptor {
-                    flatNetworksModel: d.flatNetworks
-                    tokenGroupsModel: TokenGroupsModel {}
-                    selectedNetworkChainId: paymentRequestModal.selectedNetworkChainId
-                }
+                tokenGroupsForChainModel: popupBg.tokensStore.tokenGroupsForChainModel
+                searchResultModel: popupBg.tokensStore.searchResultModel
 
                 Connections {
                     target: d
@@ -85,11 +95,17 @@ SplitView {
                         paymentRequestModal.selectedAccountAddress = d.selectedAccountAddress
                     }
                 }
+
                 Component.onCompleted: {
                     if (d.selectedNetworkChainId > -1)
                         paymentRequestModal.selectedNetworkChainId = d.selectedNetworkChainId
                     if (!!d.selectedAccountAddress)
                         paymentRequestModal.selectedAccountAddress = d.selectedAccountAddress
+                    popupBg.tokensStore.buildGroupsForChain(paymentRequestModal.selectedNetworkChainId)
+                }
+
+                onBuildGroupsForChain: {
+                    popupBg.tokensStore.buildGroupsForChain(paymentRequestModal.selectedNetworkChainId)
                 }
             }
         }
@@ -131,8 +147,8 @@ SplitView {
                 Layout.fillWidth: true
                 Label { text: "Account:" }
                 ComboBox {
-                    Layout.fillWidth: true
                     id: ctrlAccount
+                    Layout.fillWidth: true
                     textRole: "name"
                     valueRole: "address"
                     displayText: currentText || "----"

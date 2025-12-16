@@ -25,8 +25,8 @@ Control {
     signal selected(string groupKey)
     signal loadMoreRequested()
 
-    function setSelection(name: string, icon: url, tokenGroupKey: string) {
-        button.name = name
+    function setSelection(symbol, icon, tokenGroupKey) {
+        button.name = symbol
         button.icon = icon
         button.selected = true
 
@@ -83,10 +83,8 @@ Control {
 
             onLoadMoreRequested: root.loadMoreRequested()
 
-            function setCurrentAndClose(name, icon) {
-                button.name = name
-                button.icon = icon
-                button.selected = true
+            function setCurrentAndClose(symbol, icon, tokenGroupKey) {
+                root.setSelection(symbol, icon, tokenGroupKey)
                 dropdown.close()
             }
 
@@ -96,10 +94,9 @@ Control {
                     console.error("asset couldn't be resolved for the key", key)
                     return
                 }
-                highlightedKey = key
 
-                setCurrentAndClose(entry.symbol, entry.iconSource)
-                root.selected(key)
+                setCurrentAndClose(entry.symbol, entry.logoUri, entry.key)
+                root.selected(entry.key)
             }
 
             onSearch: function(keyword) {

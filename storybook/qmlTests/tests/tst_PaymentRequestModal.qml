@@ -8,15 +8,15 @@ import StatusQ.Controls
 
 import QtQuick.Controls
 
-import Models
-import Storybook
-
 import utils
 
-import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.Wallet.adaptors
 import AppLayouts.Chat.popups
 import shared.stores as SharedStores
+
+import Storybook
+import Models
+import Mocks
 
 Item {
     id: root
@@ -28,6 +28,17 @@ Item {
 
         readonly property var accounts: WalletAccountsModel {}
         readonly property var flatNetworks: NetworksModel.flatNetworks
+
+        readonly property var tokensStore: TokensStoreMock {
+            tokenGroupsModel: TokenGroupsModel {}
+            tokenGroupsForChainModel: TokenGroupsModel {
+                skipInitialLoad: true
+            }
+            searchResultModel: TokenGroupsModel {
+                skipInitialLoad: true
+                tokenGroupsForChainModel: d.tokensStore.tokenGroupsForChainModel
+            }
+        }
     }
 
     Component {
@@ -42,89 +53,20 @@ Item {
             formatCurrencyAmount: currencyStore.formatCurrencyAmount
             flatNetworksModel: d.flatNetworks
             accountsModel: d.accounts
-            assetsModel: ListModel {
-                Component.onCompleted: populateModel()
+            tokenGroupsForChainModel: d.tokensStore.tokenGroupsForChainModel
+            searchResultModel: d.tokensStore.searchResultModel
 
-                readonly property var data: [
-                    {
-                        key: Constants.ethGroupKey,
-                        name: "eth",
-                        symbol: "ETH",
-                        chainId: NetworksModel.ethNet,
-                        address: "0xbbc200",
-                        decimals: 18,
-                        iconSource: ModelsData.assets.eth,
-                        logoUri: ModelsData.assets.eth,
-                        marketDetails: {
-                           currencyPrice: {
-                               amount: 1,
-                               displayDecimals: true
-                           }
-                        }
-                    },
-                    {
-                        key: Constants.sntGroupKey,
-                        name: "snt",
-                        symbol: "SNT",
-                        chainId: NetworksModel.ethNet,
-                        address: "0xbbc2000000000000000000000000000000000123",
-                        decimals: 18,
-                        iconSource: ModelsData.assets.snt,
-                        logoUri: ModelsData.assets.snt,
-                        marketDetails: {
-                           currencyPrice: {
-                               amount: 1,
-                               displayDecimals: true
-                           }
-                        }
-                    },
-                    {
-                        key: Constants.daiGroupKey,
-                        name: "dai",
-                        symbol: "DAI",
-                        chainId: NetworksModel.ethNet,
-                        address: "0xbbc2000000000000000000000000000000550567",
-                        decimals: 2,
-                        iconSource: ModelsData.assets.dai,
-                        logoUri: ModelsData.assets.dai,
-                        marketDetails: {
-                           currencyPrice: {
-                               amount: 1,
-                               displayDecimals: true
-                           }
-                        }
-                    },
-                ]
-                readonly property var sepArbData: [
-                    {
-                        key: Constants.sttGroupKey,
-                        name: "stt",
-                        symbol: "STT",
-                        chainId: NetworksModel.sepArbChainId,
-                        address: "0xbbc2000000000000000000000000000000550567",
-                        decimals: 2,
-                        iconSource: ModelsData.assets.snt,
-                        logoUri: ModelsData.assets.snt,
-                        marketDetails: {
-                            currencyPrice: {
-                                amount: 1,
-                                displayDecimals: true
-                            }
-                        }
-                    }
-                ]
-
-                function populateModel() {
-                    // Simulate model refresh when network is changed
-                    clear()
-                    append(data)
-                    if (paymentRequestModal.selectedNetworkChainId === NetworksModel.sepArbChainId) {
-                        append(sepArbData)
-                    }
-                }
+            Component.onCompleted: {
+                d.tokensStore.buildGroupsForChain(paymentRequestModal.selectedNetworkChainId)
             }
 
-            onSelectedNetworkChainIdChanged: assetsModel.populateModel()
+            onBuildGroupsForChain: {
+                d.tokensStore.buildGroupsForChain(paymentRequestModal.selectedNetworkChainId)
+            }
+
+            onSelectedNetworkChainIdChanged: {
+                d.tokensStore.buildGroupsForChain(paymentRequestModal.selectedNetworkChainId)
+            }
         }
     }
 
@@ -187,13 +129,21 @@ Item {
         function test_change_amount() {
             launchAndVerfyModal()
 
+            // Wait for the model to be populated and selection to be ready
+            const assetSelector = findChild(controlUnderTest, "assetSelector")
+            verify(!!assetSelector)
+            tryCompare(assetSelector.contentItem, "name", Constants.ethToken, 5000)
+
             const amountInput = findChild(controlUnderTest, "amountInput")
             verify(!!amountInput)
 
+            tryVerify(() => amountInput.multiplierIndex > 0, 5000)
+
             const amount = "1.24"
             amountInput.setValue(amount)
+
             compare(amountInput.text, amount)
-            compare(controlUnderTest.amount, "1240000000000000000") // Raw amount is returned
+            compare(controlUnderTest.amount, "1240000000000000000")
 
             closeAndVerfyModal()
         }
@@ -290,13 +240,16 @@ Item {
 
             controlUnderTest.open()
             tryVerify(() => controlUnderTest.opened)
+
             // TODO: Fix the model population issue. We should be able to set the initial asset when building the control.
             controlUnderTest.selectedTokenGroupKey = assetGroupKey
+            wait(1000) // wait until change is conducted (because of callLater call in selectedHolding)
 
             compare(controlUnderTest.selectedNetworkChainId, Constants.chains.arbitrumSepoliaChainId)
             compare(controlUnderTest.selectedTokenGroupKey, assetGroupKey)
             const assetSelector = findChild(controlUnderTest, "assetSelector")
             verify(!!assetSelector)
+
             compare(assetSelector.contentItem.name, "STT")
 
             controlUnderTest.selectedNetworkChainId = Constants.chains.mainnetChainId
@@ -348,6 +301,7 @@ Item {
             controlUnderTest.selectedTokenGroupKey = assetGroupKey
 
             compare(controlUnderTest.selectedTokenGroupKey, assetGroupKey)
+            wait(1000) // wait until change is conducted (because of callLater call in selectedHolding)
             const assetSelector = findChild(controlUnderTest, "assetSelector")
             verify(!!assetSelector)
             verify(assetSelector.isSelected)

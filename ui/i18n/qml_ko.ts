@@ -8139,6 +8139,13 @@ L2 수수료: %2</translation>
     </message>
 </context>
 <context>
+    <name>GroupsModel</name>
+    <message>
+        <source>Popular assets on %1</source>
+        <translation type="unfinished">%1에서 인기 있는 자산</translation>
+    </message>
+</context>
+<context>
     <name>HelpUsImproveStatusPage</name>
     <message>
         <source>Help us improve Status</source>
@@ -12893,13 +12900,6 @@ to load</source>
     </message>
 </context>
 <context>
-    <name>PaymentRequestAdaptor</name>
-    <message>
-        <source>Popular assets on %1</source>
-        <translation>%1에서 인기 있는 자산</translation>
-    </message>
-</context>
-<context>
     <name>PaymentRequestCardDelegate</name>
     <message>
         <source>Send %1 %2 to %3</source>
@@ -15157,6 +15157,17 @@ to load</source>
     </message>
 </context>
 <context>
+    <name>SendModalHandler</name>
+    <message>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Token that you&apos;re trying to send is not supported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SendModalHeader</name>
     <message>
         <source>Send</source>
@@ -15716,31 +15727,31 @@ to load</source>
     <name>SimpleSendModal</name>
     <message>
         <source>To</source>
-        <translation>수신</translation>
+        <translation type="unfinished">수신</translation>
     </message>
     <message>
         <source>Fees</source>
-        <translation>수수료</translation>
+        <translation type="unfinished">수수료</translation>
     </message>
     <message>
         <source>Insufficient funds for send transaction</source>
-        <translation>전송 트랜잭션을 수행하기에 잔액이 부족합니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add ETH</source>
-        <translation>ETH 추가</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add BNB</source>
-        <translation>BNB 추가</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add assets</source>
-        <translation>자산 추가</translation>
+        <translation type="unfinished">자산 추가</translation>
     </message>
     <message>
         <source>Add %1</source>
-        <translation>%1 추가</translation>
+        <translation type="unfinished">%1 추가</translation>
     </message>
 </context>
 <context>

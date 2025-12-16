@@ -1,5 +1,6 @@
 import QtCore
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Window
 import QtQml.Models
@@ -21,7 +22,6 @@ import AppLayouts.Communities.popups
 import AppLayouts.Communities.helpers
 import AppLayouts.Wallet.popups.buy
 import AppLayouts.Wallet.popups
-import AppLayouts.Wallet.adaptors
 import AppLayouts.Communities.stores
 import AppLayouts.Profile.helpers
 
@@ -123,6 +123,7 @@ QtObject {
         Global.termsOfUseRequested.connect(() => openPopup(termsOfUsePopupComponent))
         Global.openNewsMessagePopupRequested.connect(openNewsMessagePopup)
         Global.quitAppRequested.connect(() => openPopup(quitConfirmPopupComponent))
+        Global.openInfoPopup.connect(openInfoPopup)
     }
 
     property var currentPopup
@@ -435,6 +436,10 @@ QtObject {
 
     function openNewsMessagePopup(notification, notificationId) {
         openPopup(newsMessageComponent, {notification: notification, notificationId: notificationId})
+    }
+
+    function openInfoPopup(title, message) {
+        openPopup(infoComponent, {title: title, message, message})
     }
 
     readonly property list<Component> _components: [
@@ -1375,24 +1380,26 @@ QtObject {
             id: paymentRequestModalComponent
             PaymentRequestModal {
                 id: paymentRequestModal
-                readonly property var paymentRequestAdaptor: PaymentRequestAdaptor {
-                    tokenGroupsModel: WalletStores.RootStore.tokensStore.tokenGroupsModel
-                    selectedNetworkChainId: paymentRequestModal.selectedNetworkChainId
-                    flatNetworksModel: root.networksStore.allNetworks
-                }
+
                 property var callback: null
                 currentCurrency: root.currencyStore.currentCurrency
                 formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
                 flatNetworksModel: root.networksStore.activeNetworks
                 accountsModel: WalletStores.RootStore.nonWatchAccounts
-                assetsModel: paymentRequestAdaptor.outputModel
+
+                tokenGroupsForChainModel: WalletStores.RootStore.tokensStore.tokenGroupsForChainModel
+                searchResultModel: WalletStores.RootStore.tokensStore.searchResultModel
+
+                onBuildGroupsForChain: {
+                    WalletStores.RootStore.tokensStore.buildGroupsForChain(selectedNetworkChainId, "")
+                }
 
                 onAccepted: {
                     if (!callback) {
                         console.error("No callback set for Payment Request")
                         return
                     }
-                    callback(selectedAccountAddress, amount, selectedTokenKey, symbol)
+                    callback(selectedAccountAddress, amount, selectedTokenKey, selectedSymbol, selectedTokenLogoUri)
                 }
                 destroyOnClose: true
             }
@@ -1415,6 +1422,25 @@ QtObject {
                 confirmationText: qsTr("Make sure you have your account password and recovery phrase stored. Without them you can lock yourself out of your account and lose funds.")
                 confirmButtonLabel: qsTr("Sign out & Quit")
                 onConfirmButtonClicked: Qt.exit(0)
+            }
+        },
+
+        Component {
+            id: infoComponent
+
+            StatusDialog {
+                id: infoPopup
+
+                property string message
+
+                StatusBaseText {
+                    anchors.fill: parent
+                    font.pixelSize: Constants.keycard.general.fontSize2
+                    color: Theme.palette.directColor1
+                    text: infoPopup.message
+                }
+
+                standardButtons: Dialog.Ok
             }
         }
     ]

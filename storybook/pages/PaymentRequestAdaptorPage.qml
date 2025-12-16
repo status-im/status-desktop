@@ -8,11 +8,12 @@ import AppLayouts.Wallet.adaptors
 
 import StatusQ.Core.Utils
 
-import Storybook
-import Models
-
 import shared.stores
 import utils
+
+import Storybook
+import Models
+import Mocks
 
 Item {
     id: root
@@ -22,15 +23,34 @@ Item {
 
         readonly property int selectedNetworkChainId: ctrlSelectedNetworkChainId.currentValue
 
-        readonly property var assetsModel: TokenGroupsModel {}
         readonly property var flatNetworks: NetworksModel.flatNetworks
+
+        readonly property var tokensStore: TokensStoreMock {
+            tokenGroupsModel: TokenGroupsModel {}
+            tokenGroupsForChainModel: TokenGroupsModel {
+                skipInitialLoad: true
+            }
+            searchResultModel: TokenGroupsModel {
+                skipInitialLoad: true
+                tokenGroupsForChainModel: d.tokensStore.tokenGroupsForChainModel
+            }
+        }
+
+        onSelectedNetworkChainIdChanged: {
+            d.tokensStore.buildGroupsForChain(d.selectedNetworkChainId)
+        }
+    }
+
+    Component.onCompleted: {
+        Qt.callLater(() => d.tokensStore.buildGroupsForChain(d.selectedNetworkChainId))
     }
 
     PaymentRequestAdaptor {
         id: adaptor
         selectedNetworkChainId: d.selectedNetworkChainId
-        tokenGroupsModel: d.assetsModel
         flatNetworksModel: d.flatNetworks
+        tokenGroupsForChainModel: d.tokensStore.tokenGroupsForChainModel
+        searchResultModel: d.tokensStore.searchResultModel
     }
 
     ColumnLayout {
@@ -45,8 +65,8 @@ Item {
                 text: "Chain:"
             }
             ComboBox {
-                Layout.fillWidth: true
                 id: ctrlSelectedNetworkChainId
+                Layout.fillWidth: true
                 model: d.flatNetworks
                 textRole: "chainName"
                 valueRole: "chainId"
@@ -65,34 +85,49 @@ Item {
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+
                 Label {
                     Layout.fillWidth: true
                     horizontalAlignment: Qt.AlignHCenter
                     font.bold: true
                     text: "Input"
                 }
-                GenericListView {
-                    label: "Tokens model"
 
-                    model: d.assetsModel
+                GenericListView {
+                    label: "Token groups model, total: " + d.tokensStore.tokenGroupsModel.count
+
+                    model: d.tokensStore.tokenGroupsModel
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
-                    roles: ["key", "name", "symbol"]
+                    roles: ["index", "key", "name", "symbol", "decimals", "logoUri"]
                     skipEmptyRoles: true
                     insetComponent: Label {
                         text: {
                             if (!model)
                                 return ""
-                            let chains = "Chains: \n" + JSON.stringify(ModelUtils.modelToFlatArray(model["addressPerChain"], "chainId"))
+                            let chains = "Chains: \n" + JSON.stringify(ModelUtils.modelToFlatArray(model["tokens"], "chainId"))
                             chains = chains.replace(/,/g, '\n')
                             return chains
                         }
                     }
                 }
+
                 GenericListView {
-                    label: "Networks model"
+                    label: "Token groups for chain model, total: " + d.tokensStore.tokenGroupsForChainModel.count
+
+                    model: d.tokensStore.tokenGroupsForChainModel
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    roles: ["index", "key", "name", "symbol", "decimals", "logoUri"]
+                    skipEmptyRoles: true
+                }
+
+                GenericListView {
+                    label: "Networks model, total: " + d.flatNetworks.count
 
                     model: d.flatNetworks
 
@@ -121,7 +156,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
-                    roles: ["tokensKey", "name", "symbol", "iconSource", "currencyBalanceAsString", "sectionName"]
+                    roles: ["index", "key", "name", "symbol", "logoUri", "sectionName"]
 
                     skipEmptyRoles: true
                 }

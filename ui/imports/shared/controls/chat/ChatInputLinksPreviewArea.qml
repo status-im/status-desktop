@@ -118,7 +118,11 @@ Control {
                             return root.formatBalance(model.amount, model.tokenKey)
                         }
                         symbol: model.symbol
-                        onClose: root.removePaymentRequestPreview(model.index)
+                        logoUri: model.logoUri
+
+                        onClose: {
+                            root.removePaymentRequestPreview(model.index)
+                        }
                     }
                 }
                 Repeater {

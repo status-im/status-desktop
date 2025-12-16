@@ -19,6 +19,7 @@ CalloutCard {
     required property string amount
     required property string symbol
     required property string address
+    required property string logoUri
 
     required property bool areTestNetworksEnabled
 
@@ -73,7 +74,7 @@ CalloutCard {
                 StatusRoundedImage {
                     id: symbolImage
                     anchors.verticalCenter: parent.verticalCenter
-                    image.source: Constants.tokenIcon(root.symbol)
+                    image.source: root.logoUri || Constants.tokenIcon(root.symbol)
                     width: 44
                     height: width
                     image.layer.enabled: true
