@@ -1499,7 +1499,12 @@ method createOrEditCommunityTokenPermission*(self: Module, permissionId: string,
     if tokenCriteriaDto.`type` != TokenType.ENS:
       if not service_common_utils.isTokenKey(key):
         # handle token group
-        let tokens = self.controller.getTokensByGroupKey(key)
+        var tokens = self.controller.getTokensByGroupKey(key)
+        if tokens.len == 0:
+          # fallback to get token by key or group key from all tokens
+          let token = self.controller.getTokenByKeyOrGroupKeyFromAllTokens(key)
+          if not token.isNil:
+            tokens = @[token]
         if tokens.len == 0:
           emitUnexistingKeyError(key)
           return

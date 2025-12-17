@@ -562,6 +562,7 @@ Item {
         id: createChannelPopup
         CreateChannelPopup {
             communitiesStore: root.communitiesStore
+            tokensStore: root.walletAssetsStore.walletTokensStore
             assetsModel: root.store.assetsModel
             collectiblesModel: root.store.collectiblesModel
             ensCommunityPermissionsEnabled: root.ensCommunityPermissionsEnabled

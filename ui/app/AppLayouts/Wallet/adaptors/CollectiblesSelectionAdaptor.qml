@@ -112,7 +112,7 @@ QObject {
                 readonly property string key: model.symbol
 
                 readonly property url icon:
-                    model.imageUrl || model.mediaUrl || Assets.png("tokens/DEFAULT-TOKEN")
+                    model.imageUrl || model.mediaUrl || Assets.png(Constants.defaultTokenIcon)
 
                 SortFilterProxyModel { /* 1 */
                     id: ownershipFiltered

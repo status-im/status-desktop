@@ -22,11 +22,13 @@ import AppLayouts.Communities.panels
 import AppLayouts.Communities.models
 import AppLayouts.Communities.controls
 import AppLayouts.Communities.stores as CommunitiesStores
+import AppLayouts.Wallet.stores
 
 StatusStackModal {
     id: root
 
     property CommunitiesStores.CommunitiesStore communitiesStore
+    property TokensStore tokensStore
 
     property bool isDiscordImport // creating new or importing from discord?
     property bool isEdit: false
@@ -840,6 +842,9 @@ StatusStackModal {
                     permissionsModel: d.channelEditModel.channelPermissionsModel
                     assetsModel: root.assetsModel
                     collectiblesModel: root.collectiblesModel
+
+                    getTokenByKeyOrGroupKeyFromAllTokens: root.tokensStore.getTokenByKeyOrGroupKeyFromAllTokens
+
                     viewOnlyCanAddReaction: root.viewOnlyCanAddReaction
                     channelsModel: d.channelEditModel.liveChannelsModel
                     communityDetails: d.communityDetails
@@ -935,6 +940,8 @@ StatusStackModal {
             communityDetails: d.communityDetails
             showChannelSelector: false
             ensCommunityPermissionsEnabled: root.ensCommunityPermissionsEnabled
+
+            getTokenByKeyOrGroupKeyFromAllTokens: root.tokensStore.getTokenByKeyOrGroupKeyFromAllTokens
 
             readonly property string nextButtonText: !!currentItem.permissionKeyToEdit ?
                                                          qsTr("Update permission") : qsTr("Create permission")

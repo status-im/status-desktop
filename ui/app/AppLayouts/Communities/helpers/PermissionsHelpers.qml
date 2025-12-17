@@ -48,7 +48,7 @@ QtObject {
 
     function getTokenIconByKey(model, isCollectible, key) {
         const item = getTokenByKey(model, isCollectible, key)
-        const defaultIcon = Assets.png("tokens/DEFAULT-TOKEN")
+        const defaultIcon = Assets.png(Constants.defaultTokenIcon)
         if (item)
             return item.iconSource ? item.iconSource : defaultIcon
         return defaultIcon

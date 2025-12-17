@@ -24,6 +24,10 @@ StackView {
     required property var assetsModel
     required property var collectiblesModel
     required property var channelsModel
+
+    // Returns token that matches provided key (key can be token or group key). Use it as a last option (may affect app performances, because it fetches all tokens from stautsgo).
+    property var getTokenByKeyOrGroupKeyFromAllTokens: function(key){ return {}}
+
     property bool showChannelSelector: true
     property bool ensCommunityPermissionsEnabled
     property alias initialPage: initialItem
@@ -114,6 +118,8 @@ StackView {
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
             channelsModel: allChannelsTransformed
+
+            getTokenByKeyOrGroupKeyFromAllTokens: root.getTokenByKeyOrGroupKeyFromAllTokens
 
             communityDetails: root.communityDetails
 
