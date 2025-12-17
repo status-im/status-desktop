@@ -9,11 +9,12 @@ import StatusQ.Models
 
 import utils
 
-import Storybook
-import Models
-
 import AppLayouts.Wallet.panels
 import AppLayouts.Wallet.stores
+
+import Storybook
+import Models
+import Mocks
 
 SplitView {
     id: root
@@ -22,7 +23,7 @@ SplitView {
 
     orientation: Qt.Horizontal
 
-    readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+    readonly property WalletAssetsStoreMock walletAssetStore: WalletAssetsStoreMock {
     }
 
     ManageAssetsPanel {

@@ -24,7 +24,7 @@ SplitView {
         id: d
 
         readonly property var flatNetworks: NetworksModel.flatNetworks
-        readonly property var assetsStore: WalletAssetsStore {
+        readonly property var assetsStore: WalletAssetsStoreMock {
             id: thisWalletAssetStore
             walletTokensStore: TokensStoreMock {
                 tokenGroupsModel: TokenGroupsModel {}

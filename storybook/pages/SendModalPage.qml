@@ -7,8 +7,6 @@ import StatusQ.Core
 import StatusQ.Core.Utils
 import StatusQ.Controls
 
-import Storybook
-import Models
 import utils
 
 import shared.popups.send
@@ -18,12 +16,16 @@ import shared.stores.send
 import SortFilterProxyModel
 import AppLayouts.Wallet.stores
 
+import Storybook
+import Models
+import Mocks
+
 SplitView {
     id: root
 
     orientation: Qt.Horizontal
 
-    property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+    property WalletAssetsStoreMock walletAssetStore: WalletAssetsStoreMock {
 
 
         property var groupedAccountAssetsModel: ListModel {

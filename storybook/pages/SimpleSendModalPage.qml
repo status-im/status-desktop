@@ -13,7 +13,6 @@ import StatusQ.Core.Backpressure
 
 import AppLayouts.Wallet.popups.simpleSend
 import AppLayouts.Wallet.stores
-import Mocks
 import AppLayouts.Wallet.adaptors
 
 import utils
@@ -35,7 +34,7 @@ SplitView {
             filters: ValueFilter { roleName: "isTest"; value: testNetworksCheckbox.checked }
         }
 
-        readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+        readonly property WalletAssetsStoreMock walletAssetStore: WalletAssetsStoreMock {
             walletTokensStore: TokensStoreMock {
                 tokenGroupsModel: TokenGroupsModel{}
                 _displayAssetsBelowBalanceThresholdDisplayAmountFunc: () => 0
