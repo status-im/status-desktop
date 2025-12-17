@@ -90,7 +90,7 @@ SplitView {
         }
     }
 
-    TransactionStore {
+    TransactionStoreMock {
         id: txStore
 
         property bool areTestNetworksEnabled: true
