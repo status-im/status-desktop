@@ -13872,11 +13872,6 @@
   <context>
     <name>MessagingView</name>
     <message>
-      <source>Allow new contact requests</source>
-      <comment>MessagingView</comment>
-      <translation>Allow new contact requests</translation>
-    </message>
-    <message>
       <source>Contacts, Requests, and Blocked Users</source>
       <comment>MessagingView</comment>
       <translation>Contacts, Requests, and Blocked Users</translation>
@@ -13910,6 +13905,11 @@
       <source>Never show previews</source>
       <comment>MessagingView</comment>
       <translation>Never show previews</translation>
+    </message>
+    <message>
+      <source>Receive community messages &amp; requests from non-contacts</source>
+      <comment>MessagingView</comment>
+      <translation>Receive community messages &amp; requests from non-contacts</translation>
     </message>
   </context>
   <context>

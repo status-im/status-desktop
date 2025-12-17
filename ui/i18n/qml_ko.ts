@@ -11379,10 +11379,6 @@ to load</source>
 <context>
     <name>MessagingView</name>
     <message>
-        <source>Allow new contact requests</source>
-        <translation>새 연락처 요청 허용</translation>
-    </message>
-    <message>
         <source>Contacts, Requests, and Blocked Users</source>
         <translation>연락처, 요청, 차단된 사용자</translation>
     </message>
@@ -11409,6 +11405,10 @@ to load</source>
     <message>
         <source>Never show previews</source>
         <translation>미리 보기를 표시하지 않기</translation>
+    </message>
+    <message>
+        <source>Receive community messages &amp; requests from non-contacts</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
