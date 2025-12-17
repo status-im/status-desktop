@@ -11386,10 +11386,6 @@ to load</source>
 <context>
     <name>MessagingView</name>
     <message>
-        <source>Allow new contact requests</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Contacts, Requests, and Blocked Users</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11415,6 +11411,10 @@ to load</source>
     </message>
     <message>
         <source>Never show previews</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Receive community messages &amp; requests from non-contacts</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

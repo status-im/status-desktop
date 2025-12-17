@@ -11403,10 +11403,6 @@ al cargar</translation>
 <context>
     <name>MessagingView</name>
     <message>
-        <source>Allow new contact requests</source>
-        <translation>Permitir nuevas solicitudes de contacto</translation>
-    </message>
-    <message>
         <source>Contacts, Requests, and Blocked Users</source>
         <translation>Contactos, solicitudes y usuarios bloqueados</translation>
     </message>
@@ -11433,6 +11429,10 @@ al cargar</translation>
     <message>
         <source>Never show previews</source>
         <translation>Nunca mostrar vistas previas</translation>
+    </message>
+    <message>
+        <source>Receive community messages &amp; requests from non-contacts</source>
+        <translation>Recibe mensajes de comunidades y solicitudes, incluso de no contactos</translation>
     </message>
 </context>
 <context>

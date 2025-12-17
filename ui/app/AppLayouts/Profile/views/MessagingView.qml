@@ -51,7 +51,7 @@ SettingsContentBase {
             Layout.fillWidth: true
             implicitHeight: 64
 
-            title: qsTr("Allow new contact requests")
+            title: qsTr("Receive community messages & requests from non-contacts")
 
             components: [
                 StatusSwitch {

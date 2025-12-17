@@ -11476,10 +11476,6 @@ selhalo</translation>
 <context>
     <name>MessagingView</name>
     <message>
-        <source>Allow new contact requests</source>
-        <translation>Povolit nové žádosti o kontakt</translation>
-    </message>
-    <message>
         <source>Contacts, Requests, and Blocked Users</source>
         <translation>Kontakty, žádosti a blokovaní uživatelé</translation>
     </message>
@@ -11506,6 +11502,10 @@ selhalo</translation>
     <message>
         <source>Never show previews</source>
         <translation>Nikdy nezobrazovat náhledy</translation>
+    </message>
+    <message>
+        <source>Receive community messages &amp; requests from non-contacts</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
