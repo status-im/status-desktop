@@ -373,6 +373,8 @@ StatusSectionLayout {
                 collectiblesModel: rootStore.collectiblesModel
                 channelsModel: rootStore.chatCommunitySectionModule.model
 
+                getTokenByKeyOrGroupKeyFromAllTokens: root.tokensStore.getTokenByKeyOrGroupKeyFromAllTokens
+
                 ensCommunityPermissionsEnabled: root.ensCommunityPermissionsEnabled
 
                 communityDetails: d.communityDetails

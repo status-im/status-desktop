@@ -30,6 +30,9 @@ ColumnLayout {
     required property var collectiblesModel
     required property var channelsModel
 
+    // Returns token that matches provided key (key can be token or group key). Use it as a last option (may affect app performances, because it fetches all tokens from stautsgo).
+    property var getTokenByKeyOrGroupKeyFromAllTokens: function(key){ return {}}
+
     // id, name, image, color, owner, admin properties expected
     required property QtObject communityDetails
 
@@ -115,6 +118,7 @@ ColumnLayout {
                 sourceModel: model.holdingsListModel
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
+                getTokenByKeyOrGroupKeyFromAllTokens: root.getTokenByKeyOrGroupKeyFromAllTokens
             }
 
             permissionType: model.permissionType

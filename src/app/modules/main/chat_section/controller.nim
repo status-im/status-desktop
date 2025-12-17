@@ -706,6 +706,9 @@ proc getTokenByKey*(self: Controller, tokenKey: string): TokenItem =
 proc getTokensByGroupKey*(self: Controller, groupKey: string): seq[TokenItem] =
   return self.tokenService.getTokensByGroupKey(groupKey)
 
+proc getTokenByKeyOrGroupKeyFromAllTokens*(self: Controller, key: string): TokenItem =
+  return self.tokenService.getTokenByKeyOrGroupKeyFromAllTokens(key)
+
 proc createOrEditCommunityTokenPermission*(self: Controller, tokenPermission: CommunityTokenPermissionDto) =
   self.communityService.createOrEditCommunityTokenPermission(self.sectionId, tokenPermission)
 

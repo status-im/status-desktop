@@ -11,8 +11,12 @@ import StatusQ.Core.Theme
 import utils
 
 SortFilterProxyModel {
+    id: root
+
     property var assetsModel
     property var collectiblesModel
+    // Returns token that matches provided key (key can be token or group key). Use it as a last option (may affect app performances, because it fetches all tokens from stautsgo).
+    property var getTokenByKeyOrGroupKeyFromAllTokens: function(key){ return {}}
 
     readonly property ModelChangeTracker _assetsChanges: ModelChangeTracker {
         model: assetsModel
@@ -45,6 +49,10 @@ SortFilterProxyModel {
                             : collectiblesModel
 
                 let item = PermissionsHelpers.getTokenByKey(model, collectibles, key)
+                if (Object.keys(item).length === 0) {
+                    item = root.getTokenByKeyOrGroupKeyFromAllTokens(key)
+                }
+
                 let name = getName(type, item, key)
                 const decimals = getDecimals(type, item)
 
@@ -75,7 +83,15 @@ SortFilterProxyModel {
                 const model = type === Constants.TokenType.ERC20
                             ? assetsModel : collectiblesModel
 
-                return PermissionsHelpers.getTokenIconByKey(model, collectibles, key)
+                let icon = PermissionsHelpers.getTokenIconByKey(model, collectibles, key)
+                if (Constants.isDefaultTokenIcon(icon)) {
+                    const item = root.getTokenByKeyOrGroupKeyFromAllTokens(key)
+                    if (!!item){
+                        icon = item.logoUri
+                    }
+                }
+
+                return icon
             }
 
             expression: {

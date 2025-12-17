@@ -763,6 +763,8 @@ QtObject {
         Retrying = 2
     }
 
+    readonly property string defaultTokenIcon: "tokens/DEFAULT-TOKEN"
+
     readonly property string dummyText: "Dummy"
 
     // Transaction states
@@ -1232,12 +1234,12 @@ QtObject {
             return Assets.png("tokens/" + tmpSymbol)
 
         if (useDefault)
-            return Assets.png("tokens/DEFAULT-TOKEN")
+            return Assets.png(root.defaultTokenIcon)
         return ""
     }
 
     function isDefaultTokenIcon(url) {
-        return url.indexOf("DEFAULT-TOKEN") !== -1
+        return url.indexOf(root.defaultTokenIcon) !== -1
     }
 
     enum RecipientAddressObjectType {
