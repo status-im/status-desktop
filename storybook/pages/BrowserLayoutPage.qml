@@ -7,9 +7,6 @@ import QtQml
 import StatusQ
 import StatusQ.Core.Utils as SQUtils
 
-import Models
-import Storybook
-
 import utils
 
 import AppLayouts.Browser
@@ -17,6 +14,10 @@ import AppLayouts.Browser.stores as BrowserStores
 import AppLayouts.Wallet.stores
 import shared.stores as SharedStores
 import shared.stores.send
+
+import Storybook
+import Models
+import Mocks
 
 Item {
     id: root
@@ -29,7 +30,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             userUID: "0xdeadbeef"
-            transactionStore: TransactionStore {}
+            transactionStore: TransactionStoreMock {}
             thirdpartyServicesEnabled: true
             connectorController: null
             platformOS: ctrlPlatformOS.currentValue

@@ -1,2 +1,3 @@
 TokensStoreMock 1.0 TokensStoreMock.qml
 WalletAssetsStoreMock 1.0 WalletAssetsStoreMock.qml
+TransactionStoreMock 1.0 TransactionStoreMock.qml
