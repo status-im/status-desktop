@@ -15,13 +15,13 @@ import StatusQ.Popups
 
 import SortFilterProxyModel
 
-import Storybook
-
-import Models
-
 import utils
 
 import shared.controls
+
+import Storybook
+import Models
+import Mocks
 
 SplitView {
     id: root
@@ -75,7 +75,7 @@ SplitView {
             }
         }
 
-        readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+        readonly property WalletAssetsStoreMock walletAssetStore: WalletAssetsStoreMock {
         }
     }
     ActivityFiltersStore {

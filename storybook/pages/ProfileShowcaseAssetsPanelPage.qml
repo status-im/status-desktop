@@ -14,10 +14,11 @@ import shared.stores
 
 import utils
 
+import AppLayouts.Wallet.stores
+
 import Storybook
 import Models
-
-import AppLayouts.Wallet.stores
+import Mocks
 
 SplitView {
     id: root
@@ -26,7 +27,7 @@ SplitView {
 
     orientation: Qt.Vertical
 
-    readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+    readonly property WalletAssetsStoreMock walletAssetStore: WalletAssetsStoreMock {
     }
 
     SortFilterProxyModel {

@@ -3,13 +3,14 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQml
 
-import Storybook
-import Models
-
 import shared.popups
 import utils
 
 import AppLayouts.Wallet.stores
+
+import Storybook
+import Models
+import Mocks
 
 SplitView {
     SplitView {
@@ -20,7 +21,7 @@ SplitView {
 
         Logs { id: logs }
 
-        readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+        readonly property WalletAssetsStoreMock walletAssetStore: WalletAssetsStoreMock {
         }
 
         function openDialog() {

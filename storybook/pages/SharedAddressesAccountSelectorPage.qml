@@ -1,12 +1,12 @@
 import QtQuick
 import QtQuick.Controls
 
-import Storybook
-import Models
-
 import AppLayouts.Wallet.stores
 import AppLayouts.Communities.panels
 
+import Storybook
+import Models
+import Mocks
 
 SplitView {
     id: root
@@ -16,7 +16,7 @@ SplitView {
 
     Logs { id: logs }
 
-    readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+    readonly property WalletAssetsStoreMock walletAssetStore: WalletAssetsStoreMock {
     }
 
     WalletAccountsModel {

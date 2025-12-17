@@ -4,7 +4,6 @@ import QtQuick.Layouts
 import SortFilterProxyModel
 
 import AppLayouts.Wallet.stores
-import Mocks
 import AppLayouts.Wallet.adaptors
 
 import shared.stores
@@ -100,7 +99,7 @@ Item {
     QtObject {
         id: d
 
-        readonly property var assetsStore: WalletAssetsStore {
+        readonly property var assetsStore: WalletAssetsStoreMock {
             id: thisWalletAssetStore
             walletTokensStore: TokensStoreMock {
                 tokenGroupsModel: TokenGroupsModel {}

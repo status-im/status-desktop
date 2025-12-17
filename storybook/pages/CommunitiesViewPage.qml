@@ -10,9 +10,11 @@ import AppLayouts.Profile.stores
 import mainui
 import utils
 
+import shared.stores as SharedStores
+
 import Storybook
 import Models
-import shared.stores as SharedStores
+import Mocks
 
 SplitView {
     id: root
@@ -21,7 +23,7 @@ SplitView {
 
     orientation: Qt.Vertical
 
-    readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+    readonly property WalletAssetsStoreMock walletAssetStore: WalletAssetsStoreMock {
     }
 
     readonly property var currencyStore: SharedStores.CurrenciesStore {}

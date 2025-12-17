@@ -12,10 +12,11 @@ import AppLayouts.Wallet.stores
 
 import utils
 
+import QtModelsToolkit
+
 import Storybook
 import Models
-
-import QtModelsToolkit
+import Mocks
 
 SplitView {
     id: root
@@ -24,7 +25,7 @@ SplitView {
 
     orientation: Qt.Horizontal
 
-    readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+    readonly property WalletAssetsStoreMock walletAssetStore: WalletAssetsStoreMock {
     }
 
     ManageCollectiblesModel {

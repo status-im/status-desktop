@@ -311,7 +311,7 @@ Item {
         }
     }
 
-    WalletStore.WalletAssetsStore {
+    WalletAssetsStoreMock {
         id: assetsStoreMock
         walletTokensStore: TokensStoreMock {
             tokenGroupsModel: TokenGroupsModel {}

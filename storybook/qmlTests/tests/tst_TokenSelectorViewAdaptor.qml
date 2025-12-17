@@ -27,7 +27,7 @@ Item {
         id: d
 
         readonly property var flatNetworks: NetworksModel.flatNetworks
-        readonly property var assetsStore: WalletAssetsStore {
+        readonly property var assetsStore: WalletAssetsStoreMock {
             walletTokensStore: TokensStoreMock {
                 tokenGroupsModel: TokenGroupsModel {}
                 tokenGroupsForChainModel: TokenGroupsModel {

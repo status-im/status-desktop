@@ -36,7 +36,7 @@ Item {
             swapStore: SwapStore {
                 readonly property var accounts: WalletAccountsModel {}
             }
-            walletAssetsStore: WalletAssetsStore {
+            walletAssetsStore: WalletAssetsStoreMock {
                 walletTokensStore: TokensStoreMock {
                     tokenGroupsModel: TokenGroupsModel {}
                     tokenGroupsForChainModel: TokenGroupsModel {

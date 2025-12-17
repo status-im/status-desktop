@@ -126,7 +126,7 @@ SplitView {
         SwapModalAdaptor {
             id: adaptor
             swapStore: dSwapStore
-            walletAssetsStore: WalletAssetsStore {
+            walletAssetsStore: WalletAssetsStoreMock {
                 id: thisWalletAssetStore
                 walletTokensStore: tokensStore
                 readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}

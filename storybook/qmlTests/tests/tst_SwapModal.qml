@@ -51,7 +51,7 @@ Item {
 
     readonly property SwapModalAdaptor swapAdaptor: SwapModalAdaptor {
         currencyStore: CurrenciesStore {}
-        walletAssetsStore: WalletAssetsStore {
+        walletAssetsStore: WalletAssetsStoreMock {
             id: thisWalletAssetStore
             walletTokensStore: TokensStoreMock {
                 tokenGroupsModel: TokenGroupsModel {}
