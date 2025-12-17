@@ -115,7 +115,7 @@ pipeline {
         } } }
         stage('iOS/aarch64') { steps { script {
           ios_aarch64 = getArtifacts(
-            'iOS/aarch64', jenkins.Build('status-app/systems/ios/aarch64/package')
+            'iOS/aarch64', jenkins.Build('status-app/systems/ios/arm64/package')
           )
         } } }
       }
