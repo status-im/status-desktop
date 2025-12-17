@@ -44,6 +44,9 @@ GIT_ROOT ?= $(shell git rev-parse --show-toplevel 2>/dev/null || echo .)
 	run-statusq-sanity-checker \
 	statusq-tests \
 	run-statusq-tests \
+	statusq-import-lib \
+	nim-sds \
+	copy-windows-dlls \
 	storybook-build \
 	run-storybook \
 	run-storybook-tests \
@@ -249,6 +252,56 @@ NIMSDS_LIBFILE := $(NIMSDS_LIBDIR)/libsds.$(LIB_EXT)
 NIM_EXTRA_PARAMS += --passL:"-L$(NIMSDS_LIBDIR)" --passL:"-lsds"
 STATUSGO_MAKE_PARAMS += NIM_SDS_SOURCE_DIR="$(NIM_SDS_SOURCE_DIR)"
 
+# Common nim-sds build recipe (used by both Windows and non-Windows)
+define BUILD_NIMSDS
+	@echo -e "\033[92mBuilding:\033[39m nim-sds"
+	@if [ ! -d "$(NIM_SDS_SOURCE_DIR)" ]; then \
+		echo "Error: nim-sds directory not found at $(NIM_SDS_SOURCE_DIR)"; \
+		echo "Please clone it or set NIM_SDS_SOURCE_DIR environment variable"; \
+		exit 1; \
+	fi
+	@$(MAKE) -C $(NIM_SDS_SOURCE_DIR) libsds USE_SYSTEM_NIM=1 SHELL=/bin/bash $(HANDLE_OUTPUT)
+endef
+
+ifeq ($(mkspecs),win32)
+# On Windows with MinGW, create import library for nim-sds
+NIMSDS_DLL := $(NIMSDS_LIBDIR)/libsds.dll
+NIMSDS_DEF := $(NIMSDS_LIBDIR)/libsds.def
+NIMSDS_IMPORT_LIB := $(NIMSDS_LIBDIR)/libsds.dll.a
+
+$(NIMSDS_DEF): $(NIMSDS_DLL)
+	@echo -e "\033[92mCreating:\033[39m libsds.def"
+	@mkdir -p $(NIMSDS_LIBDIR)
+	@(echo "EXPORTS"; \
+	  echo "SdsCleanupReliabilityManager"; \
+	  echo "SdsMarkDependenciesMet"; \
+	  echo "SdsNewReliabilityManager"; \
+	  echo "SdsResetReliabilityManager"; \
+	  echo "SdsSetEventCallback"; \
+	  echo "SdsStartPeriodicTasks"; \
+	  echo "SdsUnwrapReceivedMessage"; \
+	  echo "SdsWrapOutgoingMessage"; \
+	  echo "libsdsNimDestroyGlobals"; \
+	  echo "libsdsNimMain") > $(NIMSDS_DEF)
+
+$(NIMSDS_IMPORT_LIB): $(NIMSDS_DLL) $(NIMSDS_DEF)
+	@echo -e "\033[92mCreating:\033[39m libsds.dll.a"
+	@rm -f $(NIMSDS_IMPORT_LIB)
+	@cd $(NIMSDS_LIBDIR) && dlltool --dllname libsds.dll --def libsds.def --output-lib libsds.dll.a || \
+		(echo "Warning: Failed to create import library. Ensure dlltool is in PATH." && exit 0)
+
+$(NIMSDS_LIBFILE): | deps
+	$(BUILD_NIMSDS)
+	@$(MAKE) $(NIMSDS_IMPORT_LIB) || true
+
+nim-sds: $(NIMSDS_LIBFILE) $(NIMSDS_IMPORT_LIB)
+else
+$(NIMSDS_LIBFILE): | deps
+	$(BUILD_NIMSDS)
+
+nim-sds: $(NIMSDS_LIBFILE)
+endif
+
 INCLUDE_DEBUG_SYMBOLS ?= false
 ifeq ($(INCLUDE_DEBUG_SYMBOLS),true)
  # We need `-d:debug` to get Nim's default stack traces
@@ -326,10 +379,35 @@ statusq-build: | statusq-configure
 
 statusq-install: | statusq-build
 	echo -e "\033[92mInstalling:\033[39m StatusQ"
+	@mkdir -p $(STATUSQ_INSTALL_PATH)/StatusQ || true
 	cmake --install $(STATUSQ_BUILD_PATH) \
 		$(HANDLE_OUTPUT)
 
+ifeq ($(mkspecs),win32)
+# On Windows with MinGW, create import libraries (.dll.a) from DLLs
+STATUSQ_DLL := $(STATUSQ_INSTALL_PATH)/StatusQ/StatusQ.dll
+STATUSQ_DEF := $(STATUSQ_INSTALL_PATH)/StatusQ/StatusQ.def
+STATUSQ_IMPORT_LIB := $(STATUSQ_INSTALL_PATH)/StatusQ/libStatusQ.dll.a
+
+$(STATUSQ_DEF): $(STATUSQ_DLL)
+	@echo -e "\033[92mCreating:\033[39m StatusQ.def"
+	@mkdir -p $(STATUSQ_INSTALL_PATH)/StatusQ || true
+	@(echo "EXPORTS"; \
+	  echo "statusq_getMobileUIScaleFactor"; \
+	  echo "statusq_registerQmlTypes") > $(STATUSQ_DEF)
+
+$(STATUSQ_IMPORT_LIB): $(STATUSQ_DLL) $(STATUSQ_DEF)
+	@echo -e "\033[92mCreating:\033[39m libStatusQ.dll.a"
+	@mkdir -p $(STATUSQ_INSTALL_PATH)/StatusQ
+	@cd $(STATUSQ_INSTALL_PATH)/StatusQ && dlltool --dllname StatusQ.dll --def StatusQ.def --output-lib libStatusQ.dll.a || \
+		(echo "Warning: Failed to create import library. Ensure dlltool is in PATH." && exit 0)
+
+statusq-import-lib: $(STATUSQ_IMPORT_LIB)
+
+statusq: | statusq-install statusq-import-lib
+else
 statusq: | statusq-install
+endif
 
 statusq-clean:
 	echo -e "\033[92mCleaning:\033[39m StatusQ"
@@ -474,6 +552,7 @@ STATUSGO := vendor/status-go/build/bin/libstatus.$(LIB_EXT)
 STATUSGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSGO)")
 export STATUSGO_LIBDIR
 
+ifeq ($(mkspecs),win32)
 $(STATUSGO): | deps status-go-deps
 	echo -e $(BUILD_MSG) "status-go"
 	# FIXME: Nix shell usage breaks builds due to Glibc mismatch.
@@ -481,6 +560,17 @@ $(STATUSGO): | deps status-go-deps
 		SENTRY_CONTEXT_NAME="status-desktop" \
 		SENTRY_CONTEXT_VERSION="$(DESKTOP_VERSION)" \
 		 $(HANDLE_OUTPUT)
+	# On Windows, ensure import library exists after status-go build
+	@if [ -f "$(NIMSDS_LIBFILE)" ]; then $(MAKE) $(NIMSDS_IMPORT_LIB) || true; fi
+else
+$(STATUSGO): | deps status-go-deps
+	echo -e $(BUILD_MSG) "status-go"
+	# FIXME: Nix shell usage breaks builds due to Glibc mismatch.
+	$(STATUSGO_MAKE_PARAMS) $(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/sh \
+		SENTRY_CONTEXT_NAME="status-desktop" \
+		SENTRY_CONTEXT_VERSION="$(DESKTOP_VERSION)" \
+		 $(HANDLE_OUTPUT)
+endif
 
 status-go: $(STATUSGO)
 
@@ -611,7 +701,33 @@ $(NIM_STATUS_CLIENT): update-qmake-previous
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) rcc deps
+ifeq ($(mkspecs),win32)
+# Copy DLLs to bin directory for Windows runtime
+copy-windows-dlls: | statusq dotherside $(STATUSGO) $(STATUSKEYCARDGO) $(NIMSDS_LIBFILE)
+	@echo -e "\033[92mCopying:\033[39m Windows DLLs to bin directory"
+	@mkdir -p $(STATUSQ_INSTALL_PATH)
+	@mkdir -p $(STATUSQ_INSTALL_PATH)/StatusQ
+	@if [ -f "$(STATUSQ_INSTALL_PATH)/StatusQ/StatusQ.dll" ]; then \
+		echo "StatusQ.dll already in $(STATUSQ_INSTALL_PATH)/StatusQ/"; \
+	elif [ -f "$(STATUSQ_BUILD_PATH)/bin/$(COMMON_CMAKE_BUILD_TYPE)/StatusQ.dll" ]; then \
+		cp "$(STATUSQ_BUILD_PATH)/bin/$(COMMON_CMAKE_BUILD_TYPE)/StatusQ.dll" "$(STATUSQ_INSTALL_PATH)/StatusQ/" 2>/dev/null || true; \
+	fi
+	@rm -f "$(STATUSQ_INSTALL_PATH)/StatusQ.dll" 2>/dev/null || true
+	@if [ -f "$(DOTHERSIDE_LIBFILE)" ]; then \
+		cp "$(DOTHERSIDE_LIBFILE)" "$(STATUSQ_INSTALL_PATH)/" 2>/dev/null || true; \
+	fi
+	@if [ -f "$(STATUSGO)" ]; then \
+		cp "$(STATUSGO)" "$(STATUSQ_INSTALL_PATH)/" 2>/dev/null || true; \
+	fi
+	@if [ -f "$(STATUSKEYCARDGO)" ]; then \
+		cp "$(STATUSKEYCARDGO)" "$(STATUSQ_INSTALL_PATH)/" 2>/dev/null || true; \
+	fi
+	@if [ -f "$(NIMSDS_LIBFILE)" ]; then \
+		cp "$(NIMSDS_LIBFILE)" "$(STATUSQ_INSTALL_PATH)/" 2>/dev/null || true; \
+	fi
+endif
+
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) rcc deps $(if $(filter win32,$(mkspecs)),copy-windows-dlls)
 	echo -e $(BUILD_MSG) "$@"
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
 		--mm:refc \
@@ -887,9 +1003,9 @@ run-macos: nim_status_client
 	./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
 
 run-windows: STATUS_RC_FILE = status-dev.rc
-run-windows: compile_windows_resources nim_status_client
+run-windows: compile_windows_resources nim_status_client $(if $(filter win32,$(mkspecs)),copy-windows-dlls)
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client.exe"
-	PATH="$(DOTHERSIDE_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(PATH)" \
+	PATH="$(DOTHERSIDE_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(STATUSQ_INSTALL_PATH)":"$(PATH)" \
 	./bin/nim_status_client.exe $(ARGS)
 
 NIM_TEST_FILES := $(wildcard test/nim/*.nim)
