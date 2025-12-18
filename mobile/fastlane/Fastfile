@@ -119,7 +119,6 @@ platform :ios do
     app_path = File.join(BUILD_DIR, app_name)
     ipa_name = app_name.sub(".app", ".ipa")
     ipa_path = File.join(BUILD_DIR, ipa_name)
-    unsigned_ipa_path = File.join(BUILD_DIR, "unsigned_#{ipa_name}")
 
     unless File.exist?(app_path)
       UI.user_error!("#{app_name} not found at #{app_path}")
@@ -136,8 +135,15 @@ platform :ios do
       UI.user_error!("Provisioning profile not found!")
     end
 
+    unless signing_identity
+      UI.user_error!("Signing identity not found!")
+    end
+
+    UI.message("Pre-embedding provisioning profile into .app bundle...")
+    FileUtils.cp(provisioning_profile, File.join(app_path, "embedded.mobileprovision"))
+
     UI.message("Creating unsigned IPA...")
-    FileUtils.rm_f(unsigned_ipa_path)
+    FileUtils.rm_f(ipa_path)
 
     Dir.mktmpdir do |tmpdir|
       payload_dir = File.join(tmpdir, "Payload")
@@ -145,22 +151,22 @@ platform :ios do
       FileUtils.cp_r(app_path, payload_dir)
 
       Dir.chdir(tmpdir) do
-        sh("zip -r '#{unsigned_ipa_path}' Payload")
+        sh("zip -r '#{ipa_path}' Payload")
       end
     end
 
+    # This handles frameworks, entitlements patching, and bundle ID updates
     UI.message("Resigning IPA with fastlane resign action...")
     resign(
-      ipa: unsigned_ipa_path,
+      ipa: ipa_path,
       signing_identity: signing_identity,
       provisioning_profile: {
         app_identifier => provisioning_profile
       },
       bundle_id: app_identifier,
-      display_name: display_name
+      display_name: display_name,
+      keychain_path: is_ci ? File.expand_path("~/Library/Keychains/#{keychain_name}-db") : nil
     )
-
-    FileUtils.mv(unsigned_ipa_path, ipa_path)
 
     UI.success("Signed and packaged: #{ipa_path}")
   end
