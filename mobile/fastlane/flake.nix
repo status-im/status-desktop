@@ -37,11 +37,9 @@
             export CURL_CA_BUNDLE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
 
             # Force system Xcode for fastlane - it needs access to codesign, security, etc.
-            # Override nix's apple-sdk DEVELOPER_DIR which doesn't have signing tools
             export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
 
             # Create wrapper directory with system Xcode tools that fastlane needs
-            # This ensures we use system xcrun/codesign/security instead of nix's limited versions
             XCODE_WRAPPER_DIR=$(mktemp -d)
             for tool in xcrun codesign security xcodebuild plutil; do
               ln -sf /usr/bin/$tool "$XCODE_WRAPPER_DIR/$tool" 2>/dev/null || true

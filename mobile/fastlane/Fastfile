@@ -139,9 +139,6 @@ platform :ios do
       UI.user_error!("Signing identity not found!")
     end
 
-    UI.message("Pre-embedding provisioning profile into .app bundle...")
-    FileUtils.cp(provisioning_profile, File.join(app_path, "embedded.mobileprovision"))
-
     UI.message("Creating unsigned IPA...")
     FileUtils.rm_f(ipa_path)
 
@@ -164,8 +161,7 @@ platform :ios do
         app_identifier => provisioning_profile
       },
       bundle_id: app_identifier,
-      display_name: display_name,
-      keychain_path: is_ci ? File.expand_path("~/Library/Keychains/#{keychain_name}-db") : nil
+      display_name: display_name
     )
 
     UI.success("Signed and packaged: #{ipa_path}")
