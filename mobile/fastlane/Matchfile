@@ -13,8 +13,6 @@ app_identifier([
   "app.status.mobile.pr"
 ])
 
-team_id("8B5X2M6H2Y")
-
 # App Store Connect API Key
 api_key_path(ENV["ASC_API_KEY_JSON"]) if ENV["ASC_API_KEY_JSON"]
 

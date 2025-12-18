@@ -35,28 +35,28 @@ iOS builds use **fastlane** with **match** for code signing management. This pro
 
 ### Bundle Identifiers
 
-| Build Type | Bundle ID | Fastlane Lane |
-|------------|-----------|---------------|
-| PR builds | `app.status.mobile.pr` | `pr` |
-| Release | `app.status.mobile` | `release` |
+| Build Type | Bundle ID              | Fastlane Lane |
+|------------|------------------------|---------------|
+| PR builds  | `app.status.mobile.pr` | `pr`          |
+| Release    | `app.status.mobile`    | `release`     |
 
 ### Certificate Types
 
-| Build Type | Certificate Type | Match Type | Purpose |
-|------------|------------------|------------|---------|
-| PR builds | Apple Development | `development` | Testing on registered devices |
-| Release | Apple Distribution | `appstore` | App Store / TestFlight |
+| Build Type | Certificate Type   | Match Type  | Purpose                       |
+|------------|--------------------|-------------|-------------------------------|
+| PR builds  | Apple Distribution | `adhoc`     | Testing on registered devices |
+| Release    | Apple Distribution | `appstore`  | App Store / TestFlight        |
 
 ### Fastlane Files
 
 The `fastlane` configuration is located in `mobile/fastlane/`:
 
-| File | Purpose |
-|------|---------|
-| `Fastfile` | Defines build lanes (pr, nightly, release) |
-| `Matchfile` | Configures match for certificate management |
-| `Appfile` | App identifiers and team configuration |
-| `Gemfile` | Ruby dependencies |
+| File        | Purpose                                      |
+|-------------|----------------------------------------------|
+| `Fastfile`  | Defines signing lanes (`pr`, `release`)      |
+| `Matchfile` | Configures match for certificate management  |
+| `Appfile`   | App identifiers and team configuration       |
+| `Gemfile`   | Ruby dependencies                            |
 
 
 ### Local Development

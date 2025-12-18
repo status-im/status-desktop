@@ -2,7 +2,7 @@
   description = "Fastlane environment for iOS signing";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -42,7 +42,8 @@
             echo "Ruby $(ruby --version)"
             echo "Bundler $(bundle --version)"
             echo ""
-            echo "Run 'bundle install' to install fastlane dependencies"
+            echo "Installing fastlane dependencies..."
+            bundle install
           '';
         };
       }

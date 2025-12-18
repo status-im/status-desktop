@@ -11,17 +11,18 @@ BUILD_DIR=${BUILD_DIR:-"$CWD/../build"}
 ANDROID_ABI=${ANDROID_ABI:-"arm64-v8a"}
 BUILD_TYPE=${BUILD_TYPE:-"apk"}
 
-# PR builds use StatusPR.pro with separate bundle ID (app.status.mobile.pr)
+# BUILD_VARIANT controls bundle ID: "pr" = app.status.mobile.pr, "release" = app.status.mobile
 BUILD_VARIANT=${BUILD_VARIANT:-"release"}
+export BUILD_VARIANT
 
 QMAKE_BIN="${QMAKE:-qmake}"
 QMAKE_CONFIG="CONFIG+=device CONFIG+=release"
 
+PRO_FILE="$CWD/../wrapperApp/Status.pro"
+
 if [[ "$BUILD_VARIANT" == "pr" ]]; then
-  PRO_FILE="$CWD/../wrapperApp/StatusPR.pro"
   echo "Building PR variant (app.status.mobile.pr)"
 else
-  PRO_FILE="$CWD/../wrapperApp/Status.pro"
   echo "Building release variant (app.status.mobile)"
 fi
 
