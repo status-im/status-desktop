@@ -3,9 +3,7 @@
 
 default_platform(:ios)
 
-TEAM_ID = "8B5X2M6H2Y"
-APP_ID_RELEASE = "app.status.mobile"
-APP_ID_PR = "app.status.mobile.pr"
+# Build configuration
 APP_NAME_RELEASE = "Status.app"
 APP_NAME_PR = "StatusPR.app"
 DISPLAY_NAME_RELEASE = "Status"
@@ -40,10 +38,9 @@ platform :ios do
   lane :pr do
     setup_ci_keychain
 
-    run_match(type: "adhoc", app_identifier: APP_ID_PR)
+    run_match(type: "adhoc")
 
     resign_and_package(
-      app_identifier: APP_ID_PR,
       app_name: APP_NAME_PR,
       display_name: DISPLAY_NAME_PR,
       profile_type: "adhoc"
@@ -57,10 +54,9 @@ platform :ios do
   lane :release do
     setup_ci_keychain
 
-    run_match(type: "appstore", app_identifier: APP_ID_RELEASE)
+    run_match(type: "appstore")
 
     resign_and_package(
-      app_identifier: APP_ID_RELEASE,
       app_name: APP_NAME_RELEASE,
       display_name: DISPLAY_NAME_RELEASE,
       profile_type: "appstore"
@@ -95,7 +91,6 @@ platform :ios do
   private_lane :run_match do |options|
     match_params = {
       type: options[:type],
-      app_identifier: options[:app_identifier],
       readonly: false,
       # Auto-regenerate profiles when new devices are registered (for dev and adhoc)
       force_for_new_devices: options[:type] == "development" || options[:type] == "adhoc"
@@ -111,7 +106,7 @@ platform :ios do
   end
 
   private_lane :resign_and_package do |options|
-    app_identifier = options[:app_identifier]
+    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
     app_name = options[:app_name] || "Status.app"
     display_name = options[:display_name] || "Status"
     profile_type = options[:profile_type]
