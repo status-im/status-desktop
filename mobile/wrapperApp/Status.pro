@@ -47,10 +47,22 @@ ios {
 
     QMAKE_INFO_PLIST = $$PWD/../ios/Info.plist
     QMAKE_IOS_DEPLOYMENT_TARGET=16.0
-    QMAKE_TARGET_BUNDLE_PREFIX = app.status
-    QMAKE_BUNDLE = mobile
     QMAKE_ASSET_CATALOGS += $$PWD/../ios/Images.xcassets
     QMAKE_IOS_LAUNCH_SCREEN = $$PWD/../ios/launch-image-universal.storyboard
+
+    # Bundle identifier configuration based on BUILD_VARIANT environment variable
+    # - PR builds (BUILD_VARIANT=pr): app.status.mobile.pr
+    # - Release/Local dev (BUILD_VARIANT unset or "release"): app.status.mobile
+    equals($$(BUILD_VARIANT), "pr") {
+        TARGET = StatusPR
+        QMAKE_TARGET_BUNDLE_PREFIX = app.status.mobile
+        QMAKE_BUNDLE = pr
+    } else {
+        # Default for local development and release builds
+        TARGET = Status
+        QMAKE_TARGET_BUNDLE_PREFIX = app.status
+        QMAKE_BUNDLE = mobile
+    }
 
     LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lsds -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen
 

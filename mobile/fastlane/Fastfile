@@ -1,4 +1,5 @@
-# This file defines the build and signing lanes for iOS
+# This file defines the signing and packaging lanes for iOS
+# Building is done separately via make targets
 
 default_platform(:ios)
 
@@ -7,6 +8,8 @@ APP_ID_RELEASE = "app.status.mobile"
 APP_ID_PR = "app.status.mobile.pr"
 APP_NAME_RELEASE = "Status.app"
 APP_NAME_PR = "StatusPR.app"
+DISPLAY_NAME_RELEASE = "Status"
+DISPLAY_NAME_PR = "Status PR"
 PROJECT_DIR = File.expand_path("../", __dir__)
 BUILD_DIR = File.join(PROJECT_DIR, "bin", "ios", "qt6")
 
@@ -17,7 +20,7 @@ platform :ios do
   end
 
   after_all do
-    # Clean up CI keychain after build
+    # Clean up CI keychain after signing
     if is_ci
       delete_keychain(name: keychain_name) if File.exist?(File.expand_path("~/Library/Keychains/#{keychain_name}-db"))
     end
@@ -31,64 +34,45 @@ platform :ios do
   end
 
   # ============================================
-  # PR Builds
+  # PR Builds - Sign and package for ad-hoc distribution
   # ============================================
-  desc "Build iOS app for PRs"
+  desc "Sign and package iOS app for PRs"
   lane :pr do
     setup_ci_keychain
 
     run_match(type: "adhoc", app_identifier: APP_ID_PR)
 
-    sign_app(
+    resign_and_package(
       app_identifier: APP_ID_PR,
       app_name: APP_NAME_PR,
+      display_name: DISPLAY_NAME_PR,
       profile_type: "adhoc"
     )
-
-    create_ipa(app_name: APP_NAME_PR)
   end
 
   # ============================================
-  # Release Builds
+  # Release Builds - Sign and package for App Store
   # ============================================
-  desc "Build iOS app for release"
+  desc "Sign and package iOS app for release"
   lane :release do
     setup_ci_keychain
 
     run_match(type: "appstore", app_identifier: APP_ID_RELEASE)
 
-    sign_app(
+    resign_and_package(
       app_identifier: APP_ID_RELEASE,
       app_name: APP_NAME_RELEASE,
+      display_name: DISPLAY_NAME_RELEASE,
       profile_type: "appstore"
     )
 
-    create_ipa(app_name: APP_NAME_RELEASE)
-
     if ENV["UPLOAD_TO_TESTFLIGHT"] == "true"
-      upload_to_testflight_lane
+      upload_to_testflight(
+        ipa: File.join(BUILD_DIR, "Status.ipa"),
+        skip_waiting_for_build_processing: true,
+        changelog: ENV["CHANGELOG"] || "New build from CI"
+      )
     end
-  end
-
-  # ============================================
-  # TestFlight Upload
-  # ============================================
-  desc "Upload IPA to TestFlight"
-  lane :upload_to_testflight_lane do
-    api_key = app_store_connect_api_key(
-      key_id: ENV["ASC_KEY_ID"],
-      issuer_id: ENV["ASC_ISSUER_ID"],
-      key_filepath: ENV["ASC_KEY_FILE"],
-      duration: 1200,
-      in_house: false
-    )
-
-    upload_to_testflight(
-      api_key: api_key,
-      ipa: File.join(BUILD_DIR, "Status.ipa"),
-      skip_waiting_for_build_processing: true,
-      changelog: ENV["CHANGELOG"] || "New build from CI"
-    )
   end
 
   # ============================================
@@ -126,45 +110,49 @@ platform :ios do
     match(match_params)
   end
 
-  private_lane :sign_app do |options|
+  private_lane :resign_and_package do |options|
     app_identifier = options[:app_identifier]
     app_name = options[:app_name] || "Status.app"
+    display_name = options[:display_name] || "Status"
     profile_type = options[:profile_type]
 
     app_path = File.join(BUILD_DIR, app_name)
+    ipa_name = app_name.sub(".app", ".ipa")
+    ipa_path = File.join(BUILD_DIR, ipa_name)
 
     unless File.exist?(app_path)
       UI.user_error!("#{app_name} not found at #{app_path}")
     end
 
-    # Use plutil to handle both binary and XML plist formats
+    # Update Info.plist with correct bundle ID and display name
     plist_path = File.join(app_path, "Info.plist")
-    UI.message("Setting CFBundleIdentifier to #{app_identifier} in #{plist_path}")
+    UI.message("Setting CFBundleIdentifier to #{app_identifier}")
     sh("plutil -replace CFBundleIdentifier -string '#{app_identifier}' '#{plist_path}'")
+    UI.message("Setting CFBundleDisplayName to #{display_name}")
+    sh("plutil -replace CFBundleDisplayName -string '#{display_name}' '#{plist_path}'")
 
-    UI.message("Signing app with identifier: #{app_identifier}")
+    # Get signing identity and provisioning profile from match
+    # Match sets these environment variables automatically
+    signing_identity = ENV["sigh_#{app_identifier}_#{profile_type}_certificate-name"]
+    provisioning_profile = ENV["sigh_#{app_identifier}_#{profile_type}_profile-path"]
 
-    profile_name = "match #{profile_type.capitalize} #{app_identifier}"
+    UI.message("Signing identity: #{signing_identity}")
+    UI.message("Provisioning profile: #{provisioning_profile}")
 
-    signing_identity = ENV["sigh_#{app_identifier}_#{profile_type}_certificate-name"] ||
-                       lane_context[SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING]&.dig(app_identifier) ||
-                       get_signing_identity(profile_type)
+    # Copy provisioning profile to app bundle
+    if provisioning_profile && File.exist?(provisioning_profile)
+      FileUtils.cp(provisioning_profile, File.join(app_path, "embedded.mobileprovision"))
+    else
+      UI.user_error!("Provisioning profile not found!")
+    end
 
-    # Need to Sign all frameworks first, else App crashes at runtime
+    # Sign all frameworks first (required for app to work at runtime)
     frameworks_path = File.join(app_path, "Frameworks")
     if File.directory?(frameworks_path)
       Dir.glob("#{frameworks_path}/*.framework").each do |framework|
         UI.message("Signing framework: #{File.basename(framework)}")
         sh("codesign --force --sign '#{signing_identity}' --timestamp '#{framework}'")
       end
-    end
-
-    UI.message("Signing main app bundle...")
-
-    profile_path = ENV["sigh_#{app_identifier}_#{profile_type}_profile-path"]
-
-    if profile_path && File.exist?(profile_path)
-      FileUtils.cp(profile_path, File.join(app_path, "embedded.mobileprovision"))
     end
 
     # Extract entitlements from provisioning profile and sign with them
@@ -174,20 +162,12 @@ platform :ios do
     sh("security cms -D -i '#{embedded_profile}' > '#{decoded_profile_path}'")
     sh("plutil -extract Entitlements xml1 -o '#{entitlements_path}' '#{decoded_profile_path}'")
 
+    # Sign the main app bundle
+    UI.message("Signing main app bundle...")
     sh("codesign --force --sign '#{signing_identity}' --entitlements '#{entitlements_path}' --timestamp '#{app_path}'")
 
-    UI.success("App signed successfully!")
-  end
-
-  private_lane :create_ipa do |options|
-    app_name = options[:app_name] || "Status.app"
-    ipa_name = app_name.sub(".app", ".ipa")
-
-    app_path = File.join(BUILD_DIR, app_name)
-    ipa_path = File.join(BUILD_DIR, ipa_name)
-
+    # Create IPA
     UI.message("Creating IPA at #{ipa_path}...")
-
     FileUtils.rm_f(ipa_path)
 
     Dir.mktmpdir do |tmpdir|
@@ -200,7 +180,7 @@ platform :ios do
       end
     end
 
-    UI.success("IPA created at #{ipa_path}")
+    UI.success("Signed and packaged: #{ipa_path}")
   end
 
   def keychain_name
@@ -209,16 +189,5 @@ platform :ios do
 
   def keychain_password
     ENV["MATCH_PASSWORD"] || "fastlane_ci_password"
-  end
-
-  def get_signing_identity(profile_type)
-    case profile_type
-    when "development"
-      "Apple Development"
-    when "adhoc", "appstore"
-      "Apple Distribution"
-    else
-      "Apple Distribution"
-    end
   end
 end

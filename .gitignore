@@ -114,3 +114,13 @@ mobile/bin/
 mobile/lib/
 mobile/build/
 scripts/node_modules/
+
+# fastlane
+mobile/fastlane/.gems/
+mobile/fastlane/vendor/bundle/
+mobile/fastlane/.bundle/
+mobile/fastlane/report.xml
+mobile/fastlane/Preview.html
+mobile/fastlane/screenshots/
+mobile/fastlane/test_output/
+mobile/fastlane/result
