@@ -119,56 +119,25 @@ platform :ios do
     app_path = File.join(BUILD_DIR, app_name)
     ipa_name = app_name.sub(".app", ".ipa")
     ipa_path = File.join(BUILD_DIR, ipa_name)
+    unsigned_ipa_path = File.join(BUILD_DIR, "unsigned_#{ipa_name}")
 
     unless File.exist?(app_path)
       UI.user_error!("#{app_name} not found at #{app_path}")
     end
 
-    # Update Info.plist with correct bundle ID and display name
-    plist_path = File.join(app_path, "Info.plist")
-    UI.message("Setting CFBundleIdentifier to #{app_identifier}")
-    sh("plutil -replace CFBundleIdentifier -string '#{app_identifier}' '#{plist_path}'")
-    UI.message("Setting CFBundleDisplayName to #{display_name}")
-    sh("plutil -replace CFBundleDisplayName -string '#{display_name}' '#{plist_path}'")
-
     # Get signing identity and provisioning profile from match
-    # Match sets these environment variables automatically
     signing_identity = ENV["sigh_#{app_identifier}_#{profile_type}_certificate-name"]
     provisioning_profile = ENV["sigh_#{app_identifier}_#{profile_type}_profile-path"]
 
     UI.message("Signing identity: #{signing_identity}")
     UI.message("Provisioning profile: #{provisioning_profile}")
 
-    # Copy provisioning profile to app bundle
-    if provisioning_profile && File.exist?(provisioning_profile)
-      FileUtils.cp(provisioning_profile, File.join(app_path, "embedded.mobileprovision"))
-    else
+    unless provisioning_profile && File.exist?(provisioning_profile)
       UI.user_error!("Provisioning profile not found!")
     end
 
-    # Sign all frameworks first (required for app to work at runtime)
-    frameworks_path = File.join(app_path, "Frameworks")
-    if File.directory?(frameworks_path)
-      Dir.glob("#{frameworks_path}/*.framework").each do |framework|
-        UI.message("Signing framework: #{File.basename(framework)}")
-        sh("codesign --force --sign '#{signing_identity}' --timestamp '#{framework}'")
-      end
-    end
-
-    # Extract entitlements from provisioning profile and sign with them
-    entitlements_path = File.join(Dir.tmpdir, "entitlements.plist")
-    decoded_profile_path = File.join(Dir.tmpdir, "profile_decoded.plist")
-    embedded_profile = File.join(app_path, "embedded.mobileprovision")
-    sh("security cms -D -i '#{embedded_profile}' > '#{decoded_profile_path}'")
-    sh("plutil -extract Entitlements xml1 -o '#{entitlements_path}' '#{decoded_profile_path}'")
-
-    # Sign the main app bundle
-    UI.message("Signing main app bundle...")
-    sh("codesign --force --sign '#{signing_identity}' --entitlements '#{entitlements_path}' --timestamp '#{app_path}'")
-
-    # Create IPA
-    UI.message("Creating IPA at #{ipa_path}...")
-    FileUtils.rm_f(ipa_path)
+    UI.message("Creating unsigned IPA...")
+    FileUtils.rm_f(unsigned_ipa_path)
 
     Dir.mktmpdir do |tmpdir|
       payload_dir = File.join(tmpdir, "Payload")
@@ -176,9 +145,22 @@ platform :ios do
       FileUtils.cp_r(app_path, payload_dir)
 
       Dir.chdir(tmpdir) do
-        sh("zip -r '#{ipa_path}' Payload")
+        sh("zip -r '#{unsigned_ipa_path}' Payload")
       end
     end
+
+    UI.message("Resigning IPA with fastlane resign action...")
+    resign(
+      ipa: unsigned_ipa_path,
+      signing_identity: signing_identity,
+      provisioning_profile: {
+        app_identifier => provisioning_profile
+      },
+      bundle_id: app_identifier,
+      display_name: display_name
+    )
+
+    FileUtils.mv(unsigned_ipa_path, ipa_path)
 
     UI.success("Signed and packaged: #{ipa_path}")
   end
