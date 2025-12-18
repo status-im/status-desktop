@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.33'
+library 'status-jenkins-lib@fix-android-signing'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -11,7 +11,7 @@ pipeline {
     /* Image with Ubuntu 22.04, QT 6.9.2, Android SDK/NDK, Go, and Nim */
     docker {
       label 'linuxcontainer'
-      image 'harbor.status.im/status-im/status-desktop-build:1.0.6-qt6.9.2-android'
+      image 'harbor.status.im/status-im/status-desktop-build:1.0.8-qt6.9.2-android'
       alwaysPull true
       args '--entrypoint="" ' +
            '--volume=/nix:/nix ' +
@@ -70,8 +70,12 @@ pipeline {
     QMAKE = "/opt/qt/${env.QT_VERSION}/android_arm64_v8a/bin/qmake"
     /* override package type if set, otherwise auto-select based on branch */
     PACKAGE_TYPE = "${params.PACKAGE_TYPE != 'auto' ? params.PACKAGE_TYPE : (isReleaseBranch ? 'aab' : 'apk')}"
+    /* BUILD_VARIANT controls package name and signing: pr = app.status.mobile.pr, release = app.status.mobile */
+    BUILD_VARIANT = "${utils.isReleaseBuild() ? 'release' : 'pr'}"
+    /* App name derived from BUILD_VARIANT */
+    STATUS_ANDROID_APP_NAME = "${['pr': 'StatusPR', 'release': 'Status'][env.BUILD_VARIANT]}"
     STATUS_ARTIFACT = "pkg/${utils.pkgFilename(ext: env.PACKAGE_TYPE, arch: 'arm64', version: env.VERSION, type: env.APP_TYPE)}"
-    STATUS_BINARY = "${WORKSPACE}/mobile/bin/android/qt6/Status.${env.PACKAGE_TYPE}"
+    STATUS_BINARY = "${WORKSPACE}/mobile/bin/android/qt6/${env.STATUS_ANDROID_APP_NAME}.${env.PACKAGE_TYPE}"
     NIM_SDS_SOURCE_DIR = "${env.WORKSPACE_TMP}/nim-sds"
   }
 
