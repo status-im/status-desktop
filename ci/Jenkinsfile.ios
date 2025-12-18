@@ -109,7 +109,7 @@ pipeline {
     stage('Build iOS App') {
       steps {
         script {
-          app.buildSignedIOS(target='mobile-build', verbose=params.VERBOSE)
+          app.buildSignedIOS(target='mobile-build', verbose='3')
         }
       }
     }
