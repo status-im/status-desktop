@@ -20,7 +20,7 @@ import shared.popups.send
 import shared.stores.send
 import shared.stores as SharedStores
 
-import AppLayouts.Browser.stores as BrowserStores
+import AppLayouts.stores.Browser as BrowserStores
 import AppLayouts.Browser.adaptors
 import AppLayouts.Wallet.services.dapps
 

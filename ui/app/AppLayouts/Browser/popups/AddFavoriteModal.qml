@@ -11,7 +11,7 @@ import shared.popups
 
 import utils
 
-import AppLayouts.Browser.stores as BrowserStores
+import AppLayouts.stores.Browser as BrowserStores
 
 // TODO: replace with StatusDialog
 ModalPopup {

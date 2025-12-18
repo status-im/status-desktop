@@ -51,7 +51,7 @@ import AppLayouts.Wallet.popups.dapps as DAppsPopups
 import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.stores as AppStores
 import AppLayouts.stores.Messaging as MessagingStores
-import AppLayouts.Browser.stores as BrowserStores
+import AppLayouts.stores.Browser as BrowserStores
 import AppLayouts.ActivityCenter
 import AppLayouts.ActivityCenter.popups
 
@@ -2089,13 +2089,11 @@ Item {
                             userUID: appMain.profileStore.pubKey
                             thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
                             navBar: appMain.navBar
-                            bookmarksStore: BrowserStores.BookmarksStore {}
-                            downloadsStore: BrowserStores.DownloadsStore {}
-                            browserRootStore: BrowserStores.BrowserRootStore {}
-                            browserWalletStore: BrowserStores.BrowserWalletStore {}
-                            browserActivityStore: BrowserStores.BrowserActivityStore {
-                                browserWalletStore: browserLayout.browserWalletStore
-                            }
+                            bookmarksStore: appMain.rootStore.bookmarksStore
+                            downloadsStore: appMain.rootStore.downloadsStore
+                            browserRootStore: appMain.rootStore.browserRootStore
+                            browserWalletStore: appMain.rootStore.browserWalletStore
+                            browserActivityStore: appMain.rootStore.browserActivityStore
                             currencyStore: appMain.currencyStore
                             networksStore: appMain.networksStore
                             connectorController: WalletStores.RootStore.dappsConnectorController
