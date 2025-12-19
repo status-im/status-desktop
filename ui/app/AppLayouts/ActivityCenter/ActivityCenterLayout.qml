@@ -250,6 +250,7 @@ StatusSectionLayout {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
             onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
+            onPopulateContactDetailsRequested: (contactId) => root.contactsStore.populateContactDetails(contactId)
         }
     }
     Component {
@@ -269,6 +270,7 @@ StatusSectionLayout {
             onCloseActivityCenter: d.callLaterMarkAsSeen()
             onJumpToMessageRequested: (messageId) => { root.store.messageStore.messageModule.jumpToMessage(messageId) }
             onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
+            onPopulateContactDetailsRequested: (contactId) => root.contactsStore.populateContactDetails(contactId)
         }
     }
     Component {
@@ -295,6 +297,7 @@ StatusSectionLayout {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
             onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
+            onPopulateContactDetailsRequested: (contactId) => root.contactsStore.populateContactDetails(contactId)
         }
     }
     Component {
@@ -316,6 +319,7 @@ StatusSectionLayout {
                                                            root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
             onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
+            onPopulateContactDetailsRequested: (contactId) => root.contactsStore.populateContactDetails(contactId)
         }
     }
     Component {
@@ -347,6 +351,7 @@ StatusSectionLayout {
                 }
             }
             onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
+            onPopulateContactDetailsRequested: (contactId) => root.contactsStore.populateContactDetails(contactId)
         }
     }
     Component {
@@ -428,6 +433,7 @@ StatusSectionLayout {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
             onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
+            onPopulateContactDetailsRequested: (contactId) => root.contactsStore.populateContactDetails(contactId)
         }
     }
 
@@ -589,6 +595,7 @@ StatusSectionLayout {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
             onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
+            onPopulateContactDetailsRequested: (contactId) => root.contactsStore.populateContactDetails(contactId)
         }
     }
 
