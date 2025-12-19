@@ -77,6 +77,27 @@ QtObject {
 
     property var activePopupComponents: []
 
+    property var sharedContactModelEntryLoader: Loader {
+        property string publicKey: ""
+
+        active: false
+
+        sourceComponent: ContactModelEntry {
+            publicKey: sharedContactModelEntryLoader.publicKey
+            contactsModel: root.allContactsModel
+            onPopulateContactDetailsRequested: {
+                root.contactsStore.populateContactDetails(sharedContactModelEntryLoader.publicKey)
+            }
+        }
+    }
+
+    function getContactModelEntry(pubkey) {
+        sharedContactModelEntryLoader.active = false
+        sharedContactModelEntryLoader.publicKey = pubkey
+        sharedContactModelEntryLoader.active = true
+        return sharedContactModelEntryLoader.item
+    }
+
     Component.onCompleted: {
         Global.openMarkAsIDVerifiedPopup.connect(openMarkAsIDVerifiedPopup)
         Global.openRemoveIDVerificationDialog.connect(openRemoveIDVerificationDialog)
@@ -175,33 +196,29 @@ QtObject {
     }
 
     function openNicknamePopup(publicKey: string, cb) {
-        const contactDetails = Utils.getContactDetailsAsJson(
-                                 publicKey, false, true, true)
-        const properties = { publicKey, contactDetails }
+        const contactEntry = getContactModelEntry(publicKey)
+        const properties = { publicKey, contactDetails: contactEntry.contactDetails }
 
         openPopup(nicknamePopupComponent, properties, cb)
     }
 
     function openMarkAsUntrustedPopup(publicKey: string) {
-        const contactDetails = Utils.getContactDetailsAsJson(
-                                 publicKey, false, true, true)
-        const properties = { publicKey, contactDetails }
+        const contactEntry = getContactModelEntry(publicKey)
+        const properties = { publicKey, contactDetails: contactEntry.contactDetails }
 
         openPopup(markAsUntrustedComponent, properties)
     }
 
     function openBlockContactPopup(publicKey: string) {
-        const contactDetails = Utils.getContactDetailsAsJson(
-                                 publicKey, false, true, true)
-        const properties = { publicKey, contactDetails }
+        const contactEntry = getContactModelEntry(publicKey)
+        const properties = { publicKey, contactDetails: contactEntry.contactDetails }
 
         openPopup(blockContactConfirmationComponent, properties)
     }
 
     function openUnblockContactPopup(publicKey: string) {
-        const contactDetails = Utils.getContactDetailsAsJson(
-                                 publicKey, false, true, true)
-        const properties = { publicKey, contactDetails }
+        const contactEntry = getContactModelEntry(publicKey)
+        const properties = { publicKey, contactDetails: contactEntry.contactDetails }
 
         openPopup(unblockContactConfirmationComponent, properties)
     }
@@ -224,17 +241,15 @@ QtObject {
     }
 
     function openMarkAsIDVerifiedPopup(publicKey, cb) {
-        const contactDetails = Utils.getContactDetailsAsJson(
-                                 publicKey, true, true, true)
-        const properties = { publicKey, contactDetails }
+        const contactEntry = getContactModelEntry(publicKey)
+        const properties = { publicKey, contactDetails: contactEntry.contactDetails }
 
         openPopup(markAsIDVerifiedPopupComponent, properties, cb)
     }
 
     function openRemoveIDVerificationDialog(publicKey, cb) {
-        const contactDetails = Utils.getContactDetailsAsJson(
-                                 publicKey, true, true, true)
-        const properties = { publicKey, contactDetails }
+        const contactEntry = getContactModelEntry(publicKey)
+        const properties = { publicKey, contactDetails: contactEntry.contactDetails }
 
         openPopup(removeIDVerificationPopupComponent, properties, cb)
     }
@@ -251,9 +266,8 @@ QtObject {
     }
 
     function openContactRequestPopup(publicKey, cb) {
-        const contactDetails = Utils.getContactDetailsAsJson(
-                                 publicKey, false, true, true)
-        const properties = { publicKey, contactDetails }
+        const contactEntry = getContactModelEntry(publicKey)
+        const properties = { publicKey, contactDetails: contactEntry.contactDetails }
 
         openPopup(sendContactRequestPopupComponent, properties, cb)
     }
@@ -266,9 +280,8 @@ QtObject {
                 return
             }
 
-            const contactDetails = Utils.getContactDetailsAsJson(
-                                     publicKey, false, true, true)
-            const properties = { publicKey, contactDetails, crDetails }
+            const contactEntry = getContactModelEntry(publicKey)
+            const properties = { publicKey, contactDetails: contactEntry.contactDetails, crDetails }
 
             openPopup(reviewContactRequestPopupComponent, properties, cb)
         } catch (e) {
@@ -333,9 +346,8 @@ QtObject {
     }
 
     function openRemoveContactConfirmationPopup(publicKey) {
-        const contactDetails = Utils.getContactDetailsAsJson(
-                                 publicKey, false, true, true)
-        const properties = { publicKey, contactDetails }
+        const contactEntry = getContactModelEntry(publicKey)
+        const properties = { publicKey, contactDetails: contactEntry.contactDetails }
 
         openPopup(removeContactConfirmationDialog, properties)
     }
@@ -590,16 +602,10 @@ QtObject {
                 property string publicKey
                 readonly property bool isCurrentUser: contactDetails.isCurrentUser
 
-                ContactModelEntry {
-                    id: contactModelEntry
-                    publicKey: profilePopup.publicKey
-                    contactsModel: root.allContactsModel
-                    onPopulateContactDetailsRequested: {
-                        root.contactsStore.populateContactDetails(profilePopup.publicKey)
-                    }
+                contactDetails: {
+                    const contactEntry = getContactModelEntry(profilePopup.publicKey)
+                    contactEntry.contactDetails
                 }
-
-                contactDetails: contactModelEntry.contactDetails
 
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
