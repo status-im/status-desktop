@@ -15897,13 +15897,6 @@ to load</source>
     </message>
 </context>
 <context>
-    <name>StatusActivityCenterButton</name>
-    <message>
-        <source>Notifications</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>StatusAddressOrEnsValidator</name>
     <message>
         <source>Please enter a valid address or ENS name.</source>

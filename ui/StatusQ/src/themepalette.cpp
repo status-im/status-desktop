@@ -163,7 +163,7 @@ std::unique_ptr<ThemePalette> createDarkThemePalette(QObject* parent)
     t->statusAppLayout.rightPanelBackgroundColor = t->baseColor3;
 
     // Status app nav bar
-    t->statusAppNavBar.backgroundColor = t->baseColor5;
+    t->statusAppNavBar.backgroundColor = StatusColors::darkDesktopBlue10; // TODO temp color
 
     // Status toast message
     t->statusToastMessage.backgroundColor = t->baseColor3;
@@ -359,7 +359,7 @@ std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
     t->statusAppLayout.rightPanelBackgroundColor = StatusColors::white;
 
     // Status app nav bar
-    t->statusAppNavBar.backgroundColor = t->baseColor2;
+    t->statusAppNavBar.backgroundColor = StatusColors::lightDesktopBlue10; // TODO temp color
 
     // Status toast message
     t->statusToastMessage.backgroundColor = StatusColors::white;

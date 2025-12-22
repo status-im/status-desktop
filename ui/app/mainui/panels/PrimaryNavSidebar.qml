@@ -91,11 +91,8 @@ Drawer {
         readonly property int windowWidth: root.parent?.Window?.width ?? Screen.width
         readonly property int windowHeight: root.parent?.Window?.height ?? Screen.height
 
-        readonly property color containerBgColor: {
-            !root.thirdpartyServicesEnabled ? root.Theme.palette.privacyColors.primary :
-                                              root.Theme.palette.isDark ? root.StatusColors.darkDesktopBlue10
-                                                                        : root.StatusColors.lightDesktopBlue10 // FIXME correct container bg color
-        }
+        readonly property color containerBgColor: root.thirdpartyServicesEnabled ? root.Theme.palette.statusAppNavBar.backgroundColor
+                                                                                 : root.Theme.palette.privacyColors.primary
         readonly property int containerBgRadius: root.Theme.padding // 16
 
         // models
@@ -299,7 +296,6 @@ Drawer {
         icon.name: model.icon
         icon.source: model.image
         text: model.icon.length > 0 ? "" : model.name
-        tooltipText: Utils.translatedSectionName(sectionType, model.name) // FIXME Utils.translatedSectionName to take model.name as fallback for community name
 
         hasNotification: model.hasNotification
         notificationsCount: model.notificationsCount

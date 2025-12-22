@@ -7,6 +7,8 @@ import StatusQ.Components
 import StatusQ.Components.private // for StatusNewItemGradient
 import StatusQ.Core.Theme
 
+import utils
+
 ToolButton {
     id: root
 
@@ -14,7 +16,7 @@ ToolButton {
     property int sectionType // cf Constants.appSection.*
     property bool hasNotification
     property int notificationsCount
-    property string tooltipText
+    property string tooltipText: Utils.translatedSectionName(sectionType)
     property bool showBadgeGradient
     property Component popupMenu
 
@@ -22,11 +24,13 @@ ToolButton {
     readonly property bool badgeVisible: identicon.badge.visible
 
     padding: Theme.halfPadding
-    opacity: /*down ? ThemeUtils.pressedOpacity :*/ enabled ? 1 : ThemeUtils.disabledOpacity // TODO pressed state ?
+    opacity: enabled ? 1 : ThemeUtils.disabledOpacity
     Behavior on opacity { NumberAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
 
     implicitWidth: 40
     implicitHeight: 40
+
+    focusPolicy: Utils.isMobile ? Qt.NoFocus : Qt.StrongFocus
 
     icon.color: {
         if (checked || down || highlighted)
@@ -38,6 +42,9 @@ ToolButton {
 
     icon.width: 24 // TODO scalable
     icon.height: 24
+
+    font.family: Fonts.baseFont.family
+    font.pixelSize: Theme.additionalTextSize
 
     background: Rectangle {
         color: {
@@ -67,14 +74,13 @@ ToolButton {
         asset.useAcronymForLetterIdenticon: false
         asset.color: root.icon.color
 
-        hoverEnabled: false
+        StatusNewItemGradient { id: newGradient }
 
         badge {
             width: root.notificationsCount ? badge.implicitWidth : Theme.padding - badge.border.width // bigger dot
             height: root.notificationsCount ? badge.implicitHeight : Theme.padding - badge.border.width
             border.width: 2
-            border.color: Theme.palette.isDark ? StatusColors.darkDesktopBlue10
-                                               : StatusColors.lightDesktopBlue10 // TODO follow container bg color
+            border.color: Theme.palette.statusAppNavBar.backgroundColor
             anchors.bottom: undefined // override StatusBadge
             anchors.bottomMargin: 0 // override StatusBadge
             anchors.right: identicon.right
@@ -87,8 +93,6 @@ ToolButton {
             gradient: root.showBadgeGradient ? newGradient : undefined // gradient has precedence over a simple color
         }
     }
-
-    StatusNewItemGradient { id: newGradient }
 
     StatusToolTip {
         id: statusTooltip
