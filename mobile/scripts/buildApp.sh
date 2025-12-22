@@ -168,7 +168,6 @@ else
   echo "Signing Configuration: ${SIGN_ARGS}"
   xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH" ${SIGN_ARGS} | xcbeautify
   # Compile the app
-  echo "Signing Configuration: ${SIGN_ARGS}"
   xcodebuild -configuration Release -target "$TARGET_NAME" install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CURRENT_PROJECT_VERSION=$BUILD_VERSION ${SIGN_ARGS} | xcbeautify
 
   if [[ ! -e "${BIN_DIR}/${TARGET_NAME}.app/Info.plist" ]]; then
