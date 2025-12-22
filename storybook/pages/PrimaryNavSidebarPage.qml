@@ -219,11 +219,11 @@ SplitView {
             showCreateCommunityBadge: ctrlShowCreateCommunityBadge.checked
             profileSectionHasNotification: ctrlSettingsHasNotification.checked
 
-            onItemActivated: function (sectionType, id) {
+            onItemActivated: function (sectionType, sectionId) {
                 logs.logEvent("onItemActivated", ["sectionType", "sectionId"], arguments)
-                sectionsModel.setActiveSection(id)
+                sectionsModel.setActiveSection(sectionId)
                 d.activeSectionType = sectionType
-                d.activeSectionId = id
+                d.activeSectionId = sectionId
             }
             onActivityCenterRequested: function (shouldShow) {
                 logs.logEvent("onActivityCenterRequested", ["shouldShow"], arguments)

@@ -46,8 +46,6 @@ SwipeView {
     implicitWidth: 822
     implicitHeight: 600
 
-    // handle: Item { }
-    property Item navBar: null
     /*!
         \qmlproperty Item StatusSectionLayout::leftPanel
         This property holds the left panel of the component.
@@ -168,11 +166,6 @@ SwipeView {
         }
         contentItem: RowLayout {
             spacing: 0
-            LayoutItemProxy {
-                Layout.fillHeight: true
-                target: root.navBar
-                visible: baseProxyPanel.index === 0
-            }
             LayoutItemProxy {
                 Layout.fillWidth: true
                 Layout.fillHeight: true

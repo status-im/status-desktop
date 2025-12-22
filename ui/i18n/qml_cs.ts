@@ -16009,13 +16009,6 @@ selhalo</translation>
     </message>
 </context>
 <context>
-    <name>StatusActivityCenterButton</name>
-    <message>
-        <source>Notifications</source>
-        <translation>Oznámení</translation>
-    </message>
-</context>
-<context>
     <name>StatusAddressOrEnsValidator</name>
     <message>
         <source>Please enter a valid address or ENS name.</source>

@@ -168,6 +168,7 @@ Control {
         anchors.topMargin: Theme.defaultSmallPadding
         spacing: 12
 
+        // TODO remove me, duplicate in PrimaryNavSidebar
         ProfileButton {
             objectName: "homeProfileButton"
             name: root.profileStore.name
