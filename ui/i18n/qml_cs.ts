@@ -6657,6 +6657,10 @@ Pamatujte si své heslo a s nikým ho nesdílejte.</translation>
         <source>Create permission</source>
         <translation>Vytvořit oprávnění</translation>
     </message>
+    <message>
+        <source>There was an error saving the permission: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>EditSlippagePanel</name>
