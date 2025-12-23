@@ -2638,7 +2638,9 @@ Item {
         sourceComponent: WalletPopups.AddEditSavedAddressPopup {
             store: WalletStores.RootStore
             sharedRootStore: appMain.sharedRootStore
+            contactsModel: appMain.contactsStore.contactsModel
 
+            onPopulateContactDetails: (publicKey) => appMain.contactsStore.populateContactDetails(publicKey)
             onClosed: {
                 addEditSavedAddress.close()
             }
