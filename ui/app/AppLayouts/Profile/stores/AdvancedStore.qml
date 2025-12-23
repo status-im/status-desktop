@@ -177,4 +177,11 @@ QtObject {
 
         localAppSettings.scrollDeceleration = value
     }
+
+    function refetchTxHistory() {
+        if(!root.walletModule)
+            return
+
+        root.walletModule.refetchTxHistory()
+    }
 }

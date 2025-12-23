@@ -274,7 +274,7 @@ QtObject:
         raise newException(Exception, "Error in response of getting supported tokens list")
 
       # Create a copy of the tokenResultStr to avoid exceptions in `decode`
-      # Workaround for https://github.com/status-im/status-desktop/issues/17398
+      # Workaround for https://github.com/status-im/status-app/issues/17398
       let tokenResultStr = $tokensResult
       let tokenList =  Json.decode(tokenResultStr, TokenListDto, allowUnknownFields = true)
 
@@ -463,7 +463,7 @@ QtObject:
 
   # TODO: needed in token permission right now, and activity controller which needs
   # to consider that token symbol may not be unique
-  # https://github.com/status-im/status-desktop/issues/13505
+  # https://github.com/status-im/status-app/issues/13505
   proc findTokenBySymbol*(self: Service, symbol: string): TokenBySymbolItem =
     for token in self.tokenBySymbolList:
       if token.symbol == symbol:
@@ -472,7 +472,7 @@ QtObject:
 
   # TODO: remove this call once the activty filter mechanism uses tokenKeys instead of the token
   # symbol as we may have two tokens with the same symbol in the future. Only tokensKey will be unqiue
-  # https://github.com/status-im/status-desktop/issues/13505
+  # https://github.com/status-im/status-app/issues/13505
   proc findTokenBySymbolAndChainId*(self: Service, symbol: string, chainId: int): TokenBySymbolItem =
     for token in self.tokenBySymbolList:
       if token.symbol == symbol:

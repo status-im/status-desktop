@@ -1366,6 +1366,18 @@
         <source>Change</source>
         <translation>Cambiar</translation>
     </message>
+    <message>
+        <source>Refetch transaction history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refetch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation type="unfinished">Listo</translation>
+    </message>
 </context>
 <context>
     <name>AirdropRecipientsSelector</name>
@@ -2478,6 +2490,10 @@ Para respaldar tu frase de recuperación, escríbela y guárdala de forma segura
         <source>Supported backup formats (%1)</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Choose a folder to store your backup files in.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BalanceExceeded</name>
@@ -2692,6 +2708,26 @@ Do you wish to override the security check and continue?</source>
     <message>
         <source>Settings</source>
         <translation>Ajustes</translation>
+    </message>
+    <message>
+        <source>Clear site data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use it to reset the current site if it doesn&apos;t load or work properly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clearing cache...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear cache</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6758,10 +6794,6 @@ Recuerda tu contraseña y no la compartas con nadie.</translation>
         <translation>¿Habilitar backup de mensajes en el dispositivo?</translation>
     </message>
     <message>
-        <source>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</source>
-        <translation>Los backups en el dispositivo son:&lt;br&gt;Automáticos: cada 30 minutos&lt;br&gt;Seguros: cifrados con tu clave privada del perfil&lt;br&gt;Privados: almacenados solo en tu dispositivo</translation>
-    </message>
-    <message>
         <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
         <translation>Los backups te permiten restaurar tus mensajes 1 a 1, grupales y de comunidad si necesitas reinstalar la app o cambiar de dispositivo. Puedes omitir este paso ahora y habilitarlo en cualquier momento en: &lt;i&gt;Configuración &gt; Respaldo en el dispositivo &gt; Datos de backup&lt;/i&gt;</translation>
     </message>
@@ -6772,6 +6804,22 @@ Recuerda tu contraseña y no la compartas con nadie.</translation>
     <message>
         <source>Enable</source>
         <translation>Habilitar</translation>
+    </message>
+    <message>
+        <source>Enable on-device backup?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On-device backups are:&lt;br&gt;&lt;b&gt;Automatic&lt;/b&gt; –  created every 30 minutes&lt;br&gt;&lt;b&gt;Secure&lt;/b&gt; – encrypted with your profile’s private key&lt;br&gt;&lt;b&gt;Private&lt;/b&gt; – stored only on your device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To enable backups, choose a folder to store your backup files under the &lt;b&gt;Backup location&lt;/b&gt; setting.&lt;br&gt;&lt;br&gt;You can also &lt;b&gt;optionally&lt;/b&gt; back up your &lt;b&gt;1-on-1, group, and community messages&lt;/b&gt; by turning on the &lt;b&gt;Backup your messages&lt;/b&gt; toggle under the &lt;b&gt;Backup data&lt;/b&gt; setting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Go to settings</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7834,6 +7882,56 @@ Por favor, agrégala e intenta de nuevo.</translation>
     </message>
 </context>
 <context>
+    <name>FollowingAddressMenu</name>
+    <message>
+        <source>Address copied</source>
+        <translation type="unfinished">Dirección copiada</translation>
+    </message>
+    <message>
+        <source>Copy address</source>
+        <translation type="unfinished">Copiar dirección</translation>
+    </message>
+    <message>
+        <source>Show address QR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View activity</source>
+        <translation type="unfinished">Ver actividad</translation>
+    </message>
+    <message>
+        <source>Already in saved addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to saved addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FollowingAddresses</name>
+    <message>
+        <source>Search for name, ENS or address</source>
+        <translation type="unfinished">Buscar por nombre, ENS o dirección</translation>
+    </message>
+    <message>
+        <source>Your search is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+        <translation type="unfinished">Tu búsqueda es demasiado genial (usa solo A-Z y 0-9, un solo espacio en blanco, guiones y guiones bajos)</translation>
+    </message>
+    <message>
+        <source>Your search contains invalid characters (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+        <translation type="unfinished">Tu búsqueda contiene caracteres inválidos (usa solo A-Z y 0-9, un solo espacio en blanco, guiones y guiones bajos)</translation>
+    </message>
+    <message>
+        <source>Your EFP onchain friends will appear here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No following addresses found. Check spelling or whether the address is correct.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GapComponent</name>
     <message>
         <source>Fetch messages</source>
@@ -8161,12 +8259,8 @@ Tarifa L2: %2</translation>
 <context>
     <name>HistoryBetaTag</name>
     <message>
-        <source>or</source>
-        <translation>o</translation>
-    </message>
-    <message>
-        <source>Activity is in beta. If transactions are missing, check %1.</source>
-        <translation>La actividad está en beta. Si faltan transacciones, consulta %1.</translation>
+        <source>Activity is in beta. For any issues, go to Settings → Advanced → Refetch transaction history.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10092,6 +10186,10 @@ acceso a tus fondos.</translation>
         <source>Saved addresses</source>
         <translation>Direcciones guardadas</translation>
     </message>
+    <message>
+        <source>EFP onchain friends</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LinkPreviewCard</name>
@@ -11333,10 +11431,6 @@ al cargar</translation>
 <context>
     <name>MessagingView</name>
     <message>
-        <source>Allow new contact requests</source>
-        <translation>Permitir nuevas solicitudes de contacto</translation>
-    </message>
-    <message>
         <source>Contacts, Requests, and Blocked Users</source>
         <translation>Contactos, solicitudes y usuarios bloqueados</translation>
     </message>
@@ -11363,6 +11457,10 @@ al cargar</translation>
     <message>
         <source>Never show previews</source>
         <translation>Nunca mostrar vistas previas</translation>
+    </message>
+    <message>
+        <source>Receive community messages &amp; requests from non-contacts</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -18576,6 +18674,21 @@ Si una transacción con un nonce más bajo está pendiente, las transacciones co
     <message>
         <source>%1 community assets are now visible</source>
         <translation>%1 activos de comunidad ahora son visibles</translation>
+    </message>
+</context>
+<context>
+    <name>WalletFollowingAddressesHeader</name>
+    <message>
+        <source>Add via EFP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EFP onchain friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last refreshed %1</source>
+        <translation type="unfinished">Última actualización %1</translation>
     </message>
 </context>
 <context>

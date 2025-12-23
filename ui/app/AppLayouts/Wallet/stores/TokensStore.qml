@@ -119,7 +119,7 @@ QtObject {
 
     // Property and methods below are used to apply advanced token management settings to the SendModal
 
-    // Temporarily disabled, refer to https://github.com/status-im/status-desktop/issues/15955 for details.
+    // Temporarily disabled, refer to https://github.com/status-im/status-app/issues/15955 for details.
     readonly property bool showCommunityAssetsInSend: true //root._allTokensModule.showCommunityAssetWhenSendingTokens
     readonly property bool displayAssetsBelowBalance: root._allTokensModule.displayAssetsBelowBalance
     readonly property bool autoRefreshTokensLists: root._allTokensModule.autoRefreshTokensLists

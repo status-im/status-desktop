@@ -121,7 +121,7 @@ Item {
                 anchors.leftMargin: 12
                 anchors.top: parent.top
                 anchors.topMargin: 12
-                //TODO TBD, https://github.com/status-im/status-desktop/issues/13782
+                //TODO TBD, https://github.com/status-im/status-app/issues/13782
                 visible: (model.userHas > 1)
 
                 background: Rectangle {

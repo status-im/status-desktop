@@ -481,7 +481,7 @@ QtObject {
         return address1.toUpperCase() === address2.toUpperCase()
     }
 
-    // TODO: https://github.com/status-im/status-desktop/issues/15329
+    // TODO: https://github.com/status-im/status-app/issues/15329
     // Get DApp data from the backend
     function getDappDetails(chainId, contractAddress) {
         switch (contractAddress) {

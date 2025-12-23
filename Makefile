@@ -725,6 +725,12 @@ ifdef LINUX_GPG_PRIVATE_KEY_FILE
 	scripts/sign-linux-file.sh $(STATUS_CLIENT_TARBALL)
 endif
 
+DMG_TOOL := node_modules/.bin/create-dmg
+
+$(DMG_TOOL):
+	echo -e "\033[92mInstalling:\033[39m create-dmg"
+	yarn install
+
 MACOS_OUTER_BUNDLE := tmp/macos/dist/Status.app
 MACOS_INNER_BUNDLE := $(MACOS_OUTER_BUNDLE)/Contents/Frameworks/QtWebEngineCore.framework/Versions/Current/Helpers/QtWebEngineProcess.app
 
@@ -732,7 +738,7 @@ STATUS_CLIENT_DMG ?= pkg/Status.dmg
 
 $(STATUS_CLIENT_DMG): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
 $(STATUS_CLIENT_DMG): ENTITLEMENTS ?= resources/Entitlements.plist
-$(STATUS_CLIENT_DMG): nim_status_client
+$(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	rm -rf tmp/macos pkg/*.dmg
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/MacOS
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/Resources
@@ -761,11 +767,16 @@ ifdef MACOS_CODESIGN_IDENT
 endif
 	echo -e $(BUILD_MSG) "dmg"
 	mkdir -p pkg
-	scripts/create-dmg/create-dmg \
-		--skip-jenkins \
-		pkg/Status.dmg \
-		$(MACOS_OUTER_BUNDLE) || true
+	# See: https://github.com/sindresorhus/create-dmg#dmg-icon
+	# GraphicsMagick must be installed for create-dmg to make the custom
+	# DMG icon based on app icon, but should otherwise work without it
+	npx create-dmg \
+		--identity="NOBODY" \
+		$(MACOS_OUTER_BUNDLE) \
+		pkg || true
 	# We ignore failure above create-dmg can't skip signing.
+	# To work around that a dummy identity - 'NOBODY' - is specified.
+	# This causes non-zero exit code despite DMG being created.
 	# It is just not signed, hence the next command should succeed.
 	mv "`ls pkg/*.dmg`" $(STATUS_CLIENT_DMG)
 

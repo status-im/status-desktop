@@ -203,7 +203,7 @@ SplitView {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     textFormat: Text.MarkdownText
-                    text: "Please, read our [contributing guide](https://github.com/status-im/status-desktop/blob/master/ui/StatusQ/src/contributing.md#StatusScrollView) (or checkout a [presenation](https://docs.google.com/presentation/d/1ZZeg9j2fZMV-iHreu_Wsl1u6D9POH7SlUO78ZXNj-AI)) about using `StatusScrollView`"
+                    text: "Please, read our [contributing guide](https://github.com/status-im/status-app/blob/master/ui/StatusQ/src/contributing.md#StatusScrollView) (or checkout a [presenation](https://docs.google.com/presentation/d/1ZZeg9j2fZMV-iHreu_Wsl1u6D9POH7SlUO78ZXNj-AI)) about using `StatusScrollView`"
                     onLinkActivated: (link) => {
                         Qt.openUrlExternally(link)
                     }

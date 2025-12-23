@@ -595,6 +595,9 @@ QtObject:
   proc getLocalBackupChosenPath*(self: LocalAccountSensitiveSettings): string {.slot.} =
     let setting = self.getLocalBackupChosenPathSetting()
     if setting == "":
+      when defined(android):
+        # Return an empty string to make it clear to users that without permissisons we cannot access any path
+        return ""
       return DEFAULT_BACKUP_DIR
 
     return setting

@@ -260,7 +260,7 @@ Control {
                 }
 
                 sorters: [
-                    // FIXME add sort token-relevant accounts first; https://github.com/status-im/status-desktop/issues/14192
+                    // FIXME add sort token-relevant accounts first; https://github.com/status-im/status-app/issues/14192
                     RoleSorter {
                         roleName: "tokenCount"
                         sortOrder: Qt.DescendingOrder

@@ -97,7 +97,7 @@ method getModuleAsVariant*(self: Module): QVariant =
 
 proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto] = @[]): seq[Item] =
   for message in messages:
-    # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
+    # https://github.com/status-im/status-app/issues/7632 will introduce deleteFroMe feature.
     # Now we just skip deleted messages
     if message.deletedForMe:
       continue

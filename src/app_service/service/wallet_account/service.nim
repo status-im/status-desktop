@@ -22,6 +22,7 @@ import backend/backend as backend
 import backend/network as status_go_network
 import backend/eth as status_go_eth
 import backend/collectibles
+import backend/wallet as status_go_wallet
 import constants as main_constants
 
 
@@ -102,6 +103,12 @@ QtObject:
     except Exception as e:
       error "error: ", procName="isChecksumValidForAddress", errName=e.name, errDesription=e.msg
 
+  proc refetchTxHistory*(self: Service) =
+    try:
+      discard status_go_wallet.refetchTxHistory()
+    except Exception as e:
+      let errDescription = e.msg
+      error "error: ", errDescription
 
   include service_account
   include service_token

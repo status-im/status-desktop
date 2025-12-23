@@ -3,9 +3,10 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import StatusQ
-import StatusQ.Core
 import StatusQ.Controls
+import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Popups.Dialog
 
 import utils
@@ -132,7 +133,13 @@ SettingsContentBase {
             Layout.fillWidth: true
             Layout.leftMargin: Theme.padding
             wrapMode: Text.Wrap
-            text: qsTr("Choose a folder to store your backup files or use the default one.")
+            text: {
+                if (SQUtils.Utils.isAndroid) {
+                    // We cannot use arbitrary paths on Android without requesting storage permissions
+                    return qsTr("Choose a folder to store your backup files in.")
+                }
+                return qsTr("Choose a folder to store your backup files or use the default one.")
+            }
             color: Theme.palette.baseColor1
         }
 

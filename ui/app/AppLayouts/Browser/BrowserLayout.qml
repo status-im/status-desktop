@@ -96,6 +96,12 @@ StatusSectionLayout {
             }
             return ""
         }
+
+        onCacheClearCompleted: {
+            if (_internal.currentWebView) {
+                _internal.currentWebView.reload()
+            }
+        }
     }
 
     BCBrowserDappsProvider {
@@ -381,6 +387,7 @@ StatusSectionLayout {
 
             incognitoMode: _internal.currentWebView && _internal.currentWebView.profile === connectorBridge.otrProfile
             zoomFactor: _internal.currentWebView ? _internal.currentWebView.zoomFactor : 1
+            clearingCache: connectorBridge.clearingCache
             onAddNewTab: _internal.addNewTab()
             onAddNewDownloadTab: _internal.addNewDownloadTab()
             onGoIncognito: function (checked) {
@@ -416,6 +423,14 @@ StatusSectionLayout {
             }
             onLaunchBrowserSettings: {
                 Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.browserSettings);
+            }
+            onClearSiteData: {
+                connectorBridge.clearSiteDataAndReload()
+            }
+            onClearCache: {
+                if (_internal.currentWebView) {
+                    connectorBridge.clearCache(_internal.currentWebView.profile)
+                }
             }
         }
         Component  {
@@ -531,6 +546,7 @@ StatusSectionLayout {
             addFavModal: addFavoriteModal
             downloadsMenu: downloadMenu
             enableJsLogs: root.isDebugEnabled
+            navigationBlocked: connectorBridge.clearingCache
 
             determineRealURLFn: function(url) {
                 return _internal.determineRealURL(url)

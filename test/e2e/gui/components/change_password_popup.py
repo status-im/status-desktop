@@ -20,7 +20,7 @@ class ChangePasswordPopup(QObject):
         the process of re-hashing DB initiated. Taking into account the user is new , so DB is relatively small
         I assume, 30 seconds should be enough to finish re-hashing and show the Restart button
         This time is not really predictable, especially for huge DBs.
-        In case it does not please check https://github.com/status-im/status-desktop/issues/13013 for context
+        In case it does not please check https://github.com/status-im/status-app/issues/13013 for context
         """
         self.re_encrypt_data_restart_button.click()
         assert driver.waitForObject(self.re_encryption_complete_element.real_name, 30000), \

@@ -8,7 +8,7 @@ import StatusQ.Controls
 StatusInput {
     id: root
 
-    // TODO: Use https://github.com/status-im/status-desktop/issues/6136
+    // TODO: Use https://github.com/status-im/status-app/issues/6136
 
     enum Mode {
         WriteMode,

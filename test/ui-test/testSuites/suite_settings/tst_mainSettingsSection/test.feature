@@ -50,7 +50,7 @@ Feature: Status Desktop Main Settings Section
     	Then the user lands on the signed in app
     	Then the user status is automatic
 
-	# https://github.com/status-im/status-desktop/issues/10287
+	# https://github.com/status-im/status-app/issues/10287
 	@mayfail
 	Scenario: The user can change the password and login with new password
     	When the user changes the password from TesTEr16843/!@00 to NewPassword@12345

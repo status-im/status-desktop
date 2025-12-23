@@ -1,4 +1,4 @@
-# Mobile Build FURPS ([#18082](https://github.com/status-im/status-desktop/issues/18082))
+# Mobile Build FURPS ([#18082](https://github.com/status-im/status-app/issues/18082))
 
 ## Functionality
 - Full feature parity with tablet builds expected

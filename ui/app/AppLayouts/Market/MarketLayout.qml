@@ -28,6 +28,8 @@ StatusSectionLayout {
     required property var fnFormatCurrencyAmount
     /** required property holds the current page set from the backend **/
     required property int currentPage
+    /** property to enable/disable swap button **/
+    property bool swapEnabled: true
 
     /** signal to request the launch of Swap Modal **/
     signal requestLaunchSwap()
@@ -68,6 +70,7 @@ StatusSectionLayout {
             Item { Layout.fillWidth: true }
             StatusButton {
                 objectName: "swapButton"
+                visible: root.swapEnabled
                 text: qsTr("Swap")
                 icon.name: "swap"
                 type: StatusBaseButton.Type.Primary

@@ -223,8 +223,8 @@ method updateMembersList*(self: Module, membersToReset: seq[ChatMember] = @[]) =
         members = myCommunity.members
       else:
         # TODO: when a new channel is added, chat may arrive earlier and we have no up to date community yet
-        # see log here: https://github.com/status-im/status-desktop/issues/14442#issuecomment-2120756598
-        # should be resolved in https://github.com/status-im/status-desktop/issues/11694
+        # see log here: https://github.com/status-im/status-app/issues/14442#issuecomment-2120756598
+        # should be resolved in https://github.com/status-im/status-app/issues/11694
         let myChatId = self.controller.getMyChatId()
         let chat = myCommunity.getCommunityChat(myChatId)
         if not chat.tokenGated:

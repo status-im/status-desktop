@@ -184,7 +184,7 @@ Item {
 
                 spacing: 8
                 StatusListItem {
-                    // Temporarily disabled, refer to https://github.com/status-im/status-desktop/issues/15955 for details.
+                    // Temporarily disabled, refer to https://github.com/status-im/status-app/issues/15955 for details.
                     visible: false
 
                     Layout.fillWidth: true

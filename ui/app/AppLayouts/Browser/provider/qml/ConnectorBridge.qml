@@ -20,6 +20,9 @@ QtObject {
     required property var connectorController
     property string httpUserAgent: ""          // Custom user agent for web profiles
 
+    property bool clearingCache: false
+    signal cacheClearCompleted()
+
     readonly property alias dappUrl: connectorManager.dappUrl
     readonly property alias dappOrigin: connectorManager.dappOrigin
     readonly property alias dappName: connectorManager.dappName
@@ -54,8 +57,54 @@ QtObject {
         onRequestInternal: (args) => connectorManager.request(args)
     }
 
+    readonly property SiteUtilsAdapter siteUtilsAdapter: SiteUtilsAdapter {
+        id: siteUtils
+        objectName: "siteUtils"
+        WebChannel.id: "siteUtils"
+    }
+
+    function clearSiteDataAndReload() {
+        siteUtilsAdapter.clearSiteDataAndReload()
+    }
+
+    function clearCache(profile) {
+        if (clearingCache) {
+            console.warn("[ConnectorBridge] Cache clearing already in progress")
+            return
+        }
+
+        clearingCache = true
+        profile.clearHttpCache()
+        _cacheClearFallbackTimer.start()
+    }
+
+    function clearCurrentProfileCache() {
+        clearCache(defaultProfile)
+    }
+
+    function _onCacheClearCompleted() {
+        if (!clearingCache) return  // Already completed via fallback
+        _cacheClearFallbackTimer.stop()
+        clearingCache = false
+        console.log("[ConnectorBridge] Cache clear completed (via signal)")
+        cacheClearCompleted()
+    }
+
+    // Fallback timer in case clearHttpCacheCompleted signal doesn't fire
+    readonly property Timer _cacheClearFallbackTimer: Timer {
+        interval: 1000
+        repeat: false
+        onTriggered: {
+            if (!root.clearingCache) return  // Already completed via signal
+            root.clearingCache = false
+            console.log("[ConnectorBridge] Cache clear completed (via fallback timer)")
+            root.cacheClearCompleted()
+        }
+    }
+
     readonly property var _scripts: [
         createScript("qwebchannel.js", true),
+        createScript("site_utils.js", true),
         createScript("ethereum_wrapper.js", true),
         createScript("eip6963_announcer.js", false), // Only top-level window (EIP-6963 spec)
         createScript("ethereum_injector.js", true)
@@ -66,6 +115,7 @@ QtObject {
         offTheRecord: false
         httpUserAgent: root.httpUserAgent
         userScripts.collection: root._scripts
+        onClearHttpCacheCompleted: root._onCacheClearCompleted()
     }
 
     readonly property WebEngineProfile otrProfile: WebEngineProfile {
@@ -74,10 +124,11 @@ QtObject {
         persistentCookiesPolicy: WebEngineProfile.NoPersistentCookies
         httpUserAgent: root.httpUserAgent
         userScripts.collection: root._scripts
+        onClearHttpCacheCompleted: root._onCacheClearCompleted()
     }
 
     readonly property WebChannel channel: WebChannel {
-        registeredObjects: [eip1193ProviderAdapter]
+        registeredObjects: [eip1193ProviderAdapter, siteUtilsAdapter]
     }
 
     function hasWalletConnected(hostname, address) {

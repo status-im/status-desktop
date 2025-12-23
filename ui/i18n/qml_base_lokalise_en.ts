@@ -1673,6 +1673,21 @@
       <comment>AdvancedView</comment>
       <translation>Change</translation>
     </message>
+    <message>
+      <source>Refetch transaction history</source>
+      <comment>AdvancedView</comment>
+      <translation>Refetch transaction history</translation>
+    </message>
+    <message>
+      <source>Refetch</source>
+      <comment>AdvancedView</comment>
+      <translation>Refetch</translation>
+    </message>
+    <message>
+      <source>Done</source>
+      <comment>AdvancedView</comment>
+      <translation>Done</translation>
+    </message>
   </context>
   <context>
     <name>AirdropRecipientsSelector</name>
@@ -3035,6 +3050,11 @@
       <comment>BackupView</comment>
       <translation>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored &lt;b&gt;only&lt;/b&gt; on your device).</translation>
     </message>
+    <message>
+      <source>Choose a folder to store your backup files in.</source>
+      <comment>BackupView</comment>
+      <translation>Choose a folder to store your backup files in.</translation>
+    </message>
   </context>
   <context>
     <name>BalanceExceeded</name>
@@ -3292,6 +3312,31 @@
       <source>Zoom</source>
       <comment>BrowserSettingsMenu</comment>
       <translation>Zoom</translation>
+    </message>
+    <message>
+      <source>Clear site data</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clear site data</translation>
+    </message>
+    <message>
+      <source>Use it to reset the current site if it doesn&#39;t load or work properly.</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Use it to reset the current site if it doesn&#39;t load or work properly.</translation>
+    </message>
+    <message>
+      <source>Clearing cache...</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clearing cache...</translation>
+    </message>
+    <message>
+      <source>Clear cache</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clear cache</translation>
+    </message>
+    <message>
+      <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</translation>
     </message>
   </context>
   <context>
@@ -8246,14 +8291,29 @@
       <translation>Enable on-device message backup?</translation>
     </message>
     <message>
-      <source>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</source>
-      <comment>EnableMessageBackupPopup</comment>
-      <translation>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</translation>
-    </message>
-    <message>
       <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
       <comment>EnableMessageBackupPopup</comment>
       <translation>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</translation>
+    </message>
+    <message>
+      <source>Enable on-device backup?</source>
+      <comment>EnableMessageBackupPopup</comment>
+      <translation>Enable on-device backup?</translation>
+    </message>
+    <message>
+      <source>On-device backups are:&lt;br&gt;&lt;b&gt;Automatic&lt;/b&gt; –  created every 30 minutes&lt;br&gt;&lt;b&gt;Secure&lt;/b&gt; – encrypted with your profile’s private key&lt;br&gt;&lt;b&gt;Private&lt;/b&gt; – stored only on your device</source>
+      <comment>EnableMessageBackupPopup</comment>
+      <translation>On-device backups are:&lt;br&gt;&lt;b&gt;Automatic&lt;/b&gt; –  created every 30 minutes&lt;br&gt;&lt;b&gt;Secure&lt;/b&gt; – encrypted with your profile’s private key&lt;br&gt;&lt;b&gt;Private&lt;/b&gt; – stored only on your device</translation>
+    </message>
+    <message>
+      <source>To enable backups, choose a folder to store your backup files under the &lt;b&gt;Backup location&lt;/b&gt; setting.&lt;br&gt;&lt;br&gt;You can also &lt;b&gt;optionally&lt;/b&gt; back up your &lt;b&gt;1-on-1, group, and community messages&lt;/b&gt; by turning on the &lt;b&gt;Backup your messages&lt;/b&gt; toggle under the &lt;b&gt;Backup data&lt;/b&gt; setting.</source>
+      <comment>EnableMessageBackupPopup</comment>
+      <translation>To enable backups, choose a folder to store your backup files under the &lt;b&gt;Backup location&lt;/b&gt; setting.&lt;br&gt;&lt;br&gt;You can also &lt;b&gt;optionally&lt;/b&gt; back up your &lt;b&gt;1-on-1, group, and community messages&lt;/b&gt; by turning on the &lt;b&gt;Backup your messages&lt;/b&gt; toggle under the &lt;b&gt;Backup data&lt;/b&gt; setting.</translation>
+    </message>
+    <message>
+      <source>Go to settings</source>
+      <comment>EnableMessageBackupPopup</comment>
+      <translation>Go to settings</translation>
     </message>
   </context>
   <context>
@@ -9549,6 +9609,67 @@
     </message>
   </context>
   <context>
+    <name>FollowingAddressMenu</name>
+    <message>
+      <source>Address copied</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Address copied</translation>
+    </message>
+    <message>
+      <source>Copy address</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Copy address</translation>
+    </message>
+    <message>
+      <source>Show address QR</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Show address QR</translation>
+    </message>
+    <message>
+      <source>View activity</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>View activity</translation>
+    </message>
+    <message>
+      <source>Already in saved addresses</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Already in saved addresses</translation>
+    </message>
+    <message>
+      <source>Add to saved addresses</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Add to saved addresses</translation>
+    </message>
+  </context>
+  <context>
+    <name>FollowingAddresses</name>
+    <message>
+      <source>Search for name, ENS or address</source>
+      <comment>FollowingAddresses</comment>
+      <translation>Search for name, ENS or address</translation>
+    </message>
+    <message>
+      <source>Your search is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+      <comment>FollowingAddresses</comment>
+      <translation>Your search is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)</translation>
+    </message>
+    <message>
+      <source>Your search contains invalid characters (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+      <comment>FollowingAddresses</comment>
+      <translation>Your search contains invalid characters (use A-Z and 0-9, single whitespace, hyphens and underscores only)</translation>
+    </message>
+    <message>
+      <source>Your EFP onchain friends will appear here</source>
+      <comment>FollowingAddresses</comment>
+      <translation>Your EFP onchain friends will appear here</translation>
+    </message>
+    <message>
+      <source>No following addresses found. Check spelling or whether the address is correct.</source>
+      <comment>FollowingAddresses</comment>
+      <translation>No following addresses found. Check spelling or whether the address is correct.</translation>
+    </message>
+  </context>
+  <context>
     <name>GapComponent</name>
     <message>
       <source>Fetch messages</source>
@@ -9948,14 +10069,9 @@
   <context>
     <name>HistoryBetaTag</name>
     <message>
-      <source>or</source>
+      <source>Activity is in beta. For any issues, go to Settings → Advanced → Refetch transaction history.</source>
       <comment>HistoryBetaTag</comment>
-      <translation>or</translation>
-    </message>
-    <message>
-      <source>Activity is in beta. If transactions are missing, check %1.</source>
-      <comment>HistoryBetaTag</comment>
-      <translation>Activity is in beta. If transactions are missing, check %1.</translation>
+      <translation>Activity is in beta. For any issues, go to Settings → Advanced → Refetch transaction history.</translation>
     </message>
   </context>
   <context>
@@ -12281,6 +12397,11 @@
       <comment>LeftTabView</comment>
       <translation>Saved addresses</translation>
     </message>
+    <message>
+      <source>EFP onchain friends</source>
+      <comment>LeftTabView</comment>
+      <translation>EFP onchain friends</translation>
+    </message>
   </context>
   <context>
     <name>LinkPreviewCard</name>
@@ -13776,11 +13897,6 @@
   <context>
     <name>MessagingView</name>
     <message>
-      <source>Allow new contact requests</source>
-      <comment>MessagingView</comment>
-      <translation>Allow new contact requests</translation>
-    </message>
-    <message>
       <source>Contacts, Requests, and Blocked Users</source>
       <comment>MessagingView</comment>
       <translation>Contacts, Requests, and Blocked Users</translation>
@@ -13814,6 +13930,11 @@
       <source>Never show previews</source>
       <comment>MessagingView</comment>
       <translation>Never show previews</translation>
+    </message>
+    <message>
+      <source>Receive community messages &amp; requests from non-contacts</source>
+      <comment>MessagingView</comment>
+      <translation>Receive community messages &amp; requests from non-contacts</translation>
     </message>
   </context>
   <context>
@@ -22545,6 +22666,24 @@
       <source>%1 community assets are now visible</source>
       <comment>WalletAssetsStore</comment>
       <translation>%1 community assets are now visible</translation>
+    </message>
+  </context>
+  <context>
+    <name>WalletFollowingAddressesHeader</name>
+    <message>
+      <source>Add via EFP</source>
+      <comment>WalletFollowingAddressesHeader</comment>
+      <translation>Add via EFP</translation>
+    </message>
+    <message>
+      <source>EFP onchain friends</source>
+      <comment>WalletFollowingAddressesHeader</comment>
+      <translation>EFP onchain friends</translation>
+    </message>
+    <message>
+      <source>Last refreshed %1</source>
+      <comment>WalletFollowingAddressesHeader</comment>
+      <translation>Last refreshed %1</translation>
     </message>
   </context>
   <context>

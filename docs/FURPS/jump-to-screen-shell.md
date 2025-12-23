@@ -1,4 +1,4 @@
-# Jump to screen (Home Page) FURPS ([#17971](https://github.com/status-im/status-desktop/issues/17971))
+# Jump to screen (Home Page) FURPS ([#17971](https://github.com/status-im/status-app/issues/17971))
 
 ## Functionality
 - Support navigation to communities, chats, accounts, or dApps through a unified launcher interface.

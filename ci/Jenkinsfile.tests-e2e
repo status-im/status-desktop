@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.30'
+library 'status-jenkins-lib@v1.9.31'
 
 pipeline {
   agent {
@@ -256,7 +256,7 @@ pipeline {
 def setNewBuildName() {
   if (currentBuild.upstreamBuilds) {
     def parent = utils.parentOrCurrentBuild()
-    currentBuild.displayName = parent.getFullDisplayName().minus('status-desktop » ')
+    currentBuild.displayName = parent.getFullDisplayName().minus('status-app » ')
   }
 }
 
@@ -283,7 +283,7 @@ def updateGitHubStatus() {
     github.statusUpdate(
       context: 'jenkins/prs/tests/e2e-new',
       commit: jenkins.getJobCommitByPath(params.BUILD_SOURCE),
-      repo_url: 'https://github.com/status-im/status-desktop'
+      repo_url: 'https://github.com/status-im/status-app'
     )
   }
 }
@@ -299,7 +299,7 @@ def getDefaultBuildSource() {
 }
 
 def getDefaultTestScopeFlag() {
-  if (JOB_NAME == "status-desktop/systems/linux/x86_64/tests-e2e") {
+  if (JOB_NAME == "status-app/systems/linux/x86_64/tests-e2e") {
     return ''
   } else {
     return '-m=critical'

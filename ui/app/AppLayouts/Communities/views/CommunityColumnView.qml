@@ -137,7 +137,7 @@ Item {
             onTriggered: Global.openPopup(createChannelPopup)
         }
 
-        // hidden as part of https://github.com/status-im/status-desktop/issues/17726
+        // hidden as part of https://github.com/status-im/status-app/issues/17726
         // StatusAction {
         //     objectName: "importCommunityChannelBtn"
         //     text: qsTr("Create channel via Discord import")
@@ -231,7 +231,7 @@ Item {
                     onTriggered: Global.openPopup(createChannelPopup)
                 }
 
-                // hidden as part of https://github.com/status-im/status-desktop/issues/17726
+                // hidden as part of https://github.com/status-im/status-app/issues/17726
                 // StatusAction {
                 //     objectName: "importCommunityChannelBtn"
                 //     text: qsTr("Create channel via Discord import")

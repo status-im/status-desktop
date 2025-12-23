@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-library 'status-jenkins-lib@v1.9.30'
+library 'status-jenkins-lib@v1.9.31'
 
 /* Object to store public URLs for description. */
 urls = [:]
@@ -28,7 +28,7 @@ pipeline {
       artifactNumToKeepStr: '10',
     ))
     /* Allows combined build to copy */
-    copyArtifactPermission('/status-desktop/*')
+    copyArtifactPermission('/status-app/*')
   }
 
   parameters {
@@ -53,7 +53,7 @@ pipeline {
               steps {
                 script {
                   linux_x86_64 = getArtifacts(
-                    'Linux', jenkins.Build('status-desktop/systems/linux/x86_64/package')
+                    'Linux', jenkins.Build('status-app/systems/linux/x86_64/package')
                   )
                 }
               }
@@ -62,7 +62,7 @@ pipeline {
               steps {
                 script {
                   linux_e2e = build(
-                    job: 'status-desktop/systems/linux/x86_64/tests-e2e',
+                    job: 'status-app/systems/linux/x86_64/tests-e2e',
                     parameters: jenkins.mapToParams([
                       BUILD_SOURCE:       linux_x86_64.fullProjectName,
                       TESTRAIL_RUN_NAME:  utils.pkgFilename(),
@@ -81,7 +81,7 @@ pipeline {
               steps {
                 script {
                   windows_x86_64 = getArtifacts(
-                    'Windows', jenkins.Build('status-desktop/systems/windows/x86_64/package')
+                    'Windows', jenkins.Build('status-app/systems/windows/x86_64/package')
                   )
                 }
               }
@@ -95,7 +95,7 @@ pipeline {
               steps {
                 script {
                   windows_e2e = build(
-                    job: 'status-desktop/systems/windows/x86_64/tests-e2e',
+                    job: 'status-app/systems/windows/x86_64/tests-e2e',
                     parameters: jenkins.mapToParams([
                       BUILD_SOURCE:       windows_x86_64.fullProjectName,
                       TESTRAIL_RUN_NAME:  utils.pkgFilename(),
@@ -110,7 +110,7 @@ pipeline {
         }
         stage('MacOS/aarch64') { steps { script {
           macos_aarch64 = getArtifacts(
-            'MacOS/aarch64', jenkins.Build('status-desktop/systems/macos/aarch64/package')
+            'MacOS/aarch64', jenkins.Build('status-app/systems/macos/aarch64/package')
           )
         } } }
       }
@@ -118,7 +118,7 @@ pipeline {
     stage('Publish') {
       when { expression { params.PUBLISH } }
       steps { script {
-        github.publishReleaseFiles(repo: 'status-desktop');
+        github.publishReleaseFiles(repo: 'status-app');
       } }
     }
   }
@@ -151,7 +151,7 @@ pipeline {
  * - A user explicitly specified a value
  * Since release builds create and re-create GitHub drafts every time. */
 def Boolean getPublishDefault(Boolean previousValue) {
-  if (env.JOB_NAME.startsWith('status-desktop/release')) { return true }
+  if (env.JOB_NAME.startsWith('status-app/release')) { return true }
   if (previousValue != null) { return previousValue }
   return false
 }

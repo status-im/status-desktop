@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.30'
+library 'status-jenkins-lib@v1.9.31'
 
 pipeline {
 
@@ -275,7 +275,7 @@ def updateGitHubStatus() {
     github.statusUpdate(
       context: 'jenkins/prs/tests/e2e-new.windows',
       commit: jenkins.getJobCommitByPath(params.BUILD_SOURCE),
-      repo_url: 'https://github.com/status-im/status-desktop'
+      repo_url: 'https://github.com/status-im/status-app'
     )
   }
 }
@@ -291,7 +291,7 @@ def getDefaultBuildSource() {
 }
 
 def getDefaultTestScopeFlag() {
-  if (JOB_NAME == "status-desktop/systems/windows/x86_64/tests-e2e") {
+  if (JOB_NAME == "status-app/systems/windows/x86_64/tests-e2e") {
     return ''
   } else {
     return '-m=critical'

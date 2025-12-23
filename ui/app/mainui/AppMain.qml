@@ -1792,6 +1792,7 @@ Item {
                             showEnabledSectionsOnly: true
                             marketEnabled: appMain.featureFlagsStore.marketEnabled
                             browserEnabled: d.isBrowserEnabled
+                            showDapps: false // temp fix for https://github.com/status-im/status-app/issues/19580
 
                             syncingBadgeCount: appMain.devicesStore.devicesModel.count - appMain.devicesStore.devicesModel.pairedCount
                             messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
@@ -2235,6 +2236,7 @@ Item {
                             tokensModel: appMain.marketStore.marketLeaderboardModel
                             totalTokensCount: appMain.marketStore.totalLeaderboardCount
                             loading: appMain.marketStore.marketLeaderboardLoading
+                            swapEnabled: featureFlagsStore.swapEnabled
                             currencySymbol: {
                                 const symbol = SQUtils.ModelUtils.getByKey(
                                                  appMain.currencyStore.currenciesModel,

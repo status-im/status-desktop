@@ -1,4 +1,4 @@
-# UI Modular Architecture ([#17872](https://github.com/status-im/status-desktop/issues/17872))
+# UI Modular Architecture ([#17872](https://github.com/status-im/status-app/issues/17872))
 
 ## Functionality
 - Establish a clean separation between UI and backend through a layered architecture (Services → Modules → Stores → Adaptors → UI Components).

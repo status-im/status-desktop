@@ -152,7 +152,7 @@ ColumnLayout {
 
     // TODO: Extract this to a component.
     //       Also used in `PasswordView` and several other files.
-    //       https://github.com/status-im/status-desktop/issues/6136
+    //       https://github.com/status-im/status-app/issues/6136
 
     StyledText {
         id: inputLabel

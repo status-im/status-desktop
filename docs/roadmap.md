@@ -17,27 +17,27 @@
 
 ### 2.35
 
-Release Epic: https://github.com/status-im/status-desktop/issues/17966
+Release Epic: https://github.com/status-im/status-app/issues/17966
 
 #### Features
 
-- [QT6 migration](https://github.com/status-im/status-desktop/issues/17622)
+- [QT6 migration](https://github.com/status-im/status-app/issues/17622)
   - No provided FURPS at the moment
     - This is about maintaing the same level of quality as with QT5 but with QT6 instead.
   - Done ✅ 🟩🟩🟩🟩🟩 100%
 - [Tablet Build](https://github.com/status-im/status-desktop/issues/17941)
   - [FURPS](/docs/FURPS/tablet-build.md)
   - Done ✅ 🟩🟩🟩🟩🟩 100%
-- [Jump to screen (Shell)](https://github.com/status-im/status-desktop/issues/17971)
+- [Jump to screen (Shell)](https://github.com/status-im/status-app/issues/17971)
   - [FURPS](/docs/FURPS/jump-to-screen-shell.md)
   - Done ✅ 🟩🟩🟩🟩🟩 100%
-- [Backup user data locally](https://github.com/status-im/status-desktop/issues/18106)
+- [Backup user data locally](https://github.com/status-im/status-app/issues/18106)
   - [FURPS](/docs/FURPS/local-user-backups.md)
   - Done ✅ 🟩🟩🟩🟩🟩 100%
 
 ### 2.36
 
-Release Epic: https://github.com/status-im/status-desktop/issues/18029
+Release Epic: https://github.com/status-im/status-app/issues/18029
 
 Estimated release: End of November
 
@@ -55,13 +55,13 @@ Estimated release: End of November
   - In Progress ⏳ 🟩🟩🟨⬜⬜ 55%
 - [Local Backup finishing touches](https://github.com/status-im/status-desktop/issues/18583)
   - Done ✅ 🟩🟩🟩🟩🟩 100%
-- [Opt-in Messages local backup](https://github.com/status-im/status-desktop/issues/18527)
+- [Opt-in Messages local backup](https://github.com/status-im/status-app/issues/18527)
   - Done ✅ 🟩🟩🟩🟩🟩 100%
-- [Opt-in Messages Sync during local pairing](https://github.com/status-im/status-desktop/issues/18892)
+- [Opt-in Messages Sync during local pairing](https://github.com/status-im/status-app/issues/18892)
   - Done ✅ 🟩🟩🟩🟩🟩 100%
-- [External Activity fetching](https://github.com/status-im/status-desktop/issues/17188)
+- [External Activity fetching](https://github.com/status-im/status-app/issues/17188)
   - Done ✅ 🟩🟩🟩🟩🟩 100%
-- [Translation initiative](https://github.com/status-im/status-desktop/issues/18293)
+- [Translation initiative](https://github.com/status-im/status-app/issues/18293)
   - In Progress ⏳ 🟩🟩🟩🟩⬜ 82%
 - [Full Emoji list in Reactions](https://github.com/status-im/status-desktop/issues/18766)
   - Done ✅ 🟩🟩🟩🟩🟩 100%
@@ -69,7 +69,7 @@ Estimated release: End of November
 
 ### 2.37
 
-Release Epic: https://github.com/status-im/status-desktop/issues/18528
+Release Epic: https://github.com/status-im/status-app/issues/18528
 
 Estimated release: Mid-December
 

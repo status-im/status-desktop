@@ -66,7 +66,7 @@ Control {
             color: Theme.palette.directColor5
         }
         /* TODO: error conditions for custom enteries missing will be done under -
-        https://github.com/status-im/status-desktop/issues/15017 */
+        https://github.com/status-im/status-app/issues/15017 */
         SlippageSelector {
             id: slippageSelector
             objectName: "slippageSelector"

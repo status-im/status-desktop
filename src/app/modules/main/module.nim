@@ -884,7 +884,7 @@ method load*[T](
   self.marketModule.load()
 
   # If the home page is enabled, we default to it as the opening section
-  # (disabled for 2.35 as per https://github.com/status-im/status-desktop/issues/18664, revisit after)
+  # (disabled for 2.35 as per https://github.com/status-im/status-app/issues/18664, revisit after)
   #if homePageEnabled:
   #  activeSection = homePageSectionItem
 

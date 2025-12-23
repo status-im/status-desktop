@@ -27,6 +27,7 @@ WebEngineView {
     property bool isDownloadView
     property bool enableJsLogs: false
     property bool htmlPageLoaded: false
+    property bool navigationBlocked: false
 
     signal setCurrentWebUrl(url url)
 
@@ -112,6 +113,10 @@ WebEngineView {
     }
 
     onNavigationRequested: function (request) {
+        if (root.navigationBlocked) {
+            request.reject()
+            return
+        }
         if(request.url.toString().startsWith("file:/")){
             console.log("Local file browsing is disabled" )
             request.reject()

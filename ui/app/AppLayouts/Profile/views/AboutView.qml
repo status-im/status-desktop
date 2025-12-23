@@ -76,8 +76,8 @@ SettingsContentBase {
                 normalColor: Theme.palette.directColor1
                 text: root.currentVersion
                 onClicked: {
-                    const link = root.isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1".arg(root.currentVersion) :
-                                                     "https://github.com/status-im/status-desktop/commit/%1".arg(root.gitCommit)
+                    const link = root.isProduction ? "https://github.com/status-im/status-app/releases/tag/%1".arg(root.currentVersion) :
+                                                     "https://github.com/status-im/status-app/commit/%1".arg(root.gitCommit)
 
                     root.openLink(link)
                 }
@@ -131,8 +131,8 @@ SettingsContentBase {
                 text: qsTr("Release Notes")
                 visible: root.isProduction
                 onClicked: {
-                    const link = root.isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1".arg(root.currentVersion) :
-                                                     "https://github.com/status-im/status-desktop/commit/%1".arg(root.gitCommit)
+                    const link = root.isProduction ? "https://github.com/status-im/status-app/releases/tag/%1".arg(root.currentVersion) :
+                                                     "https://github.com/status-im/status-app/commit/%1".arg(root.gitCommit)
 
                     root.openLink(link)
                 }
@@ -169,7 +169,7 @@ SettingsContentBase {
 
             LinkItem {
                 title: qsTr("status-desktop")
-                onClicked: root.openLink("https://github.com/status-im/status-desktop")
+                onClicked: root.openLink("https://github.com/status-im/status-app")
             }
 
             LinkItem {
@@ -179,7 +179,7 @@ SettingsContentBase {
 
             LinkItem {
                 title: qsTr("StatusQ")
-                onClicked: root.openLink("https://github.com/status-im/status-desktop/tree/master/ui/StatusQ")
+                onClicked: root.openLink("https://github.com/status-im/status-app/tree/master/ui/StatusQ")
             }
 
             LinkItem {
@@ -213,7 +213,7 @@ SettingsContentBase {
 
             LinkItem {
                 title: qsTr("Software License")
-                onClicked: root.openLink("https://github.com/status-im/status-desktop/blob/master/LICENSE.md")
+                onClicked: root.openLink("https://github.com/status-im/status-app/blob/master/LICENSE.md")
             }
         }
     }

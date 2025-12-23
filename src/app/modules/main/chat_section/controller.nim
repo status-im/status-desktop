@@ -435,7 +435,7 @@ proc getChatsAndBuildUI*(self: Controller) =
     community = self.getMyCommunity()
     let normalChats = self.chatService.getChatsForCommunity(community.id)
 
-    # TODO remove this once we do this refactor https://github.com/status-im/status-desktop/issues/11694
+    # TODO remove this once we do this refactor https://github.com/status-im/status-app/issues/11694
     var fullChats: seq[ChatDto] = @[]
     for communityChat in community.chats:
       for chat in normalChats:

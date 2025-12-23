@@ -3,24 +3,39 @@
 
 This guide provides step-by-step instructions to build Status Desktop from source on **Windows**, **Linux**, and **macOS**.
 
+If you're looking for instructions to build Status Mobile instead, go [here](/mobile/README.md).
 
 ## 📑 Table of Contents
 
-- [1️⃣ Prerequisites](#1️⃣-prerequisites)
-  - [Windows](#windows)
-  - [Linux](#linux)
-    - [Ubuntu](#ubuntu)
-    - [Fedora](#fedora)
-  - [macOS](#macos)
-- [2️⃣ Install Qt](#2️⃣-install-qt)
-  - [Windows & Linux](#windows--linux)
-  - [Linux (Alternative)](#linux-alternative)
-- [3️⃣ Configure Environment](#3️⃣-configure-environment)
-  - [Windows](#windows-1)
-  - [Linux](#linux-1)
-- [4️⃣ Build the App](#4️⃣-build-the-app)
-- [🐞 Troubleshooting](#-troubleshooting)
-- [📬 Need Further Help?](#-need-further-help)
+- [🛠️ Status Desktop Build Guide](#️-status-desktop-build-guide)
+  - [📑 Table of Contents](#-table-of-contents)
+  - [1️⃣ Prerequisites](#1️⃣-prerequisites)
+    - [Windows](#windows)
+      - [Install Chocolatey](#install-chocolatey)
+      - [Install Required Packages](#install-required-packages)
+      - [Install Go 1.24](#install-go-124)
+    - [Linux](#linux)
+      - [Ubuntu](#ubuntu)
+      - [Fedora](#fedora)
+    - [macOS](#macos)
+      - [Install Homebrew](#install-homebrew)
+      - [Install Required Packages](#install-required-packages-1)
+      - [Export GITHUB\_USER and GITHUB\_TOKEN environment variables](#export-github_user-and-github_token-environment-variables)
+      - [Install Node.js](#install-nodejs)
+      - [Install Python Dependencies](#install-python-dependencies)
+  - [2️⃣ Install Qt](#2️⃣-install-qt)
+    - [Windows \& Linux](#windows--linux)
+    - [Linux (Alternative)](#linux-alternative)
+      - [Ubuntu](#ubuntu-1)
+      - [Fedora](#fedora-1)
+  - [3️⃣ Configure Environment](#3️⃣-configure-environment)
+    - [Windows](#windows-1)
+    - [Linux](#linux-1)
+  - [4️⃣ Build the App](#4️⃣-build-the-app)
+  - [🐞 Troubleshooting](#-troubleshooting)
+    - [Qt Not Found](#qt-not-found)
+    - [Application doesn't build](#application-doesnt-build)
+  - [📬 Need Further Help?](#-need-further-help)
 
 ## 1️⃣ Prerequisites
 
@@ -249,7 +264,7 @@ export PATH="${QTDIR}/bin:${PATH}"
 Clone the repository:
 
 ```bash
-git clone https://github.com/status-im/status-desktop.git
+git clone https://github.com/status-im/status-app.git
 cd status-desktop
 ```
 
@@ -304,5 +319,5 @@ make run V=1
 If you get stuck or something doesn't work:
 
 - Ask in `#feedback-desktop` channel on [Status](https://status.app/cc/G-EAAORobqgnsUPSVCLaSJr855iXTIdQiY1Q0ckBe8dWWEBpUAs9s8DTjWEpvsmpE83Izx1JWQuZrWWKUoxiXCwdtB-wPBzyvv_n9a0F61xTaPZE7BEJDC7Ly_WcmQ4tHRAKnPfXE_JUtEX_3NhnXQN0eh4ue0D77dWvaDpDrSi0U0CaGLZ-pqD_iV0z9RMFE2LKulDZdwL40etJ8lxjyTFoxS0lUhdWKinIOk8qBmJJpCmsqMrSklEU#zQ3shZeEJqTC1xhGUjxuS4rtHSrhJ8vUYp64v6qWkLpvdy9L9)
-- Open an [issue on GitHub](https://github.com/status-im/status-desktop/issues)
+- Open an [issue on GitHub](https://github.com/status-im/status-app/issues/new/choose)
 

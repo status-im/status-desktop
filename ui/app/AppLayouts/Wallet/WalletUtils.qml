@@ -40,7 +40,7 @@ QtObject {
       This logic is here to make sure there is enough eth to pay for the gas.
       Context, when making a transaction, whatever the type: swap/bridge/send, you need eth to pay for the gas.
 
-      rationale: https://github.com/status-im/status-desktop/pull/14959#discussion_r1627110880
+      rationale: https://github.com/status-im/status-app/pull/14959#discussion_r1627110880
       */
     function calculateMaxSafeSendAmount(value, symbol, chainId, cryptoFeesToReserve = "") {
         if (!value) {

@@ -49,7 +49,7 @@ proc run*(self: KeycardReplacementTask,
   )
   discard walletAccountService.addKeycardOrAccounts(keycard, password = "")
 
-  # FIXME: store metadata to a Keycard - https://github.com/status-im/status-desktop/issues/17128
+  # FIXME: store metadata to a Keycard - https://github.com/status-im/status-app/issues/17128
   # let accountsPathsToStore = keypair.accounts.filter(acc => not acc.isChat).map(acc => acc.path)
   # keycardServiceV2.asyncStoreMetadata(keypair.name, self.startupModule.getPin(), accountsPathsToStore)
 
