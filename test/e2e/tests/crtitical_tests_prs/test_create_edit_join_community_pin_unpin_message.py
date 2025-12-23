@@ -1,9 +1,7 @@
-import allure
 import pytest
 from allure_commons._allure import step
 
 import driver
-from configs import get_platform
 from constants.community import Channel
 from gui.main_window import MainWindow
 from helpers.chat_helper import skip_message_backup_popup_if_visible
@@ -11,6 +9,7 @@ from helpers.multiple_instances_helper import (
     authorize_user_in_aut, get_chat_key, send_contact_request_from_settings, 
     accept_contact_request_from_settings, switch_to_aut
 )
+from scripts.utils.validators import verify_community_link_format
 from scripts.utils.generators import random_text_message, random_community_introduction, random_community_description, \
     random_community_name, random_community_leave_message
 import configs
@@ -23,7 +22,6 @@ from gui.screens.messages import MessagesScreen
 @pytest.mark.communities
 @pytest.mark.smoke
 @pytest.mark.critical
-# @pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
 def test_create_edit_join_community_pin_unpin_message(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
@@ -74,26 +72,12 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
                                          new_introduction, new_leaving_message,
                                          new_logo, new_banner)
 
-            with step('Copy community link and verify that it does not give 404 error'):
+            with step('Copy community link and verify that it is valid and accessible'):
                 invite_modal = main_screen.left_panel.open_community_context_menu(
                     name=new_name).select_invite_people()
                 community_link = invite_modal.copy_community_link()
-                # assert get_response(community_link).status_code == 200
-                # TODO: https://github.com/status-im/status-desktop/issues/18601
+                verify_community_link_format(community_link)
                 invite_modal.close_button.click()
-
-            # with step('Verify that community title and description are displayed on webpage and correct'):
-            #     web_content = get_page_content(community_link)
-            #
-            #     content_list = []
-            #
-            #     for item in web_content.find_all('meta'):
-            #         if 'content' in item.attrs:
-            #             content_list.append(item.attrs['content'])
-            #
-            #     assert f'Join {new_name} community in Status' in content_list
-            #     assert new_description in content_list
-            #     invite_modal.close_button.click()
 
             with step('Verify community parameters on settings overview'):
                 overview_setting = community_setting.left_panel.open_overview()
@@ -103,8 +87,6 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
             with step('Verify community parameters in community screen'):
                 community_setting.left_panel.back_to_community()
                 assert community_screen.left_panel.name == new_name
-
-            # TODO: https://github.com/status-im/status-desktop/issues/18417
 
             with step('Verify community parameters in community settings screen'):
                 settings_screen = main_screen.left_panel.open_settings()
