@@ -127,7 +127,7 @@ pipeline {
               def changelog = sh(script: './scripts/generate-changelog.sh', returnStdout: true).trim()
 
               app.uploadToTestFlight(
-                ipaPath=env.STATUS_IOS_APP_ARTIFACT,
+                ipaPath="${WORKSPACE}/${env.STATUS_IOS_APP_ARTIFACT}",
                 changelog=changelog,
                 pollTimeout=env.TESTFLIGHT_POLL_TIMEOUT,
                 pollInterval=env.TESTFLIGHT_POLL_INTERVAL
