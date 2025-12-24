@@ -49,7 +49,6 @@ OnboardingPage {
     signal biometricsRequested(string profileId)
     signal dismissBiometricsRequested
     signal changeLanguageRequested(string newLanguageCode)
-    signal deleteMultiaccountRequested(string keyUid, string username)
 
     function setBiometricResponse(secret: string, error = "") {
         if (!root.isBiometricsLogin)
@@ -92,6 +91,7 @@ OnboardingPage {
     signal unblockWithSeedphraseRequested()
     signal unblockWithPukRequested()
     signal lostKeycardFlowRequested()
+    signal onboardingManageProfilesFlowRequested()
 
     QtObject {
         id: d
@@ -248,7 +248,7 @@ OnboardingPage {
                 }
                 onOnboardingCreateProfileFlowRequested: root.onboardingCreateProfileFlowRequested()
                 onOnboardingLoginFlowRequested: root.onboardingLoginFlowRequested()
-                onDeleteMultiaccountRequested: (keyUid, username) => root.deleteMultiaccountRequested(keyUid, username)
+                onOnboardingManageProfilesFlowRequested: root.onboardingManageProfilesFlowRequested()
             }
 
             LoginPasswordBox {
