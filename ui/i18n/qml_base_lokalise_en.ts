@@ -12844,6 +12844,11 @@
       <comment>LoginUserSelector</comment>
       <translation>Log in</translation>
     </message>
+    <message>
+      <source>Manage profiles</source>
+      <comment>LoginUserSelector</comment>
+      <translation>Manage profiles</translation>
+    </message>
   </context>
   <context>
     <name>LoginUserSelectorDelegate</name>
@@ -15261,6 +15266,11 @@
       <source>Remove profile</source>
       <comment>OnboardingFlow</comment>
       <translation>Remove profile</translation>
+    </message>
+    <message>
+      <source>Manage profiles</source>
+      <comment>OnboardingFlow</comment>
+      <translation>Manage profiles</translation>
     </message>
   </context>
   <context>
