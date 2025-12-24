@@ -68,6 +68,7 @@ OnboardingStackView {
     signal authorizationRequested(string pin)
     signal performKeycardFactoryResetRequested
     signal importLocalBackupRequested(url importFilePath)
+    signal deleteMultiaccountRequested(string keyUid)
 
     signal linkActivated(string link)
 
@@ -142,6 +143,10 @@ OnboardingStackView {
 
         function openThirdpartyServicesPopup() {
             thirdpartyServicesPopup.createObject(root).open()
+        }
+
+        function openDeleteMultiaccountConfirmationDialog(keyUid, username) {
+            deleteMultiaccountConfirmationDialog.createObject(root, { keyUid, username }).open()
         }
     }
 
@@ -239,6 +244,7 @@ OnboardingStackView {
 
             onUnblockWithSeedphraseRequested: root.push(unblockWithSeedphraseFlow)
             onUnblockWithPukRequested: root.push(unblockWithPukFlow)
+            onDeleteMultiaccountRequested: (keyUid, username) => d.openDeleteMultiaccountConfirmationDialog(keyUid, username)
 
             onVisibleChanged: {
                 if (!visible)
@@ -588,6 +594,27 @@ OnboardingStackView {
             onToggleThirdpartyServicesEnabledRequested: root.toggleThirdpartyServicesEnabledRequested()
             onOpenDiscussPageRequested: Qt.openUrlExternally(Constants.statusDiscussPageUrl)
             onOpenThirdpartyServicesArticleRequested: Qt.openUrlExternally(Constants.statusThirdpartyServicesArticle)
+        }
+    }
+
+    Component {
+        id: deleteMultiaccountConfirmationDialog
+
+        ConfirmationDialog {
+            property string keyUid
+            property string username
+
+            destroyOnClose: true
+            headerSettings.title: qsTr("Remove %1 profile").arg(username)
+            confirmationText: qsTr("If you remove %1, all data for this profile will be deleted from this device. To use this profile again, you'll need to reimport it to this device.").arg(username)
+            confirmButtonLabel: qsTr("Remove profile")
+            showCancelButton: true
+
+            onConfirmButtonClicked: {
+                root.deleteMultiaccountRequested(keyUid)
+                close()
+            }
+            onCancelButtonClicked: close()
         }
     }
 }
