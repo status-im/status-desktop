@@ -64,7 +64,7 @@ ios {
         QMAKE_BUNDLE = mobile
     }
 
-    LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lsds -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen
+    LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen
 
     # --- iOS frameworks required by keychain_apple.mm ---
     LIBS += -framework LocalAuthentication \
