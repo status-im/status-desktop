@@ -26,3 +26,10 @@ It also expects the presence of the following credentials:
 * `macos-keychain-file` - Keychain file with the MacOS signing certificate.
 
 You can read about how to create such a keychain [here](https://github.com/status-im/infra-docs/blob/master/articles/macos_signing_keychain.md).
+
+## iOS
+
+iOS builds use **fastlane** with **match** for code signing management.
+
+For detailed documentation on iOS signing, fastlane configuration, and certificate management, see [`mobile/fastlane/README.md`](../mobile/fastlane/README.md).
+

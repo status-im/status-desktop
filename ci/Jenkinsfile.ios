@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.31'
+library 'status-jenkins-lib@v1.9.32'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -72,11 +72,8 @@ pipeline {
     APP_TYPE = "${utils.getAppType()}"
     /* iOS build configuration */
     IPHONE_SDK = "iphoneos"
-    ARCH = "x86_64"
-    /* iOS app paths */
+    ARCH = "arm64"
     STATUS_IOS_APP_ARTIFACT = "pkg/${utils.pkgFilename(ext: 'ipa', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
-    STATUS_IOS_APP = "${WORKSPACE}/mobile/bin/ios/qt6/Status.app"
-    STATUS_IOS_IPA = "${WORKSPACE}/mobile/bin/ios/qt6/Status.ipa"
     TESTFLIGHT_POLL_TIMEOUT = "${params.TESTFLIGHT_POLL_TIMEOUT}"
     TESTFLIGHT_POLL_INTERVAL = "${params.TESTFLIGHT_POLL_INTERVAL}"
   }
@@ -112,7 +109,7 @@ pipeline {
     stage('Package iOS App') {
       steps {
         sh 'mkdir -p pkg'
-        sh "cp ${env.STATUS_IOS_IPA} ${env.STATUS_IOS_APP_ARTIFACT}"
+        sh "cp ${WORKSPACE}/mobile/bin/ios/qt6/Status${utils.isReleaseBuild() ? '' : 'PR'}.ipa ${env.STATUS_IOS_APP_ARTIFACT}"
         sh "ls -lh ${env.STATUS_IOS_APP_ARTIFACT}"
       }
     }
@@ -120,6 +117,7 @@ pipeline {
     stage('Parallel Upload') {
       parallel {
         stage('Upload to TestFlight') {
+          when { expression { utils.isReleaseBuild() } }
           steps {
             script {
               def changelog = sh(script: './scripts/generate-changelog.sh', returnStdout: true).trim()
@@ -133,11 +131,20 @@ pipeline {
             }
           }
         }
+        stage('Upload to Diawi') {
+          when { expression { !utils.isReleaseBuild() } }
+          steps {
+            script {
+              def comment = "status-desktop PR build ${env.VERSION} ${git.commit(8)}"
+              env.DIAWI_URL = app.uploadToDiawi(env.STATUS_IOS_APP_ARTIFACT, comment)
+              jenkins.setBuildDesc(IPA: env.DIAWI_URL)
+            }
+          }
+        }
         stage('Upload to S3') {
           steps {
             script {
               env.PKG_URL = s5cmd.upload(env.STATUS_IOS_APP_ARTIFACT)
-              jenkins.setBuildDesc(IPA: env.PKG_URL)
             }
           }
         }

@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.31'
+library 'status-jenkins-lib@v1.9.32'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -96,6 +96,7 @@ pipeline {
     USE_MOCKED_KEYCARD_LIB = "${params.USE_MOCKED_KEYCARD_LIB}"
     /* FIXME: figure out why NIMFLAGS are not respected */
     XDG_CACHE_HOME = "${env.WORKSPACE_TMP}/.cache"
+    NIM_SDS_SOURCE_DIR = "${env.WORKSPACE_TMP}/nim-sds".replace('\\', '/')
   }
 
   stages {

@@ -25,7 +25,7 @@ proc `$`*(self: CommunityDataDto): string =
     ]"""
 
 type
-  TokenDto* = ref object of RootObj
+  TokenDto* = object
     address* {.serializedFieldName("address").}: string
     name* {.serializedFieldName("name").}: string
     symbol* {.serializedFieldName("symbol").}: string
@@ -34,6 +34,8 @@ type
     communityData* {.serializedFieldName("community_data").}: CommunityDataDto
     image* {.serializedFieldName("image").}: string
     communityID* : string
+
+  TokenDtoSafe* = TokenDto
 
 proc `$`*(self: TokenDto): string =
   result = fmt"""TokenDto[

@@ -96,13 +96,13 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
   var toChainid = 0
   var fromTokenSymbol = ""
   var toTokenSymbol = ""
-  if not txPath.fromChain.isNil:
+  if txPath.fromChain.chainId > 0:
     fromChainId = txPath.fromChain.chainId
-  if not txPath.toChain.isNil:
+  if txPath.toChain.chainId > 0:
     toChainId = txPath.toChain.chainId
-  if not txPath.fromToken.isNil:
+  if txPath.fromToken.chainId > 0:
     fromTokenSymbol = txPath.fromToken.bySymbolModelKey()
-  if not txPath.toToken.isNil:
+  if txPath.toToken.chainId > 0:
     toTokenSymbol = txPath.toToken.bySymbolModelKey()
 
   result = newPathItem(
