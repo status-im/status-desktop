@@ -253,6 +253,11 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                 assert driver.waitFor(lambda: sent_message[0].get_link_preview_title() == user_two.name,
                                       timeout)
 
+            with step(f'Clear group chat history'):
+                messages_screen.group_chat.clear_group_chat_history()
+                messages = messages_screen.chat.messages(index=None)
+                assert len(messages) == 0, f"The history of messages is not empty"
+
             with step('Leave group'):
                 messages_screen.group_chat.leave_group().confirm_leaving()
 

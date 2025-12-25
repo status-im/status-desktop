@@ -366,6 +366,7 @@ class ChatMessagesView(QObject):
         self._leave_group_item = QObject(messaging_names.leave_group_StatusMenuItem)
         self._add_remove_item = QObject(messaging_names.add_remove_from_group_StatusMenuItem)
         self._clear_history_item = QObject(messaging_names.clear_History_StatusMenuItem)
+        self._clear_group_chhat_history_item = QObject(messaging_names.clear_group_chat_history_item)
         self._close_chat_item = QObject(messaging_names.close_Chat_StatusMenuItem)
         self._chat_input = QObject(messaging_names.mainWindow_statusChatInput_StatusChatInput)
         self._message_input_area = QObject(messaging_names.inputScrollView_messageInputField_TextArea)
@@ -449,7 +450,14 @@ class ChatMessagesView(QObject):
         return self
 
     @allure.step('Get text of title of link preview bubble')
-    def get_link_preview_bubble_title(self) -> str:
+    def get_link_preview_bubble_title(self, timeout_msec: int = configs.timeouts.APP_LOAD_TIMEOUT_MSEC) -> str:
+        def _ready():
+            try:
+                str(self._link_preview_title.object.text); return True
+            except (RuntimeError, AttributeError, LookupError):
+                return False
+
+        driver.waitFor(_ready, timeout_msec)
         return str(self._link_preview_title.object.text)
 
     @allure.step('Get text of description of link preview bubble')
@@ -511,6 +519,15 @@ class ChatMessagesView(QObject):
         self.open_more_options()
         time.sleep(2)
         self._clear_history_item.click()
+        clear_history_popup = ClearChatHistoryPopup().wait_until_appears()
+        clear_history_popup.confirm_clearing_chat()
+
+    @allure.step('Clear group chat history option')
+    def clear_group_chat_history(self):
+        time.sleep(2)
+        self.open_more_options()
+        time.sleep(2)
+        self._clear_group_chhat_history_item.click()
         clear_history_popup = ClearChatHistoryPopup().wait_until_appears()
         clear_history_popup.confirm_clearing_chat()
 
