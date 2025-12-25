@@ -115,6 +115,7 @@ StatusDialog {
     footer: StatusDialogFooter {
         rightButtons: ObjectModel {
             StatusButton {
+                objectName: "joinStatusDialogFooterButton"
                 enabled: d.isInputValid && d.communityFound
                 loading: d.isInputValid && !d.communityFound && d.communityInfoRequested
                 text: qsTr("Join")
