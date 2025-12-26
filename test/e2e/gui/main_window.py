@@ -105,7 +105,12 @@ class MainLeftPanel(QObject):
     def communities(self) -> typing.List[str]:
         community_names = []
         for obj in driver.findAllObjects(self.community_template_button.real_name):
-            community_names.append(obj.name)
+            try:
+                if obj is not None and hasattr(obj, 'name') and obj.name is not None:
+                    community_names.append(str(obj.name))
+            except Exception as e:
+                LOG.warning(f'Error getting community name: {e}')
+                continue
 
         return community_names
 
