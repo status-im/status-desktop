@@ -66,5 +66,7 @@
     <string>Log in securely to your account.</string>
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
+    <key>NFCReaderUsageDescription</key>
+    <string>Status uses NFC to read and verify identity cards for secure authentication.</string>
 </dict>
 </plist>
