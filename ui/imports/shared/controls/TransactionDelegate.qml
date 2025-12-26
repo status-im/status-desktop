@@ -24,14 +24,16 @@ import shared.stores as SharedStores
    Delegate to display transaction activity data.
 
    \qml
+    // Normal usage - in ListView with TransactionsModelAdaptor model
     TransactionDelegate {
-        id: delegate
         width: ListView.view.width
-        modelData: model.activityEntry
-        flatNetworks: root.flatNetworks
-        currenciesStore: root.currencyStore
-        activityStore: root.activityStore
-        loading: isModelDataValid
+        currentCurrency: root.currentCurrency
+        formatCurrencyAmountFn: root.formatCurrencyAmountFn
+    }
+
+    // Loading skeleton
+    TransactionDelegate {
+        loading: true
     }
    \endqml
 
@@ -43,126 +45,52 @@ StatusListItem {
 
     signal retryClicked()
 
-    property var modelData
     property string timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000) : ""
     property bool showAllAccounts: false
     property bool displayValues: true
 
-    required property var flatNetworks
+    // for fiat value formatting in UI
+    property string currentCurrency: ""
+    property var formatCurrencyAmountFn: function(amount, symbol, options) { return "" }
 
-    required property SharedStores.CurrenciesStore currenciesStore
-    required property var activityStore
-
-    readonly property bool isModelDataValid: modelData !== undefined && !!modelData
-
-    readonly property string txID: isModelDataValid ? modelData.id : "INVALID"
-    readonly property int transactionStatus: isModelDataValid ? modelData.status : Constants.TransactionStatus.Pending
-    readonly property bool isMultiTransaction: isModelDataValid && modelData.isMultiTransaction
-    readonly property string currentCurrency: currenciesStore.currentCurrency
-    readonly property double cryptoValue: isModelDataValid ? modelData.amount : 0.0
-    readonly property double fiatValue: isModelDataValid ? currenciesStore.getFiatValue(cryptoValue, modelData.symbol) : 0.0
-    readonly property double inCryptoValue: isModelDataValid ? modelData.inAmount : 0.0
-    readonly property double inFiatValue: isModelDataValid && isMultiTransaction ? currenciesStore.getFiatValue(inCryptoValue, modelData.inSymbol): 0.0
-    readonly property double outCryptoValue: isModelDataValid ? modelData.outAmount : 0.0
-    readonly property double outFiatValue: isModelDataValid && isMultiTransaction ? currenciesStore.getFiatValue(outCryptoValue, modelData.outSymbol): 0.0
-    readonly property string networkColor: isModelDataValid ? SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainId, "chainColor") : ""
-    readonly property string networkName: isModelDataValid ? SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainId, "chainName") : ""
-    readonly property string networkNameIn: isMultiTransaction ? SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainIdIn, "chainName") : ""
-    readonly property string networkNameOut: isMultiTransaction ? SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainIdOut, "chainName") : ""
-    readonly property string addressNameTo: isModelDataValid ? activityStore.getNameForAddress(modelData.recipient) : ""
-    readonly property string addressNameFrom: isModelDataValid ? activityStore.getNameForAddress(modelData.sender) : ""
-    readonly property bool isNFT: isModelDataValid && modelData.isNFT
-    readonly property bool isCommunityAssetViaAirdrop: isModelDataValid && !!communityId && d.txType === Constants.TransactionType.Mint
-    readonly property string communityId: isModelDataValid && modelData.communityId ? modelData.communityId : ""
-    property var community: null
-    readonly property bool isCommunityToken: !!community && Object.keys(community).length > 0
-    readonly property string communityImage: isCommunityToken ? community.image : ""
-    readonly property string communityName: isCommunityToken ? community.name : ""
-
-    readonly property var dAppDetails: {
-        if (!isModelDataValid) {
-            return null
-        }
-        if (modelData.txType === Constants.TransactionType.Approve) {
-            return activityStore.getDappDetails(modelData.chainId, modelData.approvalSpender)
-        }
-        if (modelData.txType === Constants.TransactionType.Swap) {
-            return activityStore.getDappDetails(modelData.chainId, modelData.interactedContractAddress)
-        }
-        return null
-    }
-
-    readonly property string dAppIcon: dAppDetails ? dAppDetails.icon : ""
-    readonly property string dAppUrl: dAppDetails ? dAppDetails.url : ""
-    readonly property string dAppName: dAppDetails ? dAppDetails.name : ""
-
-    readonly property string transactionValue: {
-        if (!isModelDataValid) {
-            return qsTr("N/A")
-        } else if (root.isNFT) {
-            let value = ""
-            if (d.txType === Constants.TransactionType.Mint) {
-                value += modelData.amount + " "
-            }
-            if (modelData.nftName) {
-                value += modelData.nftName
-            } else if (modelData.tokenID) {
-                value += "#" + modelData.tokenID
-            } else {
-                value += qsTr("Unknown NFT")
-            }
-            return value
-        } else if (!modelData.symbol && !!modelData.tokenAddress) {
-            return "%1 (%2)".arg(root.currenciesStore.formatCurrencyAmount(cryptoValue, "")).arg(Utils.compactAddress(modelData.tokenAddress, 4))
-        }
-        return root.currenciesStore.formatCurrencyAmount(cryptoValue, modelData.symbol)
-    }
-
-    readonly property string inTransactionValue: {
-        if (!isModelDataValid) {
-            return qsTr("N/A")
-        } else if (!modelData.inSymbol && !!modelData.tokenInAddress) {
-            return "%1 (%2)".arg(root.currenciesStore.formatCurrencyAmount(inCryptoValue, "")).arg(Utils.compactAddress(modelData.tokenInAddress, 4))
-        }
-        return currenciesStore.formatCurrencyAmount(inCryptoValue, modelData.inSymbol)
-    }
-    readonly property string outTransactionValue: {
-        if (!isModelDataValid) {
-            return qsTr("N/A")
-        } else if (!modelData.outSymbol && !!modelData.tokenOutAddress) {
-            return "%1 (%2)".arg(root.currenciesStore.formatCurrencyAmount(outCryptoValue, "")).arg(Utils.compactAddress(modelData.tokenOutAddress, 4))
-        }
-        return currenciesStore.formatCurrencyAmount(outCryptoValue, modelData.outSymbol)
-    }
-
-    readonly property string tokenImage: {
-        if (!isModelDataValid || 
-            d.txType === Constants.TransactionType.ContractDeployment || 
-            d.txType === Constants.TransactionType.ContractInteraction)
-            return ""
-        if (root.isNFT) {
-            return modelData.nftImageUrl ? modelData.nftImageUrl : ""
-        } else {
-            return Constants.tokenIcon(isMultiTransaction ? d.txType === Constants.TransactionType.Receive ? modelData.inSymbol : modelData.outSymbol : modelData.symbol)
-        }
-    }
-
-    readonly property string inTokenImage: isModelDataValid ? Constants.tokenIcon(modelData.inSymbol) : ""
-
-    readonly property string toAddress: !!addressNameTo ?
-                                            addressNameTo :
-                                            isModelDataValid ?
-                                                Utils.compactAddress(modelData.recipient, 4) :
-                                                ""
-
-    readonly property string fromAddress: !!addressNameFrom ?
-                                            addressNameFrom :
-                                            isModelDataValid ?
-                                                Utils.compactAddress(modelData.sender, 4) :
-                                                ""
-    
-    readonly property string interactedContractAddress: isModelDataValid ? Utils.compactAddress(modelData.interactedContractAddress, 4) : ""
-    readonly property string approvalSpender: isModelDataValid ? Utils.compactAddress(modelData.approvalSpender, 4) : ""
+    // All computed properties come from model (via TransactionsModelAdaptor)
+    readonly property var modelData: loading ? null : (model?.activityEntry ?? null)
+    readonly property bool isModelDataValid: !loading && modelData !== null && modelData !== undefined
+    readonly property string txID: loading ? "" : (model?.txID ?? "")
+    readonly property int transactionStatus: loading ? Constants.TransactionStatus.Pending : (model?.transactionStatus ?? Constants.TransactionStatus.Pending)
+    readonly property bool isMultiTransaction: loading ? false : (model?.isMultiTransaction ?? false)
+    readonly property double cryptoValue: loading ? 0.0 : (model?.cryptoValue ?? 0.0)
+    readonly property double fiatValue: loading ? 0.0 : (model?.fiatValue ?? 0.0)
+    readonly property double inCryptoValue: loading ? 0.0 : (model?.inCryptoValue ?? 0.0)
+    readonly property double inFiatValue: loading ? 0.0 : (model?.inFiatValue ?? 0.0)
+    readonly property double outCryptoValue: loading ? 0.0 : (model?.outCryptoValue ?? 0.0)
+    readonly property double outFiatValue: loading ? 0.0 : (model?.outFiatValue ?? 0.0)
+    readonly property string networkColor: loading ? "" : (model?.networkColor ?? "")
+    readonly property string networkName: loading ? "" : (model?.networkName ?? "")
+    readonly property string networkNameIn: loading ? "" : (model?.networkNameIn ?? "")
+    readonly property string networkNameOut: loading ? "" : (model?.networkNameOut ?? "")
+    readonly property string addressNameTo: loading ? "" : (model?.addressNameTo ?? "")
+    readonly property string addressNameFrom: loading ? "" : (model?.addressNameFrom ?? "")
+    readonly property bool isNFT: loading ? false : (model?.isNFT ?? false)
+    readonly property bool isCommunityAssetViaAirdrop: loading ? false : (model?.isCommunityAssetViaAirdrop ?? false)
+    readonly property string communityId: loading ? "" : (model?.communityId ?? "")
+    readonly property var community: loading ? null : (model?.community ?? null)
+    readonly property bool isCommunityToken: loading ? false : (model?.isCommunityToken ?? false)
+    readonly property string communityImage: loading ? "" : (model?.communityImage ?? "")
+    readonly property string communityName: loading ? "" : (model?.communityName ?? "")
+    readonly property var dAppDetails: loading ? null : (model?.dAppDetails ?? null)
+    readonly property string dAppIcon: loading ? "" : (model?.dAppIcon ?? "")
+    readonly property string dAppUrl: loading ? "" : (model?.dAppUrl ?? "")
+    readonly property string dAppName: loading ? "" : (model?.dAppName ?? "")
+    readonly property string transactionValue: loading ? "" : (model?.transactionValue ?? "")
+    readonly property string inTransactionValue: loading ? "" : (model?.inTransactionValue ?? "")
+    readonly property string outTransactionValue: loading ? "" : (model?.outTransactionValue ?? "")
+    readonly property string tokenImage: loading ? "" : (model?.tokenImage ?? "")
+    readonly property string inTokenImage: loading ? "" : (model?.inTokenImage ?? "")
+    readonly property string toAddress: loading ? "" : (model?.toAddress ?? "")
+    readonly property string fromAddress: loading ? "" : (model?.fromAddress ?? "")
+    readonly property string interactedContractAddress: loading ? "" : (model?.interactedContractAddress ?? "")
+    readonly property string approvalSpender: loading ? "" : (model?.approvalSpender ?? "")
 
     property StatusAssetSettings statusIconAsset: StatusAssetSettings {
         width: 12
@@ -212,7 +140,7 @@ StatusListItem {
 
         readonly property bool isLightTheme: Theme.palette.name === Constants.lightThemeName
         property color animatedBgColor
-        readonly property int txType: activityStore.getTransactionType(root.modelData)
+        readonly property int txType: root.loading ? 0 : (model?.txType ?? 0)
 
         readonly property var secondIconAsset: StatusAssetSettings {
             width: root.tokenIconAsset.width
@@ -320,8 +248,7 @@ StatusListItem {
     }
 
     rightPadding: 16
-    enabled: !loading
-    loading: !isModelDataValid
+    enabled: !root.loading
     color: {
         if (bgColorAnimation.running) {
             return d.animatedBgColor
@@ -532,12 +459,12 @@ StatusListItem {
 
                         switch(d.txType) {
                         case Constants.TransactionType.Send:
-                            return "−" + root.currenciesStore.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
+                            return "−" + root.formatCurrencyAmountFn(root.fiatValue, root.currentCurrency)
                         case Constants.TransactionType.Receive:
-                            return "+" + root.currenciesStore.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
+                            return "+" + root.formatCurrencyAmountFn(root.fiatValue, root.currentCurrency)
                         case Constants.TransactionType.Swap:
-                            return "-%1 / +%2".arg(root.currenciesStore.formatCurrencyAmount(root.outFiatValue, root.currentCurrency))
-                                              .arg(root.currenciesStore.formatCurrencyAmount(root.inFiatValue, root.currentCurrency))
+                            return "-%1 / +%2".arg(root.formatCurrencyAmountFn(root.outFiatValue, root.currentCurrency))
+                                              .arg(root.formatCurrencyAmountFn(root.inFiatValue, root.currentCurrency))
                         case Constants.TransactionType.Bridge:
                         case Constants.TransactionType.Approve:
                         default:

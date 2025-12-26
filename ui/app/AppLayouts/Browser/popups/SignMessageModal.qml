@@ -13,7 +13,7 @@ import shared.views
 import shared.panels
 import shared.popups
 
-import AppLayouts.Browser.stores as BrowserStores
+import AppLayouts.stores.Browser as BrowserStores
 
 StatusModal {
     id: root

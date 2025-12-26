@@ -2,11 +2,13 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import StatusQ
 import StatusQ.Core
 import StatusQ.Core.Theme
 
 import utils
 import shared.controls
+import shared.views
 import shared.stores as SharedStores
 
 import AppLayouts.Wallet.stores as WalletStores
@@ -57,6 +59,35 @@ SplitView {
         property bool _highlight: false
     }
 
+    ListModel {
+        id: mockModel
+        ListElement {}
+        Component.onCompleted: {
+            mockModel.setProperty(0, "activityEntry", root.mockupModelData)
+        }
+    }
+
+    Connections {
+        target: root.mockupModelData
+        function onStatusChanged() { mockModel.setProperty(0, "activityEntry", root.mockupModelData) }
+        function onTxTypeChanged() { mockModel.setProperty(0, "activityEntry", root.mockupModelData) }
+        function onIsMultiTransactionChanged() { mockModel.setProperty(0, "activityEntry", root.mockupModelData) }
+        function onIsNFTChanged() { mockModel.setProperty(0, "activityEntry", root.mockupModelData) }
+    }
+
+    TransactionsModelAdaptor {
+        id: txAdaptor
+        sourceModel: mockModel
+        flatNetworks: NetworksModel.flatNetworks
+        currentCurrency: "EUR"
+        getFiatValueFn: (cryptoValue, symbol) => cryptoValue * 0.1
+        formatCurrencyAmountFn: (cryptoValue, symbol) => "%L1 %2".arg(cryptoValue).arg(symbol)
+        getNameForAddressFn: (address) => WalletStores.RootStore.getNameForAddress(address)
+        getDappDetailsFn: (chainId, address) => WalletStores.RootStore.getDappDetails(chainId, address)
+        getTransactionTypeFn: (transaction) => WalletStores.RootStore.getTransactionType(transaction)
+        localeUtils: LocaleUtils
+    }
+
     SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
@@ -77,24 +108,25 @@ SplitView {
 
                 width: 600
 
-                TransactionDelegate {
-                    id: delegate
+                ListView {
+                    id: listView
                     Layout.fillWidth: true
-                    modelData: root.mockupModelData
-                    showAllAccounts: ctrlAllAccounts.checked
-                    currenciesStore: SharedStores.CurrenciesStore {
-                        readonly property string currentCurrency: "EUR"
-
-                        function getFiatValue(cryptoValue, symbol) {
-                            return cryptoValue * 0.1;
-                        }
-
-                        function formatCurrencyAmount(cryptoValue, symbol) {
-                            return "%L1 %2".arg(cryptoValue).arg(symbol)
-                        }
+                    Layout.preferredHeight: 80
+                    model: txAdaptor.model
+                    interactive: false
+                    delegate: TransactionDelegate {
+                        width: listView.width
+                        showAllAccounts: ctrlAllAccounts.checked
+                        currentCurrency: "EUR"
+                        formatCurrencyAmountFn: (cryptoValue, symbol) => "%L1 %2".arg(cryptoValue).arg(symbol)
+                        loading: ctrlLoading.checked
+                        state: ctrlHeaderState.checked ? "header" : ""
                     }
-                    flatNetworks: NetworksModel.flatNetworks
-                    activityStore: WalletStores.RootStore
+                }
+
+                TransactionDelegate {
+                    Layout.fillWidth: true
+                    loading: true
                 }
             }
         }
@@ -113,15 +145,12 @@ SplitView {
 
         ColumnLayout {
             CheckBox {
+                id: ctrlLoading
                 text: "Is loading"
-                checked: delegate.loading
-                onToggled: delegate.loading = checked
             }
             CheckBox {
+                id: ctrlHeaderState
                 text: "Is activity details header"
-                readonly property string headerState: "header"
-                checked: delegate.state === headerState
-                onToggled: delegate.state = checked ? headerState : ""
             }
 
             CheckBox {

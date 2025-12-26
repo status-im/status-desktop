@@ -4,7 +4,7 @@ import QtQuick.Controls
 import StatusQ.Popups
 import StatusQ.Core.Theme
 
-import AppLayouts.Browser.stores as BrowserStores
+import AppLayouts.stores.Browser as BrowserStores
 
 StatusMenu {
     id: root

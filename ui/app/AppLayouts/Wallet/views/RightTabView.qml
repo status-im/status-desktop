@@ -532,13 +532,57 @@ RightTabBaseView {
                     id: historyView
                     HistoryView {
                         overview: RootStore.overview
-                        activityStore: RootStore
-                        communitiesStore: root.communitiesStore
-                        currencyStore: root.sharedRootStore.currencyStore
-                        networksStore: root.networksStore
+
+                        loadingHistoryTransactions: RootStore.loadingHistoryTransactions
+                        historyTransactionsModel: RootStore.historyTransactions
+                        newDataAvailable: RootStore.newDataAvailable
+                        isNonArchivalNode: RootStore.isNonArchivalNode
+                        selectedAddress: RootStore.overview.address
                         showAllAccounts: RootStore.showAllAccounts
+                        isFilterDirty: RootStore.activityController.activityFilterStore.isFilterDirty
+                        activeNetworks: root.networksStore.activeNetworks
+                        allNetworks: root.networksStore.allNetworks
+                        currentCurrency: root.sharedRootStore.currencyStore.currentCurrency
+
+                        getNameForAddressFn: function(address) {
+                            return RootStore.getNameForAddress(address)
+                        }
+                        getDappDetailsFn: function(chainId, address) {
+                            return RootStore.getDappDetails(chainId, address)
+                        }
+                        getFiatValueFn: function(amount, symbol) {
+                            return root.sharedRootStore.currencyStore.getFiatValue(amount, symbol)
+                        }
+                        formatCurrencyAmountFn: function(amount, symbol, options) {
+                            return root.sharedRootStore.currencyStore.formatCurrencyAmount(amount, symbol, options)
+                        }
+                        getTransactionTypeFn: function(transaction) {
+                            return RootStore.getTransactionType(transaction)
+                        }
+
+                        communitiesStore: root.communitiesStore
+
                         filterVisible: false  // TODO #16761: Re-enable filter for activity when implemented
                         bannerComponent: buyReceiveBannerComponent
+
+                        onUpdateTransactionFilterRequested: RootStore.updateTransactionFilterIfDirty()
+                        onMoreTransactionsRequested: RootStore.fetchMoreTransactions()
+                        onActivityDataResetRequested: RootStore.resetActivityData()
+                        onCollectiblesModelUpdateRequested: RootStore.activityController.activityFilterStore.updateCollectiblesModel()
+                        onRecipientsModelUpdateRequested: RootStore.activityController.activityFilterStore.updateRecipientsModel()
+                        onAllFiltersApplyRequested: RootStore.activityController.activityFilterStore.applyAllFilters()
+
+                        Connections {
+                            target: RootStore.transactionActivityStatus
+                            enabled: visible
+                            function onIsFilterDirtyChanged() {
+                                RootStore.updateTransactionFilterIfDirty()
+                            }
+                            function onFilterChainsChanged() {
+                                RootStore.activityController.activityFilterStore.updateCollectiblesModel()
+                                RootStore.activityController.activityFilterStore.updateRecipientsModel()
+                            }
+                        }
                     }
                 }
             }

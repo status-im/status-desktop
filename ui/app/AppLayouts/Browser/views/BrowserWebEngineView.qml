@@ -10,7 +10,7 @@ import utils
 import "../panels"
 import "ScriptUtils.js" as ScriptUtils
 
-import AppLayouts.Browser.stores as BrowserStores
+import AppLayouts.stores.Browser as BrowserStores
 
 WebEngineView {
     id: root
