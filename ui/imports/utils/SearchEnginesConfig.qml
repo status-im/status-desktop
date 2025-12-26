@@ -7,13 +7,14 @@ QtObject {
 
     readonly property int browserSearchEngineNone: 0
     readonly property int browserSearchEngineDuckDuckGo: 1
-    readonly property int browserSearchEngineQwant: 2
-    readonly property int browserSearchEngineStartpage: 3
-    readonly property int browserSearchEngineMojeek: 4
-    readonly property int browserSearchEngineEcosia: 5
-    readonly property int browserSearchEngineBing: 6
-    readonly property int browserSearchEngineGoogle: 7
-    readonly property int browserSearchEngineCustom: 8
+    readonly property int browserSearchEngineBrave: 2
+    readonly property int browserSearchEngineQwant: 3
+    readonly property int browserSearchEngineStartpage: 4
+    readonly property int browserSearchEngineMojeek: 5
+    readonly property int browserSearchEngineEcosia: 6
+    readonly property int browserSearchEngineBing: 7
+    readonly property int browserSearchEngineGoogle: 8
+    readonly property int browserSearchEngineCustom: 9
 
     readonly property ListModel engines: ListModel {
         ListElement {
@@ -31,49 +32,56 @@ QtObject {
             urlTemplate: "https://duckduckgo.com/?q=%1"
         }
         ListElement {
-            engineId: 2  // browserSearchEngineQwant
+            engineId: 2  // browserSearchEngineBrave
+            name: "Brave Search"
+            description: ""
+            iconUrl: "search_engines/brave_search"
+            urlTemplate: "https://search.brave.com/search?q=%1"
+        }
+        ListElement {
+            engineId: 3  // browserSearchEngineQwant
             name: "Qwant"
             description: ""
             iconUrl: "search_engines/qwant"
             urlTemplate: "https://www.qwant.com/?q=%1"
         }
         ListElement {
-            engineId: 3  // browserSearchEngineStartpage
+            engineId: 4  // browserSearchEngineStartpage
             name: "Startpage"
             description: ""
             iconUrl: "search_engines/starpage"
             urlTemplate: "https://www.startpage.com/sp/search?q=%1"
         }
         ListElement {
-            engineId: 4  // browserSearchEngineMojeek
+            engineId: 5  // browserSearchEngineMojeek
             name: "Mojeek"
             description: ""
             iconUrl: "search_engines/mojeek"
             urlTemplate: "https://www.mojeek.com/search?q=%1"
         }
         ListElement {
-            engineId: 5  // browserSearchEngineEcosia
+            engineId: 6  // browserSearchEngineEcosia
             name: "Ecosia"
             description: ""
             iconUrl: "search_engines/ecosia"
             urlTemplate: "https://www.ecosia.org/search?q=%1"
         }
         ListElement {
-            engineId: 6  // browserSearchEngineBing
+            engineId: 7  // browserSearchEngineBing
             name: "Bing"
             description: ""
             iconUrl: "search_engines/bing"
             urlTemplate: "https://www.bing.com/search?q=%1"
         }
         ListElement {
-            engineId: 7  // browserSearchEngineGoogle
+            engineId: 8  // browserSearchEngineGoogle
             name: "Google"
             description: ""
             iconUrl: "search_engines/google"
             urlTemplate: "https://www.google.com/search?q=%1"
         }
         ListElement {
-            engineId: 8  // browserSearchEngineCustom
+            engineId: 9  // browserSearchEngineCustom
             name: qsTr("Custom")
             description: qsTr("Plug in your own search engine that follows the OpenSearch URL format")
             iconUrl: "search_engines/custom"
