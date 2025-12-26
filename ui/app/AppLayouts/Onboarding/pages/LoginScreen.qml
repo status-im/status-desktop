@@ -49,6 +49,7 @@ OnboardingPage {
     signal biometricsRequested(string profileId)
     signal dismissBiometricsRequested
     signal changeLanguageRequested(string newLanguageCode)
+    signal deleteMultiaccountRequested(string keyUid, string username)
 
     function setBiometricResponse(secret: string, error = "") {
         if (!root.isBiometricsLogin)
@@ -247,6 +248,7 @@ OnboardingPage {
                 }
                 onOnboardingCreateProfileFlowRequested: root.onboardingCreateProfileFlowRequested()
                 onOnboardingLoginFlowRequested: root.onboardingLoginFlowRequested()
+                onDeleteMultiaccountRequested: (keyUid, username) => root.deleteMultiaccountRequested(keyUid, username)
             }
 
             LoginPasswordBox {

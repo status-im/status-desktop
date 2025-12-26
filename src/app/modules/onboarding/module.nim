@@ -446,6 +446,14 @@ method requestLocalBackup*[T](self: Module[T], backupImportFileUrl: string) =
 method requestDeleteBiometrics*[T](self: Module[T], account: string) =
   self.view.deleteBiometricsRequested(account)
 
+method requestDeleteMultiaccount*[T](self: Module[T], keyUid: string): string =
+  let err = self.controller.deleteMultiaccount(keyUid)
+  if err.len > 0:
+    return err
+
+  self.view.removeLoginAccountItem(keyUid)
+  return ""
+
 proc runPostLoginTasks*[T](self: Module[T]) =
   let tasks = self.postLoginTasks
   for task in tasks:
