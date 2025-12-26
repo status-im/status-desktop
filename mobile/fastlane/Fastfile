@@ -172,7 +172,7 @@ platform :ios do
     end
 
     UI.message("Resigning IPA with resign.sh directly via bash...")
-    UI.message("Using entitlements: #{entitlements_path}")
+    UI.message("Using entitlements: #{entitlements_file.path}")
     command = [
       resign_sh.shellescape,
       ipa_path.shellescape,
