@@ -4,9 +4,15 @@ from objectmaphelper import *
 # Map for communities screens, views locators
 
 # Community Portal
-mainWindow_communitiesPortalLayout_CommunitiesPortalLayout = {"container": statusDesktop_mainWindow, "objectName": "communitiesPortalLayout", "type": "CommunitiesPortalLayout", "visible": True}
-mainWindow_Create_New_Community_StatusButton = {"checkable": False, "container": mainWindow_communitiesPortalLayout_CommunitiesPortalLayout, "objectName": "createCommunityButton", "type": "StatusButton", "visible": True}
+communityPortal = {"container": statusDesktop_mainWindow, "objectName": "communitiesPortalLayout", "type": "CommunitiesPortalLayout", "visible": True}
+communityPortal_CreateCommunityButton = {"checkable": False, "container": communityPortal, "objectName": "createCommunityButton", "type": "StatusButton", "visible": True}
+communityPortal_JoinCommunityButton = {"checkable": False, "container": communityPortal, "objectName": "joinCommunityButton", "type": "StatusButton", "visible": True}
 
+# Import Community Popup
+
+importCommunityPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "ImportCommunityPopup", "type": "PopupItem", "visible": True}
+importCommunityPopup_KeyInput = {"container": statusDesktop_mainWindow_overlay, "id": "keyInput", "type": "StatusTextArea", "unnamed": 1, "visible": True}
+importCommunityPopup_JoinButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "joinStatusDialogFooterButton", "type": "StatusButton", "visible": True}
 # Community View
 mainWindow_communityLoader_Loader = {"container": statusDesktop_mainWindow, "objectName": "StatusSectionLayoutLandscape", "type": "ContentItem", "visible": True}
 
@@ -269,3 +275,6 @@ membersTabBar_All_Members_StatusTabButton = {"checkable": True, "container": mai
 
 # Context menu
 leaveCommunityContextMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "CommunitiesListPanel_leaveCommunityButtonInPopup", "type": "StatusButton", "visible": True}
+
+# Leave confirmation popup
+leaveCommunityButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunitiesListPanel_leaveCommunityButtonInPopup", "type": "StatusButton", "visible": True}

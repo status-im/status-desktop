@@ -1,9 +1,6 @@
-import allure
 import pytest
 from allure_commons._allure import step
 
-import configs
-import driver
 from constants import permission_data_member, RandomCommunity
 from constants.community import LimitWarnings
 from gui.main_window import MainWindow

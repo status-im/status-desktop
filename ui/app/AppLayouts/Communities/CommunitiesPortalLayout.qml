@@ -191,6 +191,7 @@ StatusSectionLayout {
         spacing: Theme.bigPadding
 
         StatusButton {
+            objectName: "joinCommunityButton"
             Layout.fillWidth: true
             Layout.preferredHeight: 38
             Layout.maximumWidth: implicitWidth

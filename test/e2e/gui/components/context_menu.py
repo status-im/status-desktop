@@ -48,3 +48,8 @@ class ContextMenu(QObject):
         self.delete_category_item.click()
         return ConfirmationCategoryPopup().wait_until_appears()
 
+    @allure.step('Open leave community popup')
+    def open_leave_community_popup(self) -> LeaveCommunityConfirmationPopup:
+        self.leave_community_option.click()
+        return LeaveCommunityConfirmationPopup().wait_until_appears()
+

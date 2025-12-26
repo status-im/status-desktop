@@ -1,5 +1,6 @@
 import allure
 
+import configs
 from gui.components.authenticate_popup import AuthenticatePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -41,5 +42,6 @@ class WelcomeCommunityPopup(QObject):
         self._authenticate_button.click()
         return AuthenticatePopup().wait_until_appears()
 
-    def share_address(self):
+    def join_with_sharing_all_addresses(self):
         self._share_address_button.click()
+        return AuthenticatePopup().wait_until_appears()
