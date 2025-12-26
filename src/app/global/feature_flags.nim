@@ -16,7 +16,7 @@ macro featureFlag(name: string, defaultValue: bool, buildFlag: static bool = fal
     return quote do:
       let `flagName`* = getEnv("FLAG_" & `name`.toUpper, boolToEnv(`defaultValue`)) != "0"
 
-const DEFAULT_FLAG_SWAP_ENABLED  = true
+const DEFAULT_FLAG_SWAP_ENABLED  = when defined(swap_disabled): false else: true
 const DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED  = true
 const DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED = true
 const DEFAULT_FLAG_SIMPLE_SEND_ENABLED = true
