@@ -38,6 +38,7 @@ QObject {
 
     property var allTokenGroupsForChainModel // all token groups, loaded on demand
     property var searchResultModel // token groups that match the search keyword
+    property var listOfAvailableTokens // considered only if non-empty, otherwise all token groups default to true
 
     // expected roles: chainId, chainName, iconUrl
     required property var flatNetworksModel
@@ -143,6 +144,9 @@ QObject {
                 proxyRoles: [
                     FastExpressionRole {
                         name: "balanceAsDouble"
+                        expression: balanceToDouble(model.balance, delegateRoot.decimals)
+                        expectedRoles: ["balance"]
+
                         function balanceToDouble(balance: string, decimals: int): double {
                             if (typeof balance !== 'string')
                                 return 0
@@ -150,18 +154,16 @@ QObject {
                             if (isNaN(bigIntBalance))
                                 return 0
                             return AmountsArithmetic.toNumber(bigIntBalance, decimals)
-                        }
-                        expression: balanceToDouble(model.balance, delegateRoot.decimals)
-                        expectedRoles: ["balance"]
+                        }                        
                     },
                     FastExpressionRole {
                         name: "balanceAsString"
+                        expression: convert(model.balanceAsDouble)
+                        expectedRoles: ["balanceAsDouble"]
+
                         function convert(amount: double): string {
                             return LocaleUtils.currencyAmountToLocaleString({amount, displayDecimals: 2}, {noSymbol: true})
                         }
-
-                        expression: convert(model.balanceAsDouble)
-                        expectedRoles: ["balanceAsDouble"]
                     }
                 ]
 
@@ -231,6 +233,9 @@ QObject {
         proxyRoles: [
             FastExpressionRole {
                 name: "sectionName"
+                expression: getSectionName(!!model.currentBalance)
+                expectedRoles: ["currentBalance"]
+
                 function getSectionName(hasBalance) {
                     if (!hasBalance)
                         return qsTr("Popular assets")
@@ -238,16 +243,42 @@ QObject {
                     if (firstEnabledChain.available)
                         return qsTr("Your assets on %1").arg(firstEnabledChain.item.chainName)
                 }
-                expression: getSectionName(!!model.currentBalance)
-                expectedRoles: ["currentBalance"]
             },
             FastExpressionRole {
-                function tokenIcon(symbol) {
-                    return Constants.tokenIcon(symbol)
-                }
                 name: "iconSource"
                 expression: model.logoUri || tokenIcon(model.symbol)
                 expectedRoles: ["logoUri", "symbol"]
+
+                function tokenIcon(symbol) {
+                    return Constants.tokenIcon(symbol)
+                }
+            },
+            FastExpressionRole {
+                name: "groupAvailable" // group is available if at least one token is in the list of available tokens
+                expression: isAvailable(model.tokens)
+                expectedRoles: ["tokens"]
+
+                function isAvailable(tokens) {
+                    if (!root.listOfAvailableTokens) {
+                        return true
+                    }
+
+                    for (let i = 0; i < tokens.ModelCount.count; i++) {
+                        const token = ModelUtils.get(tokens, i)
+                        for (let j = 0; j < root.listOfAvailableTokens.length; j++) {
+                            let tokenKey = token.key.toLowerCase()
+                            if (token.address === Constants.zeroAddress) {
+                                // special handling for native tokens
+                                tokenKey = Utils.buildTokenKey(token.chainId, Constants.zeroAddress1)
+                            }
+                            if (tokenKey !== root.listOfAvailableTokens[j].toLowerCase()) {
+                                continue
+                            }
+                            return true
+                        }
+                    }
+                    return false
+                }
             }
         ]
 
@@ -296,6 +327,9 @@ QObject {
             proxyRoles: [
                 FastExpressionRole {
                     name: "sectionName"
+                    expression: getSectionName(!!model.currentBalance)
+                    expectedRoles: ["currentBalance"]
+
                     function getSectionName(hasBalance) {
                         if (!hasBalance)
                             return qsTr("Popular assets")
@@ -303,16 +337,42 @@ QObject {
                         if (firstEnabledChain.available)
                             return qsTr("Your assets on %1").arg(firstEnabledChain.item.chainName)
                     }
-                    expression: getSectionName(!!model.currentBalance)
-                    expectedRoles: ["currentBalance"]
                 },
                 FastExpressionRole {
-                    function tokenIcon(symbol) {
-                        return Constants.tokenIcon(symbol)
-                    }
                     name: "iconSource"
                     expression: model.logoUri || tokenIcon(model.symbol)
                     expectedRoles: ["logoUri", "symbol"]
+
+                    function tokenIcon(symbol) {
+                        return Constants.tokenIcon(symbol)
+                    }
+                },
+                FastExpressionRole {
+                    name: "groupAvailable" // group is available if at least one token is in the list of available tokens
+                    expression: isAvailable(model.tokens)
+                    expectedRoles: ["tokens"]
+
+                    function isAvailable(tokens) {
+                        if (!root.listOfAvailableTokens) {
+                            return true
+                        }
+
+                        for (let i = 0; i < tokens.ModelCount.count; i++) {
+                            const token = ModelUtils.get(tokens, i)
+                            for (let j = 0; j < root.listOfAvailableTokens.length; j++) {
+                                let tokenKey = token.key.toLowerCase()
+                                if (token.address === Constants.zeroAddress) {
+                                    // special handling for native tokens
+                                    tokenKey = Utils.buildTokenKey(token.chainId, Constants.zeroAddress1)
+                                }
+                                if (tokenKey !== root.listOfAvailableTokens[j].toLowerCase()) {
+                                    continue
+                                }
+                                return true
+                            }
+                        }
+                        return false
+                    }
                 }
             ]
 
