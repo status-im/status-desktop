@@ -148,12 +148,37 @@ platform :ios do
     # that resign.sh uses for processing nested apps/extensions
     resign_sh = File.join(Sigh::ROOT, 'lib', 'assets', 'resign.sh')
 
+    # Extract entitlements from provisioning profile and modify NFC entitlement
+    # This fixes "NDEF is disallowed" error with Xcode 16+ / SDK 18.x
+    # We remove NDEF from com.apple.developer.nfc.readersession.formats (keep TAG and PACE)
+    require 'tempfile'
+    entitlements_file = Tempfile.new(['entitlements', '.plist'])
+
+    # Extract entitlements from provisioning profile
+    sh("security cms -D -i #{provisioning_profile.shellescape} | plutil -extract Entitlements xml1 -o #{entitlements_file.path.shellescape} -", log: false)
+
+    # Check if NFC entitlement exists and modify it to remove NDEF
+    nfc_key = "com.apple.developer.nfc.readersession.formats"
+    has_nfc = sh("/usr/libexec/PlistBuddy -c 'Print :#{nfc_key}' #{entitlements_file.path.shellescape} 2>/dev/null || echo ''", log: false).strip
+
+    if has_nfc != ""
+      UI.message("Found NFC entitlements, removing deprecated NDEF value...")
+      # Delete existing NFC array and recreate with only TAG and PACE (no NDEF)
+      sh("/usr/libexec/PlistBuddy -c 'Delete :#{nfc_key}' #{entitlements_file.path.shellescape}", log: false)
+      sh("/usr/libexec/PlistBuddy -c 'Add :#{nfc_key} array' #{entitlements_file.path.shellescape}", log: false)
+      sh("/usr/libexec/PlistBuddy -c 'Add :#{nfc_key}:0 string TAG' #{entitlements_file.path.shellescape}", log: false)
+      sh("/usr/libexec/PlistBuddy -c 'Add :#{nfc_key}:1 string PACE' #{entitlements_file.path.shellescape}", log: false)
+      UI.message("Modified NFC entitlements: removed NDEF, keeping TAG and PACE")
+    end
+
     UI.message("Resigning IPA with resign.sh directly via bash...")
+    UI.message("Using entitlements: #{entitlements_path}")
     command = [
       resign_sh.shellescape,
       ipa_path.shellescape,
       signing_identity.shellescape,
       "-p", "#{app_identifier}=#{provisioning_profile}".shellescape,
+      "-e", entitlements_file.path.shellescape,
       "-d", display_name.shellescape,
       "-b", app_identifier.shellescape,
       "-v",

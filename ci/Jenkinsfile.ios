@@ -117,7 +117,6 @@ pipeline {
     stage('Parallel Upload') {
       parallel {
         stage('Upload to TestFlight') {
-          when { expression { utils.isReleaseBuild() } }
           steps {
             script {
               def changelog = sh(script: './scripts/generate-changelog.sh', returnStdout: true).trim()
