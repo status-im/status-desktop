@@ -380,6 +380,72 @@
     </message>
   </context>
   <context>
+    <name>ActivityCenterOptionsPanel</name>
+    <message>
+      <source>Mark all as read</source>
+      <comment>ActivityCenterOptionsPanel</comment>
+      <translation>Mark all as read</translation>
+    </message>
+    <message>
+      <source>Hide read notifications</source>
+      <comment>ActivityCenterOptionsPanel</comment>
+      <translation>Hide read notifications</translation>
+    </message>
+    <message>
+      <source>Show read notifications</source>
+      <comment>ActivityCenterOptionsPanel</comment>
+      <translation>Show read notifications</translation>
+    </message>
+  </context>
+  <context>
+    <name>ActivityCenterPanel</name>
+    <message>
+      <source>Notifications</source>
+      <comment>ActivityCenterPanel</comment>
+      <translation>Notifications</translation>
+    </message>
+    <message>
+      <source>Enable Status News notifications</source>
+      <comment>ActivityCenterPanel</comment>
+      <translation>Enable Status News notifications</translation>
+    </message>
+    <message>
+      <source>Enable RSS</source>
+      <comment>ActivityCenterPanel</comment>
+      <translation>Enable RSS</translation>
+    </message>
+    <message>
+      <source>Status News RSS are off</source>
+      <comment>ActivityCenterPanel</comment>
+      <translation>Status News RSS are off</translation>
+    </message>
+    <message>
+      <source>Status News notifications are off</source>
+      <comment>ActivityCenterPanel</comment>
+      <translation>Status News notifications are off</translation>
+    </message>
+    <message>
+      <source>Turn them on to get updates about new features and announcements. You can also enable this anytime in Privacy &amp; Security settings.</source>
+      <comment>ActivityCenterPanel</comment>
+      <translation>Turn them on to get updates about new features and announcements. You can also enable this anytime in Privacy &amp; Security settings.</translation>
+    </message>
+    <message>
+      <source>Turn them on to get updates about new features and announcements. You can also enable this anytime in Notifications and Sound settings.</source>
+      <comment>ActivityCenterPanel</comment>
+      <translation>Turn them on to get updates about new features and announcements. You can also enable this anytime in Notifications and Sound settings.</translation>
+    </message>
+    <message>
+      <source>No notifications right now.</source>
+      <comment>ActivityCenterPanel</comment>
+      <translation>No notifications right now.</translation>
+    </message>
+    <message>
+      <source>Check back later for updates.</source>
+      <comment>ActivityCenterPanel</comment>
+      <translation>Check back later for updates.</translation>
+    </message>
+  </context>
+  <context>
     <name>ActivityCenterPopupTopBarPanel</name>
     <message>
       <source>All</source>

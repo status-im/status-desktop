@@ -310,6 +310,60 @@
     </message>
 </context>
 <context>
+    <name>ActivityCenterOptionsPanel</name>
+    <message>
+        <source>Mark all as read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide read notifications</source>
+        <translation type="unfinished">읽은 알림 숨기기</translation>
+    </message>
+    <message>
+        <source>Show read notifications</source>
+        <translation type="unfinished">읽음 알림 표시</translation>
+    </message>
+</context>
+<context>
+    <name>ActivityCenterPanel</name>
+    <message>
+        <source>Notifications</source>
+        <translation type="unfinished">알림</translation>
+    </message>
+    <message>
+        <source>Enable Status News notifications</source>
+        <translation type="unfinished">Status 뉴스 알림 활성화</translation>
+    </message>
+    <message>
+        <source>Enable RSS</source>
+        <translation type="unfinished">RSS 활성화</translation>
+    </message>
+    <message>
+        <source>Status News RSS are off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status News notifications are off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn them on to get updates about new features and announcements. You can also enable this anytime in Privacy &amp; Security settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn them on to get updates about new features and announcements. You can also enable this anytime in Notifications and Sound settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No notifications right now.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check back later for updates.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ActivityCenterPopupTopBarPanel</name>
     <message>
         <source>All</source>

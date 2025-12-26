@@ -91,7 +91,8 @@ Control {
 
     // Max thumbnails to show (album caps to this).
     // Default to the maximumb images that fit in the current layout.
-    property int    maxThumbs: Math.min(Math.floor((root.width + root.thumbSpacing) / (root.thumbSize + root.thumbSpacing)), attachments.length)
+    property int    maxThumbs: attachments && attachments.length ? Math.min(Math.floor((root.width + root.thumbSpacing) / (root.thumbSize + root.thumbSpacing)), attachments.length) :
+                                                                   Math.min(Math.floor((root.width + root.thumbSpacing) / (root.thumbSize + root.thumbSpacing)), 0)
 
     // Max thumbnails to show (album caps to this).
     property int    thumbSize: 56
@@ -181,7 +182,9 @@ Control {
         StatusMessageImageAlbum {
             Layout.fillWidth: true
             Layout.preferredHeight: root.thumbSize
-            visible: root.attachments.length > 0
+            visible: root.attachments && root.attachments.length ?
+                         root.attachments.length > 0 :
+                         false
 
             spacing: root.thumbSpacing
             imageWidth: root.thumbSize
