@@ -31,6 +31,9 @@ dependencies {
     implementation 'androidx.documentfile:documentfile:1.0.1'
 }
 
+// Allow overriding qtAndroidDir via environment variable (for different Qt installations)
+def qtDir = System.getenv("QT_ANDROID_DIR") ?: qtAndroidDir
+
 android {
     /*******************************************************
      * The following variables:
@@ -54,9 +57,9 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = [qtAndroidDir + '/src', 'src', 'java']
-            aidl.srcDirs = [qtAndroidDir + '/src', 'src', 'aidl']
-            res.srcDirs = [qtAndroidDir + '/res', 'res']
+            java.srcDirs = [qtDir + '/src', 'src', 'java']
+            aidl.srcDirs = [qtDir + '/src', 'src', 'aidl']
+            res.srcDirs = [qtDir + '/res', 'res']
             resources.srcDirs = ['resources']
             renderscript.srcDirs = ['src']
             assets.srcDirs = ['assets']
@@ -89,6 +92,42 @@ android {
         ndk.abiFilters = qtTargetAbiList.split(",")
         // Generate unique versionCode based on minutes since epoch
         versionCode = (System.currentTimeMillis() / 60000).toInteger()
+    }
+
+    signingConfigs {
+        pr {
+            storeFile file(System.getenv("STATUS_APP_KEYSTORE_PATH"))
+            storePassword System.getenv("STATUS_APP_KEYSTORE_PASSWORD")
+            keyAlias System.getenv("STATUS_APP_KEY_ALIAS")
+            keyPassword System.getenv("STATUS_APP_KEY_PASSWORD")
+        }
+        production {
+            storeFile file(System.getenv("STATUS_APP_KEYSTORE_PATH"))
+            storePassword System.getenv("STATUS_APP_KEYSTORE_PASSWORD")
+            keyAlias System.getenv("STATUS_APP_KEY_ALIAS")
+            keyPassword System.getenv("STATUS_APP_KEY_PASSWORD")
+        }
+    }
+
+    flavorDimensions "variant"
+
+    productFlavors {
+        pr {
+            dimension "variant"
+            applicationId "app.status.mobile.pr"
+            resValue "string", "app_name", "StatusPR"
+            if (System.getenv("STATUS_APP_KEYSTORE_PATH") && file(System.getenv("STATUS_APP_KEYSTORE_PATH")).exists()) {
+                signingConfig signingConfigs.pr
+            }
+        }
+        production {
+            dimension "variant"
+            applicationId "app.status.mobile"
+            resValue "string", "app_name", "Status"
+            if (System.getenv("STATUS_APP_KEYSTORE_PATH") && file(System.getenv("STATUS_APP_KEYSTORE_PATH")).exists()) {
+                signingConfig signingConfigs.production
+            }
+        }
     }
 
     buildTypes {
