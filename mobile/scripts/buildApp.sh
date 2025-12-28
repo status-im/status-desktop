@@ -30,8 +30,8 @@ echo "Version: $VERSION, build: $BUILD_VERSION"
 if [[ "${OS}" == "android" ]]; then
   [[ -z "${JAVA_HOME}" ]] && { echo "JAVA_HOME is not set"; exit 1; }
 
-  GRADLE_FLAVOR="production"
-  [[ "$BUILD_VARIANT" == "pr" ]] && GRADLE_FLAVOR="pr"
+  # Export BUILD_VARIANT for build.gradle to pick up
+  export BUILD_VARIANT
 
   "$QMAKE_BIN" "$CWD/../wrapperApp/Status.pro" "${QMAKE_CONFIG[@]}" -spec android-clang \
     ANDROID_ABIS="${ANDROID_ABI:-arm64-v8a}" VERSION="$VERSION" -after
@@ -53,10 +53,10 @@ if [[ "${OS}" == "android" ]]; then
 
   # Build: aab -> bundle, apk -> assemble
   TASK="assemble"; [[ "$BUILD_TYPE" == "aab" ]] && TASK="bundle"
-  gradle "${TASK}${GRADLE_FLAVOR^}Release" --no-daemon
+  gradle "${TASK}Release" --no-daemon
 
-  OUTPUT_FILE="build/outputs/apk/${GRADLE_FLAVOR}/release/android-build-${GRADLE_FLAVOR}-release.apk"
-  [[ "$BUILD_TYPE" == "aab" ]] && OUTPUT_FILE="build/outputs/bundle/${GRADLE_FLAVOR}Release/android-build-${GRADLE_FLAVOR}-release.aab"
+  OUTPUT_FILE="build/outputs/apk/release/android-build-release.apk"
+  [[ "$BUILD_TYPE" == "aab" ]] && OUTPUT_FILE="build/outputs/bundle/release/android-build-release.aab"
   [[ ! -f "$OUTPUT_FILE" ]] && { echo "Error: $OUTPUT_FILE not found"; exit 1; }
 
   BIN_DIR=${BIN_DIR:-"$CWD/../bin/android/qt6"}
