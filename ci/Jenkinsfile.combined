@@ -86,23 +86,43 @@ pipeline {
                 }
               }
             }
-            stage('E2E') {
+            stage('E2E Tests') {
               when {
                 expression {
                   env.JOB_NAME.toLowerCase().contains('nightly')
                 }
               }
-              steps {
-                script {
-                  windows_e2e = build(
-                    job: 'status-app/systems/windows/x86_64/tests-e2e',
-                    parameters: jenkins.mapToParams([
-                      BUILD_SOURCE:       windows_x86_64.fullProjectName,
-                      TESTRAIL_RUN_NAME:  utils.pkgFilename(),
-                      TEST_SCOPE_FLAG:    utils.isReleaseBuild() ? '-m=critical' : '',
-                      GIT_REF:            env.BRANCH_NAME,
-                    ]),
-                  )
+              parallel {
+                stage('E2E') {
+                  steps {
+                    script {
+                      windows_e2e = build(
+                        job: 'status-app/systems/windows/x86_64/tests-e2e',
+                        parameters: jenkins.mapToParams([
+                          BUILD_SOURCE:       windows_x86_64.fullProjectName,
+                          TESTRAIL_RUN_NAME:  utils.pkgFilename(),
+                          TEST_SCOPE_FLAG:    utils.isReleaseBuild() ? '-m=critical' : '',
+                          GIT_REF:            env.BRANCH_NAME,
+                        ]),
+                      )
+                    }
+                  }
+                }
+                stage('Benchmark E2E') {
+                  steps {
+                    script {
+                      benchmark_windows_e2e = build(
+                        job: 'status-app/e2e/nightly-benchmark-windows-master',
+                        propagate: false,
+                        parameters: jenkins.mapToParams([
+                          BUILD_SOURCE:      windows_x86_64.fullProjectName,
+                          TESTRAIL_RUN_NAME: utils.pkgFilename(),
+                          TEST_SCOPE_FLAG:   utils.isReleaseBuild() ? '-m=critical' : '',
+                          GIT_REF:           env.BRANCH_NAME
+                        ]),
+                      )
+                    }
+                  }
                 }
               }
             }

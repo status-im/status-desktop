@@ -1,0 +1,247 @@
+#!/usr/bin/env groovy
+library 'status-jenkins-lib@v1.9.31'
+
+pipeline {
+  agent {
+    label 'windows && x86_64 && qt-6.9.2 && windows-e2e-benchmark'
+  }
+
+  parameters {
+    string(
+      name: 'GIT_REF',
+      description: 'Git branch to checkout.',
+      defaultValue: 'master'
+    )
+    string(
+      name: 'BUILD_SOURCE',
+      description: 'URL to tar.gz file OR path to Jenkins build.',
+      defaultValue: 'status-app/systems/windows/x86_64/package'
+    )
+    string(
+      name: 'TEST_NAME',
+      description: 'Paste test name/part of test name to run specific test.',
+      defaultValue: ''
+    )
+    string(
+      name: 'TEST_SCOPE_FLAG',
+      description: 'Paste a known mark to run tests labeled with this mark',
+      defaultValue: ''
+    )
+    string(
+      name: 'TESTRAIL_RUN_NAME',
+      description: 'Test run name in Test Rail.',
+      defaultValue: ''
+    )
+    choice(
+      name: 'LOG_LEVEL',
+      description: 'Log level for pytest.',
+      choices: ['INFO', 'DEBUG', 'TRACE', 'WARNING', 'CRITICAL']
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 120, unit: 'MINUTES')
+    disableConcurrentBuilds()
+    disableRestartFromStage()
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '1',
+    ))
+  }
+
+  environment {
+    PLATFORM = 'tests/e2e-windows'
+
+    SQUISH_DIR = 'C:\\squish-runner-9.1.0-qt-6.9'
+    PYTHONPATH = "${SQUISH_DIR}\\lib;${SQUISH_DIR}\\bin;${SQUISH_DIR}\\lib\\python;${PYTHONPATH}"
+
+    /* To stop e2e tests using port 8545 */
+    STATUS_RUNTIME_HTTP_API = 'False'
+    STATUS_RUNTIME_WS_API = 'False'
+
+    /* Avoid race conditions with other builds using virtualenv. */
+    VIRTUAL_ENV = "${WORKSPACE_TMP}\\venv"
+    PATH = "${VIRTUAL_ENV}\\bin;C:\\Qt\\6.9.2\\msvc2022_64\\bin;${PATH}"
+
+    /* To store user configuratiin files in temp dir */
+    XDG_CONFIG_HOME = "${WORKSPACE_TMP}/config"
+
+    TESTRAIL_URL = 'https://ethstatus.testrail.net'
+    TESTRAIL_PROJECT_ID = 18
+
+    /* Runtime flag to make testing of the app easier.  Switched off: unpredictable app behavior under new tests */
+    STATUS_RUNTIME_TEST_MODE = 1
+
+    /*To enable Home tab */
+    FLAG_HOMEPAGE_ENABLED = 1
+
+    /* Hack fix for params not being set in job on first run */
+    BUILD_SOURCE =      "${params.BUILD_SOURCE}"
+    TEST_NAME =         "${params.TEST_NAME}"
+    TEST_SCOPE_FLAG =   "${params.TEST_SCOPE_FLAG}"
+    TESTRAIL_RUN_NAME = "${params.TESTRAIL_RUN_NAME}"
+    LOG_LEVEL =         "${params.LOG_LEVEL}"
+
+    /* Forces QT to use OpenGL for rendering instead of default Direct3D 11 */
+    QSG_RHI_BACKEND = 'opengl'
+  }
+
+
+  stages {
+    stage('Cleanup Workspace') {
+      steps {
+        sh './scripts/clean-git.sh'
+      }
+    }
+
+    stage('Deps') {
+      steps { script { dir('test/e2e') {
+          bat """
+            python310 -m venv ${VIRTUAL_ENV}
+            ${VIRTUAL_ENV}\\Scripts\\python.exe -m pip install --upgrade pip
+            ${VIRTUAL_ENV}\\Scripts\\python.exe -m pip install -r requirements.txt
+          """
+      } } }
+    }
+
+    stage('Download') {
+      when { expression { params.BUILD_SOURCE.startsWith('http') } }
+      steps { timeout(5) { script { dir('test/e2e') {
+        sh 'mkdir -p ./pkg/'
+        setBuildDescFromFile(params.BUILD_SOURCE)
+        fileOperations([
+          fileDownloadOperation(
+            url:            params.BUILD_SOURCE,
+            targetFileName: 'StatusIm-Desktop.7z',
+            targetLocation: './pkg/',
+          )
+        ])
+      } } } }
+    }
+
+    stage('Copy') {
+      when { expression { ! params.BUILD_SOURCE.startsWith('http') } }
+      steps { timeout(5) { script { dir('test/e2e') {
+        copyArtifacts(
+          projectName: params.BUILD_SOURCE,
+          filter:      'pkg/*-x86_64.7z',
+          selector:    lastWithArtifacts(),
+          target:      './'
+        )
+        setBuildDescFromFile(utils.findFile('pkg/*7z'))
+      } } } }
+    }
+
+    stage('Unpack') {
+      steps { timeout(5) { script { dir('test/e2e') {
+        sh 'mkdir aut'
+        sh "7z x '${utils.findFile('pkg/*.7z')}' -o'./aut'"
+        env.AUT_PATH = utils.findFile('aut/Status/bin/Status.exe').replace('\\','/')
+      } } } }
+    }
+
+    stage('Test') {
+      steps {
+        timeout(time: 120) {
+          dir('test/e2e') {
+            /* Lock the agent so we run only one e2e build at a time */
+            lock(resource: "e2e-windows-${env.NODE_NAME}", quantity: 1) {
+              script {
+                def flags = []
+                if (params.TEST_NAME)       { flags.add("-k=${params.TEST_NAME}") }
+                if (params.TEST_SCOPE_FLAG) { flags.add(params.TEST_SCOPE_FLAG) }
+                if (params.LOG_LEVEL)       { flags.addAll(["--log-level=${params.LOG_LEVEL}", "--log-cli-level=${params.LOG_LEVEL}"]) }
+                def flagStr = flags.join(' ')
+
+                withCredentials([
+                  usernamePassword(credentialsId: 'test-rail-api-devops', usernameVariable: 'TESTRAIL_USR', passwordVariable: 'TESTRAIL_PSW'),
+                  string(credentialsId: 'wallet-test-user-seed', variable: 'WALLET_TEST_USER_SEED')
+                ]) {
+                  sh"""
+                    pushd configs
+                    ln -sf _local.ci.py _local.py || cp _local.ci.py _local.py
+                    popd
+
+                  """
+                  bat"""
+                    ${VIRTUAL_ENV}\\Scripts\\python.exe -m pytest -m "not keycard" -v --reruns=1 --timeout=300 ${flagStr} --disable-warnings --alluredir=./allure-results -o timeout_func_only=true
+                  """
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+  post {
+    always { 
+      script { 
+        dir('test/e2e') {
+          archiveArtifacts('aut/Status/bin/*.log')
+
+          sh 'cp ext/allure_files/categories.json allure-results'
+          sh 'cp ext/allure_files/environment.properties allure-results'
+
+          allure([
+            results: [[path: 'allure-results']],
+            reportBuildPolicy: 'ALWAYS',
+            properties: [],
+            jdk: '',
+          ])
+        }
+      }
+      script {
+        withCredentials([sshUserPrivateKey(
+          credentialsId: 'status-app-benchmarks-deploy-key',
+          keyFileVariable: 'SSH_KEY_FILE'
+        )]) {
+          sh '''
+              eval $(ssh-agent -s)
+              ssh-add $SSH_KEY_FILE
+              ./scripts/push_benchmark.sh
+            '''
+        }
+      }
+    }
+    cleanup {
+      script {
+        powershell '''
+          if (Test-Path "C:\\Users\\jenkins\\AppData\\Local\\Status") {
+            Remove-Item "C:\\Users\\jenkins\\AppData\\Local\\Status" -Recurse -Force -ErrorAction SilentlyContinue
+          }
+          # Clean-up registry entries
+          $registryPath = "HKCU:\\Software\\Status\\Status Desktop"
+          if (Test-Path $registryPath) {
+            Remove-Item $registryPath -Recurse -Force -ErrorAction SilentlyContinue
+          }
+        '''
+      }
+      cleanWs(disableDeferredWipeout: true)
+      powershell "Remove-Item -Path '${env.WORKSPACE_TMP}' -Recurse -Force"
+    }
+  }
+}
+
+def setBuildDescFromFile(fileNameOrPath) {
+  def tokens = utils.parseFilename(utils.baseName(fileNameOrPath))
+  if (tokens == null) { /* Fallback for regex fail. */
+    currentBuild.description = utils.baseName(fileNameOrPath)
+    return
+  }
+  if (tokens.build && tokens.build.startsWith('pr')) {
+    currentBuild.displayName = tokens.build.replace(/^pr/, 'PR-')
+  }
+  currentBuild.description = formatMap([
+    Node: NODE_NAME,
+    Build: tokens.build,
+    Commit: tokens.commit,
+    Version: (tokens.tstamp ?: tokens.version),
+  ])
+}
