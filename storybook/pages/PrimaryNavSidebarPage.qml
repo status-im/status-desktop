@@ -67,8 +67,8 @@ SplitView {
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: 2
-            anchors.leftMargin: sidebar.alwaysVisible ? sidebar.width : 2
-            Behavior on anchors.leftMargin {PropertyAnimation {duration: ThemeUtils.AnimationDuration.Fast}}
+            anchors.leftMargin: sidebar.width * sidebar.position
+            // Behavior on anchors.leftMargin {PropertyAnimation {duration: ThemeUtils.AnimationDuration.Fast}}
 
             WebView {
                 Layout.fillWidth: true
@@ -79,7 +79,7 @@ SplitView {
             StatusButton {
                 icon.name: "more"
                 enabled: !sidebar.alwaysVisible
-                onClicked: sidebar.open()
+                onClicked: sidebar.toggle()
 
                 tooltip.text: "Open sidebar"
                 tooltip.orientation: StatusToolTip.Orientation.Bottom
@@ -234,6 +234,54 @@ SplitView {
                 logs.logEvent("onSetCurrentUserStatusRequested", ["status"], arguments) // <- root.rootStore.setCurrentUserStatus(status)
             }
             onViewProfileRequested: logs.logEvent("onViewProfileRequested", ["pubKey"], arguments) // <- Global.openProfilePopup(pubKey)
+        }
+
+        // Native swipe + indicator demo
+        NativeSwipeHandler {
+            id: navSwipeHandler
+            width: 20
+            height: parent.height
+            x: Math.max(0, sidebar.width * sidebar.position - sidebar.leftPadding)
+            y: 0
+            openDistance: sidebar.width
+            visible: !sidebar.alwaysVisible
+            clip: true
+
+            property real _lastPos: 0
+            property real _lastDelta: 0
+
+            onSwipeStarted: (from, to) => {
+                sidebar.dragActive = true
+                sidebar.stopAnimations()
+                _lastPos = sidebar.position
+                _lastDelta = 0
+            }
+            onSwipeProgress: (position, from, to, velocity) => {
+                sidebar.position = position
+                _lastDelta = sidebar.position - _lastPos
+                _lastPos = sidebar.position
+            }
+            onSwipeEnded: (committed, from, to, velocity) => {
+                const opening =
+                    velocity > 0 ? true :
+                    velocity < 0 ? false :
+                    _lastDelta > 0 ? true :
+                    _lastDelta < 0 ? false :
+                    sidebar.position >= 0.5
+
+                sidebar.position = opening ? 1.0 : 0.0
+                sidebar.dragActive = false
+                opening ? sidebar.open() : sidebar.close()
+            }
+
+            NativeIndicator {
+                width: 5
+                height: 100
+                x: - width * sidebar.position
+                y: (parent.height - height) / 2
+                source: Assets.svg("swipe-indicator")
+                visible: navSwipeHandler.visible
+            }
         }
     }
 

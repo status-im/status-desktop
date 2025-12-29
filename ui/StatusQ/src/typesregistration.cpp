@@ -20,6 +20,16 @@
 #include "StatusQ/undefinedfilter.h"
 #include "StatusQ/urlutils.h"
 
+#include "StatusQ/NativeSwipeHandlerNative.h"
+#include "StatusQ/NativeIndicatorNative.h"
+
+// Forward declare platform-specific registration functions
+// These are implemented in the respective platform files
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID) || defined(Q_OS_MACOS)
+extern void registerNativeSwipeHandlerNativeType();
+extern void registerNativeIndicatorNativeType();
+#endif
+
 #include <qtmodelstoolkit/registerqmltypes.h>
 #include <qqmlsortfilterproxymodeltypes.h>
 
@@ -110,6 +120,14 @@ void registerStatusQTypes() {
     qmlRegisterUncreatableType<ThemePalette>("StatusQ.Core.Theme", 0, 1,
                                              "ThemePalette", QStringLiteral("Theme palette cannot be created directly."));
 
+    // Register NativeSwipeHandler + NativeIndicator (native on iOS/Android/macOS)
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID) || defined(Q_OS_MACOS)
+    registerNativeSwipeHandlerNativeType();
+    registerNativeIndicatorNativeType();
+#else
+    qmlRegisterType<NativeSwipeHandlerNative>("StatusQ.Controls", 0, 1, "NativeSwipeHandlerNative");
+    qmlRegisterType<NativeIndicatorNative>("StatusQ.Controls", 0, 1, "NativeIndicatorNative");
+#endif
 
 #ifdef BUNDLE_QML_RESOURCES
     Q_INIT_RESOURCE(TestConfig);
