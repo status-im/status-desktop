@@ -2166,10 +2166,6 @@ Item {
 
         sectionsModel: appMain.rootStore.sectionsModel
 
-        Binding on alwaysVisible { // NB: on browser+mobile, can't overlay the native WebView
-            when:  SQUtils.Utils.isMobile && d.activeSectionType === Constants.appSection.browser
-            value: true
-        }
 
         acVisible: d.activeSectionType === Constants.appSection.activityCenter // FIXME AC should not be a section
         acHasUnseenNotifications: appMain.activityCenterStore.hasUnseenNotifications
@@ -2217,6 +2213,55 @@ Item {
             } else {
                 changeAppSectionBySectionId(sectionId)
             }
+        }
+    }
+
+    // Swipe gesture handler for sidebar (native on iOS/Android/macOS)
+    // Must be OUTSIDE the sidebar so it can catch gestures when the sidebar is closed.
+    NativeSwipeHandler {
+        id: navSwipeHandler
+        width: 20
+        height: parent.height
+        x: Math.max(0, sidebar.width * sidebar.position - sidebar.leftPadding)
+        y: 0
+        openDistance: sidebar.width
+        visible: !sidebar.alwaysVisible
+        clip: true
+
+        property real _lastPos: 0
+        property real _lastDelta: 0
+
+        onSwipeStarted: (from, to) => {
+            sidebar.dragActive = true
+            sidebar.stopAnimations()
+            _lastPos = sidebar.position
+            _lastDelta = 0
+        }
+        onSwipeProgress: (position, from, to, velocity) => {
+            sidebar.position = position
+            _lastDelta = sidebar.position - _lastPos
+            _lastPos = sidebar.position
+        }
+        onSwipeEnded: (committed, from, to, velocity) => {
+            const opening =
+                velocity > 0 ? true :
+                velocity < 0 ? false :
+                _lastDelta > 0 ? true :
+                _lastDelta < 0 ? false :
+                sidebar.position >= 0.5
+
+            sidebar.position = opening ? 1.0 : 0.0
+            sidebar.dragActive = false
+            opening ? sidebar.open() : sidebar.close()
+        }
+
+        NativeIndicator {
+            width: 5
+            height: 100
+            x: - width * sidebar.position
+            y: (parent.height - height) / 2
+            source: Assets.svg("swipe-indicator")
+            visible: navSwipeHandler.visible && (navSwipeHandler.isSwipeActive || sidebar.position !== 1.0)
         }
     }
 

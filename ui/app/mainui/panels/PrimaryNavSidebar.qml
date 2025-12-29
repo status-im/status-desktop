@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import StatusQ.Core.Utils as SQUtils
 import StatusQ.Core.Theme
 import StatusQ.Components
+import StatusQ.Controls
 
 import mainui
 
@@ -16,7 +17,7 @@ import utils
 
 import SortFilterProxyModel
 
-Drawer {
+Item {
     id: root
 
     /**
@@ -37,6 +38,15 @@ Drawer {
 
     // defaults to true in landscape (desktop/tablet) mode; can be overridden here
     property bool alwaysVisible: d.windowWidth > d.windowHeight
+
+    // External swipe/drag driver can set this directly (0..1).
+    // When alwaysVisible is true, we force it to 1.
+    property real position: 0.0
+    // When true, disable snapping animation so the drawer tracks the finger precisely.
+    property bool dragActive: false
+    readonly property bool opened: alwaysVisible || position >= 0.999
+    // Used by button delegates to auto-close on click in non-always-visible mode.
+    readonly property bool interactive: !alwaysVisible
 
     required property ProfileStores.ProfileStore profileStore
     property var getLinkToProfileFn: function(pubkey) { console.error("IMPLEMENT ME"); return "" }
@@ -62,25 +72,95 @@ Drawer {
     signal viewProfileRequested(string pubKey)
     signal setCurrentUserStatusRequested(int status)
 
-    edge: Qt.LeftEdge
-
-    // behaviors like visible/modal/interactive/dim all depend on `alwaysVisible`
-    visible: alwaysVisible
-    interactive: !alwaysVisible
-    dim: !alwaysVisible
-    modal: !alwaysVisible
-
-    topPadding: Qt.platform.os === SQUtils.Utils.mac && Window.visibility !== Window.FullScreen ? Theme.padding * 3 // 48
-                                                                                                : Theme.halfPadding // 8
-    bottomPadding: Theme.halfPadding
-    leftPadding: Theme.halfPadding
-    rightPadding: Theme.halfPadding
-
-    spacing: Theme.halfPadding // 8
-
-    background: Rectangle {
-        color: "transparent"
+    // Snap when switching between modes:
+    // - alwaysVisible=true  -> force open immediately (position=1)
+    // - alwaysVisible=false -> default closed (position=0)
+    function _snapToMode() {
+        dragActive = false
+        position = alwaysVisible ? 1.0 : 0.0
     }
+    Component.onCompleted: _snapToMode()
+    onAlwaysVisibleChanged: _snapToMode()
+
+    // Slide in/out from the left.
+    x: alwaysVisible ? 0 : (-width + width * position)
+
+    // Animate snapping when not directly driven by a drag/swipe.
+    Behavior on position {
+        enabled: !root.dragActive && !root.alwaysVisible
+        NumberAnimation {
+            duration: ThemeUtils.AnimationDuration.Fast
+            easing.type: Easing.OutCubic
+        }
+    }
+
+    // No dimming, but keep an invisible click-catcher outside the drawer to close it.
+    Item {
+        id: clickCatcher
+        parent: root.parent
+        anchors.fill: parent
+        // ensure this sits above content but below the sidebar itself
+        z: root.z - 1
+        visible: !root.alwaysVisible && root.position > 0.0
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: root.close()
+        }
+    }
+
+    function open() { dragActive = false; position = 1.0 }
+    function close() { dragActive = false; position = 0.0 }
+    function toggle() { root.position == 0.0 ? open() : close() }
+    function stopAnimations() { /* kept for callers; Behavior drives snap */ }
+
+    // Swipe-to-close inside the drawer (when not alwaysVisible).
+    // Use DragHandler so it behaves consistently regardless of the initial open/closed state.
+    DragHandler {
+        id: closeDrag
+        enabled: !root.alwaysVisible && root.position > 0
+        target: null
+        xAxis.enabled: true
+        yAxis.enabled: false
+
+        property real _startPos: 0
+        property real _lastTx: 0
+        property real _lastDelta: 0
+
+        onActiveChanged: {
+            if (active) {
+                root.dragActive = true
+                _startPos = root.position
+                _lastTx = translation.x
+                _lastDelta = 0
+            } else {
+                const opening =
+                    _lastDelta > 0 ? true :
+                    _lastDelta < 0 ? false :
+                    root.position >= 0.5
+
+                root.dragActive = false
+                root.position = opening ? 1.0 : 0.0
+                opening ? root.open() : root.close()
+            }
+        }
+
+        onTranslationChanged: {
+            const dx = translation.x - _lastTx
+            _lastDelta = dx
+            _lastTx = translation.x
+
+            const nextPos = _startPos + (translation.x / Math.max(1.0, root.width))
+            root.position = Math.max(0.0, Math.min(1.0, nextPos))
+        }
+    }
+
+    // Padding and spacing were previously Drawer properties; keep them as locals.
+    readonly property real topPadding: Qt.platform.os === SQUtils.Utils.mac && Window.visibility !== Window.FullScreen ? Theme.padding * 3 : Theme.halfPadding
+    readonly property real bottomPadding: Theme.halfPadding
+    readonly property real leftPadding: Theme.halfPadding
+    readonly property real rightPadding: Theme.halfPadding
+    readonly property real spacing: Theme.halfPadding
 
     implicitWidth: 76 // by design; FIXME use a scalable value (60 + Theme.halfPadding + Theme.halfPadding)
 
@@ -178,7 +258,12 @@ Drawer {
         }
     }
 
-    contentItem: ColumnLayout {
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.topMargin: root.topPadding
+        anchors.bottomMargin: root.bottomPadding
+        anchors.leftMargin: root.leftPadding
+        anchors.rightMargin: root.rightPadding
         spacing: root.spacing
 
         // main section

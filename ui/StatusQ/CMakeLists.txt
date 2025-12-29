@@ -37,7 +37,7 @@ endif()
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
-        Core Qml Gui Quick QuickControls2 REQUIRED)
+        Core Qml Gui Quick QuickControls2 Svg REQUIRED)
 
 # --- QML test hooks flag and TestConfig generation ---
 option(STATUSQ_TESTMODE "Enable QML test hooks (TestConfig.testMode)" OFF)
@@ -172,6 +172,8 @@ add_library(StatusQ ${LIB_TYPE}
         include/StatusQ/formatteddoubleproperty.h
         include/StatusQ/genericvalidator.h
         include/StatusQ/keychain.h
+        include/StatusQ/NativeSwipeHandlerNative.h
+        include/StatusQ/NativeIndicatorNative.h
         include/StatusQ/networkchecker.h
         include/StatusQ/oneoffilter.h
         include/StatusQ/permissionutilsinternal.h
@@ -212,6 +214,9 @@ add_library(StatusQ ${LIB_TYPE}
         src/urlutils.cpp
         src/ios_utils.h
 
+        src/StatusQ/Controls/NativeSwipeHandlerNative.cpp
+        src/StatusQ/Controls/NativeIndicatorNative.cpp
+
         # wallet
         src/wallet/managetokenscontroller.cpp
         src/wallet/managetokenscontroller.h
@@ -237,19 +242,26 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     find_library(Foundation Foundation)
     find_library(Security Security)
     find_library(LocalAuthentication LocalAuthentication)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation} ${Security} ${LocalAuthentication})
+    find_library(QuartzCore QuartzCore)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation} ${Security} ${LocalAuthentication} ${QuartzCore})
     target_sources(StatusQ PRIVATE
         src/keychain_apple.mm
+        src/StatusQ/Controls/NativeSwipeHandlerNative_macos.mm
+        src/StatusQ/Controls/NativeIndicatorNative_macos.mm
     )
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "iOS")
     target_sources(StatusQ PRIVATE
         src/ios_utils.mm
         src/keychain_apple.mm
+        src/StatusQ/Controls/NativeSwipeHandlerNative_ios.mm
+        src/StatusQ/Controls/NativeIndicatorNative_ios.mm
     )
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Android")
     target_sources(StatusQ PRIVATE
         src/keychain_android.cpp
         src/safutils_android.cpp
+        src/StatusQ/Controls/NativeSwipeHandlerNative_android.cpp
+        src/StatusQ/Controls/NativeIndicatorNative_android.cpp
     )
 else ()
     target_sources(StatusQ PRIVATE
@@ -280,6 +292,7 @@ target_link_libraries(StatusQ PRIVATE
         Qt::Gui
         Qt::Quick
         Qt::QuickControls2
+        Qt::Svg
         SortFilterProxyModel
         QtModelsToolkit
         MobileUI
