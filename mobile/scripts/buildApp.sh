@@ -138,12 +138,17 @@ else
   echo "Generating Info.plist (FLAG_KEYCARD_ENABLED=${FLAG_KEYCARD_ENABLED})..."
   if [[ "${FLAG_KEYCARD_ENABLED}" == "1" ]]; then
     # Enable NFC/Keycard support - uncomment NFC sections
-    sed -e '/<!-- KEYCARD_NFC_START$/d' \
-        -e '/^KEYCARD_NFC_END -->$/d' \
+    # NOTE: markers in Info.plist.template are intentionally odd:
+    # - start marker begins an XML comment: "<!-- KEYCARD_NFC_START"
+    # - end marker ends it later on its own line: "KEYCARD_NFC_END -->"
+    # These lines may be indented, so match by substring (not anchors).
+    sed -e '/KEYCARD_NFC_START/d' \
+        -e '/KEYCARD_NFC_END/d' \
         "$CWD/../ios/Info.plist.template" > "$BUILD_DIR/Info.plist"
   else
     # Disable NFC/Keycard support - remove NFC sections entirely
-    sed '/<!-- KEYCARD_NFC_START$/,/^KEYCARD_NFC_END -->$/d' \
+    # Match indentation-agnostic markers (see note above).
+    sed '/KEYCARD_NFC_START/,/KEYCARD_NFC_END/d' \
         "$CWD/../ios/Info.plist.template" > "$BUILD_DIR/Info.plist"
   fi
 
