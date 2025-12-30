@@ -29,10 +29,6 @@ Item {
     signal showJsDialogComponent(var request)
     signal linkHovered(var hoveredUrl)
 
-    QtObject {
-        id: d
-    }
-
     Loader {
         id: webContainerLoader
         anchors.fill: parent
