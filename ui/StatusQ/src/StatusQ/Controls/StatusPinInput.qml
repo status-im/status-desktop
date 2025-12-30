@@ -102,6 +102,13 @@ Item {
     */
     property int additionalSpacing: 0
 
+    /*!
+       \qmlproperty flags StatusPinInput::inputMethodHints
+       This property allows you to customize the input method hints for the virtual keyboard.
+       The default value is Qt.ImhDigitsOnly which allows only digits input.
+    */
+    property int inputMethodHints: Qt.ImhDigitsOnly
+
     signal pinEditedManually()
 
     QtObject {
@@ -158,8 +165,6 @@ Item {
         Convenient method to force active focus in case it gets stolen by any other component.
     */
     function forceFocus() {
-        if (Utils.isMobile)
-            return
         inputText.forceActiveFocus()
         d.activateBlink()
     }
@@ -208,10 +213,14 @@ Item {
     TextInput {
         id: inputText
         objectName: "pinInputTextInput"
-        visible: false
-        focus: !Utils.isMobile
+        visible: true
+        // Set explicit dimensions for Android keyboard input to work
+        width: 1
+        height: 1
+        opacity: 0
         maximumLength: root.pinLen
-        validator: d.statusValidator.validatorObj
+        inputMethodHints: root.inputMethodHints
+        // validator: d.statusValidator.validatorObj
         onTextChanged: {
             // Modify state of current introduced character position:
             if(text.length >= (d.currentPinIndex + 1)) {
