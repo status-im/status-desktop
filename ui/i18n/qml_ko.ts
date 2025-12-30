@@ -10539,6 +10539,10 @@ to load</source>
         <source>Log in</source>
         <translation>로그인</translation>
     </message>
+    <message>
+        <source>Manage profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LoginUserSelectorDelegate</name>
@@ -12516,6 +12520,10 @@ to load</source>
     </message>
     <message>
         <source>Remove profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage profiles</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
