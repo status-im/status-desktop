@@ -310,6 +310,60 @@
     </message>
 </context>
 <context>
+    <name>ActivityCenterOptionsPanel</name>
+    <message>
+        <source>Mark all as read</source>
+        <translation>Marcar todo como leído</translation>
+    </message>
+    <message>
+        <source>Hide read notifications</source>
+        <translation>Ocultar notificaciones leídas</translation>
+    </message>
+    <message>
+        <source>Show read notifications</source>
+        <translation>Mostrar notificaciones leídas</translation>
+    </message>
+</context>
+<context>
+    <name>ActivityCenterPanel</name>
+    <message>
+        <source>Notifications</source>
+        <translation>Notificaciones</translation>
+    </message>
+    <message>
+        <source>Enable Status News notifications</source>
+        <translation>Habilitar notificaciones de Status News</translation>
+    </message>
+    <message>
+        <source>Enable RSS</source>
+        <translation>Habilitar RSS</translation>
+    </message>
+    <message>
+        <source>Status News RSS are off</source>
+        <translation>Recibir Status News mediante RSS está deshabilitado</translation>
+    </message>
+    <message>
+        <source>Status News notifications are off</source>
+        <translation>Recibir Status News está deshabilitado</translation>
+    </message>
+    <message>
+        <source>Turn them on to get updates about new features and announcements. You can also enable this anytime in Privacy &amp; Security settings.</source>
+        <translation>Actívalas para recibir actualizaciones sobre nuevas funciones y anuncios. También puedes habilitarlas en cualquier momento en la configuración de Privacidad y Seguridad.</translation>
+    </message>
+    <message>
+        <source>Turn them on to get updates about new features and announcements. You can also enable this anytime in Notifications and Sound settings.</source>
+        <translation>Actívalas para recibir actualizaciones sobre nuevas funciones y anuncios. También puedes activarlas en cualquier momento en la configuración de Notificaciones y Sonidos.</translation>
+    </message>
+    <message>
+        <source>No notifications right now.</source>
+        <translation>No hay notificaciones ahora mismo.</translation>
+    </message>
+    <message>
+        <source>Check back later for updates.</source>
+        <translation>Vuelva más tarde para revisar actualizaciones.</translation>
+    </message>
+</context>
+<context>
     <name>ActivityCenterPopupTopBarPanel</name>
     <message>
         <source>All</source>
@@ -2492,7 +2546,7 @@ Para respaldar tu frase de recuperación, escríbela y guárdala de forma segura
     </message>
     <message>
         <source>Choose a folder to store your backup files in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Elige una carpeta para almacenar tus archivos de backup.</translation>
     </message>
 </context>
 <context>
@@ -2648,15 +2702,15 @@ Do you wish to override the security check and continue?</source>
     <name>BrowserPrivacyWall</name>
     <message>
         <source>Enable third-party services for browser features to work.</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilita servicios de terceros para que funcionen las funciones del navegador.</translation>
     </message>
     <message>
         <source>Dapp browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Navegador Web/dApp</translation>
     </message>
     <message>
         <source>Browse decentralized apps</source>
-        <translation type="unfinished"></translation>
+        <translation>Navega apps descentralizadas</translation>
     </message>
 </context>
 <context>
