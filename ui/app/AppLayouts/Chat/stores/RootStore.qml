@@ -8,6 +8,7 @@ import StatusQ
 import StatusQ.Core.Utils as StatusQUtils
 import StatusQ.Core.Theme
 
+import AppLayouts.Profile.helpers
 import AppLayouts.Profile.stores
 import AppLayouts.Wallet.stores as WalletStore
 import shared.stores
@@ -50,6 +51,8 @@ QtObject {
     property WalletStore.RootStore walletStore
     property CurrenciesStore currencyStore
     property NetworkConnectionStore networkConnectionStore
+
+    property var contactsModel: contactsStore.contactsModel
 
     // Unique instance for all the chat / channel related low-level UI components
     readonly property UsersStore usersStore: UsersStore {
@@ -591,23 +594,27 @@ QtObject {
             }
         }
 
+        property var oneToOneContactModelEntryLoader: Loader {
+            active: d.activeChatId && d.activeChatType === Constants.chatType.oneToOne
+
+            sourceComponent: ContactModelEntry {
+                publicKey: d.activeChatId
+                contactsModel: root.contactsModel
+                onPopulateContactDetailsRequested: {
+                    root.populateContactDetails(d.activeChatId)
+                }
+            }
+        }
+
         readonly property string activeChatId: chatCommunitySectionModule && chatCommunitySectionModule.activeItem ? chatCommunitySectionModule.activeItem.id : ""
         readonly property int activeChatType: chatCommunitySectionModule && chatCommunitySectionModule.activeItem ? chatCommunitySectionModule.activeItem.type : -1
         readonly property bool amIMember: chatCommunitySectionModule ? chatCommunitySectionModule.amIMember : false
 
-        property var oneToOneChatContact: undefined
+        property var oneToOneChatContact: oneToOneContactModelEntryLoader.active ? d.oneToOneContactModelEntryLoader.item.contactDetails : undefined
         readonly property string oneToOneChatContactName: !!d.oneToOneChatContact ? ProfileUtils.displayName(d.oneToOneChatContact.localNickname,
                                                                                                     d.oneToOneChatContact.name,
                                                                                                     d.oneToOneChatContact.displayName,
                                                                                                     d.oneToOneChatContact.alias) : ""
-
-        StatusQUtils.ModelEntryChangeTracker {
-            model: root.contactsStore.contactsModel
-            role: "pubKey"
-            key: d.activeChatId
-
-            onItemChanged: d.oneToOneChatContact = Utils.getContactDetailsAsJson(d.activeChatId, false)
-        }
 
         readonly property bool isUserAllowedToSendMessage: {
             if (d.activeChatType === Constants.chatType.oneToOne && d.oneToOneChatContact) {
@@ -630,17 +637,14 @@ QtObject {
 
             return qsTr("Message")
         }
-
-        //Update oneToOneChatContact when activeChat id changes
-        Binding on oneToOneChatContact {
-            when: d.activeChatId && d.activeChatType === Constants.chatType.oneToOne
-            value: Utils.getContactDetailsAsJson(d.activeChatId, false)
-            restoreMode: Binding.RestoreBindingOrValue
-        }
     }
 
     function removeMemberFromGroupChat(publicKey) {
         const chatId = chatCommunitySectionModule.activeItem.id
         chatCommunitySectionModule.removeMemberFromGroupChat("", chatId, publicKey)
+    }
+
+    function populateContactDetailsRequested(publicKey) {
+        root.contactsStore.populateContactDetails(publicKey)
     }
 }
