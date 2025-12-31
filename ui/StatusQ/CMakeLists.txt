@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.19)
 
 project(StatusQ)
 
+# Enable Objective-C++ for Apple platforms (needed for CustomWebViewLib)
+if(APPLE)
+    enable_language(OBJCXX)
+endif()
+
 option(STATUSQ_BUILD_SANITY_CHECKER "Enable to build StatusQ Sanity Checker application" ON)
 option(STATUSQ_BUILD_TESTS "Enable to build StatusQ UI auto tests" ON)
 option(STATUSQ_STATIC_LIB "Enable to build StatusQ as a static library" OFF)
@@ -37,7 +42,7 @@ endif()
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
-        Core Qml Gui Quick QuickControls2 REQUIRED)
+        Core Qml Gui Quick QuickControls2 WebChannel REQUIRED)
 
 # --- QML test hooks flag and TestConfig generation ---
 option(STATUSQ_TESTMODE "Enable QML test hooks (TestConfig.testMode)" OFF)
@@ -228,6 +233,13 @@ add_library(StatusQ ${LIB_TYPE}
         src/l10n/languagemodel.cpp
         src/l10n/languageservice.h
         src/l10n/languageservice.cpp
+
+        # CustomWebView
+        src/CustomWebView/nativewebview.h
+        src/CustomWebView/nativewebview.cpp
+        src/CustomWebView/nativewebviewbackend.h
+        src/CustomWebView/nativewebviewtransport.h
+        src/CustomWebView/nativewebviewtransport.cpp
         )
 
 target_compile_features(StatusQ PRIVATE cxx_std_17)
@@ -237,19 +249,26 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     find_library(Foundation Foundation)
     find_library(Security Security)
     find_library(LocalAuthentication LocalAuthentication)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation} ${Security} ${LocalAuthentication})
+    find_library(WebKit WebKit)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation} ${Security} ${LocalAuthentication} ${WebKit})
     target_sources(StatusQ PRIVATE
         src/keychain_apple.mm
+        src/CustomWebView/darwinwebviewbackend.mm
     )
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "iOS")
+    find_library(WebKit WebKit)
+    find_library(UIKit UIKit)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${WebKit} ${UIKit})
     target_sources(StatusQ PRIVATE
         src/ios_utils.mm
         src/keychain_apple.mm
+        src/CustomWebView/darwinwebviewbackend.mm
     )
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Android")
     target_sources(StatusQ PRIVATE
         src/keychain_android.cpp
         src/safutils_android.cpp
+        src/CustomWebView/androidwebviewbackend.cpp
     )
 else ()
     target_sources(StatusQ PRIVATE
@@ -280,6 +299,7 @@ target_link_libraries(StatusQ PRIVATE
         Qt::Gui
         Qt::Quick
         Qt::QuickControls2
+        Qt::WebChannel
         SortFilterProxyModel
         QtModelsToolkit
         MobileUI

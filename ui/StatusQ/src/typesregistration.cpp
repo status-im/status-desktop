@@ -31,6 +31,8 @@
 #include "wallet/managetokensmodel.h"
 #include "onboarding/enums.h"
 
+#include "CustomWebView/nativewebview.h"
+
 #include <QZXing.h>
 
 #include <QQmlEngine>
@@ -38,6 +40,7 @@
 void registerStatusQTypes() {
     qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0, 1, "StatusSyntaxHighlighter");
     qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
+    qmlRegisterType<NativeWebView>("StatusQ", 0, 1, "NativeWebView");
 
     qmlRegisterUncreatableType<QValidator>(
                 "StatusQ", 0, 1,
