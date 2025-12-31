@@ -1,0 +1,4 @@
+EXPORTS
+statusq_getMobileUIScaleFactor
+statusq_registerQmlTypes
+

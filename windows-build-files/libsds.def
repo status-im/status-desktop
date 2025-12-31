@@ -1,0 +1,12 @@
+EXPORTS
+SdsCleanupReliabilityManager
+SdsMarkDependenciesMet
+SdsNewReliabilityManager
+SdsResetReliabilityManager
+SdsSetEventCallback
+SdsStartPeriodicTasks
+SdsUnwrapReceivedMessage
+SdsWrapOutgoingMessage
+libsdsNimDestroyGlobals
+libsdsNimMain
+
