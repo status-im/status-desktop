@@ -1,5 +1,4 @@
 import QtQuick
-import QtWebEngine
 
 import StatusQ.Core
 import StatusQ.Core.Theme
@@ -9,18 +8,20 @@ import utils
 import AppLayouts.Browser.controls
 
 Rectangle {
-    id: downloadView
+    id: root
 
     property alias downloadsModel: listView.model
 
-    property var downloadsMenu
+    required property var downloadsMenu
 
     signal openDownloadClicked(bool downloadComplete, int index)
 
+    z: 54
     color: Theme.palette.background
 
     StatusListView {
         id: listView
+
         anchors {
             topMargin: Theme.bigPadding
             top: parent.top
@@ -28,6 +29,7 @@ Rectangle {
             bottomMargin: Theme.bigPadding * 2
             horizontalCenter: parent.horizontalCenter
         }
+
         width: 624
         spacing: Theme.padding
 
@@ -58,7 +60,7 @@ Rectangle {
                 downloadsMenu.index = index
                 downloadsMenu.parent = downloadElement
                 downloadsMenu.x = xVal
-                downloadsMenu.y = downloadView.y - downloadsMenu.height
+                downloadsMenu.y = root.y - downloadsMenu.height
                 downloadsMenu.open()
             }
         }
