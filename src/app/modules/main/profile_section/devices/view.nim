@@ -80,9 +80,6 @@ QtObject:
   proc advertise*(self: View) {.slot.} =
     self.delegate.advertise()
 
-  proc enableDevice*(self: View, installationId: string, enable: bool) {.slot.} =
-    self.delegate.enableDevice(installationId, enable)
-
   # LocalPairing status
 
   proc localPairingStatusChanged*(self: View) {.signal.}
@@ -147,6 +144,12 @@ QtObject:
     let error = self.delegate.unpairDevice(installationId)
     if error.len == 0:
       self.model.updateItemEnabled(installationId, false)
+    return error
+
+  proc deleteDevice*(self: View, installationId: string): string {.slot.} =
+    let error = self.delegate.deleteDevice(installationId)
+    if error.len == 0:
+      self.model.removeItem(installationId)
     return error
 
   proc delete*(self: View) =

@@ -88,9 +88,6 @@ method syncAllDevices*(self: Module) =
 method advertise*(self: Module) =
   self.controller.advertise()
 
-method enableDevice*(self: Module, installationId: string, enable: bool) =
-  self.controller.enableDevice(installationId, enable)
-
 method updateOrAddDevice*(self: Module, installation: InstallationDto) =
   if(self.view.model().isItemWithInstallationIdAdded(installation.id)):
     self.view.model().updateItem(installation)
@@ -134,3 +131,6 @@ method pairDevice*(self: Module, installationId: string): string =
 
 method unpairDevice*(self: Module, installationId: string): string =
   return self.controller.unpairDevice(installationId)
+
+method deleteDevice*(self: Module, installationId: string): string =
+  return self.controller.deleteDevice(installationId)

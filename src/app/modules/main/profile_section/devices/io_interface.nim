@@ -47,9 +47,6 @@ method syncAllDevices*(self: AccessInterface) {.base.} =
 method advertise*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method enableDevice*(self: AccessInterface, installationId: string, enable: bool) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method generateConnectionStringAndRunSetupSyncingPopup*(self: AccessInterface, messageSyncingEnabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -69,4 +66,7 @@ method pairDevice*(self: AccessInterface, installationId: string): string {.base
   raise newException(ValueError, "No implementation available")
 
 method unpairDevice*(self: AccessInterface, installationId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method deleteDevice*(self: AccessInterface, installationId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")

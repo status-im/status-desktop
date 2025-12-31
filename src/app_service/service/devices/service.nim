@@ -185,21 +185,12 @@ QtObject:
 
   proc syncAllDevices*(self: Service) =
     let preferredName = self.settingsService.getPreferredName()
-    let photoPath = "" # From the old code: TODO change this to identicon when status-go is updated
     # Once we get more info from `status-go` we may emit success/failed signal from here.
     discard status_installations.syncDevices(preferredName, "")
 
   proc advertise*(self: Service) =
     # Once we get more info from `status-go` we may emit success/failed signal from here.
     discard status_installations.sendPairInstallation()
-
-  proc enable*(self: Service, deviceId: string) =
-    # Once we get more info from `status-go` we may emit success/failed signal from here.
-    discard status_installations.enableInstallation(deviceId)
-
-  proc disable*(self: Service, deviceId: string) =
-    # Once we get more info from `status-go` we may emit success/failed signal from here.
-    discard status_installations.disableInstallation(deviceId)
 
 
   #
@@ -443,6 +434,16 @@ QtObject:
         raise newException(CatchableError, e.message)
     except Exception as e:
       error "error in unpairDevice: ", desription = e.msg
+      return e.msg
+
+  proc deleteDevice*(self: Service, installationId: string): string =
+    try:
+      let response = status_installations.deleteDevice(installationId)
+      if response.error != nil:
+        let e = Json.decode($response.error, RpcError)
+        raise newException(CatchableError, e.message)
+    except Exception as e:
+      error "error in deleteDevice: ", desription = e.msg
       return e.msg
 
   proc pairDevice*(self: Service, installationId: string): string =

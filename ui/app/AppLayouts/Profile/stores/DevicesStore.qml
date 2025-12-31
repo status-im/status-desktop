@@ -84,10 +84,6 @@ QtObject {
         root.devicesModule.advertise()
     }
 
-    function enableDevice(installationId, enable) {
-        root.devicesModule.enableDevice(installationId, enable)
-    }
-
     function generateConnectionStringAndRunSetupSyncingPopup(messageSyncingEnabled) {
         root.devicesModule.generateConnectionStringAndRunSetupSyncingPopup(messageSyncingEnabled)
     }
@@ -106,6 +102,10 @@ QtObject {
 
     function unpairDevice(installationId) {
         return root.devicesModule.unpairDevice(installationId)
+    }
+
+    function deleteDevice(installationId) {
+        return root.devicesModule.deleteDevice(installationId)
     }
 
     function importLocalBackupFile(filePath: string) {

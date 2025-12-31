@@ -28,14 +28,6 @@ proc syncDevices*(preferredName: string, photoPath: string): RpcResponse[JsonNod
 proc sendPairInstallation*(): RpcResponse[JsonNode] =
   result = callPrivateRPC("sendPairInstallation".prefix)
 
-proc enableInstallation*(installationId: string): RpcResponse[JsonNode] =
-  let payload = %* [installationId]
-  result = callPrivateRPC("enableInstallation".prefix, payload)
-
-proc disableInstallation*(installationId: string): RpcResponse[JsonNode] =
-  let payload = %* [installationId]
-  result = callPrivateRPC("disableInstallation".prefix, payload)
-
 proc finishPairingThroughSeedPhraseProcess*(installationId: string): RpcResponse[JsonNode] =
   let payload = %* [{
     "installationId": installationId,
@@ -55,3 +47,7 @@ proc unpairDevice*(installationId: string): RpcResponse[JsonNode] =
 proc pairDevice*(installationId: string): RpcResponse[JsonNode] =
   let payload = %* [installationId]
   result = callPrivateRPC("enableInstallation".prefix, payload)
+
+proc deleteDevice*(installationId: string): RpcResponse[JsonNode] =
+  let payload = %* [installationId]
+  result = callPrivateRPC("deleteInstallation".prefix, payload)
