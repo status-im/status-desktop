@@ -1,15 +1,14 @@
 import time
-import os
 import logging
 from datetime import datetime
+from pathlib import Path
 from typing import Optional, List
 
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from config import log_element_action
-from core import EnvironmentSwitcher
+from config import get_config, log_element_action
 from utils.gestures import Gestures
 from utils.screenshot import save_screenshot, save_page_source
 from utils.app_lifecycle_manager import AppLifecycleManager
@@ -23,16 +22,16 @@ class BasePage:
         self.gestures = Gestures(driver)
         self.app_lifecycle = AppLifecycleManager(driver)
         self.keyboard = KeyboardManager(driver)
-        env_name = os.getenv("CURRENT_TEST_ENVIRONMENT", "lambdatest")
-
         try:
-            switcher = EnvironmentSwitcher()
-            env_config = switcher.switch_to(env_name)
-            self.timeouts = env_config.timeouts
-            element_wait_timeout = self.timeouts["element_wait"]
-            self._screenshots_dir = env_config.directories.get(
-                "screenshots", "screenshots"
-            )
+            config = get_config()
+            self.timeouts = config.environment.timeouts
+            element_wait_timeout = self.timeouts.get("element_wait", 30)
+            self._screenshots_dir = config.screenshots_dir or "screenshots"
+            try:
+                Path(self._screenshots_dir).mkdir(parents=True, exist_ok=True)
+            except Exception:
+                # Do not block tests if directory creation fails
+                pass
         except Exception:
             self.timeouts = {
                 "element_wait": 30,
@@ -146,6 +145,7 @@ class BasePage:
             attempts = 0
             while attempts < max_attempts:
                 attempts += 1
+                element = None
                 try:
                     wait = self._create_wait(timeout, "element_click")
                     element = wait.until(EC.element_to_be_clickable(loc))
@@ -153,6 +153,12 @@ class BasePage:
                     log_element_action("click_element", f"{loc[0]}: {loc[1]}", True, 0)
                     return True
                 except Exception as e:
+                    if element is not None and self._gesture_tap_fallback(element, loc):
+                        log_element_action(
+                            "click_element", f"{loc[0]}: {loc[1]}", True, 0
+                        )
+                        return True
+
                     self.logger.debug(f"Click attempt {attempts} failed for {loc}: {e}")
                     if attempts >= max_attempts:
                         break
@@ -359,13 +365,33 @@ class BasePage:
             self.logger.debug(f"Coordinate tap failed: {e}")
             return False
 
-    def restart_app(self, app_package: str = "app.status.mobile") -> bool:
+    def _gesture_tap_fallback(self, element, locator) -> bool:
+        """Fallback tap using Appium gestures when native click fails."""
+        try:
+            if self.gestures.element_tap(element):
+                self.logger.debug(f"Gesture tap fallback succeeded for {locator}")
+                return True
+        except Exception as err:
+            self.logger.debug(f"Gesture tap fallback error for {locator}: {err}")
+
+        try:
+            rect = element.rect
+            center_x = int(rect["x"] + rect["width"] / 2)
+            center_y = int(rect["y"] + rect["height"] / 2)
+            if self.gestures.tap(center_x, center_y):
+                self.logger.debug(
+                    f"Coordinate tap fallback succeeded for {locator} at ({center_x}, {center_y})"
+                )
+                return True
+        except Exception as err:
+            self.logger.debug(f"Coordinate fallback error for {locator}: {err}")
+        return False
+
+    def restart_app(self, app_package: Optional[str] = None) -> bool:
         """Restart the app within the current session."""
         return self.app_lifecycle.restart_app(app_package)
 
-    def restart_app_with_data_cleared(
-        self, app_package: str = "app.status.mobile"
-    ) -> bool:
+    def restart_app_with_data_cleared(self, app_package: Optional[str] = None) -> bool:
         """Restart the app with all app data cleared (fresh app state)."""
         return self.app_lifecycle.restart_app_with_data_cleared(app_package)
 
@@ -385,8 +411,8 @@ class BasePage:
         return False
 
     def _wait_between_attempts(self, base_delay: float = 0.5) -> None:
-        env_name = os.getenv("CURRENT_TEST_ENVIRONMENT", "lambdatest").lower()
-        if env_name in ("lt", "lambdatest"):
+        env_name = os.getenv("CURRENT_TEST_ENVIRONMENT", "browserstack").lower()
+        if env_name in ("browserstack",):
             time.sleep(base_delay * 1.5)
         else:
             time.sleep(base_delay * 0.5)
