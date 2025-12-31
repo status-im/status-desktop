@@ -2,7 +2,7 @@ import QtQuick
 
 import StatusQ.Layout
 
-import AppLayouts.Browser.stores as BrowserStores
+import AppLayouts.stores.Browser as BrowserStores
 
 // dummy container/section for mobile
 StatusSectionLayout {

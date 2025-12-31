@@ -13,24 +13,45 @@ import shared.views
 import shared.stores as SharedStores
 import utils
 
+import AppLayouts.Browser.adaptors
+
 // TODO: replace with StatusMenu
 Dialog {
     id: root
 
     required property bool incognitoMode
-    // model of wallet accounts for the dropdown
     required property var accounts
-    // currently selected wallet account
     required property var currentAccount
-    required property var activityStore
-    required property SharedStores.CurrenciesStore currencyStore
-    required property SharedStores.NetworksStore networksStore
+
+    required property bool loadingHistoryTransactions
+    required property var historyTransactionsModel
+    required property bool newDataAvailable
+    required property bool isNonArchivalNode
+    required property string selectedAddress
+    required property bool isFilterDirty
+
+    required property var activeNetworks
+    required property var allNetworks
+
+    required property string currentCurrency
+
+    required property var getNameForAddressFn
+    required property var getDappDetailsFn
+    required property var getFiatValueFn
+    required property var formatCurrencyAmountFn
+    required property var getTransactionTypeFn
 
     signal sendTriggered(string address)
     signal reload()
     signal accountChanged(string newAddress)
     signal accountSwitchRequested(string address)
     signal filterAddressesChangeRequested(string addressesJson)
+    signal updateTransactionFilterRequested()
+    signal fetchMoreTransactionsRequested()
+    signal resetActivityDataRequested()
+    signal updateCollectiblesModelRequested()
+    signal updateRecipientsModelRequested()
+    signal applyAllFiltersRequested()
 
     modal: false
 
@@ -193,16 +214,37 @@ Dialog {
         anchors.topMargin: Theme.bigPadding
         anchors.bottom: parent.bottom
 
-        activityStore: root.activityStore
         overview: root.currentAccount
-        communitiesStore: null
-        currencyStore: root.currencyStore
-        networksStore: root.networksStore
+        loadingHistoryTransactions: root.loadingHistoryTransactions
+        historyTransactionsModel: root.historyTransactionsModel
+        newDataAvailable: root.newDataAvailable
+        isNonArchivalNode: root.isNonArchivalNode
+        selectedAddress: root.selectedAddress
         showAllAccounts: false
+        isFilterDirty: root.isFilterDirty
+        activeNetworks: root.activeNetworks
+        allNetworks: root.allNetworks
+        currentCurrency: root.currentCurrency
+
+        getNameForAddressFn: root.getNameForAddressFn
+        getDappDetailsFn: root.getDappDetailsFn
+        getFiatValueFn: root.getFiatValueFn
+        formatCurrencyAmountFn: root.formatCurrencyAmountFn
+        getTransactionTypeFn: root.getTransactionTypeFn
+
+        communitiesStore: null
+
         displayValues: true
         filterVisible: false
         disableShadowOnScroll: true
         hideVerticalScrollbar: false
+
+        onUpdateTransactionFilterRequested: root.updateTransactionFilterRequested()
+        onMoreTransactionsRequested: root.fetchMoreTransactionsRequested()
+        onActivityDataResetRequested: root.resetActivityDataRequested()
+        onCollectiblesModelUpdateRequested: root.updateCollectiblesModelRequested()
+        onRecipientsModelUpdateRequested: root.updateRecipientsModelRequested()
+        onAllFiltersApplyRequested: root.applyAllFiltersRequested()
     }
     onClosed: {
         root.destroy();

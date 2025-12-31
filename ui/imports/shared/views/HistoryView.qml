@@ -31,16 +31,39 @@ ColumnLayout {
 
     property var overview
 
-    property var activityStore
-    property CommunitiesStore communitiesStore
-    property SharedStores.CurrenciesStore currencyStore
-    required property SharedStores.NetworksStore networksStore
+    property bool loadingHistoryTransactions: false
+    property var historyTransactionsModel: null
+    property bool newDataAvailable: false
+    property bool isNonArchivalNode: false
+    property string selectedAddress: ""
     property bool showAllAccounts: false
+    property bool isFilterDirty: false
+    property var activeNetworks: null
+    property var allNetworks: null
+    property string currentCurrency: ""
+
+    property var getNameForAddressFn: function(address) { return "" }
+    property var getDappDetailsFn: function(chainId, address) { return null }
+    property var getFiatValueFn: function(amount, symbol) { return 0.0 }
+    property var formatCurrencyAmountFn: function(amount, symbol, options) { return "" }
+    property var getTransactionTypeFn: function(transaction) { return 0 }
+
+    property CommunitiesStore communitiesStore: null
+
+    property var activityStore: null
+
     property bool displayValues: true
     property bool filterVisible
     property bool disableShadowOnScroll: false
     property bool hideVerticalScrollbar: false
     property int firstItemOffset: 0
+
+    signal updateTransactionFilterRequested()
+    signal moreTransactionsRequested()
+    signal activityDataResetRequested()
+    signal collectiblesModelUpdateRequested()
+    signal recipientsModelUpdateRequested()
+    signal allFiltersApplyRequested()
 
     // banner component to be displayed on top of the list
     property alias bannerComponent: banner.sourceComponent
@@ -54,29 +77,17 @@ ColumnLayout {
     }
 
     Component.onCompleted: {
-        if (root.activityStore.transactionActivityStatus.isFilterDirty) {
-            root.activityStore.currentActivityFiltersStore.applyAllFilters()
+        if (root.isFilterDirty) {
+            root.allFiltersApplyRequested()
         }
 
-        root.activityStore.currentActivityFiltersStore.updateCollectiblesModel()
-        root.activityStore.currentActivityFiltersStore.updateRecipientsModel()
-    }
-
-    Connections {
-        target: root.activityStore.transactionActivityStatus
-        enabled: root.visible
-        function onIsFilterDirtyChanged() {
-            root.activityStore.updateTransactionFilterIfDirty()
-        }
-        function onFilterChainsChanged() {
-            root.activityStore.currentActivityFiltersStore.updateCollectiblesModel()
-            root.activityStore.currentActivityFiltersStore.updateRecipientsModel()
-        }
+        root.collectiblesModelUpdateRequested()
+        root.recipientsModelUpdateRequested()
     }
 
     QtObject {
         id: d
-        readonly property bool isInitialLoading: root.activityStore.loadingHistoryTransactions && transactionListRoot.count === 0
+        readonly property bool isInitialLoading: root.loadingHistoryTransactions && transactionListRoot.count === 0
 
         readonly property int loadingSectionWidth: 56
 
@@ -87,7 +98,7 @@ ColumnLayout {
 
     HistoryBetaTag {
         id: betaTag
-        flatNetworks: root.networksStore.activeNetworks
+        flatNetworks: root.activeNetworks
 
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignTop
@@ -96,8 +107,8 @@ ColumnLayout {
         visible: root.firstItemOffset === 0 // visible only in the main wallet view
 
         onLinkActivated: {
-            const explorerUrl = root.activityStore.showAllAccounts ? link
-                                                                        : "%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.activityStore.selectedAddress)
+            const explorerUrl = root.showAllAccounts ? link
+                                                     : "%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.selectedAddress)
             Global.requestOpenLink(explorerUrl)
         }
     }
@@ -107,7 +118,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: root.firstItemOffset
-        visible: root.activityStore.isNonArchivalNode
+        visible: root.isNonArchivalNode
         text: qsTr("Status Desktop is connected to a non-archival node. Transaction history may be incomplete.")
         font.pixelSize: Theme.primaryTextFontSize
         color: Theme.palette.dangerColor1
@@ -116,7 +127,7 @@ ColumnLayout {
 
     Loader {
         id: filterPanelLoader
-        active: root.filterVisible && (d.isInitialLoading || transactionListRoot.count > 0 || root.activityStore.currentActivityFiltersStore.filtersSet)
+        active: root.filterVisible && (d.isInitialLoading || transactionListRoot.count > 0 || root.activityStore?.currentActivityFiltersStore?.filtersSet)
         visible: active && !noTxs.visible
         Layout.fillWidth: true
         sourceComponent: ActivityFilterPanel {
@@ -137,7 +148,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 42
         Layout.topMargin: !nonArchivalNodeError.visible? root.firstItemOffset : 0
-        visible: !d.isInitialLoading && !root.activityStore.currentActivityFiltersStore.filtersSet && transactionListRoot.count === 0
+        visible: !d.isInitialLoading && !root.activityStore?.currentActivityFiltersStore?.filtersSet && transactionListRoot.count === 0
         font.pixelSize: Theme.primaryTextFontSize
         text: qsTr("Activity for this account will appear here")
     }
@@ -157,54 +168,26 @@ ColumnLayout {
             visible: !root.disableShadowOnScroll && !transactionListRoot.atYBeginning
         }
 
+        TransactionsModelAdaptor {
+            id: txModelAdaptor
+            sourceModel: root.historyTransactionsModel
+            flatNetworks: root.allNetworks
+            currentCurrency: root.currentCurrency
+            getFiatValueFn: root.getFiatValueFn
+            formatCurrencyAmountFn: root.formatCurrencyAmountFn
+            getNameForAddressFn: root.getNameForAddressFn
+            getDappDetailsFn: root.getDappDetailsFn
+            getTransactionTypeFn: root.getTransactionTypeFn
+            getCommunityDetailsFn: (cid) => root.communitiesStore?.getCommunityDetailsAsJson(cid)
+            localeUtils: LocaleUtils
+        }
+
         StatusListView {
             id: transactionListRoot
             objectName: "walletAccountTransactionList"
             anchors.fill: parent
 
-            model: SortFilterProxyModel {
-                id: txModel
-
-                sourceModel: root.activityStore.historyTransactions
-
-                // LocaleUtils is not accessable from inside expression, but local function works
-                property var daysTo: (d1, d2) => LocaleUtils.daysTo(d1, d2)
-                property var daysBetween: (d1, d2) => LocaleUtils.daysBetween(d1, d2)
-                property var getFirstDayOfTheCurrentWeek: () => LocaleUtils.getFirstDayOfTheCurrentWeek()
-                proxyRoles: ExpressionRole {
-                    name: "date"
-                    expression: {
-                        if (!model.activityEntry || model.activityEntry.timestamp === 0)
-                            return ""
-                        const currDate = new Date()
-                        const timestampDate = new Date(model.activityEntry.timestamp * 1000)
-                        const daysDiff = txModel.daysBetween(currDate, timestampDate)
-                        const daysToBeginingOfThisWeek = txModel.daysTo(timestampDate, txModel.getFirstDayOfTheCurrentWeek())
-
-                        if (daysDiff < 1) {
-                            return qsTr("Today")
-                        } else if (daysDiff < 2) {
-                            return qsTr("Yesterday")
-                        } else if (daysToBeginingOfThisWeek >= 0) {
-                            return qsTr("Earlier this week")
-                        } else if (daysToBeginingOfThisWeek > -7) {
-                            return qsTr("Last week")
-                        } else if (currDate.getMonth() === timestampDate.getMonth() && currDate.getYear() === timestampDate.getYear()) {
-                            return qsTr("Earlier this month")
-                        }
-
-                        const previousMonthDate = (new Date(new Date().setDate(0)))
-                        // Special case for the end of the year
-                        if ((timestampDate.getMonth() === previousMonthDate.getMonth() && timestampDate.getYear() === previousMonthDate.getYear())
-                            || (previousMonthDate.getMonth() === 11 && timestampDate.getMonth() === 0 && Math.abs(timestampDate.getYear() - previousMonthDate.getYear()) === 1))
-                        {
-                            return qsTr("Last month")
-                        }
-
-                        return timestampDate.toLocaleDateString(Qt.locale(), "MMM yyyy")
-                    }
-                }
-            }
+            model: txModelAdaptor.model
 
             delegate: transactionDelegateComponent
 
@@ -220,17 +203,17 @@ ColumnLayout {
             }
 
             Connections {
-                target: root.activityStore
+                target: root
 
                 function onLoadingHistoryTransactionsChanged() {
                     // Calling timer instead directly to not cause binding loop
-                    if (!root.activityStore.loadingHistoryTransactions)
+                    if (!root.loadingHistoryTransactions)
                         fetchMoreTimer.start()
                 }
             }
 
             function tryFetchMoreTransactions() {
-                if (d.isInitialLoading || !footerItem || !root.activityStore.historyTransactions.hasMore)
+                if (d.isInitialLoading || !footerItem || !root.historyTransactionsModel?.hasMore)
                     return
                 const footerYPosition = footerItem.height / contentHeight
                 if (footerYPosition >= 1.0) {
@@ -239,7 +222,7 @@ ColumnLayout {
 
                 // On startup, first loaded ListView will have heightRatio equal 0
                 if (footerYPosition + visibleArea.yPosition + visibleArea.heightRatio > 1.0) {
-                    root.activityStore.fetchMoreTransactions()
+                    root.moreTransactionsRequested()
                 }
             }
 
@@ -258,8 +241,8 @@ ColumnLayout {
 
             text: qsTr("New transactions")
 
-            visible: root.activityStore.newDataAvailable && !root.activityStore.loadingHistoryTransactions
-            onClicked: root.activityStore.resetActivityData()
+            visible: root.newDataAvailable && !root.loadingHistoryTransactions
+            onClicked: root.activityDataResetRequested()
 
             icon.name: "arrow-up"
 
@@ -303,8 +286,8 @@ ColumnLayout {
             required property var model
             required property int index
 
-            readonly property bool displaySectionHeader: index === 0 || model.date !== txModel.get(index - 1).date
-            readonly property bool displaySectionFooter: index === txModel.count-1  || model.date !== txModel.get(index + 1).date
+            readonly property bool displaySectionHeader: index === 0 || model.date !== SQUtils.ModelUtils.get(txModelAdaptor.model, index - 1, "date")
+            readonly property bool displaySectionFooter: index === txModelAdaptor.model.rowCount() - 1 || model.date !== SQUtils.ModelUtils.get(txModelAdaptor.model, index + 1, "date")
 
             width: ListView.view.width
             spacing: 0
@@ -343,14 +326,11 @@ ColumnLayout {
 
             TransactionDelegate {
                 Layout.fillWidth: true
-                modelData: transactionDelegate.model.activityEntry
                 timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
-                flatNetworks: root.networksStore.allNetworks
-                currenciesStore: root.currencyStore
-                activityStore: root.activityStore
+                currentCurrency: root.currentCurrency
+                formatCurrencyAmountFn: root.formatCurrencyAmountFn
                 showAllAccounts: root.showAllAccounts
                 displayValues: root.displayValues
-                community: isModelDataValid && !!communityId && !!root.communitiesStore ? root.communitiesStore.getCommunityDetailsAsJson(communityId) : null
                 onClicked: function(itemId, mouse) {
                     if (mouse.button === Qt.RightButton) {
                         txContextMenu.createObject(this, { modelData }).popup(mouse.x, mouse.y)
@@ -371,7 +351,7 @@ ColumnLayout {
         id: footerComp
         ColumnLayout {
             id: footerColumn
-            readonly property bool allActivityLoaded: !root.activityStore.historyTransactions.hasMore && transactionListRoot.count !== 0
+            readonly property bool allActivityLoaded: !root.historyTransactionsModel?.hasMore && transactionListRoot.count !== 0
             width: root.width
             spacing: d.isInitialLoading ? 6 : 12
 
@@ -399,7 +379,7 @@ ColumnLayout {
                         const delegateHeight = 64 + footerColumn.spacing
                         if (d.isInitialLoading) {
                             return Math.floor(transactionListRoot.height / delegateHeight)
-                        } else if (root.activityStore.historyTransactions.hasMore) {
+                        } else if (root.historyTransactionsModel?.hasMore) {
                             return Math.max(3, Math.floor(transactionListRoot.height / delegateHeight) - 3)
                         }
                     }
@@ -407,10 +387,6 @@ ColumnLayout {
                 }
                 TransactionDelegate {
                     Layout.fillWidth: true
-
-                    flatNetworks: root.networksStore.allNetworks
-                    currenciesStore: root.currencyStore
-                    activityStore: root.activityStore
                     loading: true
                 }
             }

@@ -277,32 +277,44 @@ Item {
 
                 Component {
                     id: activityView
-                    StatusListView {
+                    Item {
                         height: scrollView.availableHeight
-                        model: root.activityModel
-                        header: ShapeRectangle {
-                            width: parent.width
-                            height: visible ? 42: 0
-                            visible: !root.activityModel.count && !d.activityLoading
-                            font.pixelSize: Theme.primaryTextFontSize
-                            text: qsTr("Activity will appear here")
-                        }
-                        delegate: TransactionDelegate {
-                            required property var model
-                            required property int index
-                            width: ListView.view.width
-                            modelData: model.activityEntry
-                            timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
+
+                        TransactionsModelAdaptor {
+                            id: activityModelAdaptor
+                            sourceModel: root.activityModel
                             flatNetworks: root.networksStore.allNetworks
-                            currenciesStore: root.rootStore.currencyStore
-                            activityStore: root.walletRootStore
-                            showAllAccounts: root.walletRootStore.showAllAccounts
-                            displayValues: true
-                            community: isModelDataValid && !!communityId && !!root.communitiesStore ? root.communitiesStore.getCommunityDetailsAsJson(communityId) : null
-                            loading: false
-                            onClicked: {
-                                if (mouse.button === Qt.RightButton) {
-                                    // TODO: Implement context menu
+                            currentCurrency: root.rootStore.currencyStore.currentCurrency
+                            getFiatValueFn: (amount, symbol) => root.rootStore.currencyStore.getFiatValue(amount, symbol)
+                            formatCurrencyAmountFn: (amount, symbol, options) => root.rootStore.currencyStore.formatCurrencyAmount(amount, symbol, options)
+                            getNameForAddressFn: (address) => root.walletRootStore.getNameForAddress(address)
+                            getDappDetailsFn: (chainId, address) => root.walletRootStore.getDappDetails(chainId, address)
+                            getTransactionTypeFn: (transaction) => root.walletRootStore.getTransactionType(transaction)
+                            getCommunityDetailsFn: (cid) => root.communitiesStore?.getCommunityDetailsAsJson(cid)
+                            localeUtils: LocaleUtils
+                        }
+
+                        StatusListView {
+                            anchors.fill: parent
+                            model: activityModelAdaptor.model
+                            header: ShapeRectangle {
+                                width: parent.width
+                                height: visible ? 42: 0
+                                visible: !root.activityModel.count && !d.activityLoading
+                                font.pixelSize: Theme.primaryTextFontSize
+                                text: qsTr("Activity will appear here")
+                            }
+                            delegate: TransactionDelegate {
+                                width: ListView.view.width
+                                timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
+                                currentCurrency: root.rootStore.currencyStore.currentCurrency
+                                formatCurrencyAmountFn: (amount, symbol, options) => root.rootStore.currencyStore.formatCurrencyAmount(amount, symbol, options)
+                                showAllAccounts: root.walletRootStore.showAllAccounts
+                                displayValues: true
+                                onClicked: {
+                                    if (mouse.button === Qt.RightButton) {
+                                        // TODO: Implement context menu
+                                    }
                                 }
                             }
                         }

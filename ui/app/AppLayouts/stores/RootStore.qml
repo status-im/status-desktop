@@ -9,6 +9,7 @@ import SortFilterProxyModel
 import AppLayouts.Profile.stores as ProfileStores
 import AppLayouts.Wallet.stores as WalletStore
 import AppLayouts.stores.Messaging as MessagingStores
+import AppLayouts.stores.Browser as BrowserStores
 
 // WIP: Previous reorganization step before refactoring `RootStore`
 QtObject {
@@ -65,6 +66,14 @@ QtObject {
     readonly property AccountSettingsStore accountSettingsStore: AccountSettingsStore {}
     readonly property ContactsStore contactsStore: ContactsStore {}
     readonly property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
+
+    readonly property BrowserStores.BookmarksStore bookmarksStore: BrowserStores.BookmarksStore {}
+    readonly property BrowserStores.DownloadsStore downloadsStore: BrowserStores.DownloadsStore {}
+    readonly property BrowserStores.BrowserRootStore browserRootStore: BrowserStores.BrowserRootStore {}
+    readonly property BrowserStores.BrowserWalletStore browserWalletStore: BrowserStores.BrowserWalletStore {}
+    readonly property BrowserStores.BrowserActivityStore browserActivityStore: BrowserStores.BrowserActivityStore {
+        browserWalletStore: root.browserWalletStore
+    }
 
     // readonly property ChatStores.RootStore rootChatStore: ChatStores.RootStore { ... }
     // readonly property SharedStores.NetworkConnectionStore networkConnectionStore: SharedStores.NetworkConnectionStore { ... }

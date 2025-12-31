@@ -4,7 +4,7 @@ import QtWebEngine
 
 import StatusQ.Popups
 
-import AppLayouts.Browser.stores as BrowserStores
+import AppLayouts.stores.Browser as BrowserStores
 
 StatusMenu {
     id: root

@@ -229,8 +229,39 @@ StatusDialog {
                            isWatchOnlyAccount: false,
                            mixedcaseAddress: d.address
                        })
-            activityStore: WalletStore.RootStore
-            networksStore: root.networksStore
+
+            loadingHistoryTransactions: WalletStore.RootStore.loadingHistoryTransactions
+            historyTransactionsModel: WalletStore.RootStore.historyTransactions
+            newDataAvailable: WalletStore.RootStore.newDataAvailable
+            isNonArchivalNode: WalletStore.RootStore.isNonArchivalNode
+            selectedAddress: d.address
+            isFilterDirty: WalletStore.RootStore.activityController.activityFilterStore.isFilterDirty
+            activeNetworks: root.networksStore.activeNetworks
+            allNetworks: root.networksStore.allNetworks
+            currentCurrency: WalletStore.RootStore.getCurrencyAmount.symbol || ""
+
+            getNameForAddressFn: function(address) {
+                return WalletStore.RootStore.getNameForAddress(address)
+            }
+            getDappDetailsFn: function(chainId, address) {
+                return WalletStore.RootStore.getDappDetails(chainId, address)
+            }
+            getFiatValueFn: function(amount, symbol) {
+                return root.sharedRootStore.currencyStore.getFiatValue(amount, symbol)
+            }
+            formatCurrencyAmountFn: function(amount, symbol, options) {
+                return root.sharedRootStore.currencyStore.formatCurrencyAmount(amount, symbol, options)
+            }
+            getTransactionTypeFn: function(transaction) {
+                return WalletStore.RootStore.getTransactionType(transaction)
+            }
+
+            onUpdateTransactionFilterRequested: WalletStore.RootStore.updateTransactionFilterIfDirty()
+            onMoreTransactionsRequested: WalletStore.RootStore.fetchMoreTransactions()
+            onActivityDataResetRequested: WalletStore.RootStore.resetActivityData()
+            onCollectiblesModelUpdateRequested: WalletStore.RootStore.activityController.activityFilterStore.updateCollectiblesModel()
+            onRecipientsModelUpdateRequested: WalletStore.RootStore.activityController.activityFilterStore.updateRecipientsModel()
+            onAllFiltersApplyRequested: WalletStore.RootStore.activityController.activityFilterStore.applyAllFilters()
         }
     }
 }

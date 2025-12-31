@@ -20,7 +20,8 @@ import shared.popups.send
 import shared.stores.send
 import shared.stores as SharedStores
 
-import AppLayouts.Browser.stores as BrowserStores
+import AppLayouts.stores.Browser as BrowserStores
+import AppLayouts.Browser.adaptors
 import AppLayouts.Wallet.services.dapps
 
 import "provider/qml"
@@ -112,6 +113,11 @@ StatusSectionLayout {
         id: _internal
 
         property Item currentWebView: tabs.currentIndex < tabs.count ? tabs.getCurrentTab() : null
+
+        readonly property var walletMenuAdaptor: BrowserWalletMenuAdaptor {
+            activeNetworksModel: root.networksStore.activeNetworks
+            currentAccount: root.browserWalletStore.dappBrowserAccount
+        }
 
         property Component browserDialogComponent: BrowserDialog {}
 
@@ -269,16 +275,13 @@ StatusSectionLayout {
                 _internal.currentWebView.url = _internal.determineRealURL(url);
             }
             onOpenWalletMenu: {
-                // Initialize activity filters before opening popup
-                const activeChainIds = SQUtils.ModelUtils.modelToFlatArray(
-                    root.networksStore.activeNetworks, "chainId")
-                if (activeChainIds.length > 0) {
+                // Initialize filters before opening popup
+                if (_internal.walletMenuAdaptor.hasActiveChains) {
                     root.browserActivityStore.activityController.setFilterChainsJson(
-                        JSON.stringify(activeChainIds), true)
+                        _internal.walletMenuAdaptor.chainsFilterJson, true)
                 }
-                const currentAddress = root.browserWalletStore.dappBrowserAccount.address
                 root.browserActivityStore.activityController.setFilterAddressesJson(
-                    JSON.stringify([currentAddress]))
+                    _internal.walletMenuAdaptor.addressesFilterJson)
 
                 Global.openPopup(browserWalletMenu)
             }
@@ -445,29 +448,55 @@ StatusSectionLayout {
                 incognitoMode: _internal.currentWebView && _internal.currentWebView.profile === connectorBridge.otrProfile
                 accounts: root.browserWalletStore.accounts
                 currentAccount: root.browserWalletStore.dappBrowserAccount
-                activityStore: root.browserActivityStore
-                currencyStore: root.currencyStore
-                networksStore: root.networksStore
 
-//                property point headerPoint: Qt.point(browserHeader.x, browserHeader.y)
-//                x: (parent.width - width - Theme.halfPadding)
-//                y: (Math.abs(browserHeader.mapFromGlobal(headerPoint).y) +
-//                    browserHeader.anchors.topMargin + Theme.halfPadding)
+                loadingHistoryTransactions: root.browserActivityStore.loadingHistoryTransactions
+                historyTransactionsModel: root.browserActivityStore.historyTransactions
+                newDataAvailable: root.browserActivityStore.newDataAvailable
+                isNonArchivalNode: root.browserActivityStore.isNonArchivalNode
+                selectedAddress: root.browserActivityStore.selectedAddress
+                isFilterDirty: root.browserActivityStore.transactionActivityStatus.isFilterDirty
+
+                activeNetworks: root.networksStore.activeNetworks
+                allNetworks: root.networksStore.allNetworks
+
+                currentCurrency: root.currencyStore.currentCurrency
+
+                getNameForAddressFn: function(address) {
+                    return root.browserActivityStore.getNameForAddress(address)
+                }
+                getDappDetailsFn: function(chainId, address) {
+                    return root.browserActivityStore.getDappDetails(chainId, address)
+                }
+                getFiatValueFn: function(amount, symbol) {
+                    return root.currencyStore.getFiatValue(amount, symbol)
+                }
+                formatCurrencyAmountFn: function(amount, symbol, options) {
+                    return root.currencyStore.formatCurrencyAmount(amount, symbol, options)
+                }
+                getTransactionTypeFn: function(transaction) {
+                    return root.browserActivityStore.getTransactionType(transaction)
+                }
 
                 onSendTriggered: (address) => root.sendToRecipientRequested(address)
                 onAccountChanged: (newAddress) => connectorBridge.connectorManager.changeAccount(newAddress)
                 onReload: {
-                    for (let i = 0; i < tabs.count; ++i){
-                        tabs.getTab(i).reload();
+                    for (let i = 0; i < tabs.count; ++i) {
+                        tabs.getTab(i).reload()
                     }
                 }
-
                 onAccountSwitchRequested: (address) => {
                     root.browserWalletStore.switchAccountByAddress(address)
                 }
                 onFilterAddressesChangeRequested: (addressesJson) => {
                     root.browserActivityStore.activityController.setFilterAddressesJson(addressesJson)
                 }
+
+                onUpdateTransactionFilterRequested: root.browserActivityStore.updateTransactionFilterIfDirty()
+                onFetchMoreTransactionsRequested: root.browserActivityStore.fetchMoreTransactions()
+                onResetActivityDataRequested: root.browserActivityStore.resetActivityData()
+                onUpdateCollectiblesModelRequested: root.browserActivityStore.currentActivityFiltersStore.updateCollectiblesModel()
+                onUpdateRecipientsModelRequested: root.browserActivityStore.currentActivityFiltersStore.updateRecipientsModel()
+                onApplyAllFiltersRequested: root.browserActivityStore.currentActivityFiltersStore.applyAllFilters()
 
                 Connections {
                     target: root.browserActivityStore.transactionActivityStatus
