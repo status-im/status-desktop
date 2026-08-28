@@ -726,7 +726,9 @@ QtObject {
             AuthenticationPopup {
                 store: root.authenticationStore
                 keychain: root.keychain
+                secureStorage: root.secureStorage
                 getCredentialForStorage: (keyUid, password) => root.privacyStore.getBiometricCredentialForStorage(keyUid, password)
+                getStayLoggedInCredentialForStorage: (keyUid, credential) => root.privacyStore.getStayLoggedInCredentialForStorage(keyUid, credential)
                 requirePlainCredential: reason === Constants.authenticationReason.syncDevice
                 onAuthenticationSuccess: function(reason, password, pin, keyUid, chatPrivateKey) {
                     root.authenticationStore.passwordProvided(keyUid, password)
@@ -747,7 +749,9 @@ QtObject {
 
                 store: root.signingStore
                 keychain: root.keychain
+                secureStorage: root.secureStorage
                 getCredentialForStorage: (keyUid, password) => root.privacyStore.getBiometricCredentialForStorage(keyUid, password)
+                getStayLoggedInCredentialForStorage: (keyUid, credential) => root.privacyStore.getStayLoggedInCredentialForStorage(keyUid, credential)
 
                 onPasswordProvided: function(password) {
                     // in case of signing tx via keycard no password (enc pub key)
