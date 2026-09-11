@@ -210,6 +210,7 @@ add_library(StatusQ ${LIB_TYPE}
         include/StatusQ/oneoffilter.h
         include/StatusQ/permissionutilsinternal.h
         include/StatusQ/rendersizedimage.h
+        include/StatusQ/rowbinder.h
         include/StatusQ/rxvalidator.h
         include/StatusQ/shareutils.h
         include/StatusQ/stablearraysorter.h
@@ -255,6 +256,7 @@ add_library(StatusQ ${LIB_TYPE}
         src/oneoffilter.cpp
         src/permissionutilsinternal.cpp
         src/rendersizedimage.cpp
+        src/rowbinder.cpp
         src/rxvalidator.cpp
         src/stablearraysorter.cpp
         src/statuscolors.cpp
