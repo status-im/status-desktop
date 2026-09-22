@@ -28,6 +28,7 @@ NIM_TESTS_LINK_STATUSQ := \
 	signal_handler_test \
 	swap_key_harvest_bench \
 	swap_modal_instantiation_bench \
+	thread_navigation_test \
 	typed_completion_test \
 	url_scheme_event_test \
 	wallet_connect_controller_test
@@ -35,6 +36,14 @@ NIM_TESTS_LINK_STATUSQ := \
 NIM_STATUSQ_TARGETS := $(patsubst %,nim-test-run/test/nim/%.nim,$(NIM_TESTS_LINK_STATUSQ))
 $(NIM_STATUSQ_TARGETS): NIM_PARAMS += --passL:"-L$(STATUSQ_LIB_PATH)" --passL:"-lStatusQ"
 $(NIM_STATUSQ_TARGETS): | statusq
+
+# The messages module also imports the existing keycard service bindings.
+nim-test-run/test/nim/thread_navigation_test.nim: NIM_PARAMS += --passL:"-L$(STATUSKEYCARD_QT_LIBDIR)" --passL:"-l$(STATUSKEYCARD_QT_LINKNAME)"
+nim-test-run/test/nim/thread_navigation_test.nim: | $(STATUSKEYCARD_QT_LIB)
+
+ifeq ($(mkspecs),linux)
+nim-test-run/test/nim/thread_navigation_test.nim: export LD_LIBRARY_PATH := $(shell pkg-config --variable=libdir libpcsclite):$(LD_LIBRARY_PATH)
+endif
 
 # Model-spy tests call inspection accessors gated behind
 # `when defined(testing) or defined(QT_MODEL_SPY)` or assert on the granular
@@ -74,7 +83,7 @@ endif
 nim-test-run/%: NIM_PARAMS += --nimcache:$(NIMCACHE_BASE)-$(call nim_test_cache,$@)
 
 nim-test-run/%: | qt-pkgconfig $(STATUSGO) $(QRCODEGEN)
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(NIMSDS_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(EXTRA_LIBS_PATH)":"$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(NIMSDS_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARD_QT_LIBDIR)":"$(EXTRA_LIBS_PATH)":"$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
 	nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) --mm:orc --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"$(QRCODEGEN)" -r $(subst nim-test-run/,,$@)
 
 tests-nim: $(NIM_TESTS)
