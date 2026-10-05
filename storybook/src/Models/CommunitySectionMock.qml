@@ -143,6 +143,9 @@ QtObject {
     readonly property QtObject sectionModule: QtObject {
         readonly property var model: root.chatsModel
         property var activeItem: ({ id: "", type: -1 })
+        property string openThreadId: ""
+        property string openThreadName: ""
+        property string openThreadParentChatId: ""
         readonly property bool amIMember: root.joined
         readonly property bool requiresTokenPermissionToJoin: root.requiresTokenPermissionToJoin
         readonly property bool isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin: root.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin
@@ -162,6 +165,17 @@ QtObject {
         function getChatContentModule() { return d.contentModuleFor(d.preparedChatId) }
         function getItemAsJson(id) { return JSON.stringify(d.chatInfo[id] ?? {}) }
         function getMySectionId() { return root.communityId }
+
+        function openThreadPanel(threadId, threadName, parentChatId) {
+            openThreadId = threadId
+            openThreadName = threadName
+            openThreadParentChatId = parentChatId
+        }
+        function closeThreadPanel() {
+            openThreadId = ""
+            openThreadName = ""
+            openThreadParentChatId = ""
+        }
 
         function muteChat(chatId, interval) {}
         function unmuteChat(chatId) {}
@@ -707,6 +721,7 @@ QtObject {
 
     function rebuild() {
         d.destroyContentModules()
+        sectionModule.closeThreadPanel()
         activeChatId = ""
         sectionModule.activeItem = ({ id: "", type: -1 })
         d.buildChats()

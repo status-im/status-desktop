@@ -18,6 +18,9 @@ QtObject {
     property var networkConnectionStore
     property bool openCreateChat: false
     property bool loadingHistoryMessagesInProgress: false
+    readonly property string openThreadId: chatCommunitySectionModule?.openThreadId ?? ""
+    readonly property string openThreadName: chatCommunitySectionModule?.openThreadName ?? ""
+    readonly property string openThreadParentChatId: chatCommunitySectionModule?.openThreadParentChatId ?? ""
 
     // Surface read by the chat views. Derived like the real store so the
     // injected content module's permissions (canPost, admin role) gate the
@@ -66,6 +69,12 @@ QtObject {
     function removeMemberFromGroupChat() {}
 
     // Community mutators proxied to the section module, like the real store
+    function openThreadPanel(threadId, threadName, parentChatId) {
+        chatCommunitySectionModule.openThreadPanel(threadId, threadName, parentChatId)
+    }
+    function closeThreadPanel() {
+        chatCommunitySectionModule.closeThreadPanel()
+    }
     function toggleCollapsedCommunityCategory(categoryId, collapsed) {
         chatCommunitySectionModule?.toggleCollapsedCommunityCategory(categoryId, collapsed)
     }
