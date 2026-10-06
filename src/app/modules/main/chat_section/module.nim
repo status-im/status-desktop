@@ -153,6 +153,7 @@ proc newModule*(
   result.pendingThreadId = ""
   result.pendingThreadParentChatId = ""
   result.pendingThreadPresentation = ""
+  result.pendingThreadMessageId = ""
   result.lastAppliedActiveItemId = ""
 
   result.chatContentModules = initOrderedTable[string, chat_content_module.AccessInterface]()
@@ -1572,16 +1573,22 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   let plainText = self.controller.getMessagesParsedPlainText(message, self.controller.getMyCommunity().chats)
 
   var notificationTitle = senderDisplayName
+  let threadName = if message.threadId.len > 0:
+      self.messageService.getThreadById(chatIdMsgBelongsTo, message.threadId).name
+    else:
+      ""
 
   case chatDetails.chatType:
     of ChatType.PrivateGroupChat:
-      notificationTitle.add(fmt" ({chatDetails.name})")
+      let conversationName = if threadName.len > 0: chatDetails.name & " Ξ" & threadName else: chatDetails.name
+      notificationTitle.add(fmt" ({conversationName})")
     of ChatType.CommunityChat:
+      let channelName = if threadName.len > 0: "#" & chatDetails.name & " Ξ" & threadName else: "#" & chatDetails.name
       if (chatDetails.categoryId.len == 0):
-        notificationTitle.add(fmt" (#{chatDetails.name})")
+        notificationTitle.add(fmt" ({channelName})")
       else:
         let categoryDetails = self.controller.getCommunityCategoryDetails(chatDetails.communityId, chatDetails.categoryId)
-        notificationTitle.add(fmt" (#{chatDetails.name}, {categoryDetails.name})")
+        notificationTitle.add(fmt" ({channelName}, {categoryDetails.name})")
     else:
       discard
 
@@ -1591,7 +1598,7 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
 
   singletonInstance.globalEvents.showMessageNotification(notificationTitle, plainText, sectionIdMsgBelongsTo,
     self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat,
-    message.id, notificationType.int, chatTypeMsgBelongsTo == ChatType.OneToOne,
+    message.id, message.threadId, notificationType.int, chatTypeMsgBelongsTo == ChatType.OneToOne,
     chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
 
 method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
