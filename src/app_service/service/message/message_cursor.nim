@@ -25,6 +25,11 @@ proc setValue*(self: MessageCursor, value: CursorValue) =
 proc setPending*(self: MessageCursor) =
   self.pending = true
 
+# A request that failed: the cursor stays where it was, so the next request
+# asks for the same page again.
+proc clearPending*(self: MessageCursor) =
+  self.pending = false
+
 proc isFetchable*(self: MessageCursor): bool =
   return not (self.pending or self.mostRecent)
 
