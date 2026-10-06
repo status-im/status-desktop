@@ -1,5 +1,5 @@
 import nimqml
-import std/[strformat, strutils, tables, json, sequtils, marshal, times, options], chronicles, stint, uuids
+import std/[strformat, strutils, tables, json, sequtils, marshal, times, options, uri], chronicles, stint, uuids
 
 import io_interface, view, controller
 import share_send
@@ -1975,6 +1975,38 @@ proc extractGenericNavTargetFromDeepLink(statusDeepLink: string): string =
   let path = extractDeepLinkValueUntilSeparator(extractStatusDeepLinkPath(statusDeepLink))
   return path.strip(chars = {'/'})
 
+proc extractThreadNotificationValue(query: string, key: string): string =
+  for pair in query.split('&'):
+    let separator = pair.find('=')
+    if separator == -1:
+      continue
+    if decodeUrl(pair[0 ..< separator]) == key:
+      return decodeUrl(pair[separator + 1 .. ^1])
+
+proc activateThreadNotificationDeepLink[T](self: Module[T], statusDeepLink: string): bool =
+  let link = parseUri(statusDeepLink)
+  if link.scheme != "status-app" or link.hostname != "thread-notification":
+    return false
+
+  let chatId = extractThreadNotificationValue(link.query, "chatId")
+  let threadId = extractThreadNotificationValue(link.query, "threadId")
+  let messageId = extractThreadNotificationValue(link.query, "messageId")
+  if chatId.len == 0 or threadId.len == 0 or messageId.len == 0:
+    warn "Ignoring malformed thread notification deep link", statusDeepLink
+    return true
+
+  let communityId = extractThreadNotificationValue(link.query, "communityId")
+  let sectionId = if communityId.len > 0:
+      communityId
+    else:
+      singletonInstance.userProfile.getPubKey()
+  if self.getActiveSectionId() != sectionId:
+    self.setActiveSectionById(sectionId)
+
+  if not self.openSectionChatAndMessage(sectionId, chatId, messageId, threadId):
+    warn "Unable to resolve thread notification deep link", sectionId, chatId, threadId, messageId
+  return true
+
 proc activateChatDeepLink[T](self: Module[T], statusDeepLink: string): bool =
   let oneToOneChatId = extractOneToOneChatIdFromDeepLink(statusDeepLink)
   if oneToOneChatId.len > 0:
@@ -2170,6 +2202,8 @@ method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
 
   if statusDeepLink.contains("/wc?"):
     self.view.wcLinkActivated(statusDeepLink)
+    return
+  if self.activateThreadNotificationDeepLink(statusDeepLink):
     return
   if self.activateMessageDeepLink(statusDeepLink):
     return
