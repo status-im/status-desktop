@@ -976,11 +976,12 @@ QtObject:
       if responseObj.kind != JObject:
         raise newException(CatchableError, "load more messages response is not a json object")
 
+      # before the error: a failed request is answered for its chat too
+      discard responseObj.getProp("chatId", chatId)
+
       let errorString = responseObj{"error"}.getStr()
       if errorString != "":
         raise newException(CatchableError, errorString)
-
-      discard responseObj.getProp("chatId", chatId)
 
       let msgCursor = self.initOrGetMessageCursor(chatId)
       if msgCursor.getValue() == "":
@@ -1025,7 +1026,10 @@ QtObject:
       self.events.emit(SIGNAL_MESSAGES_LOADED, data)
     except Exception as e:
       error "Erorr load more messages for chat async", msg = e.msg
-      # notify view, this is important
+      # The request is over: the next one may retry the page, and the view,
+      # waiting for an answer, gets an empty one.
+      if self.msgCursor.hasKey(chatId):
+        self.msgCursor[chatId].clearPending()
       self.events.emit(SIGNAL_MESSAGES_LOADED,
         MessagesLoadedArgs(chatId: chatId, threadId: "", messages: @[], reactions: @[]))
 

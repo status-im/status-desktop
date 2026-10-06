@@ -20,6 +20,7 @@ NIM_TESTS_LINK_STATUSQ := \
 	collectibles_request_ids_test \
 	collectibles_selector_bench \
 	collectibles_selector_model_bench \
+	message_history_paging_test \
 	send_handler_adaptors_bench \
 	send_handler_lookup_bench \
 	send_modal_instantiation_bench \
