@@ -14,6 +14,7 @@ import shared.views.chat
 import AppLayouts.Chat.stores as ChatStores
 
 import "../panels"
+import "../controls"
 
 RowLayout {
     id: root
@@ -71,7 +72,8 @@ RowLayout {
 
     ChatStores.MessageStore {
         id: messageStore
-        messageModule: chatContentModule ? chatContentModule.messagesModule : null
+        objectName: "chatHeaderMessageStore"
+        messageModule: root.chatContentModule ? root.chatContentModule.messagesModule : null
         chatSectionModule: root.rootStore.chatCommunitySectionModule
     }
 
@@ -80,7 +82,8 @@ RowLayout {
 
         Layout.fillWidth: true
 
-        sourceComponent: d.selectingMembers ? membersSelector : statusChatInfoButton
+        sourceComponent: d.selectingMembers ? membersSelector
+                        : messageStore.threadId ? threadHeader : statusChatInfoButton
     }
 
     RowLayout {
@@ -128,6 +131,7 @@ RowLayout {
         StatusFlatRoundButton {
             id: menuButton
             objectName: "chatToolbarMoreOptionsButton"
+            visible: !messageStore.threadId
             icon.name: "more"
             type: StatusFlatRoundButton.Type.Secondary
 
@@ -257,6 +261,28 @@ RowLayout {
                                         )
                         }
                     }
+            }
+        }
+    }
+
+    Component {
+        id: threadHeader
+        ThreadHeader {
+            id: selectedThreadHeader
+            threadId: messageStore.threadId
+            threadName: messageStore.threadName
+            parentChatName: {
+                const prefix = messageStore.chatType === Constants.chatType.communityChat ? "# " : ""
+                return prefix + messageStore.threadParentChatName
+            }
+            canEdit: messageStore.canEditThread
+            pending: messageStore.threadEditPending
+            onRenameRequested: name => messageStore.editThread(name)
+            Connections {
+                target: messageStore.messageModule
+                function onThreadEditFinished(error: string) {
+                    selectedThreadHeader.editFinished(error)
+                }
             }
         }
     }
