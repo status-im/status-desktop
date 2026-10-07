@@ -3388,11 +3388,6 @@ Do you wish to override the security check and continue?</source>
         <translation type="unfinished">Пошук</translation>
     </message>
     <message>
-        <source>in %1</source>
-        <extracomment>Thread header: %1 is the parent channel or chat name.</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No pinned messages found</source>
         <translation type="unfinished"></translation>
     </message>
@@ -18343,6 +18338,30 @@ This action cannot be undone.</source>
     <message>
         <source>Are you sure you want to delete this thread? It may remain visible on other participants&apos; devices.</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ThreadHeader</name>
+    <message>
+        <source>Couldn&apos;t rename thread: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thread name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>in %1</source>
+        <extracomment>Thread header: %1 is the parent channel or chat name.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Renaming...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>More</source>
+        <translation type="unfinished">Більше</translation>
     </message>
 </context>
 <context>

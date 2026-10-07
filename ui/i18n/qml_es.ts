@@ -3374,11 +3374,6 @@ Do you wish to override the security check and continue?</source>
         <translation>Buscar</translation>
     </message>
     <message>
-        <source>in %1</source>
-        <extracomment>Thread header: %1 is the parent channel or chat name.</extracomment>
-        <translation>en %1</translation>
-    </message>
-    <message>
         <source>No pinned messages found</source>
         <translation>No se encontraron mensajes fijados</translation>
     </message>
@@ -18256,6 +18251,30 @@ Esta acción no se puede deshacer.</translation>
     <message>
         <source>Are you sure you want to delete this thread? It may remain visible on other participants&apos; devices.</source>
         <translation>¿Seguro que quieres eliminar este hilo? Puede seguir siendo visible en los dispositivos de otros participantes.</translation>
+    </message>
+</context>
+<context>
+    <name>ThreadHeader</name>
+    <message>
+        <source>Couldn&apos;t rename thread: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thread name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>in %1</source>
+        <extracomment>Thread header: %1 is the parent channel or chat name.</extracomment>
+        <translation type="unfinished">en %1</translation>
+    </message>
+    <message>
+        <source>Renaming...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>More</source>
+        <translation type="unfinished">Más</translation>
     </message>
 </context>
 <context>
