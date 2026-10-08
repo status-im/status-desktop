@@ -1030,7 +1030,9 @@ Item {
         // into history, which has newer messages beyond it
         stickToBottom: !messageWindow.moreAvailableStart
 
-        placeholder: MessageRowsSkeleton {}
+        placeholder: MessageRowsSkeleton {
+            stackFromTop: chatLogView.placeholderBelowRows
+        }
         placeholderHeight: height
         prefetchMargin: height / 2
         acquireBudget: 8
