@@ -70,6 +70,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
 # Forward declaration
 proc createChatIdentifierItem(self: Module): Item
 proc createFetchMoreMessagesItem(self: Module): Item
+proc historyEndItems(self: Module): seq[Item]
 proc setChatDetails(self: Module, chatDetails: ChatDto)
 proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto): bool
 proc updateLinkPreviewsContacts(self: Module, item: Item, requestFromMailserver: bool)
@@ -102,10 +103,7 @@ method viewDidLoad*(self: Module) =
     if self.controller.getMyThreadId().len > 0:
       discard self.controller.loadMoreMessages()
 
-  let chatDto = self.controller.getChatDetails()
-  if self.controller.getMyThreadId().len == 0 and chatDto.hasMoreMessagesToRequest():
-    self.view.model().insertItemBasedOnClock(self.createFetchMoreMessagesItem())
-
+  self.updateChatFetchMoreMessages()
   self.updateChatIdentifier()
   self.view.setAmIChatAdmin(self.amIChatAdmin())
   self.view.setIsPinMessageAllowedForMembers(self.pinMessageAllowedForMembers())
@@ -256,6 +254,21 @@ proc createChatIdentifierItem(self: Module): Item =
     clearText = "",
   )
 
+# The rows standing for the start of the conversation - the chat identifier
+# (the welcome banner) and, above it, the fetch-more row - are shown only once
+# loading has reached the oldest stored message. Shown earlier, they would
+# claim the conversation starts there, and every older page would arrive
+# under them.
+proc historyEndItems(self: Module): seq[Item] =
+  if not self.controller.isHistoryExhausted():
+    return
+  # A thread starts directly with its parent message, no channel welcome header
+  if self.controller.getMyThreadId().len > 0:
+    return
+  if self.controller.getChatDetails().hasMoreMessagesToRequest():
+    result.add(self.createFetchMoreMessagesItem())
+  result.add(self.createChatIdentifierItem())
+
 proc checkIfMessageLoadedAndScroll(self: Module) =
   let searchedMessageId = self.controller.getSearchedMessageId()
 
@@ -301,19 +314,24 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
   let threadId = self.controller.getMyThreadId()
   let filtered = if THREADS_ENABLED: messages.filterIt(it.threadId == threadId) else: messages
 
-  if filtered.len > 0:
-    var viewItems = self.createMessageItemsFromMessageDtos(filtered, reactions)
+  # The page that reaches the oldest message brings the history end rows
+  # along; it may be empty.
+  let endItems = self.historyEndItems()
+  let endMissing = endItems.len > 0 and
+                   self.view.model().findIndexForMessageId(CHAT_IDENTIFIER_MESSAGE_ID) == -1
 
-    if self.controller.getMyThreadId().len == 0 and self.controller.getChatDetails().hasMoreMessagesToRequest():
-      viewItems.add(self.createFetchMoreMessagesItem())
-    # A thread starts directly with its parent message, no channel welcome header
-    if threadId.len == 0:
-      viewItems.add(self.createChatIdentifierItem())
+  if filtered.len > 0 or endMissing:
+    var viewItems = if filtered.len > 0: self.createMessageItemsFromMessageDtos(filtered, reactions)
+                    else: @[]
+
+    viewItems.add(endItems)
     self.view.model().removeItem(FETCH_MORE_MESSAGES_MESSAGE_ID)
     self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
     # Add new loaded messages
     self.view.model().insertItemsBasedOnClock(viewItems)
-    self.view.model().resetNewMessagesMarker()
+
+    if filtered.len > 0:
+      self.view.model().resetNewMessagesMarker()
 
   self.initialMessagesLoaded = true
   # Empty or filtered pages must also advance or finish a pending message search.
@@ -483,9 +501,7 @@ method setThreadId*(self: Module, threadId: string) =
   self.initialMessagesLoaded = false
   self.view.model().clear()
 
-  if threadId.len == 0 and self.controller.getChatDetails().hasMoreMessagesToRequest():
-    self.view.model().insertItemBasedOnClock(self.createFetchMoreMessagesItem())
-
+  self.updateChatFetchMoreMessages()
   self.updateChatIdentifier()
   discard self.controller.loadMoreMessages()
   self.reevaluateViewLoadingState()
@@ -760,13 +776,14 @@ method updateChatIdentifier*(self: Module) =
   if self.controller.getMyThreadId().len > 0:
     return
   let item = self.createChatIdentifierItem()
-  if not self.view.model().updateChatIdentifier(item):
+  if not self.view.model().updateChatIdentifier(item) and self.controller.isHistoryExhausted():
     self.view.model().insertItemBasedOnClock(item)
 
 method updateChatFetchMoreMessages*(self: Module) =
   self.view.model().removeItem(FETCH_MORE_MESSAGES_MESSAGE_ID)
 
-  if (self.controller.getChatDetails().hasMoreMessagesToRequest()):
+  if self.controller.isHistoryExhausted() and self.controller.getMyThreadId().len == 0 and
+      self.controller.getChatDetails().hasMoreMessagesToRequest():
     self.view.model().insertItemBasedOnClock(self.createFetchMoreMessagesItem())
 
 proc switchToMessage*(self: Module, messageId: string) =
