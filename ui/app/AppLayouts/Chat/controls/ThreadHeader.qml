@@ -143,13 +143,13 @@ RowLayout {
         }
     }
 
-    StatusFlatRoundButton {
+    StatusFlatButton {
         id: menuButton
         objectName: "threadHeaderMenuButton"
         visible: root.canEdit
         enabled: !root.pending
         icon.name: "more"
-        type: StatusFlatRoundButton.Type.Secondary
+        type: StatusFlatButton.Type.Secondary
         tooltip.text: qsTr("More")
         readonly property ThreadContextMenu menu: menuLoader.status === Loader.Ready
                                                   ? menuLoader.item as ThreadContextMenu : null
@@ -172,7 +172,6 @@ RowLayout {
                 deleteEnabled: false
                 threadLinkToCopyShare: ""
                 editEnabled: root.canEdit && !root.pending
-                isThread: true
                 onEditNameRequested: Qt.callLater(root.beginEditing)
             }
         }
