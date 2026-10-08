@@ -663,6 +663,13 @@ Item {
             return SQUtils.ModelUtils.modelToFlatArray(input.textInput.mentionsModel, "name")
         }
 
+        // as the message's edit menu does
+        function startEdit(loader, messageId) {
+            const messagesView = findChildByTypePrefix(loader, "ChatMessagesView")
+            verify(!!messagesView)
+            messagesView.editModeChanged(true, messageId)
+        }
+
         function test_editShowsMentionNamesWithoutTheRoster() {
             const loader = loadSection()
             const contentModule = mock.d.contentModuleFor(mock.activeChatId)
@@ -672,9 +679,7 @@ Item {
             messages.setProperty(1, "unparsedText", "hi @" + strangerKey)
             messages.setProperty(1, "mentionedNames", JSON.stringify({ [strangerKey]: "Xena" }))
 
-            const contentView = findChildByTypePrefix(loader, "ChatContentView")
-            verify(!!contentView)
-            contentView.editMessageRequested(own.id)
+            startEdit(loader, own.id)
 
             const input = chatInput(loader)
             compare(inputMentionNames(input), ["@Xena"])
@@ -727,7 +732,7 @@ Item {
             const contentModule = mock.d.contentModuleFor(mock.activeChatId)
             const own = SQUtils.ModelUtils.get(contentModule.messagesModel, 1)
             contentModule.messagesModel.setProperty(1, "unparsedText", "hi @" + strangerKey)
-            findChildByTypePrefix(loader, "ChatContentView").editMessageRequested(own.id)
+            startEdit(loader, own.id)
             compare(inputMentionNamesBuilt(columnView), 1)
             tryCompare(contentModule.messagesModule, "jumpedToMessageId", own.id)
         }
