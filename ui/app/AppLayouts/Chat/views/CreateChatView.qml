@@ -177,6 +177,7 @@ Page {
                 stickersPopup: root.stickersPopup
                 closeGifPopupAfterSelection: true
                 usersModel: membersSelector.selectedContactsModel
+                usersModelIncludeAtEveryone: membersSelector.model.ModelCount.count > 1
                 paymentRequestFeatureEnabled: false
                 maxImages: root.unlimitedChatImagesEnabled ? 0 : Constants.maxUploadFiles
                 onStickerSelected: (hashId, packId, url) => {
