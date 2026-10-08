@@ -137,9 +137,13 @@ suite "thread navigation":
   test "empty and filtered final pages finish a pending message search":
     let events = createEventEmitter()
     let service = message_service.newService(events, nil, nil, nil, nil, nil, nil)
+    # the final page brings the history end rows, built from the chat's details
+    let contacts = contact_service.newService(events, nil, nil, nil)
+    let chats = chat_service.newService(events, nil, contacts)
+    let communities = community_service.newService(events, nil, chats, nil, service)
     service.msgCursor["chat-id"] = initMessageCursor("", false, true)
     let module = messages_module.newModule(MockDelegate(), events, "section-id", "chat-id",
-      true, nil, nil, nil, service, nil, nil)
+      true, contacts, communities, chats, service, nil, nil)
     defer: module.delete()
     module.onFirstUnseenMessageLoaded("")
     module.switchToMessage("missing-id")
