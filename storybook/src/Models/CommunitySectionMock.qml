@@ -310,6 +310,7 @@ QtObject {
                 signal sendingMessageFailed(string error)
                 signal reactionActionFailed()
                 signal scrollToMessage(string messageId)
+                signal moreMessagesLoaded()
                 signal threadOpenRequested(string threadId, string threadName)
 
                 function getChatId() { return contentModule.chatId }
@@ -317,7 +318,7 @@ QtObject {
                     jumpedToMessageId = messageId
                     scrollToMessage(messageId)
                 }
-                function loadMoreMessages() {}
+                function loadMoreMessages() { moreMessagesLoaded() }
                 function updateKeepUnread(flag) {}
                 function createThread(parentMessageId) {
                     threadOpenRequested(parentMessageId, "New thread")

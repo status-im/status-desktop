@@ -70,6 +70,9 @@ Loader {
     property string unparsedText: ""
     // pubKey -> display name, used by the client-side renderer to resolve mentions in unparsedText.
     property var mentionsMap: ({})
+    // The message's own pubKey -> name map (JSON), naming the mentions the
+    // user models cannot; an input to mentionsMap, which the owner builds.
+    property string mentionedNames: ""
     property string messageImage: ""
     property double messageTimestamp: 0 // We use double, because QML's int is too small
     property string messageOutgoingStatus: ""
