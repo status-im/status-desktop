@@ -50,10 +50,11 @@ Item {
             const parentChatId = view.activeItemId
             const column = harness.findChildByTypePrefix(view.centerPanel, "ChatColumnView")
             verify(!!column)
-            const contentView = findChild(column, "chatContentViewColumn")
-            verify(!!contentView)
+            // the section shares one messages view now, and that is what asks
+            const messagesView = harness.findChildByTypePrefix(column, "ChatMessagesView")
+            verify(!!messagesView)
             view.threadsFeatureEnabled = true
-            contentView.openThread("", "", "thread-a")
+            messagesView.openThread("", "", "thread-a")
             compare(state.openThreadId, "thread-a")
             compare(state.openThreadName, "New thread")
             compare(view.activeItemId, parentChatId)
