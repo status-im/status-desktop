@@ -117,6 +117,7 @@ StackLayout {
 
     property var emojiPopup
     property var stickersPopup
+    property DelegatePool rowPool: null
 
     // Unfurling related data:
     property bool gifUnfurlingEnabled
@@ -323,6 +324,7 @@ StackLayout {
 
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
+            rowPool: root.rowPool
             sectionItemModel: root.sectionItemModel
             joinedMembersCount: root.sectionItemModel?.joinedMembersCount ?? 0
             areTestNetworksEnabled: root.networksStore.areTestNetworksEnabled
