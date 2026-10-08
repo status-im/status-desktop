@@ -221,12 +221,16 @@ privateAccess(chat_item.ChatItem)
 type
   ContentStub = ref object of content_interface.AccessInterface
     scrolledTo: seq[string]
+    renamedTo: seq[string]
   SectionHarness = ref object of section_module.Module
     activated: seq[string]
     panelClosed: bool
 
 method scrollToMessage(self: ContentStub, messageId: string) =
   self.scrolledTo.add(messageId)
+
+method onThreadRenamed(self: ContentStub, newName: string) =
+  self.renamedTo.add(newName)
 
 method delete(self: ContentStub) = discard
 method onNotificationsUpdated(self: ContentStub, hasUnreadMessages: bool, notificationsCount: int) = discard
@@ -314,7 +318,9 @@ suite "thread search result navigation":
       section.chatsLoaded = true
       section.onChatThreadsForChatsLoaded(@[thread], @["unrelated"])
       check content.scrolledTo.len == 0
+      check content.renamedTo.len == 0
       section.onChatThreadsForChatsLoaded(@[thread], @["parent"])
+      check content.renamedTo == @["Thread"]
       check section.activated == @["parent", "thread"]
       check section.panelClosed
       check content.scrolledTo == @["target"]
@@ -361,4 +367,3 @@ suite "thread search result navigation":
       check section.activated.len == 0
     else:
       skip()
-

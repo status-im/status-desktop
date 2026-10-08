@@ -273,6 +273,10 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_CHAT_THREADS_FOR_CHATS_LOADED) do(e: Args):
     let args = ChatThreadsForChatsLoadedArgs(e)
     if self.threadId.len > 0:
+      for thread in args.threads:
+        if thread.chatId == self.chatId and thread.threadId == self.threadId:
+          self.delegate.updateThreadDetails()
+          break
       return
     var chatThreads: seq[ThreadDto] = @[]
     for thread in args.threads:
@@ -319,7 +323,7 @@ proc pendingSends*(self: Controller): seq[SendingStartedArgs] =
 proc getThreadForParentMessage*(self: Controller, parentMessageId: string): ThreadDto =
   return self.messageService.getThreadForParentMessage(self.chatId, parentMessageId)
 
-proc getThread*(self: Controller): ThreadDto =
+proc getThread*(self: Controller): lent ThreadDto =
   self.messageService.getThreadById(self.chatId, self.threadId)
 
 proc editThread*(self: Controller, name, requestId: string) =

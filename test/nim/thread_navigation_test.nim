@@ -7,6 +7,7 @@ import app/modules/main/chat_section/chat_content/messages/module as messages_mo
 import app_service/service/message/service as message_service
 import app/global/feature_flags
 import app/modules/main/chat_section/chat_content/messages/[controller, view]
+import app/modules/main/chat_section/chat_content/messages/io_interface as messages_interface
 import app/modules/shared_models/message_model
 import app/modules/shared_models/message_item
 import app_service/service/contacts/dto/contact_details
@@ -29,6 +30,21 @@ type
   MockDelegate = ref object of chat_content_interface.AccessInterface
     opened: seq[OpenedThread]
 
+  ThreadDetailsDelegate = ref object of messages_interface.AccessInterface
+    controller: controller.Controller
+    names: seq[string]
+    namesAtCompletion: seq[string]
+    summaries: seq[ThreadDto]
+
+method updateThreadDetails(self: ThreadDetailsDelegate) =
+  self.names.add(self.controller.getThread().name)
+
+method onThreadEditFinished(self: ThreadDetailsDelegate, requestId, error: string) =
+  self.namesAtCompletion.add(self.names[^1])
+
+method onChatThreadsLoaded(self: ThreadDetailsDelegate, threads: seq[ThreadDto], listLoaded: bool = false) =
+  self.summaries = threads
+
 method openThreadAsChat(self: MockDelegate, threadId, threadName, parentMessageId: string,
     setActive: bool = true, hasUnreadMessages: bool = false, notificationsCount: int = 0) =
   self.opened.add(OpenedThread(threadId: threadId, name: threadName,
@@ -36,6 +52,44 @@ method openThreadAsChat(self: MockDelegate, threadId, threadName, parentMessageI
     hasUnreadMessages: hasUnreadMessages, notificationsCount: notificationsCount))
 
 suite "thread navigation":
+  test "local and remote renames refresh both thread headers before edit completion":
+    let events = createEventEmitter()
+    let service = message_service.newService(events, nil, nil, nil, nil, nil, nil)
+    service.init()
+    var delegates: seq[ThreadDetailsDelegate]
+    for (chatId, threadId) in [("chat-id", "thread-id"), ("chat-id", "thread-id"),
+        ("chat-id", "other-thread"), ("other-chat", "thread-id"), ("chat-id", "")]:
+      let delegate = ThreadDetailsDelegate(names: @["Original"])
+      delegate.controller = controller.newController(delegate, events, "section-id", chatId,
+        true, nil, nil, nil, service, nil, nil, threadId = threadId)
+      delegate.controller.init()
+      delegates.add(delegate)
+    defer:
+      for delegate in delegates:
+        delegate.controller.delete()
+
+    service.onAsyncEditThread($(%* {
+      "chatId": "chat-id", "threadId": "thread-id", "requestId": "rename",
+      "error": "", "threads": [{"chatId": "chat-id", "threadId": "thread-id",
+        "parentMessageId": "parent-id", "name": "Local rename"}]
+    }))
+    events.emit(chat_service.SIGNAL_CHAT_THREADS_UPDATED,
+      chat_service.ChatThreadsUpdatedArgs(threads: @[
+        ThreadDto(chatId: "chat-id", threadId: "thread-id", parentMessageId: "parent-id",
+          name: "Remote rename")
+      ]))
+
+    for delegate in delegates[0..1]:
+      check(delegate.names == @["Original", "Local rename", "Remote rename"])
+      check(delegate.namesAtCompletion == @["Local rename"])
+      check(delegate.summaries.len == 0)
+    for delegate in delegates[2..3]:
+      check(delegate.names == @["Original"])
+      check(delegate.namesAtCompletion.len == 0)
+    check(delegates[4].names == @["Original"])
+    require(delegates[4].summaries.len == 1)
+    check(delegates[4].summaries[0].name == "Remote rename")
+
   test "reopening an existing thread forwards current unread state":
     let events = createEventEmitter()
     let service = message_service.newService(events, nil, nil, nil, nil, nil, nil)
