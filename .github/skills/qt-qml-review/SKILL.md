@@ -9,7 +9,7 @@ metadata:
     github-path: skills/qt-qml-review
     github-ref: refs/heads/main
     github-repo: https://github.com/TheQtCompanyRnD/agent-skills
-    github-tree-sha: 00b3a532779a7f4f3742c52c705dd31954d08e72
+    github-tree-sha: 77307f08b69228b611e2c372d4fd93f423fe3c92
     qt-version: 6.x
     version: "1.0"
 name: qt-qml-review
