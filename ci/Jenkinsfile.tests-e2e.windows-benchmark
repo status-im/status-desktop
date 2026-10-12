@@ -231,7 +231,8 @@ pipeline {
 
                 withCredentials([
                   usernamePassword(credentialsId: 'test-rail-api-devops', usernameVariable: 'TESTRAIL_USR', passwordVariable: 'TESTRAIL_PSW'),
-                  string(credentialsId: 'wallet-test-user-seed', variable: 'WALLET_TEST_USER_SEED')
+                  string(credentialsId: 'wallet-test-user-seed', variable: 'WALLET_TEST_USER_SEED'),
+                  string(credentialsId: 'e2e-user-data-password', variable: 'USER_DATA_PASSWORD')
                 ]) {
                   sh"""
                     pushd configs
