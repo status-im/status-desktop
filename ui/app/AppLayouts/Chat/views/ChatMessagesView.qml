@@ -1038,6 +1038,11 @@ Item {
         acquireBudget: 8
         bottomPadding: Theme.halfPadding
 
+        // A notch of the mouse wheel scrolls a fixed distance and notches add
+        // up, rather than Flickable's ~72 px restarted on every notch.
+        customWheelScrolling: true
+        wheelScrollPixels: 100
+
         acquireDelegate: d.acquireRow
         releaseDelegate: d.releaseRow
 
@@ -1052,6 +1057,12 @@ Item {
         }
 
         onMovementEnded: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+
+        // a wheel scroll settling is no movement to Flickable
+        onWheelScrollingChanged: {
+            if (!wheelScrolling)
+                d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+        }
         onVisibleChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
 
         Binding on flickDeceleration {
