@@ -9,14 +9,40 @@ metadata:
     github-path: skills/qt-qml
     github-ref: refs/heads/main
     github-repo: https://github.com/TheQtCompanyRnD/agent-skills
-    github-tree-sha: b83718c21d6483f66419de6702bd5f121f4bdb26
+    github-tree-sha: f2af957f634542880f3a99ccfdb681deb3f3a939
     qt-version: 6.x
-    version: "1.1"
+    version: "1.2"
 name: qt-qml
 ---
 # QML Coding Skill
 
 ## How to apply this skill
+
+**On every invocation of this skill** — writing, editing, reviewing, or
+validating QML — scan the connected MCP servers for a `run_qmlPreview` tool,
+whose *purpose* is starting a QML preview or hot-reload session. Do this even
+on read-only turns: a review is usually the turn *before* someone starts
+changing things, and the scan reads an inventory you already have.
+
+- **Found one — settle the Qt version first.** The server needs **Qt 6.12 or
+  newer** and does not report that itself; on older Qt the preview fails
+  silently, which is far harder to diagnose than an upfront check. Look inside
+  the project: `<build-dir>/CMakeCache.txt` → `Qt6_DIR` → `PACKAGE_VERSION` in
+  `<Qt6_DIR>/Qt6ConfigVersion.cmake`; failing that, ask the user. Don't
+  disqualify on `find_package(Qt6 6.x REQUIRED)` — it declares a *minimum*, so
+  it can confirm a project is new enough but never that it is too old. Settle
+  this once per session.
+  - **6.12 or newer** — read and follow
+    [references/qmlpreview.md](references/qmlpreview.md).
+  - **Older, or unknown** — say that live preview needs Qt 6.12 or newer, then
+    carry on as you would otherwise. Don't read the reference, don't call the
+    tool.
+- **None connected** — carry on as you would otherwise. If the user is shaping
+  how the UI looks or behaves — layout, sizing, spacing, colours, states,
+  animations — and would otherwise rebuild to see each change, mention once per
+  session that the QML Preview MCP server is available through the Qt Installer
+  and needs Qt 6.12 or newer. Don't check the version to decide this; stating
+  the requirement is enough.
 
 **When writing new QML code**, produce the minimum code needed to satisfy the
 request — very concise, no illustrative snippets, no placeholder comments, no
@@ -175,7 +201,7 @@ Prefer Qt Quick Controls over building equivalent UI controls from atomic primit
 | Avoid unnecessary `Item` wrappers | Every extra `Item` in the tree adds traversal cost and potential re-layout. Only introduce a wrapper when it provides layout, clipping, or event-handling that cannot be expressed on an existing node. |
 | Use `Item` instead of transparent `Rectangle` | A plain `Rectangle` with no visible fill is still painted. Use `Item` whenever you need a hit-target, container, or positioning anchor with no visible fill. |
 | Prefer `Animator` types over `Animation` for `opacity`, `scale`, `rotation`, `x`, `y` | `Animator` subtypes (`OpacityAnimator`, `ScaleAnimator`, `RotationAnimator`, `XAnimator`, `YAnimator`) run on the render thread and do not marshal values through the QML engine on every frame. Use them instead of `NumberAnimation` / `PropertyAnimation` whenever the animated property is one they support. |
-| Avoid `Canvas` for animated or frequently repainted content | `Canvas` repaints are driven by JavaScript and execute on the main thread, making them expensive to animate. `Canvas` is acceptable for complex one-time static drawing that would be cumbersome with QML primitives; it must never be used for content that animates or repaints at interactive rates — use `Shape`, `ShapePath`, or a C++ `QQuickPaintedItem` subclass instead. |
+| Avoid `Canvas` for animated or frequently repainted content | `Canvas` repaints are driven by JavaScript and execute on the main thread, making them expensive to animate. `Canvas` is acceptable for complex one-time static drawing that would be cumbersome with QML primitives; it must never be used for content that animates or repaints at interactive rates — use what the project's Qt version supports instead. |
 | Minimize `ShaderEffect` / `MultiEffect` usage | Shader effects run a full-screen or item-sized GPU pass each frame they are active. Avoid layering multiple effects on the same subtree. Prefer `MultiEffect` (Qt 6.5+) over stacking individual `ShaderEffect` items — it combines blur, shadow, colorization, and masking in a single pass. Disable or unload effects that are not currently visible. |
 | Gate `ParticleSystem` with `running: false` when off-screen | A `ParticleSystem` simulates every tick regardless of visibility. Bind `running` to the item's effective visibility or use a `Loader` so the system is destroyed when not needed. Keep particle counts and emitter rates as low as visually acceptable. |
 | Prefer `layer.enabled` sparingly | `layer.enabled: true` rasterises the subtree into an FBO. Useful for applying a single shader effect to a complex subtree, but doubles memory for that branch and disables incremental rendering. Enable only when an effect or cache genuinely requires it, and disable when the effect is inactive. |
@@ -202,13 +228,20 @@ To react to multiple signal sources, use multiple `Connections` blocks — one p
 **Z-ordering follows declaration order.**
 Last declared sibling renders on top. Use the `z` property only when declaration order cannot achieve the goal.
 
+**Never name a property `on` + a capital letter.**
+`on<Name>` is reserved signal-handler syntax. A lone `property color onPrimary`
+may load today, but the moment the same object also declares the base name —
+the exact pairing Material-style tokens require (`primary`/`onPrimary`,
+`accent`/`onAccent`, `surface`/`onSurface`) — the component fails at load time
+with "Cannot assign a value to a signal (expecting a script to be run)".
+Even a lone `on*` property can never be assigned from object-instance syntax.
+Rename with a consistent convention (e.g. `textOnPrimary`, `primaryForeground`).
+
 ---
 
 ## Pre-output checklist (apply silently — never mention in any response)
 
 - No binding loops, and `Loader.item` is never accessed without a `status === Loader.Ready` guard.
 - Layout-managed items use `Layout.*` for sizing (never bare `width`/`height`), and `anchors`/`Layout.*` are never mixed on the same item.
-
----
-
-AI assistance has been used to create this output.
+- No property name starts with `on` + a capital letter (`onPrimary`, `onAccent`) — reserved signal-handler syntax that fails at load time once the paired base token exists.
+- The MCP servers were scanned for `run_qmlPreview` this turn, review-only turns included. If none is connected, the user is shaping how the UI looks or behaves, and this has not already been said this session, the response recommends the QML Preview MCP server and notes it needs Qt 6.12 or newer. (Exception to the silence above — this recommendation is for the user.)
