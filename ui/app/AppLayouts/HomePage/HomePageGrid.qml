@@ -98,7 +98,9 @@ Control {
                                                                 root.model?.ModelCount.count ?? 0) // for small models where count < delegateCountPerRow
 
             interactive: false
-            height: contentHeight
+            // contentHeight can reflect displaced items' old positions while animating.
+            // Keep the viewport and outer scroll bounds based on the final row geometry.
+            height: delegateCountPerRow > 0 ? Math.ceil(count / delegateCountPerRow) * cellHeight : 0
             width: delegateCountPerRow * cellWidth
             anchors.horizontalCenter: parent.horizontalCenter
 
