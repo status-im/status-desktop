@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQml.Models
@@ -408,8 +410,9 @@ SettingsContentBase {
                         confirmButtonLabel: lightMode ? qsTr("I understand") : qsTr("Confirm")
                         showCancelButton: lightMode
                         onConfirmButtonClicked: {
-                            root.advancedStore.setWakuV2LightClientEnabled(lightMode)
                             close()
+                            if (root.advancedStore.setWakuV2LightClientEnabled(lightMode))
+                                SystemUtils.restartApplication(true)
                         }
                         onCancelButtonClicked: {
                             close()
@@ -712,7 +715,7 @@ SettingsContentBase {
                     qsTr("The app will restart if you confirm.")
                 onConfirmButtonClicked: {
                     root.advancedStore.toggleDebug()
-                    SystemUtils.restartApplication()
+                    SystemUtils.restartApplication(true)
                 }
                 onCancelButtonClicked: close()
             }

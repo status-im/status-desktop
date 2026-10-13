@@ -18,9 +18,6 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method onFleetSet*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onWakuV2LightClientSet*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onDebugToggled*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -42,7 +39,7 @@ method getLogDir*(self: AccessInterface): string {.base.} =
 method getWakuV2LightClientEnabled*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setWakuV2LightClientEnabled*(self: AccessInterface, enabled: bool) {.base.} =
+method setWakuV2LightClientEnabled*(self: AccessInterface, enabled: bool): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isDebugEnabled*(self: AccessInterface): bool {.base.} =

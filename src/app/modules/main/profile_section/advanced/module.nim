@@ -72,12 +72,8 @@ method getLogDir*(self: Module): string =
 method getWakuV2LightClientEnabled*(self: Module): bool =
   return self.controller.getWakuV2LightClientEnabled()
 
-method setWakuV2LightClientEnabled*(self: Module, enabled: bool) =
-  self.controller.setWakuV2LightClientEnabled(enabled)
-
-method onWakuV2LightClientSet*(self: Module) =
-  info "quit the app because of successful WakuV2 light client change"
-  singletonInstance.application.exit() # TODO: change this to logout instead when supported
+method setWakuV2LightClientEnabled*(self: Module, enabled: bool): bool =
+  return self.controller.setWakuV2LightClientEnabled(enabled)
 
 method isDebugEnabled*(self: Module): bool =
   self.controller.isDebugEnabled()

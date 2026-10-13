@@ -132,9 +132,9 @@ QtObject {
 
     function setWakuV2LightClientEnabled(mode) {
         if(!root.advancedModule)
-            return
+            return false
 
-        root.advancedModule.setWakuV2LightClientEnabled(mode)
+        return root.advancedModule.setWakuV2LightClientEnabled(mode)
     }
 
     function toggleDebug() {

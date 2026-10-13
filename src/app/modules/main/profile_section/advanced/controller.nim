@@ -102,13 +102,13 @@ proc onOldLogsCleanupFinished*(self: Controller, deletedCount, failedCount: int,
 proc getWakuV2LightClientEnabled*(self: Controller): bool =
   return self.nodeConfigurationService.isLightClient()
 
-proc setWakuV2LightClientEnabled*(self: Controller, enabled: bool) =
+proc setWakuV2LightClientEnabled*(self: Controller, enabled: bool): bool =
   if (not self.nodeConfigurationService.setLightClient(enabled)):
     # in the future we may do a call from here to show a popup about this error
     error "an error occurred, we couldn't set WakuV2 light client"
-    return
+    return false
 
-  self.delegate.onWakuV2LightClientSet()
+  return true
 
 proc isDebugEnabled*(self: Controller): bool =
   return self.nodeConfigurationService.isDebugEnabled()
