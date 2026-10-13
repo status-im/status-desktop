@@ -39,8 +39,8 @@ QtObject:
     read = getWakuV2LightClientEnabled
     notify = wakuV2LightClientEnabledChanged
 
-  proc setWakuV2LightClientEnabled*(self: View, enabled: bool) {.slot.} =
-    self.delegate.setWakuV2LightClientEnabled(enabled)
+  proc setWakuV2LightClientEnabled*(self: View, enabled: bool): bool {.slot.} =
+    return self.delegate.setWakuV2LightClientEnabled(enabled)
 
   proc isDebugEnabledChanged*(self: View) {.signal.}
   proc getIsDebugEnabled*(self: View): bool {.slot.} =
@@ -147,4 +147,3 @@ QtObject:
 
   proc delete*(self: View) =
     self.QObject.delete
-
