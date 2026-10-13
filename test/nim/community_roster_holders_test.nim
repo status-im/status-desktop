@@ -145,7 +145,7 @@ suite "roster holders":
     holders.onRetryTimeout()
     check loads == 1
     check not timer.running
-    # nothing was filled; the drop only ends the capture of the failed load
+    # nothing was loaded; the drop only ends the capture of the failed load
     check drops == 1
     check not holders.isActive
     # the next first holder loads at once
