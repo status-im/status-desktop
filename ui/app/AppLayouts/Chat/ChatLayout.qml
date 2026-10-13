@@ -496,6 +496,7 @@ StackLayout {
         sectionName: root.sectionLayout.sectionName + "_settings"
 
         rootStore: root.rootStore
+        communitiesStore: root.communitiesStore
         networksStore: root.networksStore
         tokensStore: root.tokensStore
         transactionStore: root.transactionStore
