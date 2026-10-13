@@ -17,6 +17,24 @@ In order to run Storybook it's necessary to use remote mode:
 For convenience the setup of reverse proxy can be easily added to the config
 in QtCreator as a deployment step (`Custom Process Step`).
 
+## Exercising desktop restart
+
+Launch `Storybook ConfirmChangePasswordModal --mode local`. In the controls
+panel, leave **Success in 2 seconds** enabled and disable **Fast password change
+possible (DEK)** (or select the modal's rekey checkbox). Submit the password
+change, wait for the simulated success, and click **Restart Status**.
+
+This calls `SystemUtils.restartApplication(true)` without a backend and restarts
+the Storybook executable, not an installed Status app. The positional page and
+`--mode` arguments are preserved, so the replacement opens the same page.
+Desktop restart is deferred until the application object is destroyed; application
+owners must finish backend shutdown and release single-instance resources before
+destroying that object. Logs record when the restart is scheduled and the
+replacement process PID; launch failures are logged as critical errors.
+The replacement's standard streams are redirected to the null device so closing
+the launcher's output pipes (for example, Qt Creator's) cannot terminate it.
+Replacement console output will not appear in the original run output.
+
 
 # Building Storybook with Webassembly and Qt 5.14
 
@@ -112,4 +130,3 @@ Qt creator might not set the env paths correctly. In this case manually set buil
     
     #run
     emrun StoryBook.html
-

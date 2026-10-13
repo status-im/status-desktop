@@ -19,6 +19,8 @@ public:
     explicit SystemUtilsInternal(QObject *parent = nullptr);
 
     Q_INVOKABLE QString qtRuntimeVersion() const;
+    // Desktop: relaunch on application destruction, preserving arguments, cwd and environment.
+    // The application owner must release backend/single-instance resources before deleting qApp.
     Q_INVOKABLE void restartApplication() const;
     Q_INVOKABLE void restartApplication(bool killBackend) const;
     Q_INVOKABLE void openAppSettings();
