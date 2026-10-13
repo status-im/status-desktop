@@ -985,6 +985,19 @@ QtObject {
         }
     }
 
+    function preferredOrFirstL1ChainId(activeNetworks, preferredChainId) {
+        if (preferredChainId > 0
+                && !!StatusQUtils.ModelUtils.getByKey(activeNetworks, "chainId", preferredChainId)) {
+            return preferredChainId
+        }
+        return StatusQUtils.ModelUtils.getByKey(activeNetworks, "layer", 1, "chainId")
+    }
+
+    function defaultSwapLaunchChainId(activeNetworks, areTestNetworksEnabled) {
+        const preferredChainId = areTestNetworksEnabled ? Constants.chains.sepoliaChainId : -1
+        return preferredOrFirstL1ChainId(activeNetworks, preferredChainId)
+    }
+
     // Is given ChainID a testnet
     function isChainIDTestnet(chainID) {
         switch (+chainID) {

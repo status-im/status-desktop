@@ -13,6 +13,33 @@ Item {
     readonly property string cloudinaryVideo:
         "https://res.cloudinary.com/alchemyapi/video/fetch/f_png,so_0/nft.mp4"
 
+    ListModel {
+        id: activeNetworks
+
+        ListElement { chainId: 1; layer: 1 }
+        ListElement { chainId: 11155111; layer: 1 }
+    }
+
+    TestCase {
+        name: "Utils_preferredOrFirstL1ChainId"
+
+        function test_prefersAnActiveChain() {
+            compare(Utils.preferredOrFirstL1ChainId(activeNetworks, 11155111), 11155111)
+        }
+
+        function test_fallsBackToTheFirstLayerOneChain() {
+            compare(Utils.preferredOrFirstL1ChainId(activeNetworks, 84532), 1)
+        }
+
+        function test_prefersSepoliaWhenTestnetsAreEnabled() {
+            compare(Utils.defaultSwapLaunchChainId(activeNetworks, true), 11155111)
+        }
+
+        function test_usesFirstLayerOneWhenTestnetsAreDisabled() {
+            compare(Utils.defaultSwapLaunchChainId(activeNetworks, false), 1)
+        }
+    }
+
     TestCase {
         name: "Utils_resizedMediaSource"
 

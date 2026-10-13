@@ -70,25 +70,17 @@ QtObject {
         routeOrderEnabled: root.featureFlagsStore.lifiEnabled
 
         function launchSwap() {
-            if (root.walletRootStore.areTestNetworksEnabled) {
-                Global.openInfoPopup(qsTr("Info"), qsTr("Swap is not available in the testnet mode."))
-                return
-            }
-
+            const chainId = Utils.defaultSwapLaunchChainId(
+                root.networksStore.activeNetworks, root.walletRootStore.areTestNetworksEnabled)
             const data = {
                 selectedAccountAddress: SQUtils.ModelUtils.get(root.walletRootStore.nonWatchAccounts, 0, "address"),
-                selectedNetworkChainId: SQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
+                selectedNetworkChainId: chainId
             }
 
             openSendModal(data)
         }
 
         function launchSwapSpecific(data) {
-            if (root.walletRootStore.areTestNetworksEnabled) {
-                Global.openInfoPopup(qsTr("Info"), qsTr("Swap is not available in the testnet mode."))
-                return
-            }
-
             openSendModal(data)
         }
 
