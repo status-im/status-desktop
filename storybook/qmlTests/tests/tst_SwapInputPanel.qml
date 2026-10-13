@@ -130,7 +130,7 @@ Item {
             controlUnderTest.selectedNetworkChainId = d.goOptChainId
             compare(controlUnderTest.listChainFilter, d.goOptChainId)
 
-            const holdingSelector = findChild(controlUnderTest, "holdingSelector")
+            const holdingSelector = findChild(controlUnderTest, "swapPayHoldingSelector")
             verify(!!holdingSelector)
             const button = findChild(controlUnderTest, "tokenSelectorButton")
             verify(!!button)
@@ -174,7 +174,7 @@ Item {
                                                      {selectedNetworkChainId: ownChainId})
             verify(!!controlUnderTest)
 
-            const holdingSelector = findChild(controlUnderTest, "holdingSelector")
+            const holdingSelector = findChild(controlUnderTest, "swapPayHoldingSelector")
             verify(!!holdingSelector)
             compare(holdingSelector.defaultNetworkIcon, ownIcon)
 
@@ -515,7 +515,7 @@ Item {
                                                      {tokenSelectorModel: null})
             verify(!!controlUnderTest)
 
-            const holdingSelector = findChild(controlUnderTest, "holdingSelector")
+            const holdingSelector = findChild(controlUnderTest, "swapPayHoldingSelector")
             verify(!!holdingSelector)
 
             holdingSelector.search("eth")
@@ -572,7 +572,7 @@ Item {
             tryCompare(controlUnderTest, "value", parseFloat(tokenAmount))
             tryCompare(controlUnderTest, "valueValid", true)
 
-            const holdingSelector = findChild(controlUnderTest, "holdingSelector")
+            const holdingSelector = findChild(controlUnderTest, "swapPayHoldingSelector")
             verify(!!holdingSelector)
             const tokenSelectorButton = findChild(holdingSelector, "tokenSelectorButton")
             verify(!!tokenSelectorButton)
@@ -623,7 +623,7 @@ Item {
             d.adaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(d.goOptChainId)
             verify(!!controlUnderTest)
 
-            const holdingSelector = findChild(controlUnderTest, "holdingSelector")
+            const holdingSelector = findChild(controlUnderTest, "swapPayHoldingSelector")
             verify(!!holdingSelector)
             mouseClick(holdingSelector)
             waitForRendering(holdingSelector)
@@ -809,7 +809,7 @@ Item {
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
 
-            const holdingSelector = findChild(controlUnderTest, "holdingSelector")
+            const holdingSelector = findChild(controlUnderTest, "swapPayHoldingSelector")
             verify(!!holdingSelector)
             const modelItemToTest = ModelUtils.getByKey(holdingSelector.model, "key", tokenKeyToTest)
 
@@ -850,7 +850,7 @@ Item {
             verify(!!controlUnderTest)
             tryCompare(controlUnderTest, "selectedHoldingId", tokenKey)
 
-            const holdingSelector = findChild(controlUnderTest, "holdingSelector")
+            const holdingSelector = findChild(controlUnderTest, "swapPayHoldingSelector")
             verify(!!holdingSelector)
             const symbol = ModelUtils.getByKey(holdingSelector.model, "key", tokenKey).symbol
             compare(symbol, "ZRX")
@@ -881,7 +881,7 @@ Item {
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
 
-            const holdingSelector = findChild(controlUnderTest, "holdingSelector")
+            const holdingSelector = findChild(controlUnderTest, "swapPayHoldingSelector")
             verify(!!holdingSelector)
             const modelItemToTest = ModelUtils.getByKey(holdingSelector.model, "key", tokenKeyToTest)
 
