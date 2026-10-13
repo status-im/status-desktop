@@ -15,6 +15,7 @@
 #include <QNetworkReply>
 #include <QSslError>
 #include <QProcess>
+#include <QProcessEnvironment>
 #include <QSaveFile>
 #include <QStandardPaths>
 #include <QTimer>
@@ -117,7 +118,7 @@ SystemUtilsInternal::SystemUtilsInternal(QObject *parent)
     QObject::connect(keyboardTimer, &QTimer::timeout, this, [this]() {
         // Get the Android activity
         auto activity = QNativeInterface::QAndroidApplication::context();
-        
+
         int height = QJniObject::callStaticMethod<jint>(
             "app/status/mobile/KeyboardUtil",
             "getKeyboardHeight",
@@ -130,12 +131,12 @@ SystemUtilsInternal::SystemUtilsInternal(QObject *parent)
             "(Landroid/app/Activity;)Z",
             activity.object()
         );
-        
+
         if (m_androidKeyboardHeight != height) {
             m_androidKeyboardHeight = height;
             emit androidKeyboardHeightChanged();
         }
-        
+
         if (m_androidKeyboardVisible != visible) {
             m_androidKeyboardVisible = visible;
             emit androidKeyboardVisibleChanged();
@@ -148,19 +149,19 @@ SystemUtilsInternal::SystemUtilsInternal(QObject *parent)
     // Set up iOS keyboard tracking
     ::setupIOSKeyboardTracking();
     ::setIOSFilePickerCallbacks(handleIOSFilePickerAccepted, handleIOSFilePickerRejected);
-    
+
     // Poll iOS keyboard state and emit property change signals
     m_iosKeyboardPollTimer = new QTimer(this);
     m_iosKeyboardPollTimer->setInterval(50); // 20 FPS polling rate
     QObject::connect(m_iosKeyboardPollTimer, &QTimer::timeout, this, [this]() {
         int height = ::getIOSKeyboardHeight();
         bool visible = ::isIOSKeyboardVisible();
-        
+
         if (m_iosKeyboardHeight != height) {
             m_iosKeyboardHeight = height;
             emit iosKeyboardHeightChanged();
         }
-        
+
         if (m_iosKeyboardVisible != visible) {
             m_iosKeyboardVisible = visible;
             emit iosKeyboardVisibleChanged();
@@ -319,9 +320,43 @@ void SystemUtilsInternal::restartApplication(bool killBackend) const
 #else
     Q_UNUSED(killBackend);
 #if QT_CONFIG(process)
-    QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
+    auto app = QCoreApplication::instance();
+    static QPointer<QCoreApplication> restartingApplication;
+    if (restartingApplication == app)
+        return;
+
+    restartingApplication = app;
+    const auto program = QCoreApplication::applicationFilePath();
+    const auto arguments = QCoreApplication::arguments().mid(1);
+    const auto workingDirectory = QDir::currentPath();
+    const auto environment = QProcessEnvironment::systemEnvironment();
+    qInfo() << "Application restart scheduled after shutdown:" << program;
+
+    // Nim tears down the backend and single-instance server before deleting qApp.
+    // Do not use this as the connection context: QML singletons die during teardown.
+    QObject::connect(app, &QObject::destroyed,
+                     [program, arguments, workingDirectory, environment] {
+        QProcess process;
+        process.setProgram(program);
+        process.setArguments(arguments);
+        process.setWorkingDirectory(workingDirectory);
+        process.setProcessEnvironment(environment);
+        // Apps might close their output pipes when the original process exits.
+        // Inheriting them can kill the replacement with SIGPIPE on its first log.
+        process.setStandardInputFile(QProcess::nullDevice());
+        process.setStandardOutputFile(QProcess::nullDevice());
+        process.setStandardErrorFile(QProcess::nullDevice());
+        qint64 pid = 0;
+        if (!process.startDetached(&pid))
+            qCritical() << "Failed to restart application:" << program << process.errorString();
+        else
+            qInfo() << "Restarted application:" << program << "PID:" << pid;
+    });
+    QMetaObject::invokeMethod(app, &QCoreApplication::exit, Qt::QueuedConnection, EXIT_SUCCESS);
+#else
+    qWarning() << "Cannot restart application: Qt process support is disabled; quitting instead";
+    QMetaObject::invokeMethod(qApp, &QCoreApplication::exit, Qt::QueuedConnection, EXIT_SUCCESS);
 #endif
-    QMetaObject::invokeMethod(QCoreApplication::instance(), &QCoreApplication::exit, Qt::QueuedConnection, EXIT_SUCCESS);
 #endif
 }
 
@@ -570,7 +605,7 @@ void SystemUtilsInternal::synthetizeRightClick(QQuickItem* item, qreal x, qreal 
         QEvent::MouseButtonPress, localPos, globalPos, Qt::RightButton, Qt::NoButton, modifiers);
     auto rightClickRelease = new QMouseEvent(
         QEvent::MouseButtonRelease, localPos, globalPos, Qt::RightButton, Qt::NoButton, modifiers);
-    
+
     QCoreApplication::postEvent(item, leftClickRelease);
     QCoreApplication::postEvent(item, rightClickPress);
     QCoreApplication::postEvent(item, rightClickRelease);

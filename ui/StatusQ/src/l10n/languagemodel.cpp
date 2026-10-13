@@ -30,6 +30,7 @@ QHash<int, QByteArray> LanguageModel::roleNames() const
         {CodeRole, kLanguageCodeRoleName},
         {NameRole, kLanguageNameRoleName},
         {NativeNameRole, kLanguagenativeNameRoleName},
+        {FullIsoCode, kfullIsoCodeCodeRoleName},
     };
 
     return roles;
