@@ -110,8 +110,7 @@ ColumnLayout {
         verticalScrollBar.implicitWidth: d.scrollBarWidth
         verticalScrollBar.width: d.scrollBarWidth
 
-        // The members model maintains the canonical member order (online
-        // first, then name) in Nim — no sorters here, filtering only.
+        // Online first, then by name
         model: SortFilterProxyModel {
             sourceModel: root.usersModel
             filters: [
@@ -119,6 +118,16 @@ ColumnLayout {
                     roleName: "preferredDisplayName"
                     searchPhrase: root.searchText
                     enabled: !!root.searchText
+                }
+            ]
+            sorters: [
+                RoleSorter {
+                    roleName: "onlineStatus"
+                    sortOrder: Qt.DescendingOrder
+                },
+                StringSorter {
+                    roleName: "preferredDisplayName"
+                    caseSensitivity: Qt.CaseInsensitive
                 }
             ]
         }
@@ -153,7 +162,7 @@ ColumnLayout {
                     profileType, contactType,
                     pubKey: model.pubKey,
                     compressedPubKey: model.compressedPubKey,
-                    emojiHash: JSON.parse(model.emojiHash),
+                    emojiHash: JSON.parse(Utils.getEmojiHashAsJson(model.pubKey)),
                     colorId: model.colorId,
                     displayName: model.preferredDisplayName,
                     userIcon: model.icon,

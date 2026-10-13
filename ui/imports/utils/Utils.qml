@@ -1384,6 +1384,13 @@ QtObject {
         return globalUtilsInst.getColorId(publicKey)
     }
 
+    // A JSON array; member lists fetch it on click rather than per row
+    function getEmojiHashAsJson(publicKey) {
+        if (publicKey === "" || !globalUtilsInst)
+            return "[]"
+        return globalUtilsInst.getEmojiHashAsJson(publicKey)
+    }
+
     function colorForPubkey(palette, publicKey) {
         const pubKeyColorId = colorIdForPubkey(publicKey)
         return colorForColorId(palette, pubKeyColorId)

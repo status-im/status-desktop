@@ -82,6 +82,8 @@ Item {
 
     // Users related data:
     property var usersModel
+    // the message input has focus, so "@" mentions may suggest members
+    readonly property bool chatInputFocused: chatInput.textInput.activeFocus
 
     // Contacts related data:
     property string myPublicKey
