@@ -204,6 +204,8 @@ proc setupRoster(self: Module) =
     contact: proc(pubKey: string): RosterContact = m.rosterContact(pubKey),
     onlineStatus: proc(pubKey: string): OnlineStatus =
       toOnlineStatus(m.controller.getStatusForContactWithId(pubKey).statusType),
+    contactImageUrl: proc(pubKey: string, imageClock: uint64): string =
+      m.controller.contactImageUrl(pubKey, imageClock),
   ))
   self.rosterVariant = newQVariant(self.roster)
   self.rosterReleaseTimer = QTimer.create()
@@ -614,6 +616,10 @@ method onCommunityRosterChanged*(self: Module, deltas: seq[RosterDelta]) =
 method onCommunityRosterLoadFailed*(self: Module) =
   if not self.rosterHolders.isNil:
     self.rosterHolders.onLoadFailed()
+
+method onRosterMediaServerStarted*(self: Module) =
+  if not self.roster.isNil:
+    self.roster.iconsChanged()
 
 method onAppBackgrounded*(self: Module) =
   if not self.rosterHolders.isNil:
