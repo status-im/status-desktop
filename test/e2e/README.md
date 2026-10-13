@@ -13,7 +13,7 @@ Pick your platform below and follow the steps in order.
 3. **Install Squish** — required on all platforms ([Qt Squish](https://www.qt.io/squish)).
 
 Tests that restore profiles from `ext/user_data` require `USER_DATA_PASSWORD`.
-Set it in the terminal or pytest run configuration; CI reads it from Jenkins credentials.
+Set it in the terminal or pytest run configuration; CI sets it in Jenkinsfile environment.
 
 ---
 

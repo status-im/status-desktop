@@ -122,6 +122,9 @@ pipeline {
 
     /* Forces QT to use OpenGL for rendering instead of default Direct3D 11 */
     QSG_RHI_BACKEND = 'opengl'
+
+    /* Tests that restore profiles from `ext/user_data` require `USER_DATA_PASSWORD` */
+    USER_DATA_PASSWORD = '1111111111'
   }
 
   stages {
@@ -211,8 +214,7 @@ pipeline {
 
                   withCredentials([
                     usernamePassword(credentialsId: 'test-rail-api-devops', usernameVariable: 'TESTRAIL_USR', passwordVariable: 'TESTRAIL_PSW'),
-                    string(credentialsId: 'wallet-test-user-seed', variable: 'WALLET_TEST_USER_SEED'),
-                    string(credentialsId: 'e2e-user-data-password', variable: 'USER_DATA_PASSWORD')
+                    string(credentialsId: 'wallet-test-user-seed', variable: 'WALLET_TEST_USER_SEED')
                   ]) {
                     sh """
                       pushd configs
