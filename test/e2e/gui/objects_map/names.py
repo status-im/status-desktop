@@ -1071,6 +1071,33 @@ modalHeader_HeaderTitleText = {"container": statusDesktop_mainWindow_overlay, "o
 """Swap popup"""
 
 swapPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "SwapModal", "type": "PopupItem", "visible": True}
+swapModalCloseButton = {"container": swapPopup, "objectName": "closeButton", "type": "StatusFlatRoundButton", "visible": True}
+swapModalPayPanel = {"container": swapPopup, "objectName": "payPanel", "type": "SwapInputPanel", "visible": True}
+swapModalReceivePanel = {"container": swapPopup, "objectName": "receivePanel", "type": "SwapInputPanel", "visible": True}
+swapModalPayTokenSelectorButton = {"container": swapModalPayPanel, "objectName": "tokenSelectorButton", "type": "TokenSelectorButton", "visible": True}
+swapModalReceiveTokenSelectorButton = {"container": swapModalReceivePanel, "objectName": "tokenSelectorButton", "type": "TokenSelectorButton", "visible": True}
+swapModalPayHoldingSelector = {"container": swapModalPayPanel, "objectName": "swapPayHoldingSelector", "type": "AssetSelector", "visible": True}
+swapModalReceiveHoldingSelector = {"container": swapModalReceivePanel, "objectName": "swapReceiveHoldingSelector", "type": "AssetSelector", "visible": True}
+swapModalPayDropdown = {"container": swapModalPayHoldingSelector, "objectName": "dropdown", "type": "StatusDropdown"}
+swapModalReceiveDropdown = {"container": swapModalReceiveHoldingSelector, "objectName": "dropdown", "type": "StatusDropdown"}
+swapModalPayTokenSelectorText = {"container": swapModalPayTokenSelectorButton, "objectName": "tokenSelectorContentItemText", "type": "StatusBaseText", "visible": True}
+swapModalReceiveTokenSelectorText = {"container": swapModalReceiveTokenSelectorButton, "objectName": "tokenSelectorContentItemText", "type": "StatusBaseText", "visible": True}
+swapModalErrorTag = {"container": swapPopup, "objectName": "errorTag", "type": "ErrorTag", "visible": True}
+swapModalQuoteText = {"container": swapPopup, "objectName": "swapQuoteText", "type": "StatusTextWithLoadingState", "visible": True}
+swapModalSignButton = {"container": swapPopup, "objectName": "signButton", "type": "StatusButton", "visible": True}
+swapModalAmountField = {"container": swapModalPayPanel, "objectName": "amountToSend_textField", "type": "StatusTextField", "visible": True}
+swapModalPayAssetsPanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "swapPayAssetsPanel", "type": "SearchableAssetsPanel", "visible": True}
+swapModalReceiveAssetsPanel = {"container": statusDesktop_mainWindow, "objectName": "swapReceiveAssetsPanel", "type": "SearchableAssetsPanel", "visible": True}
+swapModalPaySearchBox = {"container": swapModalPayAssetsPanel, "objectName": "searchBox", "type": "TokenSearchBox", "visible": True}
+swapModalReceiveSearchBox = {"container": swapModalReceiveAssetsPanel, "objectName": "searchBox", "type": "TokenSearchBox", "visible": True}
+swapModalPayChainChip = {"container": swapModalPayAssetsPanel, "objectName": RegularExpression("chainChip_.*"), "type": "Chip", "visible": True}
+swapModalReceiveChainChip = {"container": swapModalReceiveAssetsPanel, "objectName": RegularExpression("chainChip_.*"), "type": "Chip", "visible": True}
+swapModalPayAssetsListView = {"container": swapModalPayAssetsPanel, "objectName": "assetsListView", "type": "StatusListView", "visible": True}
+swapModalReceiveAssetsListView = {"container": swapModalReceiveAssetsPanel, "objectName": "assetsListView", "type": "StatusListView", "visible": True}
+swapModalPayAssetDelegate = {"container": swapModalPayAssetsListView, "objectName": RegularExpression("tokenSelectorAssetDelegate_.*"), "type": "TokenSelectorAssetDelegate", "visible": True}
+swapModalReceiveAssetDelegate = {"container": swapModalReceiveAssetsListView, "objectName": RegularExpression("tokenSelectorAssetDelegate_.*"), "type": "TokenSelectorAssetDelegate", "visible": True}
+swapSignModal = {"container": statusDesktop_mainWindow_overlay, "objectName": "SwapSignModal", "type": "PopupItem", "visible": True}
+swapSignModalSignButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "signButton", "text": "Sign", "type": "StatusButton", "visible": True}
 
 # Token Selector popup
 tokenSelectorPanel_TokenSelectorNew = {"container": statusDesktop_mainWindow_overlay, "objectName": "tokenSelectorPanel", "type": "TokenSelectorPanel", "visible": True}

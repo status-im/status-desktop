@@ -80,6 +80,12 @@ class WalletCollectibleTokenType(IntEnum):
     ERC1155 = 3
 
 
+SWAP_TOKEN_GROUP_KEYS = {
+    'ETH': 'eth-native',
+    'WETH': 'weth',
+}
+
+
 class WalletTokenSymbols(Enum):
     USDS = 'USDS'
     USDC = 'USDC (EVM)'
@@ -160,6 +166,8 @@ class WalletTransactionType(IntEnum):
 
 class WalletHistoryTitles:
     SEND = ('Sent',)
+    SWAP = ('Swapped',)
+    BRIDGE = ('Bridged',)
     ENS = ('Interaction', 'Contract deployed')
     MINT = ('Interaction', 'Token minted', 'Collectible minted', 'Contract deployed')
 
