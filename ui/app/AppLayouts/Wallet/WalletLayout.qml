@@ -376,9 +376,11 @@ Item {
                                                                   hasFloatingButtons: true
                                                               })
             onLaunchSwapModal: (groupKey) => {
+                const chainId = Utils.defaultSwapLaunchChainId(
+                    root.networksStore.activeNetworks, root.networksStore.areTestNetworksEnabled)
                 const params = {
                     selectedAccountAddress: d.getSelectedOrFirstNonWatchedAddress(),
-                    selectedNetworkChainId: StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId"),
+                    selectedNetworkChainId: chainId,
                     defaultFromGroupKey: groupKey
                 }
                 root.openSwapModalRequested(params)
@@ -522,9 +524,11 @@ Item {
                            }
 
         onLaunchSwapModal: {
+            const chainId = Utils.defaultSwapLaunchChainId(
+                root.networksStore.activeNetworks, root.networksStore.areTestNetworksEnabled)
             let params = {
                 selectedAccountAddress: d.getSelectedOrFirstNonWatchedAddress(),
-                selectedNetworkChainId: StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId"),
+                selectedNetworkChainId: chainId,
             }
 
             if(!!walletStore.currentViewedHoldingTokenGroupKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
