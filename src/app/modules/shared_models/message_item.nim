@@ -44,13 +44,12 @@ type
     senderIcon: string
     seen: bool
     outgoingStatus: string
+    # Backend-rendered HTML of the message, read only by the Activity Center;
+    # every other view renders unparsedText client-side.
     messageText: string
     unparsedText: string
-    # Saving the parsed text property because we need it to getRenderedText when mentions change
-    parsedText: seq[ParsedText]
     mentionedNames: Table[string, string]
     messageImage: string
-    messageContainsMentions: bool
     sticker: string
     stickerPack: int
     gapFrom: int64
@@ -71,7 +70,6 @@ type
     links: seq[string]
     linkPreviewModel: link_preview_model.Model
     transactionParameters: TransactionParametersItem
-    mentionedUsersPks: seq[string]
     senderTrustStatus: TrustStatus
     senderEnsVerified: bool
     messageAttachments: seq[string]
@@ -79,7 +77,6 @@ type
     mentioned: bool
     quotedMessageFrom: string
     quotedMessageText: string
-    quotedMessageParsedText: string
     quotedMessageContentType: ContentType
     quotedMessageDeleted: bool
     quotedMessageAuthorDisplayName: string
@@ -112,9 +109,7 @@ proc initMessageItem*(
     outgoingStatus,
     text,
     unparsedText: string,
-    parsedText: seq[ParsedText],
     image: string,
-    messageContainsMentions,
     seen: bool,
     timestamp: int64,
     clock: int64,
@@ -126,7 +121,6 @@ proc initMessageItem*(
     links: seq[string],
     linkPreviews: seq[LinkPreview],
     transactionParameters: TransactionParametersItem,
-    mentionedUsersPks: seq[string],
     senderTrustStatus: TrustStatus,
     senderEnsVerified: bool,
     discordMessage: DiscordMessage,
@@ -138,7 +132,6 @@ proc initMessageItem*(
     mentioned: bool,
     quotedMessageFrom: string,
     quotedMessageText: string,
-    quotedMessageParsedText: string,
     quotedMessageContentType: ContentType,
     quotedMessageDeleted: bool,
     quotedMessageDiscordMessage: DiscordMessage,
@@ -170,9 +163,7 @@ proc initMessageItem*(
   result.outgoingStatus = outgoingStatus
   result.messageText = text
   result.unparsedText = unparsedText
-  result.parsedText = parsedText
   result.messageImage = image
-  result.messageContainsMentions = messageContainsMentions
   result.timestamp = timestamp
   result.clock = clock
   result.contentType = contentType
@@ -193,7 +184,6 @@ proc initMessageItem*(
   result.links = links
   result.linkPreviewModel = newLinkPreviewModel(linkPreviews)
   result.transactionParameters = transactionParameters
-  result.mentionedUsersPks = mentionedUsersPks
   result.gapFrom = 0
   result.gapTo = 0
   result.senderTrustStatus = senderTrustStatus
@@ -203,7 +193,6 @@ proc initMessageItem*(
   result.mentioned = mentioned
   result.quotedMessageFrom = quotedMessageFrom
   result.quotedMessageText = quotedMessageText
-  result.quotedMessageParsedText = quotedMessageParsedText
   result.quotedMessageContentType = quotedMessageContentType
   result.quotedMessageDeleted = quotedMessageDeleted
   result.quotedMessageAuthorDetails = quotedMessageAuthorDetails
@@ -231,7 +220,6 @@ proc initMessageItem*(
     result.quotedMessageAuthorDisplayName = quotedBridgeMessage.userName
     result.quotedMessageAuthorAvatar = quotedBridgeMessage.userAvatar
     result.quotedMessageText = quotedBridgeMessage.content
-    result.quotedMessageParsedText = quotedBridgeMessage.content
 
   if contentType == ContentType.DiscordMessage:
 
@@ -288,9 +276,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     outgoingStatus = "",
     text = "",
     unparsedText = "",
-    parsedText = @[],
     image = "",
-    messageContainsMentions = false,
     seen = true,
     timestamp = timestamp,
     clock = clock,
@@ -302,7 +288,6 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     links = @[],
     linkPreviews = @[],
     transactionParameters = newTransactionParametersItem("","","","","","",-1,""),
-    mentionedUsersPks = @[],
     senderTrustStatus = TrustStatus.Unknown,
     senderEnsVerified = false,
     discordMessage = DiscordMessage(),
@@ -314,7 +299,6 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     mentioned = false,
     quotedMessageFrom = "",
     quotedMessageText = "",
-    quotedMessageParsedText = "",
     quotedMessageContentType = ContentType.Unknown,
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
@@ -348,8 +332,6 @@ proc `$`*(self: Item): string =
     resendError:{$self.resendError},
     messageText:{self.messageText},
     unparsedText:{self.unparsedText},
-    parsedText:{$self.parsedText},
-    messageContainsMentions:{self.messageContainsMentions},
     timestamp:{$self.timestamp},
     contentType:{$self.contentType},
     messageType:{$self.messageType},
@@ -363,7 +345,6 @@ proc `$`*(self: Item): string =
     deletedBy:{$self.deletedBy},
     links:{$self.links},
     transactionParameters:{$self.transactionParameters},
-    mentionedUsersPks:{$self.mentionedUsersPks},
     senderTrustStatus:{$self.senderTrustStatus},
     senderEnsVerified: {self.senderEnsVerified},
     )"""
@@ -484,12 +465,6 @@ proc unparsedText*(self: Item): string {.inline.} =
 proc `unparsedText=`*(self: Item, value: string) {.inline.} =
   self.unparsedText = value
 
-proc parsedText*(self: Item): seq[ParsedText] {.inline.} =
-  self.parsedText
-
-proc `parsedText=`*(self: Item, value: seq[ParsedText]) {.inline.} =
-  self.parsedText = value
-
 proc mentionedNames*(self: Item): Table[string, string] {.inline.} =
   self.mentionedNames
 
@@ -519,12 +494,6 @@ proc albumImagesCount*(self: Item): int {.inline.} =
 
 proc bridgeName*(self: Item): string {.inline.} =
   self.bridgeName
-
-proc messageContainsMentions*(self: Item): bool {.inline.} =
-  self.messageContainsMentions
-
-proc `messageContainsMentions=`*(self: Item, value: bool) {.inline.} =
-  self.messageContainsMentions = value
 
 proc stickerPack*(self: Item): int {.inline.} =
   self.stickerPack
@@ -599,12 +568,6 @@ proc linkPreviewModel*(self: Item): link_preview_model.Model {.inline.} =
 proc paymentRequestModel*(self: Item): payment_request_model.Model {.inline.} =
   return self.paymentRequestModel
 
-proc mentionedUsersPks*(self: Item): seq[string] {.inline.} =
-  self.mentionedUsersPks
-
-proc `mentionedUsersPks=`*(self: Item, mentionedUsersPks: seq[string]) {.inline.} =
-  self.mentionedUsersPks = mentionedUsersPks
-
 proc transactionParameters*(self: Item): TransactionParametersItem {.inline.} =
   self.transactionParameters
 
@@ -623,10 +586,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "senderIcon": self.senderIcon,
     "seen": self.seen,
     "outgoingStatus": self.outgoingStatus,
-    "messageText": self.messageText,
     "unparsedText": self.unparsedText,
     "messageImage": self.messageImage,
-    "messageContainsMentions": self.messageContainsMentions,
     "sticker": self.sticker,
     "stickerPack": self.stickerPack,
     "gapFrom": self.gapFrom,
@@ -643,13 +604,11 @@ proc toJsonNode*(self: Item): JsonNode =
     "deleted": self.deleted,
     "deletedBy": self.deletedBy,
     "links": self.links,
-    "mentionedUsersPks": self.mentionedUsersPks,
     "senderEnsVerified": self.senderEnsVerified,
     "resendError": self.resendError,
     "mentioned": self.mentioned,
     "quotedMessageFrom": self.quotedMessageFrom,
     "quotedMessageText": self.quotedMessageText,
-    "quotedMessageParsedText": self.quotedMessageParsedText,
     "quotedMessageContentType": self.quotedMessageContentType.int,
     "quotedMessageDeleted": self.quotedMessageDeleted,
     "quotedMessageAuthorDisplayName": self.quotedMessageAuthorDisplayName,
@@ -747,11 +706,6 @@ proc quotedMessageText*(self: Item): string {.inline.} =
   self.quotedMessageText
 proc `quotedMessageText=`*(self: Item, value: string) {.inline.} =
   self.quotedMessageText = value
-
-proc quotedMessageParsedText*(self: Item): string {.inline.} =
-  self.quotedMessageParsedText
-proc `quotedMessageParsedText=`*(self: Item, value: string) {.inline.} =
-  self.quotedMessageParsedText = value
 
 proc quotedMessageContentType*(self: Item): ContentType {.inline.} =
   self.quotedMessageContentType
