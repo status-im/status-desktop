@@ -50,6 +50,9 @@ ifeq ($(mkspecs),linux)
 nim-test-run/test/nim/thread_navigation_test.nim nim-test-run/test/nim/thread_search_test.nim: export LD_LIBRARY_PATH := $(shell pkg-config --variable=libdir libpcsclite):$(LD_LIBRARY_PATH)
 endif
 
+nim-test-run/test/nim/qrscan_zxing_errors_test.nim: NIM_PARAMS += -d:qrscanZxingLib="$(abspath $(ZXING))"
+nim-test-run/test/nim/qrscan_zxing_errors_test.nim: | $(ZXING)
+
 # Model-spy tests call inspection accessors gated behind
 # `when defined(testing) or defined(QT_MODEL_SPY)` or assert on the granular
 # signals model_sync records only under QT_MODEL_SPY. The define is applied
