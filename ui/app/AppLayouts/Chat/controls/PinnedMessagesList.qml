@@ -25,8 +25,8 @@ StatusListView {
     property bool isPinActionAvailable: true
 
     // Resolves mention pub keys to display names for the client-side renderer, mirroring
-    // ChatMessagesView. Fed by the active chat's users model plus every known contact;
-    // without it, "@0x…" mentions render as raw keys.
+    // ChatMessagesView: the group chat's users (none in a community channel) plus every
+    // named contact, then the message's own mentionedNames, then an alias.
     readonly property MentionNamesAdaptor mentionNames: MentionNamesAdaptor {
         chatUsersModel: root.store?.usersStore.usersModel ?? null
         contactsModel: root.store?.contactsModel ?? null
@@ -38,7 +38,6 @@ StatusListView {
         sourceModel: root.mentionNames?.model ?? null
         nameRole: "preferredDisplayName"
         aliasProvider: pubKey => root.store?.generateAlias(pubKey) ?? ""
-        contactInfoRequester: pubKey => root.store?.requestContactInfo(pubKey)
     }
 
     // Unfurling related data:
@@ -84,7 +83,8 @@ StatusListView {
             amISender: model.amISender
             messageText: model.messageText
             unparsedText: model.unparsedText
-            mentionsMap: root.mentionResolver.resolveFor(model.unparsedText + " " + model.quotedMessageText)
+            mentionsMap: root.mentionResolver.resolveFor(model.unparsedText + " " + model.quotedMessageText,
+                                                         model.mentionedNames)
             messageImage: model.messageImage
             messageTimestamp: model.timestamp
             messageOutgoingStatus: model.outgoingStatus
