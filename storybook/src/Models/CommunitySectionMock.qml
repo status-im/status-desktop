@@ -296,6 +296,8 @@ QtObject {
             readonly property var messagesModule: QtObject {
                 readonly property var model: contentModule.messagesModel
                 readonly property bool loading: false
+                // the last message jumped to
+                property string jumpedToMessageId
                 property string threadId: ""
                 property int loadThreadsRequests: 0
                 readonly property ListModel threadsModel: ListModel {}
@@ -311,7 +313,10 @@ QtObject {
                 signal threadOpenRequested(string threadId, string threadName)
 
                 function getChatId() { return contentModule.chatId }
-                function jumpToMessage(messageId) { scrollToMessage(messageId) }
+                function jumpToMessage(messageId) {
+                    jumpedToMessageId = messageId
+                    scrollToMessage(messageId)
+                }
                 function loadMoreMessages() {}
                 function updateKeepUnread(flag) {}
                 function createThread(parentMessageId) {
