@@ -16145,13 +16145,6 @@ to load</source>
     </message>
 </context>
 <context>
-    <name>SimplifiedMessageView</name>
-    <message>
-        <source>You</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>SlippageSelector</name>
     <message>
         <source>Custom %</source>
