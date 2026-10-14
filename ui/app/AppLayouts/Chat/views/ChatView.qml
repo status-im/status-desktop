@@ -182,6 +182,8 @@ Item {
 
     // Users related data:
     property var usersModel
+    // (pubKey) -> emoji hash array, for a member's context menu
+    property var getEmojiHashFn: pubKey => []
     property bool amIChatAdmin
 
     onActiveItemIdChanged: {
@@ -571,8 +573,7 @@ Item {
         UserListPanel {
             // async incubation parents the partially-built panel into the
             // scene early — keep it invisible behind the skeleton until ready.
-            // Binding the model eagerly is fine: it arrives pre-sorted from
-            // Nim, so a chat switch pays no sorting.
+            // The panel sorts the roster on load (online first, then name).
             visible: rightPanelLoader.status === Loader.Ready
 
             chatType: root.chatContentModule?.chatDetails.type || Constants.chatType.unknown
@@ -584,6 +585,7 @@ Item {
             communityMemberReevaluationStatus: root.communityMemberReevaluationStatus
 
             usersModel: root.usersModel
+            getEmojiHashFn: root.getEmojiHashFn
 
             onOpenProfileRequested: Global.openProfilePopup(pubKey, null)
             onReviewContactRequestRequested: Global.openReviewContactRequestPopup(pubKey, null)
