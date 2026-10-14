@@ -56,6 +56,9 @@ paymentRequestAccountSelector = {"container": statusDesktop_mainWindow_overlay, 
 paymentRequestAddButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "addButton", "type": "StatusButton", "visible": True}
 mainWindow_imageBtn_StatusFlatRoundButton = {"container": statusDesktop_mainWindow, "id": "imageBtn", "type": "StatusFlatRoundButton", "unnamed": 1, "visible": True}
 mainWindow_statusChatInput_StatusChatInput = {"container": statusDesktop_mainWindow, "objectName": "statusChatInput", "type": "Control", "visible": True}
+mainWindow_suggestionsBox = {"container": statusDesktop_mainWindow, "objectName": "suggestionsBox", "type": "Control", "visible": True}
+mainWindow_suggestionBoxList = {"container": mainWindow_suggestionsBox, "objectName": "suggestionBoxList", "type": "StatusListView", "visible": True}
+suggestionsBox_mentionSuggestion_Rectangle = {"container": mainWindow_suggestionBoxList, "type": "Rectangle", "visible": True}
 mainWindow_statusChatInputSendButton = {"container": statusDesktop_mainWindow, "objectName": "statusChatInputSendButton",
                                        "type": "Control", "visible": True}
 mark_as_Read_StatusMenuItem = {"checkable": False, "container": mainWindow_Overlay, "enabled": True, "objectName": "chatMarkAsReadMenuItem", "type": "StatusMenuItem", "visible": True}

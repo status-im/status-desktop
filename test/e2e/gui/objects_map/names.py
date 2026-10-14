@@ -403,10 +403,10 @@ pinMessageDetails_in_pinnedPopup = {"container": pinnedMessagesPopup, "objectNam
 # Introduce Yourself popup
 introduceYourselfPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "IntroduceYourselfPopup",
                           "type": "PopupItem", "visible": True}
-introduceYourselfSkipButton = {"container": statusDesktop_mainWindow_overlay,
+introduceYourselfSkipButton = {"container": introduceYourselfPopup,
                                "objectName": "introduceSkipStatusFlatButton", "type": "StatusFlatButton",
                                "visible": True}
-introduceYourselfEditProfileButton = {"container": statusDesktop_mainWindow_overlay,
+introduceYourselfEditProfileButton = {"container": introduceYourselfPopup,
                                       "objectName": "introduceEditStatusFlatButton", "type": "StatusButton",
                                       "visible": True}
 

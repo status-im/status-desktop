@@ -52,6 +52,17 @@ def get_visible_message_texts(chat):
     return texts
 
 
+@allure.step('Get latest visible message text')
+def latest_message_text(chat) -> str:
+    try:
+        messages = chat.messages(0)
+    except Exception:
+        return ''
+    if not messages:
+        return ''
+    return message_plain_text(messages[0])
+
+
 @allure.step('Check if chat contains message text')
 def chat_contains_message_text(chat, needle: str) -> bool:
     try:
@@ -81,23 +92,34 @@ def skip_message_backup_popup_if_visible(attempts = 4):
                 raise Exception(f"Failed to close EnableMessageBackupPopup after {attempts} attempts: {e}")
 
 
-@allure.step('Skip Introduce Yourself popup')
-def skip_intro_if_visible(attempts = 4):
-    """
-    Skip the introduce yourself popup if it's visible.
-    """
-    
-    introduce_yourself_popup = IntroduceYourselfPopup()
-    if not introduce_yourself_popup.is_visible:
+@allure.step('Close Activity center if open')
+def close_activity_center_if_visible():
+    from gui.components.activity_center import ActivityCenter
+
+    activity_center = ActivityCenter()
+    if not activity_center.is_visible:
         return
+    activity_center.close()
+    try:
+        activity_center.wait_until_hidden(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+    except (TimeoutError, Exception):
+        pass
+
+
+@allure.step('Skip Introduce Yourself popup')
+def skip_intro_if_visible(attempts=4):
+    popup = IntroduceYourselfPopup()
+    if not popup.is_visible:
+        try:
+            popup.wait_until_appears(timeout_msec=1000)
+        except (TimeoutError, Exception):
+            return
 
     for attempt in range(1, attempts + 1):
-        introduce_yourself_popup.skip_button.click()
         try:
-            introduce_yourself_popup.wait_until_hidden(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            popup.skip_intro()
             return
         except Exception as e:
             if attempt < attempts:
                 continue
-            else:
-                raise Exception(f"Failed to close IntroduceYourselfPopup after {attempts} attempts: {e}")
+            raise Exception(f'Failed to close IntroduceYourselfPopup after {attempts} attempts: {e}') from e
