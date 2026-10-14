@@ -369,7 +369,7 @@ suite "community roster model":
     model.loadSorted(fake, snapshot(10, member(keyA), member(keyB), member(keyC)))
     for row in 0 ..< 3:
       check model.str(row, "airdropAddress") == ""
-    check model.num(model.rowOfKey(keyC), "membershipRequestState") == MembershipRequestState.Accepted.int
+      check model.num(row, "membershipRequestState") == MembershipRequestState.Accepted.int
 
   test "a pending request keeps its airdrop address":
     model.setAirdropAddress(keyA, "0xaaa")
