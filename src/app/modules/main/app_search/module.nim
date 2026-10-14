@@ -295,6 +295,14 @@ proc getResultItemFromChats(self: Module, sectionId: string, chats: seq[ChatDto]
         self.controller.addResultItemDetails(chatDto.id, sectionId, chatDto.id)
         result.add(item)
 
+# Bridged and imported Discord messages keep their text in the bridge/discord payload
+proc rawMessageText(message: MessageDto): string =
+  if message.contentType == ContentType.BridgeMessage:
+    return message.bridgeMessage.content
+  if message.contentType == ContentType.DiscordMessage and message.text == "":
+    return message.discordMessage.content
+  return message.text
+
 method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
   var items: seq[result_item.Item]
   var resultThreads = initTable[(string, string), ThreadDto]()
@@ -359,7 +367,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       senderName = "You"
 
     let community {.cursor.} = self.controller.getCommunityById(chatDto.communityId)
-    let renderedMessageText = self.controller.getRenderedText(m.parsedText, community.chats, m.mentionedNames)
+    let messageText = rawMessageText(m)
     let colorId = self.controller.getColorId(m.`from`)
 
     if(chatDto.communityId.len == 0):
@@ -367,7 +375,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       var chatImage = chatDto.icon
       if(chatDto.chatType == ChatType.OneToOne):
         (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
-      let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
+      let item = result_item.initItem(m.id, messageText, $m.timestamp, m.`from`, senderName,
         SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color, chatName, resultThread.name, chatImage,
         chatDto.color, false, true, colorId)
 
@@ -376,7 +384,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       items.add(item)
     else:
       let channelName = "#" & chatDto.name & (if resultThread.name.len > 0: " › " & resultThread.name else: "")
-      let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
+      let item = result_item.initItem(m.id, messageText, $m.timestamp, m.`from`, senderName,
         SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color,
         community.name,
         channelName,
@@ -395,12 +403,6 @@ method resultItemClicked*(self: Module, itemId: string) =
 method updateSearchLocationIfPointToChatWithId*(self: Module, chatId: string) =
   if self.controller.activeChatId() == chatId:
     self.controller.setSearchLocation(self.controller.activeSectionId(), "")
-
-proc chatMembersCount(self: Module, chat: ChatDto): int =
-  # community chats hold no member list
-  if chat.chatType == ChatType.CommunityChat and chat.communityId != "":
-    return self.controller.getCommunityById(chat.communityId).membersCount
-  chat.members.len
 
 proc createChatSearchItem(self: Module, chat: ChatDto, personalChatSectionId, personalChatSectionName: string): ChatSearchItem =
   let isCommunity = chat.chatType == ChatType.CommunityChat and chat.communityId != ""
@@ -458,7 +460,7 @@ proc createChatSearchItem(self: Module, chat: ChatDto, personalChatSectionId, pe
         self.controller.getCommunityById(chat.communityId).getCommunityChat(chat.id).canPost
       else:
         chat.canPost,
-    membersCount = self.chatMembersCount(chat),
+    membersCount = chat.members.len,
     onlineStatus = onlineStatus,
   )
 
@@ -508,7 +510,7 @@ method updateChatItems*(self: Module, updatedChats: seq[ChatDto]) =
       continue
     self.view.chatSearchModel().updateChatItem(chat.id, chat.name, chat.color, chat.icon, chat.emoji)
     self.view.chatSearchModel().updateCanPostOnChatItem(chat.id, chat.canPost)
-    self.view.chatSearchModel().updateMembersCountOnChatItem(chat.id, self.chatMembersCount(chat))
+    self.view.chatSearchModel().updateMembersCountOnChatItem(chat.id, chat.members.len)
 
 method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto]) =
   for s in statusUpdates:

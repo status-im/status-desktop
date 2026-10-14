@@ -260,10 +260,6 @@ proc resultItemClicked*(self: Controller, itemId: string) =
     threadId: itemDetails.threadId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
 
-proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], communityChats: openArray[ChatDto],
-    mentionedNames = initTable[string, string]()): string =
-  return self.messageService.getRenderedText(parsedTextArray, communityChats, mentionedNames)
-
 proc getColorId*(self: Controller, pubkey: string): int =
   procs_from_visual_identity_service.colorIdOf(pubkey)
 

@@ -8,6 +8,7 @@ import QtQuick.Window
 import QtQml.Models
 
 import AppLayouts.Chat
+import AppLayouts.Chat.adaptors
 import AppLayouts.Chat.views
 import AppLayouts.Chat.panels as ChatPanels
 import AppLayouts.Wallet
@@ -1706,6 +1707,7 @@ Item {
             onResultItemClicked: (itemId) => {
                 appMain.appSearchStore.resultItemClicked(itemId)
             }
+            resolveMentionsFn: text => appMain.mentionResolver.resolveFor(text)
             onClosed: appSearch.active = false
         }
     }
