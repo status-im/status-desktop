@@ -846,7 +846,8 @@ QtObject:
       mentioned: bool,
       messageContainsMentions: bool,
       links: seq[string],
-      mentionedUsersPks: seq[string]
+      mentionedUsersPks: seq[string],
+      mentionedNames: Table[string, string],
       ) =
     let ind = self.findIndexForMessageId(messageId)
     if ind == -1:
@@ -863,6 +864,7 @@ QtObject:
 
       if self.items[ind].parsedText != updatedParsedText:
         self.items[ind].parsedText = updatedParsedText
+      self.items[ind].mentionedNames = mentionedNames
 
     # Update replied to messages if there are
     let targetQuotedMessageParsedText = updatedMsg
@@ -1049,7 +1051,7 @@ QtObject:
     if albumMessageIdsFinal.len == 0:
       albumMessageIdsFinal = if (len(message.albumId) == 0): @[] else: @[message.id]
 
-    return message_item.initMessageItem(
+    result = message_item.initMessageItem(
       message.id,
       communityId,
       message.chatId,
@@ -1113,3 +1115,4 @@ QtObject:
       message.paymentRequests,
       hasThread = false,
     )
+    result.mentionedNames = message.mentionedNames

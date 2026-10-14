@@ -181,7 +181,7 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
     message.communityId,
     contactDetails,
     isCurrentUser,
-    self.controller.getRenderedText(message.parsedText, self.controller.getCommunityDetails().chats),
+    self.controller.getRenderedText(message.parsedText, self.controller.getCommunityDetails().chats, message.mentionedNames),
     clearText = message.text,
     albumImages = @[],
     albumMessageIds = @[],
@@ -248,14 +248,15 @@ method onMessageEdited*(self: Module, message: MessageDto) =
 
   self.view.pinnedModel().updateEditedMsg(
     message.id,
-    self.controller.getRenderedText(message.parsedText, communityChats),
+    self.controller.getRenderedText(message.parsedText, communityChats, message.mentionedNames),
     message.text,
     message.parsedText,
     message.contentType,
     message.mentioned,
     message.containsContactMentions(),
     message.links,
-    message.mentionedUsersPks
+    message.mentionedUsersPks,
+    message.mentionedNames,
   )
 
 method getMyChatId*(self: Module): string =
@@ -337,7 +338,7 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
 
     if item.messageContainsMentions and item.mentionedUsersPks.anyIt(it == contactId):
       let communityChats = self.controller.getCommunityDetails().chats
-      item.messageText = self.controller.getRenderedText(item.parsedText, communityChats)
+      item.messageText = self.controller.getRenderedText(item.parsedText, communityChats, item.mentionedNames)
 
     if self.controller.getMyChatId() == contactId:
       if self.messagesModule.getThreadId().len == 0:
