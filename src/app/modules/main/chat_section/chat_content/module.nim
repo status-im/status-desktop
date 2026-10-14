@@ -1,4 +1,4 @@
-import nimqml, chronicles, sequtils
+import nimqml, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -181,13 +181,11 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
     message.communityId,
     contactDetails,
     isCurrentUser,
-    self.controller.getRenderedText(message.parsedText, self.controller.getCommunityDetails().chats, message.mentionedNames),
     clearText = message.text,
     albumImages = @[],
     albumMessageIds = @[],
     deletedByContactDetails = ContactDetails(),
     quotedMessageAuthorDetails,
-    self.controller.getRenderedText(message.quotedMessage.parsedText, self.controller.getCommunityDetails().chats),
     transactionContract,
     transactionValue,
   )
@@ -242,20 +240,17 @@ method onMessageEdited*(self: Module, message: MessageDto) =
   if index == -1:
     return
 
-  let itemBeforeChange = self.view.pinnedModel().getItemWithMessageId(message.id)
-  let mentionedUsersPks = itemBeforeChange.mentionedUsersPks
-  let communityChats = self.controller.getCommunityDetails().chats
+  # a bridged message keeps its text in the bridge payload, as when it was added
+  let updatedText =
+    if message.contentType == ContentType.BridgeMessage: message.bridgeMessage.content
+    else: message.text
 
   self.view.pinnedModel().updateEditedMsg(
     message.id,
-    self.controller.getRenderedText(message.parsedText, communityChats, message.mentionedNames),
-    message.text,
-    message.parsedText,
+    updatedText,
     message.contentType,
     message.mentioned,
-    message.containsContactMentions(),
     message.links,
-    message.mentionedUsersPks,
     message.mentionedNames,
   )
 
@@ -336,15 +331,11 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
     if item.quotedMessageAuthorDetails.dto.id == contactId:
       item.updateQuotedAuthorDetails(updatedContact)
 
-    if item.messageContainsMentions and item.mentionedUsersPks.anyIt(it == contactId):
-      let communityChats = self.controller.getCommunityDetails().chats
-      item.messageText = self.controller.getRenderedText(item.parsedText, communityChats, item.mentionedNames)
-
-    if self.controller.getMyChatId() == contactId:
-      if self.messagesModule.getThreadId().len == 0:
-        self.view.updateChatDetailsNameAndIcon(updatedContact.defaultDisplayName, updatedContact.icon)
-      self.view.updateTrustStatus(updatedContact.dto.trustStatus)
-      self.view.updateChatBlocked(updatedContact.dto.blocked)
+  if self.controller.getMyChatId() == contactId:
+    if self.messagesModule.getThreadId().len == 0:
+      self.view.updateChatDetailsNameAndIcon(updatedContact.defaultDisplayName, updatedContact.icon)
+    self.view.updateTrustStatus(updatedContact.dto.trustStatus)
+    self.view.updateChatBlocked(updatedContact.dto.blocked)
 
 method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificationCount: int) =
   self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)
