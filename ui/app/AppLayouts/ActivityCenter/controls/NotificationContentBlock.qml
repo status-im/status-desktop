@@ -2,12 +2,12 @@
 // -----------------------------------------------------------------------------
 // A compact, versatile content block for notification cards.
 // - Optional banner image (preImage) with rounded mask
-// - Rich text body (HTML) with max character clamp (contentMaxChars)
+// - Styled text body with a line clamp (contentMaxLines) and eliding
 // - Optional media strip (thumbnail album) with fixed thumb size & spacing
 //
 // USAGE EXAMPLES
 // --------------
-// // Text only (3–4 lines depending on `contentMaxChars`)
+// // Text only (up to `contentMaxLines` lines)
 // NotificationContentBlock {
 //     contentText: "hey, <a href='status:user:robert'>@robertf.ox.eth</a>, Do we still plan…"
 // }
@@ -44,8 +44,10 @@
 //
 // NOTES
 // -----
-// * `contentMaxChars` trims the *visible* text and appends an ellipsis; the
-//   `Text` also has `elide: Text.ElideRight`.
+// * `contentMaxLines` caps the body at that many rendered lines; what does not
+//   fit is elided (`elide: Text.ElideRight`). The text is never trimmed by
+//   character count: `contentText` is markup, and a mention's href alone is
+//   longer than a short message.
 // * The banner image uses `PreserveAspectCrop` and respects `maxPreImageHeight`.
 // * The media strip is handled by `StatusMessageImageAlbum`; set `thumbSize`,
 //   `thumbRadius`, `thumbSpacing`, and `maxThumbs` to control layout.
@@ -60,7 +62,6 @@ import QtQuick.Effects
 
 import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils
 import StatusQ.Components
 import StatusQ.Components.private
 
@@ -71,11 +72,11 @@ Control {
     // API
     // ──────────────────────────────────────────────────────────────────────────
 
-    // Styled text. Links supported. Measured as *visible* chars.
+    // Styled text (Text.StyledText markup). Links and mentions supported.
     property string contentText: ""
 
-    // Max visible characters before eliding. (HTML tags ignored for count.)
-    property int    contentMaxChars: 120
+    // Max rendered lines before eliding.
+    property int    contentMaxLines: 4
 
     // Optional banner image above the text. Empty → hidden.
     property url    preImageSource: ""
@@ -162,18 +163,17 @@ Control {
         StatusBaseText {
             id: contentText
 
-            readonly property int plainTextLength: StringUtils.plainText(root.contentText).length
-
             Layout.fillWidth: true
 
             visible: root.contentText != ""
             textFormat: Text.StyledText
             wrapMode: Text.Wrap
-            text: plainTextLength > root.contentMaxChars ? Utils.elideText(root.contentText, root.contentMaxChars, 0) :
-                                                           root.contentText
+            text: root.contentText
+            maximumLineCount: root.contentMaxLines
             elide: Text.ElideRight
             font.pixelSize: Theme.fontSize(13)
             color: Theme.palette.directColor4
+            linkColor: Theme.palette.primaryColor1
 
             onLinkActivated: href => root.linkActivated(href)
         }

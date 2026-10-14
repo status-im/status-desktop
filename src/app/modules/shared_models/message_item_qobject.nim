@@ -1,4 +1,4 @@
-import nimqml, std/wrapnils, strutils
+import nimqml, std/wrapnils, std/json, std/tables, strutils
 import ./message_item
 
 QtObject:
@@ -105,13 +105,17 @@ QtObject:
   QtProperty[string] outgoingStatus:
     read = outgoingStatus
 
-  proc messageText*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.messageText
-  QtProperty[string] messageText:
-    read = messageText
-
   proc unparsedText*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.unparsedText
   QtProperty[string] unparsedText:
     read = unparsedText
+
+  # JSON { pubKey: name } status-go sent with the message, for mentions the models cannot name
+  proc mentionedNames*(self: MessageItem): string {.slot.} =
+    if self.messageItem.isNil or self.messageItem.mentionedNames.len == 0:
+      return ""
+    result = $(%self.messageItem.mentionedNames)
+  QtProperty[string] mentionedNames:
+    read = mentionedNames
 
   proc messageImage*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.messageImage
   QtProperty[string] messageImage:

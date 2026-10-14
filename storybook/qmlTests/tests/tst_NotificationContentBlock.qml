@@ -3,6 +3,7 @@ import QtTest
 
 import AppLayouts.ActivityCenter.controls
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
 Item {
     id: root
@@ -47,7 +48,7 @@ Item {
             verify(!!controlUnderTest)
 
             compare(controlUnderTest.contentText, "")
-            compare(controlUnderTest.contentMaxChars, 120)
+            compare(controlUnderTest.contentMaxLines, 4)
             compare(controlUnderTest.preImageSource.toString(), "")
             compare(controlUnderTest.maxPreImageHeight, 125)
             compare(controlUnderTest.preImageRadius, 0)
@@ -87,21 +88,46 @@ Item {
             compare(controlUnderTest.contentText, htmlContent)
         }
 
-        function test_contentMaxChars() {
-            // Create a string longer than the max chars limit
-            const longText = "A".repeat(200)
+        // the block's text item: the one child rendering the body
+        function findText(item) {
+            if ("textFormat" in item)
+                return item
+            for (const child of item.children ?? []) {
+                const found = findText(child)
+                if (found)
+                    return found
+            }
+            return null
+        }
+
+        function test_contentMaxLines() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {
-                contentText: longText,
-                contentMaxChars: 50
+                contentText: "word ".repeat(200),
+                contentMaxLines: 2
             })
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
 
-            compare(controlUnderTest.contentMaxChars, 50)
-            // The source text is preserved on the property
-            compare(controlUnderTest.contentText, longText)
-            // But the rendered text should be truncated (the internal StatusBaseText
-            // uses Utils.elideText when plainTextLength > contentMaxChars)
+            const text = findText(controlUnderTest.contentItem)
+            compare(text.lineCount, 2, "the body stops at the line it is capped at")
+            verify(text.truncated, "and says that it was cut")
+            // the markup itself is handed over whole; only the rendering is capped
+            compare(text.text, controlUnderTest.contentText)
+        }
+
+        // The markup carries a mention as <a href="0x04…(130 hex)">: a trim by character
+        // count would cut inside that tag and drop the message with it.
+        function test_longContentWithMentionKeepsItsVisibleText() {
+            const key = "0x04" + "a".repeat(128)
+            controlUnderTest = createTemporaryObject(componentUnderTest, root, {
+                contentText: `hey <a href="${key}">@Alice</a> ` + "word ".repeat(40)
+            })
+            verify(!!controlUnderTest)
+            waitForRendering(controlUnderTest)
+
+            const shown = StringUtils.plainText(findText(controlUnderTest.contentItem).text)
+            verify(shown.includes("@Alice"), `shown: "${shown}"`)
+            verify(shown.includes("word"), `shown: "${shown}"`)
         }
 
         function test_preImageProperties() {

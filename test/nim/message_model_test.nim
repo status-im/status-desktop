@@ -89,7 +89,7 @@ suite "thread summary":
   test "renames a zero-reply thread card without editing the root message":
     let model = newModel()
     let item = createTestMessageItem("thread-parent", 1)
-    let originalText = item.messageText
+    let originalText = item.unparsedText
     model.insertItemBasedOnClock(item)
     model.setThreadSummary("thread-parent", ThreadSummary(
       threadId: "thread-id", originalMessageId: "thread-parent", title: "Renamed",
@@ -97,7 +97,7 @@ suite "thread summary":
     ))
     check item.threadSummary.title == "Renamed"
     check item.threadSummary.messagesCount == 0
-    check item.messageText == originalText
+    check item.unparsedText == originalText
 
   test "keeps typed data and updates the participants model":
     let item = createTestMessageItem("thread-parent", 1)
@@ -757,18 +757,14 @@ suite "mentioned names":
     check(model.mentionedNamesOf(0) == %*{alice: "alicia"})
 
 suite "message text":
-  proc createItem(message: MessageDto, renderedMessageText = ""): Item =
+  proc createItem(message: MessageDto): Item =
     return message_model.createMessageItemFromDtos(
       message = message,
       communityId = "",
       sender = ContactDetails(),
       isCurrentUser = false,
-      renderedMessageText = renderedMessageText,
       clearText = message.text,
     )
-
-  # status-go parses the discord payload too, so its rendered HTML is never empty
-  const discordHtml = "<p>gm from discord</p>"
 
   test "a discord message takes its text from the discord payload":
     let item = createItem(MessageDto(
@@ -776,7 +772,7 @@ suite "message text":
       clock: 1,
       contentType: ContentType.DiscordMessage,
       discordMessage: DiscordMessage(timestamp: "1700000000", content: "gm from discord"),
-    ), discordHtml)
+    ))
 
     check(item.unparsedText == "gm from discord")
 
@@ -792,7 +788,7 @@ suite "message text":
         contentType: ContentType.DiscordMessage,
         discordMessage: DiscordMessage(content: "gm from discord"),
       ),
-    ), discordHtml)
+    ))
 
     check(item.quotedMessageText == "gm from discord")
 

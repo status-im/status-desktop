@@ -265,6 +265,24 @@ Item {
     readonly property var allContacsAdaptor: contactInfrastructureLoader.item?.allContactsAdaptor ?? null
     readonly property var contactsModelAdaptor: contactInfrastructureLoader.item?.contactsAdaptor ?? null
 
+    // The app-wide mention name lookup: contacts plus the current user, then the
+    // message's own mentionedNames, then a generated alias. Shared by every surface
+    // that renders message text outside a chat - search results, the home page
+    // tiles, the activity center - so an unknown key is resolved once instead of
+    // once per surface. A chat's own views need a wider source (the chat's members)
+    // and keep their own.
+    readonly property MentionNamesAdaptor mentionNames: MentionNamesAdaptor {
+        contactsModel: appMain.contactsStore?.contactsModel ?? null
+    }
+
+    readonly property MentionResolver mentionResolver: MentionResolver {
+        sourceModel: appMain.mentionNames.model
+        nameRole: "preferredDisplayName"
+        selfPubKey: appMain.profileStore?.pubKey ?? ""
+        selfName: appMain.profileStore?.name ?? ""
+        aliasProvider: publicKey => appMain.rootChatStore?.generateAlias(publicKey) ?? ""
+    }
+
     // The app-wide reservoir of pre-built message rows, handed down to every
     // chat section's messages view. Declared here, in a file without
     // `pragma ComponentBehavior: Bound`: the pool builds its delegate with no
@@ -2131,6 +2149,7 @@ Item {
                     sourceComponent: ActivityCenterAdaptor {
                         contactsModel: appMain.contactsStore?.contactsModel ?? null
                         userProfileName: appMain.profileStore?.name ?? ""
+                        resolveMentionsFn: (text, knownNames) => appMain.mentionResolver.resolveFor(text, knownNames)
                         notifications: appMain.activityCenterStore?.activityCenterNotifications ?? null
                         getCommunityDetails: function(communityId) {
                             return appMain.rootChatStore?.getCommunityDetailsAsJson(communityId) ?? ({})
