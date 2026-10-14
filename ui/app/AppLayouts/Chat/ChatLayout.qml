@@ -91,6 +91,7 @@ StackLayout {
     required property SharedStores.CurrenciesStore currencyStore
     required property SharedStores.NetworksStore networksStore
     required property ProfileStores.AdvancedStore advancedStore
+    property SharedStores.UtilsStore utilsStore
     property bool paymentRequestFeatureEnabled
     property bool unlimitedChatImagesEnabled
 
@@ -318,6 +319,7 @@ StackLayout {
             communitiesStore: root.communitiesStore
             walletAssetsStore: root.walletAssetsStore
             currencyStore: root.currencyStore
+            getEmojiHashFn: pubKey => root.utilsStore?.getEmojiHash(pubKey) ?? []
 
             mutualContactsModel: root.mutualContactsModel
 
@@ -508,6 +510,7 @@ StackLayout {
         sectionItemModel: root.sectionItemModel
         communitySettingsDisabled: root.communitySettingsDisabled
         settingsShown: root.currentIndex === 1
+        getEmojiHashFn: pubKey => root.utilsStore?.getEmojiHash(pubKey) ?? []
         leftPanelWidthOverride: root.leftPanelWidthOverride
 
         onBackToCommunityClicked: root.currentIndex = 0
