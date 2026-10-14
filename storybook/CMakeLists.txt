@@ -34,7 +34,7 @@ endif()
 
 find_package(QT 6.11 NAMES Qt6 REQUIRED COMPONENTS Core)
 
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core CorePrivate Gui Quick QuickControls2 Test
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core CorePrivate Gui GuiPrivate Quick QuickControls2 Test
     QuickTest Qml WebView Multimedia Widgets REQUIRED)
 
 include(cmake/NimLibs.cmake)
@@ -134,6 +134,7 @@ add_executable(QmlTests
     qmlTests/objectcounter.h
     qmlTests/textdocumenttester.h
     qmlTests/fakevideosource.h
+    qmlTests/appstatedriver.h
     ../vendor/QR-Code-generator/c/qrcodegen.c
     ${TEST_QML_FILES})
 
@@ -142,7 +143,7 @@ target_compile_definitions(QmlTests PRIVATE
         STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
         QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qmlTests")
 target_link_libraries(QmlTests PRIVATE
-  Qt::QuickTest Qt::Qml Qt::Core Qt::CorePrivate Qt::Gui Qt::Quick Qt::QuickControls2
+  Qt::QuickTest Qt::Qml Qt::Core Qt::CorePrivate Qt::Gui Qt::GuiPrivate Qt::Quick Qt::QuickControls2
   Qt::Multimedia StatusQ SortFilterProxyModel QmlStorybookLib)
 # FakeVideoSource renders test QR codes with the vendored generator
 target_include_directories(QmlTests PRIVATE ../vendor/QR-Code-generator/c)
