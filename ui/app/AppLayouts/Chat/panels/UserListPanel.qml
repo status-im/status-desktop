@@ -112,7 +112,7 @@ ColumnLayout {
         verticalScrollBar.implicitWidth: d.scrollBarWidth
         verticalScrollBar.width: d.scrollBarWidth
 
-        // Online first, then by name
+        // Rows keep the model's order (online first, then by name, sorted in Nim)
         model: SortFilterProxyModel {
             sourceModel: root.usersModel
             filters: [
@@ -120,16 +120,6 @@ ColumnLayout {
                     roleName: "preferredDisplayName"
                     searchPhrase: root.searchText
                     enabled: !!root.searchText
-                }
-            ]
-            sorters: [
-                RoleSorter {
-                    roleName: "onlineStatus"
-                    sortOrder: Qt.DescendingOrder
-                },
-                StringSorter {
-                    roleName: "preferredDisplayName"
-                    caseSensitivity: Qt.CaseInsensitive
                 }
             ]
         }

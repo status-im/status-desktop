@@ -573,7 +573,8 @@ Item {
         UserListPanel {
             // async incubation parents the partially-built panel into the
             // scene early — keep it invisible behind the skeleton until ready.
-            // The panel sorts the roster on load (online first, then name).
+            // Binding the model eagerly is fine: the roster arrives sorted from
+            // Nim, so a chat switch pays no sorting.
             visible: rightPanelLoader.status === Loader.Ready
 
             chatType: root.chatContentModule?.chatDetails.type || Constants.chatType.unknown
