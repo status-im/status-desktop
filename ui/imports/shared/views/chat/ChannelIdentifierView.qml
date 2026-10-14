@@ -56,6 +56,7 @@ Column {
 
     StatusBaseText {
         id: descText
+        objectName: "channelIdentifierDescriptionText"
         width: parent.width
         wrapMode: Text.Wrap
         text: {

@@ -116,12 +116,6 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             with step('Verify group chat info'):
                 with step('Verify group chat name'):
                     assert messages_screen.group_chat.wait_until_appears().group_name == group_chat_name, f'Group chat name is not correct'
-                # TODO: move to QML level
-                # with step('Welcome group message is correct'):
-                #     actual_welcome_message = messages_screen.group_chat.group_welcome_message()
-                #     assert actual_welcome_message.startswith(Messaging.WELCOME_GROUP_MESSAGE.value)
-                #     assert actual_welcome_message.endswith(' group!')
-                #     assert group_chat_name in actual_welcome_message
                 with step('Verify there are three members in group members list'):
                     assert user_one.name in messages_screen.right_panel.members
                     assert user_two.name in messages_screen.right_panel.members
