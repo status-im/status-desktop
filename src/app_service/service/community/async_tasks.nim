@@ -341,6 +341,7 @@ type
   AsyncLoadCommunityRosterTaskArg = ref object of QObjectTaskArg
     communityId: string
     generation: int
+    orderInputs: RosterOrderInputs
 
   CommunityRosterLoadResult {.acyclic.} = ref object of RootObj
     communityId: string
@@ -357,6 +358,7 @@ proc asyncLoadCommunityRosterTask(argEncoded: string) {.gcsafe, nimcall.} =
       res.error = response.error.message
     else:
       res.snapshot = parseRosterSnapshot(response.result)
+      sortRoster(res.snapshot, arg.orderInputs)
   except Exception as e:
     res.error = e.msg
   arg.finishTyped(res)
