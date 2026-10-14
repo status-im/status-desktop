@@ -173,7 +173,6 @@ proc currentUserWalletContainsAddress(self: Module, address: string): bool =
 # TODO: duplicates in chats and messages
 proc buildCommunityMemberMessageItem(self: Module, message: MessageDto): member_msg_item.Item =
   let contactDetails = self.controller.getContactDetails(message.`from`)
-  let communityChats = self.controller.getAllChats(self.getMySectionId())
   var quotedMessageAuthorDetails = ContactDetails()
   if message.quotedMessage.`from` != "":
     if message.`from` == message.quotedMessage.`from`:
@@ -194,13 +193,11 @@ proc buildCommunityMemberMessageItem(self: Module, message: MessageDto): member_
     message.communityId,
     contactDetails,
     isCurrentUser,
-    self.controller.getRenderedText(message.parsedText, communityChats),
     clearText = message.text,
     albumImages = @[],
     albumMessageIds = @[],
     deletedByContactDetails = ContactDetails(),
     quotedMessageAuthorDetails,
-    self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
     transactionContract,
     transactionValue,
   )
