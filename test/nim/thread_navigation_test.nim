@@ -213,9 +213,9 @@ suite "thread navigation":
     let module = messages_module.newModule(MockDelegate(), events, "section-id", "chat-id",
       true, nil, nil, nil, service, nil, nil)
     defer: module.delete()
-    let parent = createMessageItemFromDtos(MessageDto(id: "parent", clock: 1), "", ContactDetails(), false, "", "")
+    let parent = createMessageItemFromDtos(MessageDto(id: "parent", clock: 1), "", ContactDetails(), false, "")
     let album = createMessageItemFromDtos(MessageDto(id: "album-parent", albumId: "album", clock: 2), "",
-      ContactDetails(), false, "", "", albumMessageIds = @["album-parent", "album-child"])
+      ContactDetails(), false, "", albumMessageIds = @["album-parent", "album-child"])
     module.view.model().insertItemBasedOnClock(parent)
     module.view.model().insertItemBasedOnClock(album)
     module.onChatThreadsLoaded(@[

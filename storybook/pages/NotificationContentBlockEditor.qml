@@ -11,7 +11,7 @@ Control {
     property alias preImageVisible: preImageVisible.checked
     property alias preImageWithRadius: preImageWithRadius.checked
     property alias content: textField.text
-    property alias maxCharsContent: maxCharsContent.value
+    property alias maxLinesContent: maxLinesContent.value
     property alias areImagesClickable: areImagesClickable.checked
     property alias changeImageCursorShape: changeImageCursorShape.checked
     property alias noAttachments: noAttachments.checked
@@ -70,19 +70,19 @@ Control {
 
         Label {
             Layout.leftMargin: Theme.padding
-            text: "Max Chars [120 - 250]:"
+            text: "Max Lines [1 - 10]:"
             visible: root.fullEditorVisible
         }
 
         Slider {
-            id: maxCharsContent
+            id: maxLinesContent
             Layout.leftMargin: Theme.padding
             Layout.rightMargin: Theme.padding
             Layout.fillWidth: true
             stepSize: 1
-            from: 120
-            to: 250
-            value: from
+            from: 1
+            to: 10
+            value: 4
             visible: root.fullEditorVisible
         }
 

@@ -53,7 +53,7 @@ SplitView {
                 preImageSource: contentBlockEditor.preImageVisible ? "https://picsum.photos/320/240?6" : ""
                 preImageRadius: contentBlockEditor.preImageWithRadius ? 8 : 0
                 contentText: contentBlockEditor.content
-                contentMaxChars: contentBlockEditor.maxCharsContent
+                contentMaxLines: contentBlockEditor.maxLinesContent
                 attachments: contentBlockEditor.oneAttachment ? d.oneAttachment :
                                                                 contentBlockEditor.threeAttachments ? d.threeAttachments :
                                                                                                       contentBlockEditor.sevenAttachments ? d.sevenAttachments : []

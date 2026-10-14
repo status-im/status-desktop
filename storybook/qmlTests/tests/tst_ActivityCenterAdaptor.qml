@@ -9,9 +9,17 @@ import QtModelsToolkit
 
 import AppLayouts.ActivityCenter.adaptors
 import AppLayouts.ActivityCenter.helpers
+import AppLayouts.Chat.adaptors
+
+import shared.status
 
 Item {
     id: root
+
+    // mention wire format: "@0x" + 130 lowercase hex chars
+    readonly property string aliceKey: "0x04" + "a".repeat(128)
+    readonly property string strangerKey: "0x04" + "b".repeat(128)
+    readonly property string myKey: "0x04" + "c".repeat(128)
 
     readonly property var snapshotRoles: [
         "notificationId", "notificationType", "unread", "title", "content", "primaryText",
@@ -67,6 +75,80 @@ Item {
         ActivityCenterAdaptor {
             contactsModel: contactsComponent.createObject(this)
             userProfileName: "Me"
+        }
+    }
+
+    Component {
+        id: namedContactsComponent
+
+        ListModel {
+            // mirrors the backend contacts model API used by ContactModelEntry
+            function hasUser(pubKey) {
+                return SQUtils.ModelUtils.contains(this, "pubKey", pubKey)
+            }
+
+            Component.onCompleted: append({ pubKey: root.aliceKey, preferredDisplayName: "Alice" })
+        }
+    }
+
+    Component {
+        id: messengerAdaptorComponent
+
+        ActivityCenterAdaptor {
+            contactsModel: namedContactsComponent.createObject(this)
+            userProfileName: "Me"
+        }
+    }
+
+    // The app wires one MentionResolver for every surface that renders message text and
+    // injects it (see AppMain); the tests do the same, so the naming, the renames and the
+    // message's own names are covered the way the adaptor is really used.
+    Component {
+        id: mentionsComponent
+
+        QtObject {
+            id: mentions
+
+            property var contactsModel
+
+            readonly property var resolveFn: (text, knownNames) => mentions.resolver.resolveFor(text, knownNames)
+
+            readonly property MentionNamesAdaptor names: MentionNamesAdaptor {
+                contactsModel: mentions.contactsModel
+            }
+
+            readonly property MentionResolver resolver: MentionResolver {
+                sourceModel: mentions.names.model
+                nameRole: "preferredDisplayName"
+                selfPubKey: root.myKey
+                selfName: "Me"
+                aliasProvider: publicKey => "Alias " + publicKey.substring(0, 6)
+            }
+        }
+    }
+
+    Component {
+        id: messageNotificationsComponent
+
+        ListModel {
+            function appendNotification(id, notificationType, unparsedText, mentionedNames = "") {
+                append({
+                    id, notificationType,
+                    timestamp: 1700000000000, read: false, dismissed: false, accepted: false,
+                    chatId: "", communityId: "", sectionId: "",
+                    author: "0x04author", chatType: 0, name: "",
+                    membershipStatus: ActivityCenterTypes.ActivityCenterMembershipStatus.None,
+                    newsTitle: "", newsDescription: "", newsContent: "", newsImageUrl: "",
+                    newsLink: "", newsLinkLabel: "", installationId: "",
+                    message: {
+                        id: id + "-message", communityId: "", amISender: false, unparsedText,
+                        mentionedNames,
+                        albumMessageImages: "",
+                        contactRequestState: ActivityCenterTypes.ActivityCenterContactRequestState.Pending
+                    },
+                    repliedMessage: "", tokenData: ""
+                })
+            }
         }
     }
 
@@ -173,6 +255,65 @@ Item {
             // reading one row materialises exactly one row
             SQUtils.ModelUtils.get(adaptor.model, 0, "title")
             compare(objectCounter.count("QQmlPropertyMap"), 1)
+        }
+
+        function test_messageContentRenderedFromUnparsedText_data() {
+            return [
+                { tag: "mention", type: ActivityCenterTypes.NotificationType.Mention },
+                { tag: "reply", type: ActivityCenterTypes.NotificationType.Reply },
+                { tag: "contact request", type: ActivityCenterTypes.NotificationType.ContactRequest }
+            ]
+        }
+
+        // the adaptor with the resolver its consumer injects, as AppMain wires it
+        function createMessengerAdaptor(notifications) {
+            const adaptor = createTemporaryObject(messengerAdaptorComponent, root, { notifications })
+            const mentions = createTemporaryObject(mentionsComponent, root,
+                                                   { contactsModel: adaptor.contactsModel })
+            adaptor.resolveMentionsFn = mentions.resolveFn
+            return { adaptor, mentions }
+        }
+
+        function test_messageContentRenderedFromUnparsedText(data) {
+            failOnWarning(/Binding loop detected/)
+            const notifications = createTemporaryObject(messageNotificationsComponent, root)
+            notifications.appendNotification("n1", data.type,
+                                             `**hi** @${root.aliceKey} @${root.myKey} @${root.strangerKey}\nbye`)
+            const { adaptor } = createMessengerAdaptor(notifications)
+
+            const content = SQUtils.ModelUtils.get(adaptor.model, 0, "content")
+            verify(content.startsWith("<b>hi</b> "), content)
+            verify(content.includes(`>@Alice</a>`), content)
+            verify(content.includes(`>@Me</a>`), content)
+            verify(content.includes(`>@Alias 0x04bb</a>`), content)
+            // the content is styled text: the line break is kept, not collapsed
+            verify(content.endsWith("<br/>bye"), content)
+        }
+
+        function test_mentionFollowsContactRename() {
+            failOnWarning(/Binding loop detected/)
+            const notifications = createTemporaryObject(messageNotificationsComponent, root)
+            notifications.appendNotification("n1", ActivityCenterTypes.NotificationType.Mention,
+                                             `hi @${root.aliceKey}`)
+            const { adaptor } = createMessengerAdaptor(notifications)
+            const content = () => SQUtils.ModelUtils.get(adaptor.model, 0, "content")
+            verify(content().includes("@Alice<"), content())
+
+            adaptor.contactsModel.setProperty(0, "preferredDisplayName", "Alicia")
+            tryVerify(() => content().includes("@Alicia<"), 1000, content())
+        }
+
+        // a mention the contacts cannot name takes the name sent with the message,
+        // before an alias
+        function test_unknownMentionTakesMessageNames() {
+            const notifications = createTemporaryObject(messageNotificationsComponent, root)
+            notifications.appendNotification("n1", ActivityCenterTypes.NotificationType.Mention,
+                                             `hi @${root.strangerKey}`,
+                                             JSON.stringify({ [root.strangerKey]: "Stranger" }))
+            const { adaptor } = createMessengerAdaptor(notifications)
+
+            const content = SQUtils.ModelUtils.get(adaptor.model, 0, "content")
+            verify(content.includes(`>@Stranger</a>`), content)
         }
 
         function test_inactiveLoaderReleasesAdaptor() {

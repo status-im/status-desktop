@@ -67,7 +67,6 @@ QtObject {
                                            responseTo             [string]  - identifier of the original message
                                                                                 this message is replying to
                                            communityId            [string]  - identifier of the community, if applicable
-                                           messageText            [string]  - textual content of the message
                                            contentType            [int]     - message content type
                                                                                 (enum: StatusMessage.ContentType)
                                            amISender              [bool]    - whether the current user is the sender
@@ -76,7 +75,10 @@ QtObject {
                                            albumMessageImages     [string]  - space-separated list of album image URLs
                                            albumImagesCount       [int]     - number of images in the album
                                            messageImage           [string]  - image URL for image-based messages
-                                           unparsedText           [string]  - raw/unparsed message text (if applicable)
+                                           unparsedText           [string]  - raw message text (markdown with
+                                                                                "@0x…" mentions), rendered here
+                                           mentionedNames         [string]  - JSON { pubKey: name } sent with
+                                                                                the message, for its mentions
                                          }
 
         timestamp            [double]  - timestamp of when the notification was created
@@ -94,7 +96,7 @@ QtObject {
                                          {
                                            contentType [int]    - type of the replied message content
                                                                  (enum: Constants.messageContentType)
-                                           messageText [string] - text content of the replied message
+                                           unparsedText [string] - raw text of the replied message
                                          }
 
         chatType             [int]     - type of chat
@@ -209,7 +211,8 @@ QtObject {
         trust status) for notifications that reference a user.
 
         Expected to be a QAbstractItemModel (or compatible) indexed
-        by public key.
+        by public key. Its `pubKey` and `preferredDisplayName` roles also
+        name the users mentioned in message texts.
     */
     required property var contactsModel
 
@@ -516,6 +519,8 @@ QtObject {
 
                         notification: row.notification
                         contactsModel: root.contactsModel
+                        mentionsMap: root.resolveMentionsFn(notification.message?.unparsedText ?? "",
+                                                             notification.message?.mentionedNames ?? "")
 
                         // Avatar related
                         badgeIconName: "action-mention"
@@ -545,6 +550,8 @@ QtObject {
 
                         notification: row.notification
                         contactsModel: root.contactsModel
+                        mentionsMap: root.resolveMentionsFn(notification.message?.unparsedText ?? "",
+                                                             notification.message?.mentionedNames ?? "")
 
                         // Avatar related
                         badgeIconName: "action-reply"
@@ -567,6 +574,8 @@ QtObject {
                         // Required data
                         notification: row.notification
                         contactsModel: root.contactsModel
+                        mentionsMap: root.resolveMentionsFn(notification.message?.unparsedText ?? "",
+                                                             notification.message?.mentionedNames ?? "")
 
                         onPopulateContactDetailsRequested: (contactId) => root.populateContactDetailsRequested(contactId)
                     }
@@ -1007,6 +1016,20 @@ QtObject {
         @return        [object|null] Chat details (e.g. name, image)
     */
     property var getChatDetails: function(chatId) { return null }
+
+    /*!
+        Names the users mentioned in a message text ({ pubKey: name }), as the
+        app-wide MentionResolver does. Called from the delegate bindings, so the
+        properties it reads are tracked and the texts follow name changes.
+
+        This function must be provided by the consumer of the adaptor.
+
+        @param text       [string] Raw message text
+        @param knownNames [string] The message's own names as JSON ({ pubKey: name }),
+                                   for mentions the app cannot name otherwise
+        @return           [object] Display names, keyed by public key
+    */
+    property var resolveMentionsFn: function(text, knownNames) { return ({}) }
 
     /*!
         Requests loading of additional data for the given contact.
