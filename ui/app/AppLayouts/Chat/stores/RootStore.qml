@@ -258,6 +258,15 @@ QtObject {
         root.mainModuleInst.loadMembersForSectionId(sectionId)
     }
 
+    // Admin settings data (requests to join, bans), held while settings show
+    function loadAdminMembersForSectionId(sectionId) {
+        root.mainModuleInst.loadAdminMembersForSectionId(sectionId)
+    }
+
+    function releaseAdminMembersForSectionId(sectionId) {
+        root.mainModuleInst.releaseAdminMembersForSectionId(sectionId)
+    }
+
     function acceptContactRequest(pubKey, contactRequestId) {
         chatCommunitySectionModule.acceptContactRequest(pubKey, contactRequestId)
     }
