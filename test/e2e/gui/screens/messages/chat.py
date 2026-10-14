@@ -13,6 +13,7 @@ from gui.components.emoji_popup import EmojiPopup
 from gui.components.messaging.clear_chat_history_popup import ClearChatHistoryPopup
 from gui.components.messaging.close_chat_popup import CloseChatPopup
 from gui.components.messaging.edit_group_name_and_image_popup import EditGroupNameAndImagePopup
+from gui.components.messaging.mention_suggestions_popup import MentionSuggestionsPopup
 from gui.components.messaging.leave_group_popup import LeaveGroupPopup
 from gui.components.messaging.link_preview_options_popup import LinkPreviewOptionsPopup
 from gui.components.messaging.message_context_menu_popup import MessageContextMenuPopup
@@ -441,6 +442,7 @@ class ChatMessagesView(QObject):
         self._options_combobox = QObject(messaging_names.mainWindow_optionsComboBox_ComboBox)
         self._close_preview_button = QObject(messaging_names.mainWindow_closeLinkPreviewButton_StatusFlatRoundButton)
         self._send_message_button = Button(messaging_names.mainWindow_statusChatInputSendButton)
+        self._mention_suggestions = MentionSuggestionsPopup()
 
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC, check_interval=0.5):
         super().wait_until_appears(timeout_msec, check_interval)
@@ -464,14 +466,19 @@ class ChatMessagesView(QObject):
     @property
     @allure.step('Get gray text from message area')
     def gray_text_from_message_area(self) -> str:
-        return driver.waitForObjectExists(self._message_input_area.real_name,
-                                          configs.timeouts.UI_LOAD_TIMEOUT_MSEC).placeholderText
+        placeholder = driver.waitForObjectExists(
+            self._message_input_area.real_name,
+            configs.timeouts.UI_LOAD_TIMEOUT_MSEC,
+        ).placeholderText
+        return str(placeholder) if placeholder is not None else ''
 
     @property
     @allure.step('Get enabled state of message area')
     def is_message_area_enabled(self) -> bool:
-        return driver.waitForObjectExists(self._message_input_area.real_name,
-                                          configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
+        return bool(driver.waitForObjectExists(
+            self._message_input_area.real_name,
+            configs.timeouts.UI_LOAD_TIMEOUT_MSEC,
+        ).enabled)
 
     @allure.step('Click more options button')
     def open_more_options(self):
@@ -503,6 +510,18 @@ class ChatMessagesView(QObject):
     @allure.step('Send message to group chat')
     def send_message_to_group_chat(self, message: str):
         self.type_message(message)
+        self.confirm_sending_message()
+
+    @allure.step('Send message with @mention of {1}')
+    def send_message_mentioning(self, display_name: str):
+        self._message_field.wait_until_appears()
+        self._message_field.click()
+        self._message_field.clear(verify=False)
+        driver.type(self._message_field.object, '@')
+        self._mention_suggestions.wait_until_appears()
+        filter_text = MentionSuggestionsPopup.mention_filter_text(display_name)
+        driver.type(self._message_field.object, filter_text)
+        self._mention_suggestions.select(display_name)
         self.confirm_sending_message()
 
     @allure.step('Type text to message field')

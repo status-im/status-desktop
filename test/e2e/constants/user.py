@@ -10,13 +10,16 @@ class UserAccount:
     password: str = None
     seed_phrase: Optional[list] = field(default_factory=list)
     status_address: Optional[str] = None
+    set_display_name: bool = True
+    profile_name: Optional[str] = None
 
 
 class RandomUser(UserAccount):
-    def __init__(self):
+    def __init__(self, set_display_name: bool = True):
         super().__init__(
             name=random_name_string(),
-            password=random_password_string()
+            password=random_password_string(),
+            set_display_name=set_display_name,
         )
 
 

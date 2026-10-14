@@ -256,12 +256,14 @@ class MainWindow(Window):
         create_password_view.create_password(user_account.password)
         SplashScreen().wait_until_appears().wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
         skip_education_popup_if_visible()
-        # since we now struggle with 3 words names, I need to change display name first
-        left_panel = MainLeftPanel()
-        settings_screen = left_panel.open_settings()
-        profile = settings_screen.left_panel.open_profile_settings()
-        profile.set_name(user_account.name)
-        ChangesDetectedToastMessage().save_changes()
+        if user_account.set_display_name:
+            # since we now struggle with 3 words names, I need to change display name first
+            left_panel = MainLeftPanel()
+            settings_screen = left_panel.open_settings()
+            profile = settings_screen.left_panel.open_profile_settings()
+            profile.set_name(user_account.name)
+            ChangesDetectedToastMessage().save_changes()
+            user_account.profile_name = user_account.name
         return self
 
     @allure.step('Log in returning user')

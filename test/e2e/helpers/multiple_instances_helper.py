@@ -33,6 +33,15 @@ def authorize_user_in_aut(aut, main_window, user_account):
     main_window.minimize()
 
 
+@allure.step('Get user display name from online identifier')
+def get_user_display_name(aut, main_window) -> str:
+    _attach_and_prepare(aut, main_window)
+    online_identifier = main_window.left_panel.open_online_identifier()
+    display_name = online_identifier.get_user_name
+    main_window.left_panel.click()
+    return display_name
+
+
 @allure.step('Get chat key from user')
 def get_chat_key(aut, main_window):
     _attach_and_prepare(aut, main_window)
