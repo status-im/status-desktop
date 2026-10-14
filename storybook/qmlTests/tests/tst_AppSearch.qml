@@ -32,6 +32,7 @@ Item {
         resultModel: results
         threadLocationMenuModel: threads
         searchInProgress: false
+        resolveMentionsFn: text => ({})
         setSearchLocationFn: (section, chat, thread) => { root.lastScope = [section, chat, thread] }
         prepareLocationMenuModelFn: () => {}
         prepareThreadLocationMenuModelFn: chatId => {}
