@@ -30,13 +30,13 @@ StatusListView {
     readonly property MentionNamesAdaptor mentionNames: MentionNamesAdaptor {
         chatUsersModel: root.store?.usersStore.usersModel ?? null
         contactsModel: root.store?.contactsModel ?? null
-        selfPubKey: root.store?.myPublicKey() ?? ""
-        selfDisplayName: root.store?.name ?? ""
     }
 
     readonly property MentionResolver mentionResolver: MentionResolver {
         sourceModel: root.mentionNames?.model ?? null
         nameRole: "preferredDisplayName"
+        selfPubKey: root.store?.myPublicKey() ?? ""
+        selfName: root.store?.name ?? ""
         aliasProvider: pubKey => root.store?.generateAlias(pubKey) ?? ""
     }
 
