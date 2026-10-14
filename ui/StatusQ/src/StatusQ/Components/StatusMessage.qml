@@ -325,7 +325,7 @@ Control {
                     }
                     Loader {
                         Layout.fillWidth: true
-                        active: (!!root.messageDetails.messageText && !root.hideMessage
+                        active: (!!root.messageDetails.unparsedText && !root.hideMessage
                                  && ((root.messageDetails.contentType === StatusMessage.ContentType.Text) ||
                                      (root.messageDetails.contentType === StatusMessage.ContentType.Emoji) ||
                                      (root.messageDetails.contentType === StatusMessage.ContentType.DiscordMessage) ||
@@ -343,7 +343,7 @@ Control {
                             id: imagesColumn
                             spacing: Theme.halfPadding
                             Loader {
-                                active: root.messageDetails.messageText !== ""
+                                active: root.messageDetails.unparsedText !== ""
                                 anchors.left: parent.left
                                 anchors.right: parent.right
                                 visible: active
