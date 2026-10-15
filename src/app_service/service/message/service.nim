@@ -1,5 +1,4 @@
 import nimqml, tables, json, regex, sequtils, std/strformat, strutils, chronicles, times, oids, uuids, sets
-import ../../common/utils as common_utils
 
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types
@@ -1797,86 +1796,33 @@ QtObject:
     self.threadpool.start(arg)
     return uuid
 
-# See render-inline in status-mobile/src/status_im/ui/screens/chat/message/message.cljs
-proc renderInline(self: Service, parsedText: ParsedText, communityChats: openArray[ChatDto],
-    mentionedNames: Table[string, string]): string =
-  let value = common_utils.escape_html(parsedText.literal)
-    .multiReplace(("\r\n", "<br/>"))
-    .multiReplace(("\n", "<br/>"))
-    .multiReplace(("  ", "&nbsp;&nbsp;"))
+# The name a mention shows in plain text, without the "@": named like the message's
+# mention pills, the message's own mentionedNames included
+proc mentionName(self: Service, mention: string, mentionedNames: Table[string, string]): string =
+  if isSystemMention(mention):
+    for (tag, systemMention) in SystemTagMapping:
+      if systemMention == "@" & mention:
+        return tag[1 .. ^1]
+    return mention
+  let publicKey =
+    if isCompressedPubKey(mention): status_accounts.decompressPk(mention).result
+    else: mention
+  let contactService = self.contactService
+  let me = MentionSelf(pubKey: singletonInstance.userProfile.getPubKey(),
+    name: singletonInstance.userProfile.getName())
+  return mentionDisplayName(contactService.cachedContact(publicKey), mentionedNames, publicKey,
+    proc(pubKey: string): string = contactService.generateAlias(pubKey), me)
 
-  case parsedText.type:
-    of "":
-      result = value
-    of PARSED_TEXT_CHILD_TYPE_CODE:
-      result = fmt("<code>{value}</code>")
-    of PARSED_TEXT_CHILD_TYPE_EMPH:
-      result = fmt("<em>{value}</em>")
-    of PARSED_TEXT_CHILD_TYPE_STRONG:
-      result = fmt("<strong>{value}</strong>")
-    of PARSED_TEXT_CHILD_TYPE_STRONG_EMPH:
-      result = fmt(" <strong><em>{value}</em></strong> ")
-    of PARSED_TEXT_CHILD_TYPE_MENTION:
-      var id = value
-      if isSystemMention(id):
-        var tag = id
-        for pair in SystemTagMapping:
-          if pair[1] == "@" & id:
-            tag = pair[0]
-            break
-        result = fmt("<a href=\"#\" class=\"mention\">{tag}</a>")
-      else:
-        if isCompressedPubKey(id):
-          id = status_accounts.decompressPk(id).result
-        let contactService = self.contactService
-        let me = MentionSelf(pubKey: singletonInstance.userProfile.getPubKey(),
-          name: singletonInstance.userProfile.getName())
-        let name = mentionDisplayName(contactService.cachedContact(id), mentionedNames, id,
-          proc(pubKey: string): string = contactService.generateAlias(pubKey), me)
-        result = fmt("<a href=\"//{id}\" class=\"mention\">@{name}</a>")
-    of PARSED_TEXT_CHILD_TYPE_STATUS_TAG:
-      result = fmt("<span>#{value}</span>")
-      for chat in communityChats:
-        if chat.name == value:
-          result = fmt("<a href=\"#{value}\" class=\"status-tag\">#{value}</a>")
-          break
-    of PARSED_TEXT_CHILD_TYPE_DEL:
-      result = fmt("<del>{value}</del>")
-    of PARSED_TEXT_CHILD_TYPE_LINK:
-      result = fmt("{parsedText.destination}")
-    else:
-      result = fmt(" {value} ")
-
-# See render-block in status-mobile/src/status_im/ui/screens/chat/message/message.cljs
-proc getRenderedText*(self: Service, parsedTextArray: seq[ParsedText], communityChats: openArray[ChatDto],
-    mentionedNames = initTable[string, string]()): string =
-  for parsedText in parsedTextArray:
-    case parsedText.type:
-      of PARSED_TEXT_TYPE_PARAGRAPH:
-        result = result & "<p>"
-        for child in parsedText.children:
-          result = result & self.renderInline(child, communityChats, mentionedNames)
-        result = result & "</p>"
-      of PARSED_TEXT_TYPE_BLOCKQUOTE:
-        # strip trailing whitespace so a trailing newline doesn't become a
-        # trailing <br/> (which would add an empty line to the quote block)
-        let quoted = common_utils.escape_html(parsedText.literal.strip(leading = false))
-          .multiReplace(("\r\n", "<br/>"), ("\n", "<br/>"))
-        result = result & "<blockquote>" & quoted & "</blockquote>"
-      of PARSED_TEXT_TYPE_CODEBLOCK:
-        result = result & "<code>" & common_utils.escape_html(parsedText.literal) & "</code>"
-    result = result.strip()
-
-# Parses the message and returns the plain text representation of it.
-# If the message is a sticker or an image with no text, it returns "🖼️".
-proc getMessagesParsedPlainText*(self: Service, message: MessageDto, communityChats: openArray[ChatDto]): string =
+# The plain text of the message, for notifications.
+# If the message is a sticker or an image with no text, it returns IMAGE_PLACEHOLDER_TEXT.
+proc getMessagesParsedPlainText*(self: Service, message: MessageDto): string =
   if message.contentType == ContentType.BridgeMessage:
     return message.bridgeMessage.content
   if message.contentType == ContentType.Sticker or (message.contentType == ContentType.Image and len(message.text) == 0):
-    return "🖼️"
+    return IMAGE_PLACEHOLDER_TEXT
 
-  let renderedMessageText = self.getRenderedText(message.parsedText, communityChats, message.mentionedNames)
-  return singletonInstance.utils.plainText(renderedMessageText)
+  return plainText(message.parsedText,
+    proc(mention: string): string = self.mentionName(mention, message.mentionedNames))
 
 proc deleteMessage*(self: Service, messageId: string) =
   try:

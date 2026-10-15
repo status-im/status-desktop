@@ -16,7 +16,7 @@ ListModel {
         categoryOpened: true
         muted: false
         hidden: false
-        lastMessageText: ""
+        lastMessageUnparsedText: ""
     }
     ListElement {
         itemId: "id1"
@@ -36,7 +36,7 @@ ListModel {
         hidden: false
         isCategory: false
         categoryOpened: true
-        lastMessageText: "https://status.app/c/iwuAChYKBGZld2YSA2ZldxgCIgcjODhCMEZGAw==#zQ3shk6ceLwoMYCZnV29hwkRfRMEiw6nFrpViCoLucaycPu9y"
+        lastMessageUnparsedText: "https://status.app/c/iwuAChYKBGZld2YSA2ZldxgCIgcjODhCMEZGAw==#zQ3shk6ceLwoMYCZnV29hwkRfRMEiw6nFrpViCoLucaycPu9y"
     }
     ListElement {
         itemId: "id2"
@@ -54,7 +54,7 @@ ListModel {
         categoryOpened: false
         muted: false
         hidden: false
-        lastMessageText: ""
+        lastMessageUnparsedText: ""
     }
     ListElement {
         itemId: "id3"
@@ -73,7 +73,7 @@ ListModel {
         hidden: false
         isCategory: false
         categoryOpened: true
-        lastMessageText: "Long message consectetur adipiscing elit. Nulla tincidunt purus risus, sit amet dapibus nisi aliquam nec. In tristique risus nec tempus tempus. Vivamus quis sapien vitae ex iaculis fringilla quis in ipsum. Aenean lorem urna, gravida eget dignissim et, viverra nec ante. Fusce mi mauris, viverra sit amet leo ullamcorper, pretium gravida libero."
+        lastMessageUnparsedText: "Long message consectetur adipiscing elit. Nulla tincidunt purus risus, sit amet dapibus nisi aliquam nec. In tristique risus nec tempus tempus. Vivamus quis sapien vitae ex iaculis fringilla quis in ipsum. Aenean lorem urna, gravida eget dignissim et, viverra nec ante. Fusce mi mauris, viverra sit amet leo ullamcorper, pretium gravida libero."
     }
     ListElement {
         itemId: "id4"
@@ -90,7 +90,7 @@ ListModel {
         hidden: false
         isCategory: false
         categoryOpened: true
-        lastMessageText: "bold break line italic"
+        lastMessageUnparsedText: "**bold** break line *italic*"
     }
     ListElement {
         itemId: "id5"
@@ -109,6 +109,6 @@ ListModel {
         hidden: false
         isCategory: false
         categoryOpened: true
-        lastMessageText: "💩"
+        lastMessageUnparsedText: "💩"
     }
 }

@@ -295,14 +295,6 @@ proc getResultItemFromChats(self: Module, sectionId: string, chats: seq[ChatDto]
         self.controller.addResultItemDetails(chatDto.id, sectionId, chatDto.id)
         result.add(item)
 
-# Bridged and imported Discord messages keep their text in the bridge/discord payload
-proc rawMessageText(message: MessageDto): string =
-  if message.contentType == ContentType.BridgeMessage:
-    return message.bridgeMessage.content
-  if message.contentType == ContentType.DiscordMessage and message.text == "":
-    return message.discordMessage.content
-  return message.text
-
 method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
   var items: seq[result_item.Item]
   var resultThreads = initTable[(string, string), ThreadDto]()
@@ -367,7 +359,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       senderName = "You"
 
     let community {.cursor.} = self.controller.getCommunityById(chatDto.communityId)
-    let messageText = rawMessageText(m)
+    let messageText = m.unparsedText
     let colorId = self.controller.getColorId(m.`from`)
 
     if(chatDto.communityId.len == 0):
@@ -444,12 +436,7 @@ proc createChatSearchItem(self: Module, chat: ChatDto, personalChatSectionId, pe
     sectionName,
     chat.emoji,
     chat.chatType.int,
-    lastMessageText =
-      if isCommunity:
-        self.controller.getMessagesParsedPlainText(chat.lastMessage,
-          self.controller.getCommunityById(chat.communityId).chats)
-      else:
-        self.controller.getMessagesParsedPlainText(chat.lastMessage, []),
+    lastMessageUnparsedText = chat.lastMessage.lastMessageUnparsedText,
     lastMessageTimestamp = chat.timestamp.int,
     # Fallback for chats that predate the lastOwnMessageTimestamp column
     lastOwnMessageTimestamp = max(chat.lastOwnMessageTimestamp.int,
@@ -540,14 +527,10 @@ method updateLastOwnMessageTimestamp*(self: Module, chatId: string, lastOwnMessa
   if lastOwnMessageTimestamp > 0:
     self.view.chatSearchModel().updateLastOwnMessageTimestampOnChatItem(chatId, lastOwnMessageTimestamp)
 
-method updateLastMessage*(self: Module, chatId, communityId: string, chatType: ChatType, lastMessage: MessageDto, lastMessageTimestamp: int) =
-  self.view.chatSearchModel().updateLastMessageTextOnChatItem(
+method updateLastMessage*(self: Module, chatId: string, lastMessage: MessageDto, lastMessageTimestamp: int) =
+  self.view.chatSearchModel().updateLastMessageUnparsedTextOnChatItem(
     chatId,
-    if chatType == ChatType.CommunityChat and communityId != "":
-      self.controller.getMessagesParsedPlainText(lastMessage,
-        self.controller.getCommunityById(communityId).chats)
-    else:
-      self.controller.getMessagesParsedPlainText(lastMessage, [])
+    lastMessage.lastMessageUnparsedText,
   )
   if lastMessageTimestamp > 0:
     self.view.chatSearchModel().updateLastMessageTimestampOnChatItem(chatId, lastMessageTimestamp)
