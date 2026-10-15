@@ -97,26 +97,6 @@ To build Status from source, follow the instructions specific to your operating 
 
 We welcome contributions from the community! To get started:
 
-### Nim token catalogue
-
-Normal desktop and mobile builds use the Nim token catalogue as the sole token
-backend. With the development environment configured, the usual build and
-`make run` commands need no token flags or separate library checkout.
-
-Status-go pins the public Go wrapper and native library to the same revision.
-Its build prepares one checkout at `vendor/status-go/build/deps/nim-token-lists`
-and reuses matching native and backend artifacts. Mobile archives are separate
-for each architecture and for iOS devices and simulators. `make clean` removes
-the managed checkout and its artifacts; the next build prepares them again.
-Existing nim-sds setup is unchanged.
-
-There are no build-time or runtime backend selectors. A rollback requires an
-earlier app/backend revision.
-
-On iOS, status-go bundles the token library into its static archive. The app's
-final link hides the token ABI and the build checks the installed executable
-for leaked token-library exports.
-
 <!-- TODO Improve the contributing guide to be more about how to contribute -->
 <!-- TODO add guide on how to translate -->
 <!-- TODO Create a guide per persona in the contributing guide -->

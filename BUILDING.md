@@ -35,6 +35,7 @@ If you're looking for instructions to build Status Mobile instead, go [here](/mo
     - [Linux](#linux-1)
   - [4️⃣ Build the App](#4️⃣-build-the-app)
     - [Build Configuration Options](#build-configuration-options)
+    - [Nim token catalogue](#nim-token-catalogue)
   - [Pro tips](#pro-tips)
     - [Working with VS Code](#working-with-vs-code)
     - [Data folder](#data-folder)
@@ -313,6 +314,26 @@ The following environment variables can be used to customize the build:
 - STATUS_KEYCARD_QT_SOURCE_DIR (path) - Point the build system to a local status-keycard-qt folder. Defaults to `vendor/status-keycard-qt`
 - VCINSTALLDIR (path) - Visual Studio compiler installation path. Defaults to `C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\`
 
+
+### Nim token catalogue
+
+Desktop and mobile builds use the Nim token catalogue as the sole token
+backend. With the development environment configured, the usual build and
+`make run` commands need no token flags or separate library checkout.
+
+Status-go pins the public Go wrapper and native library to the same revision.
+Its build prepares one checkout at `vendor/status-go/build/deps/nim-token-lists`
+and reuses matching native and backend artifacts. Mobile archives are separate
+for each architecture and for iOS devices and simulators. `make clean` removes
+the managed checkout and its artifacts; the next build prepares them again.
+The existing nim-sds setup is unchanged.
+
+There are no build-time or runtime backend selectors. A rollback requires an
+earlier app/backend revision.
+
+On iOS, status-go bundles the token library into its static archive. The app's
+final link hides the token ABI and the build checks the installed executable
+for leaked token-library exports.
 
 ## Pro tips
 
