@@ -1,6 +1,7 @@
 import allure
 
 import configs
+import driver
 from gui.components.authenticate_popup import AuthenticatePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -29,6 +30,14 @@ class SignTransactionPopup(QObject):
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         self._sign_transaction_button.wait_until_appears(timeout_msec)
+        return self
+
+    @allure.step('Wait until sign button is enabled')
+    def wait_until_sign_enabled(self, timeout_msec: int = configs.timeouts.ROUTES_TIMEOUT_MSEC):
+        assert driver.waitFor(
+            lambda: self._sign_transaction_button.is_enabled,
+            timeout_msec,
+        ), 'Sign transaction button stayed disabled'
         return self
 
     @allure.step('Wait until hidden {0}')
