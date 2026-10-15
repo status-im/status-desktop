@@ -14,12 +14,11 @@ class TestMarkdownParser : public QObject
         return dump(parse(text, opts));
     }
 
-    // Counts WalletLink nodes (auto-detected wallet addresses / ENS names) in a subtree.
-    static int countWalletLinks(const Node& n)
+    static int countNodes(const Node& n, NodeKind kind)
     {
-        int c = (n.kind == NodeKind::WalletLink) ? 1 : 0;
+        int c = (n.kind == kind) ? 1 : 0;
         for (const auto& ch : n.children)
-            c += countWalletLinks(ch);
+            c += countNodes(ch, kind);
         return c;
     }
 
@@ -97,6 +96,73 @@ Document [0,4)
 )";
         QCOMPARE(d("`hi`"),
                  QString::fromUtf8(expected).trimmed());
+    }
+
+    void delimiterPairing_data()
+    {
+        QTest::addColumn<QString>("text");
+        QTest::addColumn<int>("emphasis");
+        QTest::addColumn<int>("strong");
+        QTest::addColumn<int>("strike");
+        QTest::newRow("partial-triple") << "***a***" << 1 << 1 << 0;
+        QTest::newRow("strong-in-italic") << "*a **b** c*" << 1 << 1 << 0;
+        QTest::newRow("italic-in-strong") << "**a *b* c**" << 1 << 1 << 0;
+        QTest::newRow("italic-in-strike") << "~~*a*~~" << 1 << 0 << 1;
+        QTest::newRow("strike-in-italic") << "*~~a~~*" << 1 << 0 << 1;
+        QTest::newRow("unmatched-prefix")
+            << QStringLiteral("!*a ").repeated(128) + QStringLiteral("~~b~~ ").repeated(128)
+            << 0 << 0 << 128;
+        QTest::newRow("siblings")
+            << QStringLiteral("*a* **b** ~~c~~ ***d*** ").repeated(128)
+            << 256 << 256 << 128;
+    }
+
+    void delimiterPairing()
+    {
+        QFETCH(QString, text);
+        QFETCH(int, emphasis);
+        QFETCH(int, strong);
+        QFETCH(int, strike);
+        const Node doc = parse(text);
+        QCOMPARE(countNodes(doc, NodeKind::Emphasis), emphasis);
+        QCOMPARE(countNodes(doc, NodeKind::Strong), strong);
+        QCOMPARE(countNodes(doc, NodeKind::Strikethrough), strike);
+    }
+
+    void backtickPairing_data()
+    {
+        QTest::addColumn<QString>("text");
+        QTest::addColumn<int>("spans");
+        QTest::addColumn<int>("blocks");
+        QTest::addColumn<qsizetype>("unclosedFence");
+        QTest::newRow("single-around-double") << "`a``b`" << 1 << 0 << qsizetype(-1);
+        QTest::newRow("double-around-single") << "``a`b``" << 0 << 0 << qsizetype(-1);
+        QTest::newRow("single-around-triples")
+            << "`a```b```c`" << 1 << 0 << qsizetype(-1);
+        QTest::newRow("triple-around-singles")
+            << "```a`b`c```" << 0 << 1 << qsizetype(-1);
+        QTest::newRow("unmatched-before-single")
+            << "``a`b`" << 1 << 0 << qsizetype(-1);
+        QTest::newRow("unsupported-around-emphasis")
+            << "``*a*``" << 0 << 0 << qsizetype(-1);
+        QTest::newRow("four-is-not-a-fence")
+            << "````a````" << 0 << 0 << qsizetype(-1);
+        QTest::newRow("closed-then-open")
+            << "```a``` b ```c" << 0 << 1 << qsizetype(10);
+        QTest::newRow("unmatched-lengths") << "` `` ``` ````" << 0 << 0 << qsizetype(5);
+    }
+
+    void backtickPairing()
+    {
+        QFETCH(QString, text);
+        QFETCH(int, spans);
+        QFETCH(int, blocks);
+        QFETCH(qsizetype, unclosedFence);
+        const Node doc = parse(text);
+        QCOMPARE(countNodes(doc, NodeKind::CodeSpan), spans);
+        QCOMPARE(countNodes(doc, NodeKind::CodeBlock), blocks);
+        QCOMPARE(countNodes(doc, NodeKind::Emphasis), 0);
+        QCOMPARE(findUnclosedCodeFence(text), unclosedFence);
     }
 
     void codeFence()
@@ -290,6 +356,60 @@ Document [0,8)
     {
         const QString dump = d("[google](https://google.com)");
         QCOMPARE(dump.count(QStringLiteral("Link [")), 1);
+    }
+
+    void explicitLinkUrlScan_data()
+    {
+        QTest::addColumn<QString>("text");
+        QTest::addColumn<int>("links");
+        QTest::newRow("url-in-label")
+            << "[https://label.im](https://target.im)" << 1;
+        QTest::newRow("adjacent-links")
+            << "[a](https://a.im)[b](https://b.im)" << 2;
+        QTest::newRow("preceding-auto-link")
+            << "https://before.im/path[a](https://target.im)" << 2;
+        QTest::newRow("invalid-then-valid")
+            << "[a](invalid) [b](https://target.im)" << 1;
+        QTest::newRow("url-with-trailing-punctuation")
+            << "[a](https://target.im/path.) [b](https://valid.im)" << 2;
+        QTest::newRow("unicode-label-and-path")
+            << QString::fromUtf8("[\U0001F600](https://target.im/\U0001F469\u200D\U0001F4BB)") << 1;
+        QTest::newRow("excluded-code")
+            << "`[a](https://code.im)` [b](https://target.im)" << 1;
+    }
+
+    void explicitLinkUrlScan()
+    {
+        QFETCH(QString, text);
+        QFETCH(int, links);
+        QCOMPARE(countNodes(parse(text), NodeKind::Link), links);
+    }
+
+    void mixedExclusions()
+    {
+        const QString unit = QStringLiteral(
+            "[**alice.eth**](https://target.im/@0x00001) "
+            "`**alice.eth** @0x00001 https://code.im` "
+            "**alice.eth** @0x00001\n"
+            "> [label](https://quote.im) `alice.eth` **@0x00001 **\n\n");
+        const Node doc = parse(unit.repeated(64));
+        QCOMPARE(countNodes(doc, NodeKind::Link), 128);
+        QCOMPARE(countNodes(doc, NodeKind::WalletLink), 64);
+        QCOMPARE(countNodes(doc, NodeKind::Mention), 128);
+        QCOMPARE(countNodes(doc, NodeKind::Strong), 128);
+        QCOMPARE(countNodes(doc, NodeKind::QuoteBlock), 64);
+    }
+
+    void sourceOwnership()
+    {
+        QString text = QString::fromUtf8(
+            "\U0001F600 **bold** [label](https://target.im)\n"
+            "> `code` @0x00001\n\noutside");
+        const Node doc = parse(text);
+        const QString expected = dump(doc);
+        text.fill(QLatin1Char('x'));
+        text.clear();
+        QCOMPARE(dump(doc), expected);
     }
 
     void quoteBlock()
@@ -835,7 +955,7 @@ Document [0,9)
     {
         QFETCH(QString, text);
         QFETCH(int, expected);
-        QCOMPARE(countWalletLinks(parse(text)), expected);
+        QCOMPARE(countNodes(parse(text), NodeKind::WalletLink), expected);
     }
 };
 
