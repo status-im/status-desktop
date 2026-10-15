@@ -329,6 +329,7 @@ class TransactionRecord:
         sent_at: float,
         to_address: str | None = None,
         amount: str | None = None,
+        timestamp_skew_sec: int = _HISTORY_TIMESTAMP_SKEW_SEC,
     ) -> bool:
         if self.networkName != network_name or not _history_party_matches(self.fromAddress, from_address):
             return False
@@ -336,7 +337,7 @@ class TransactionRecord:
             return False
         if amount is not None and amount not in self.transactionValue:
             return False
-        return sent_at - _HISTORY_TIMESTAMP_SKEW_SEC <= self.timestamp <= time.time()
+        return sent_at - timestamp_skew_sec <= self.timestamp <= time.time()
 
 
 class WalletAccountView(QObject):
@@ -557,6 +558,7 @@ class WalletAccountView(QObject):
         to_address: str | None = None,
         amount: str | None = None,
         timeout_msec: int = configs.timeouts.WALLET_HISTORY_TX_TIMEOUT_MSEC,
+        timestamp_skew_sec: int = _HISTORY_TIMESTAMP_SKEW_SEC,
     ) -> TransactionRecord:
         records: typing.List[TransactionRecord] = []
         matched: TransactionRecord | None = None
@@ -567,7 +569,9 @@ class WalletAccountView(QObject):
             nonlocal records, matched, failed
             records = self.collect_history_records()
             for record in records:
-                if not record.matches(network_name, from_address, sent_at, to_address, amount):
+                if not record.matches(
+                    network_name, from_address, sent_at, to_address, amount, timestamp_skew_sec,
+                ):
                     continue
                 if record.failed:
                     failed = record
