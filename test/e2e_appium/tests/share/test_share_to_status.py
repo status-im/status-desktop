@@ -1,13 +1,28 @@
 """Content shared from another Android app reaches Status and the chats the user picks."""
 
+import time
+import uuid
+
 import pytest
 
 from pages.app import App
 from pages.messaging.chat_page import ChatPage
 from pages.messaging.group_chat_page import GroupChatPage
+from pages.onboarding.welcome_back_page import WelcomeBackPage
 from pages.share_picker_page import SharePickerPage
 from support import share_intents
+from support.screen_identity import dismiss_backup_modal
 from tests.messaging.peer_base import PeerChatBase
+
+IMAGE_CONTENT_TYPE = 7
+RUNNING_IN_BACKGROUND = 3
+PICKER_TIMEOUT = 30
+NO_PICKER_TIMEOUT = 8
+PARKED_SHARE_TIMEOUT = 90
+
+
+def _unique(prefix: str) -> str:
+    return f"{prefix}-{uuid.uuid4().hex[:8]}"
 
 
 @pytest.mark.portrait
@@ -18,8 +33,41 @@ class TestShareToStatus(PeerChatBase):
     system share sheet does; the peer is every chat's other member and confirms
     what was sent."""
 
+    @property
+    def package(self) -> str:
+        return share_intents.package_of(self.driver)
+
+    @property
+    def dm_chat_id(self) -> str:
+        return self.peer.public_key
+
     def share_page(self) -> SharePickerPage:
         return SharePickerPage(self.driver)
+
+    def open_picker_with_text(self, text: str) -> SharePickerPage:
+        share_intents.share_text(self.driver, text)
+        page = self.share_page()
+        assert page.is_open(timeout=PICKER_TIMEOUT), "The share screen did not open"
+        return page
+
+    async def tick(self, page: SharePickerPage, chat_id: str) -> None:
+        await self.await_on_phone(
+            page, chat_id,
+            probe=lambda timeout: page.wait_for_destination(chat_id, timeout=timeout),
+            describe=f"Chat {chat_id[:16]}… on the share screen",
+        )
+        page.select(chat_id)
+        assert page.wait_for_selected(chat_id, True), f"Chat {chat_id[:16]}… did not get a tick"
+
+    async def send_to(self, page: SharePickerPage, *chat_ids: str) -> float:
+        """Tick the chats, tap Send, and return when the picker has gone."""
+        for chat_id in chat_ids:
+            await self.tick(page, chat_id)
+        assert page.wait_for_send_enabled(True), "Send stayed disabled with chats ticked"
+        page.tap_send()
+        sent_at = time.monotonic()
+        assert page.wait_closed(timeout=15), "The share screen stayed open after Send"
+        return sent_at
 
     def leave_the_chat(self) -> None:
         chat_page = self.open_chat_list()
@@ -30,6 +78,29 @@ class TestShareToStatus(PeerChatBase):
         assert any(name in header for name in (self.peer.display_name, self.peer.alias)), (
             f"The open chat is {header!r}, not the 1:1 with the peer{context}"
         )
+
+    def relaunch_to_login(self) -> WelcomeBackPage:
+        welcome = WelcomeBackPage(self.driver)
+        assert welcome.app_lifecycle.terminate_app(self.package), "Status did not stop"
+        welcome.app_lifecycle.activate_app_with_ui_ready(activation_timeout=15.0)
+        assert welcome.is_welcome_back_screen_displayed(timeout=30), "No login screen after the relaunch"
+        return welcome
+
+    def log_in_to_picker(self, welcome: WelcomeBackPage) -> SharePickerPage:
+        """Log in and return the share screen that a parked share opens."""
+        assert welcome.perform_login(self.device.user.password), "Login failed"
+        page = self.share_page()
+        assert page.is_open(timeout=PARKED_SHARE_TIMEOUT), "The share screen did not open after login"
+        dismiss_backup_modal(page, timeout=10)
+        return page
+
+    def wait_for_app_state(self, state: int, timeout: int = 10) -> bool:
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            if self.driver.query_app_state(self.package) == state:
+                return True
+            time.sleep(0.5)
+        return False
 
     @pytest.mark.spec("SC-SHARE-27")
     async def test_status_link_opened_with_status_keeps_its_deep_link_meaning(self) -> None:
@@ -53,3 +124,119 @@ class TestShareToStatus(PeerChatBase):
         )
         address = self.share_page().browser_address()
         assert address and "example.com" in address, f"The address bar shows {address!r}"
+
+    @pytest.mark.spec("SC-SHARE-01")
+    async def test_text_link_image_and_captioned_image_reach_the_chat(self) -> None:
+        """Status takes text, a link, an image and a captioned image through its
+        share filters, and each arrives in the chosen chat."""
+        for payload in (_unique("share-text"), f"https://example.com/{_unique('page')}"):
+            async with self.step(f"Share {payload!r} to the peer's chat"):
+                page = self.open_picker_with_text(payload)
+                await self.send_to(page, self.dm_chat_id)
+                await self.await_on_peer(payload)
+
+        async with self.step("Share one image"):
+            known = self.peer_message_ids()
+            uri = share_intents.push_image(self.driver, _unique("share") + ".png")
+            share_intents.share_image(self.driver, uri)
+            page = self.share_page()
+            assert page.is_open(timeout=PICKER_TIMEOUT), "The share screen did not open for an image"
+            await self.send_to(page, self.dm_chat_id)
+            message = await self.await_new_message_on_peer(known)
+            assert message.get("contentType") == IMAGE_CONTENT_TYPE, f"The peer got {message!r}"
+
+        async with self.step("Share an image with a caption"):
+            caption = _unique("caption")
+            share_intents.share_image(self.driver, uri, caption=caption)
+            page = self.share_page()
+            assert page.is_open(timeout=PICKER_TIMEOUT), "The share screen did not open for a captioned image"
+            await self.send_to(page, self.dm_chat_id)
+            message = await self.await_on_peer(caption)
+            assert message.get("contentType") == IMAGE_CONTENT_TYPE, f"The caption arrived without its image: {message!r}"
+
+    @pytest.mark.spec("SC-SHARE-05")
+    async def test_share_opens_the_picker_when_open_backgrounded_and_closed(self) -> None:
+        """The share screen opens whether Status is in front, in the background or not running."""
+        async with self.step("Share while Status is open on a chat"):
+            page = self.open_picker_with_text(_unique("open"))
+            page.tap_cancel()
+            assert page.wait_closed(timeout=15), "The share screen stayed open after Cancel"
+
+        async with self.step("Share while Status is in the background"):
+            assert self.wait_for_app_state(RUNNING_IN_BACKGROUND), "Status is not in the background"
+            page = self.open_picker_with_text(_unique("background"))
+            page.tap_cancel()
+            assert page.wait_closed(timeout=15), "The share screen stayed open after Cancel"
+
+        async with self.step("Share while Status is closed"):
+            assert page.app_lifecycle.terminate_app(self.package), "Status did not stop"
+            text = _unique("closed")
+            share_intents.share_text(self.driver, text)
+            welcome = WelcomeBackPage(self.driver)
+            welcome.app_lifecycle.activate_app_with_ui_ready(activation_timeout=15.0)
+            assert welcome.is_welcome_back_screen_displayed(timeout=30), "No login screen after the cold start"
+            page = self.log_in_to_picker(welcome)
+            await self.send_to(page, self.dm_chat_id)
+            await self.await_on_peer(text)
+
+    @pytest.mark.spec("SC-SHARE-06")
+    async def test_share_before_login_waits_for_login(self) -> None:
+        """A share at the login screen opens only after login, and sends."""
+        text = _unique("prelogin")
+        welcome = self.relaunch_to_login()
+        page = self.share_page()
+
+        async with self.step("Share at the login screen"):
+            share_intents.share_text(self.driver, text)
+            assert not page.is_open(timeout=NO_PICKER_TIMEOUT), "The share screen opened before login"
+            assert welcome.is_welcome_back_screen_displayed(timeout=5), "The login screen went away"
+
+        async with self.step("Log in; the share opens and sends"):
+            page = self.log_in_to_picker(welcome)
+            await self.send_to(page, self.dm_chat_id)
+            await self.await_on_peer(text)
+
+    @pytest.mark.spec("SC-SHARE-29")
+    async def test_second_share_before_login_replaces_the_first(self) -> None:
+        """Of two shares at the login screen, only the newest opens after login."""
+        first, second = _unique("first"), _unique("second")
+        welcome = self.relaunch_to_login()
+        page = self.share_page()
+
+        async with self.step("Share twice at the login screen"):
+            share_intents.share_text(self.driver, first)
+            share_intents.share_text(self.driver, second)
+            assert not page.is_open(timeout=NO_PICKER_TIMEOUT), "The share screen opened before login"
+
+        async with self.step("Log in; the newest share is sent and no other share opens"):
+            page = self.log_in_to_picker(welcome)
+            await self.send_to(page, self.dm_chat_id)
+            await self.await_on_peer(second)
+            assert not page.is_open(timeout=NO_PICKER_TIMEOUT), "A second share screen opened"
+            assert self.peer.find_message(self.phone_key, first) is None, f"{first!r} reached the peer"
+
+    @pytest.mark.spec("SC-SHARE-04")
+    async def test_share_reopened_from_recents_does_not_open_again(self) -> None:
+        """Reopened from Recents after its process died, an app gets its task's
+        first intent again, flagged as a history launch. A share that arrives
+        that way was handled before and must not open a second time. The same
+        share without the flag opens after login (SC-SHARE-05, closed step)."""
+        replayed, fresh = _unique("replayed"), _unique("fresh")
+        page = self.share_page()
+
+        async with self.step("Start Status from a share flagged as a Recents launch"):
+            assert page.app_lifecycle.terminate_app(self.package), "Status did not stop"
+            share_intents.share_text(
+                self.driver, replayed, flags=share_intents.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY,
+            )
+            welcome = WelcomeBackPage(self.driver)
+            welcome.app_lifecycle.activate_app_with_ui_ready(activation_timeout=15.0)
+            assert welcome.is_welcome_back_screen_displayed(timeout=30), "No login screen after the relaunch"
+            assert welcome.perform_login(self.device.user.password), "Login failed"
+            dismiss_backup_modal(page, timeout=10)
+            assert not page.is_open(timeout=PARKED_SHARE_TIMEOUT), "The replayed share opened again"
+
+        async with self.step("A new share still opens and sends"):
+            page = self.open_picker_with_text(fresh)
+            await self.send_to(page, self.dm_chat_id)
+            await self.await_on_peer(fresh)
