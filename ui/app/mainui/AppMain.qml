@@ -2378,6 +2378,7 @@ Item {
                         profileStore: appMain.profileStore
                         privacyStore: appMain.privacyStore
                         featureFlagsStore: appMain.featureFlagsStore
+                        resolveMentionsFn: text => appMain.mentionResolver.resolveFor(text)
                         contactsAdaptor: contactsModelAdaptor
                         dappsServiceLoader: dAppsServiceLoader
 

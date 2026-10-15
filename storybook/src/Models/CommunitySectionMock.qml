@@ -405,7 +405,7 @@ QtObject {
                 description: isCategory ? "" : "Description of " + chatName,
                 type: isCategory ? Constants.chatType.category : Constants.chatType.communityChat,
                 lastMessageTimestamp: 0,
-                lastMessageText: "",
+                lastMessageUnparsedText: "",
                 hasUnreadMessages: false,
                 notificationsCount: 0,
                 muted: false,

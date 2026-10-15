@@ -240,10 +240,7 @@ method onMessageEdited*(self: Module, message: MessageDto) =
   if index == -1:
     return
 
-  # a bridged message keeps its text in the bridge payload, as when it was added
-  let updatedText =
-    if message.contentType == ContentType.BridgeMessage: message.bridgeMessage.content
-    else: message.text
+  let updatedText = message.unparsedText
 
   self.view.pinnedModel().updateEditedMsg(
     message.id,

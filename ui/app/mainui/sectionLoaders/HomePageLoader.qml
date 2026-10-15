@@ -24,6 +24,10 @@ StatusSectionLoader {
     required property ProfileStores.PrivacyStore privacyStore
 
     required property ContactsModelAdaptor contactsAdaptor
+
+    // Names the users mentioned in the chats' last messages, from the app-wide
+    // MentionResolver (see AppMain).
+    required property var resolveMentionsFn
     required property Loader dappsServiceLoader
 
     required property bool browserEnabled
@@ -60,6 +64,8 @@ StatusSectionLoader {
             searchPhrase: root.item ? root.item.searchPhrase : ""
 
             profileId: root.userUID
+
+            resolveMentionsFn: root.resolveMentionsFn
 
             // no automatic propagation to QtObject, needs to be specified explicitely
             Theme.style: root.Theme.style
