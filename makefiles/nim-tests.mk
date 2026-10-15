@@ -82,7 +82,13 @@ else
 endif
 nim-test-run/%: NIM_PARAMS += --nimcache:$(NIMCACHE_BASE)-$(call nim_test_cache,$@)
 
-nim-test-run/%: | qt-pkgconfig $(STATUSGO) $(QRCODEGEN)
+# Windows links the sds/status import libraries by explicit path
+# (NIM_EXTRA_PARAMS); status-go's build can delete an earlier sds.lib, so wait
+# for the import libraries like the client does.
+ifeq ($(mkspecs),win32)
+ NIM_TEST_ORDER_DEPS := $(WIN_IMPORT_LIBS)
+endif
+nim-test-run/%: | qt-pkgconfig $(STATUSGO) $(QRCODEGEN) $(NIM_TEST_ORDER_DEPS)
 	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(NIMSDS_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARD_QT_LIBDIR)":"$(EXTRA_LIBS_PATH)":"$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
 	nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) --mm:orc --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"$(QRCODEGEN)" -r $(subst nim-test-run/,,$@)
 
