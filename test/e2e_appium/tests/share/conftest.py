@@ -1,6 +1,10 @@
 """The share tests pair one phone with the messaging suite's headless peer."""
 
+import asyncio
+import uuid
+
 import pytest
+import pytest_asyncio
 
 from pages.onboarding.welcome_back_page import WelcomeBackPage
 from pages.share_picker_page import SharePickerPage
@@ -38,3 +42,14 @@ def peer_chat_ready(request, peer_chat) -> PeerChatContext:  # noqa: F811
     _prepare_peer_chat(getattr(request, "instance", None), peer_chat)
     return peer_chat
 
+
+@pytest_asyncio.fixture(scope="module")
+async def share_groups(peer_chat) -> list[tuple[str, str]]:  # noqa: F811
+    """Five group chats the peer opened with the phone in them. With the 1:1
+    that is six destinations, one more than Send allows."""
+    groups = []
+    for index in range(5):
+        name = f"share-group-{index + 1}-{uuid.uuid4().hex[:6]}"
+        chat_id = await asyncio.to_thread(peer_chat.peer.create_group_with, peer_chat.phone_key, name)
+        groups.append((chat_id, name))
+    return groups

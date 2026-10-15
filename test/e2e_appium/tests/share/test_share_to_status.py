@@ -1,5 +1,7 @@
 """Content shared from another Android app reaches Status and the chats the user picks."""
 
+import asyncio
+import math
 import time
 import uuid
 
@@ -19,6 +21,8 @@ RUNNING_IN_BACKGROUND = 3
 PICKER_TIMEOUT = 30
 NO_PICKER_TIMEOUT = 8
 PARKED_SHARE_TIMEOUT = 90
+ECHO_TIMEOUT = 15
+HOME_KEY = 3
 
 
 def _unique(prefix: str) -> str:
@@ -93,6 +97,16 @@ class TestShareToStatus(PeerChatBase):
         assert page.is_open(timeout=PARKED_SHARE_TIMEOUT), "The share screen did not open after login"
         dismiss_backup_modal(page, timeout=10)
         return page
+
+    def on_peer(self, chat_id: str) -> str:
+        """The peer keys the 1:1 by the phone's key; a group has one id on both sides."""
+        return self.phone_key if chat_id == self.dm_chat_id else chat_id
+
+    async def await_in_chats(self, chat_ids: list[str], text: str) -> None:
+        await asyncio.gather(*(
+            self.peer.await_message_in(self.on_peer(chat_id), text, timeout=self.CROSS_DEVICE_TIMEOUT)
+            for chat_id in chat_ids
+        ))
 
     def wait_for_app_state(self, state: int, timeout: int = 10) -> bool:
         deadline = time.monotonic() + timeout
@@ -240,3 +254,86 @@ class TestShareToStatus(PeerChatBase):
             page = self.open_picker_with_text(fresh)
             await self.send_to(page, self.dm_chat_id)
             await self.await_on_peer(fresh)
+
+    @pytest.mark.spec("SC-SHARE-18")
+    async def test_send_reaches_one_chat_and_five_chats(self, share_groups) -> None:
+        """One Send delivers the share to every ticked chat, one or five."""
+        async with self.step("Send to one chat"):
+            text = _unique("to-one")
+            page = self.open_picker_with_text(text)
+            await self.send_to(page, self.dm_chat_id)
+            await self.await_on_peer(text)
+
+        async with self.step("Send to five chats"):
+            text = _unique("to-five")
+            targets = [self.dm_chat_id] + [chat_id for chat_id, _ in share_groups[:4]]
+            page = self.open_picker_with_text(text)
+            await self.send_to(page, *targets)
+            await self.await_in_chats(targets, text)
+
+    @pytest.mark.spec("SC-SHARE-19")
+    async def test_sent_text_shows_in_the_chat_soon_after_send(self) -> None:
+        """After Send the text is on screen in the open chat within ECHO_TIMEOUT,
+        counted from the tap. The count includes Appium's own lookups, and the
+        tree does not show a message's sending state, so this bounds the time
+        rather than proving the text was shown before the network confirmed it."""
+        text = _unique("echo")
+        page = self.open_picker_with_text(text)
+        sent_at = await self.send_to(page, self.dm_chat_id)
+
+        async with self.step(f"The text is on screen within {ECHO_TIMEOUT}s of Send"):
+            remaining = max(1, math.ceil(ECHO_TIMEOUT - (time.monotonic() - sent_at)))
+            assert ChatPage(self.driver).message_visible(text, timeout=remaining), (
+                f"{text!r} was not on screen in the chat {ECHO_TIMEOUT}s after Send"
+            )
+            shown_after = time.monotonic() - sent_at
+            assert shown_after <= ECHO_TIMEOUT, f"{text!r} took {shown_after:.1f}s to show after Send"
+
+        async with self.step("The peer gets it"):
+            await self.await_on_peer(text)
+            self.logger.info("Shared text shown %.1fs after Send", shown_after)
+
+    @pytest.mark.spec("SC-SHARE-26")
+    @pytest.mark.xfail(
+        reason="#22838: in portrait, Send selects the landing chat but leaves the chat list in front",
+        strict=False,
+    )
+    async def test_send_lands_in_the_highest_selected_chat(self, share_groups) -> None:
+        """Chats rank by the user's own latest send, so a fresh message in the
+        1:1 puts it above every group; ticking a group first must not matter."""
+        async with self.step("Put the 1:1 at the top of the list, then leave it"):
+            await self.send_from_phone(_unique("rank"))
+            self.leave_the_chat()
+
+        text = _unique("landing")
+        group_id, group_name = share_groups[0]
+        async with self.step("Tick a group, then the 1:1, and send"):
+            page = self.open_picker_with_text(text)
+            await self.send_to(page, group_id, self.dm_chat_id)
+
+        async with self.step("The open chat is the 1:1"):
+            assert ChatPage(self.driver).wait_for_message_input(timeout=15), "Send opened no chat"
+            self.assert_open_chat_is_the_1to1(f" (the group is {group_name!r})")
+            await self.await_in_chats([group_id, self.dm_chat_id], text)
+
+    @pytest.mark.spec("SC-SHARE-25")
+    async def test_cancel_sends_nothing_and_leaves_the_sharing_app_in_front(self) -> None:
+        """Cancel closes the share screen, returns to the app that shared, and sends nothing."""
+        text = _unique("cancelled")
+        self.driver.press_keycode(HOME_KEY)
+        in_front = self.driver.current_package
+        page = self.open_picker_with_text(text)
+        await self.tick(page, self.dm_chat_id)
+
+        async with self.step("Cancel"):
+            page.tap_cancel()
+            assert page.wait_closed(timeout=15), "The share screen stayed open after Cancel"
+            assert self.wait_for_app_state(RUNNING_IN_BACKGROUND), "Status stayed in front after Cancel"
+            assert self.driver.current_package == in_front, (
+                f"{self.driver.current_package} is in front, not {in_front}, which was before the share"
+            )
+
+        async with self.step("A later message arrives and the cancelled text never does"):
+            self.driver.activate_app(self.package)
+            await self.send_from_phone(_unique("after-cancel"))
+            assert self.peer.find_message(self.phone_key, text) is None, f"{text!r} reached the peer"
