@@ -8,6 +8,7 @@ from gui.objects_map import settings_names
 from gui.screens.settings_advanced import AdvancedSettingsView
 from gui.screens.settings_communities import CommunitiesSettingsView
 from gui.screens.settings_ens_usernames import ENSSettingsView
+from gui.screens.settings_language import LanguageSettingsView
 from gui.screens.settings_messaging import MessagingSettingsView
 from gui.screens.settings_profile import ProfileSettingsView
 from gui.screens.settings_syncing import SyncingSettingsView
@@ -86,6 +87,11 @@ class SettingsLeftPanel(QObject):
     @retry_settings(KeycardSettingsView, '14-MenuItem')
     def open_keycard_settings(self) -> 'KeycardSettingsView':
         return KeycardSettingsView().wait_until_appears()
+
+    @allure.step('Open language settings')
+    @retry_settings(LanguageSettingsView, '7-MenuItem')
+    def open_language_settings(self) -> 'LanguageSettingsView':
+        return LanguageSettingsView().wait_until_appears()
 
 
 class SettingsScreen(QObject):

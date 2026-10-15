@@ -9,6 +9,7 @@ from gui.main_window import MainWindow
 from helpers.chat_helper import skip_message_backup_popup_if_visible
 
 @pytest.mark.settings_messaging
+@pytest.mark.settings_all
 def test_messaging_settings_rejecting_request(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()

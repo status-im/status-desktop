@@ -1,7 +1,7 @@
 import allure
 
 from gui.elements.object import QObject
-from gui.objects_map import names, onboarding_names
+from gui.objects_map import onboarding_names
 
 
 class LanguageSelector(QObject):
