@@ -14,7 +14,7 @@ def isPRBuild = utils.isPRBuild()
 
 pipeline {
   agent {
-    label "${getAgentLabels().join(' && ')} && qt-${QT_VERSION} && go-1.26 && xcode-26.4"
+    label "macos-vm"
   }
 
   parameters {
