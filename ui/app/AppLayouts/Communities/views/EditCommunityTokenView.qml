@@ -120,6 +120,7 @@ StatusScrollView {
 
         DropAndEditImagePanel {
             id: dropAreaItem
+            objectName: "editCommunityTokenArtworkPanel"
 
             Layout.fillWidth: true
             Layout.maximumWidth: root.preferredContentWidth
@@ -143,6 +144,7 @@ StatusScrollView {
 
         CustomStatusInput {
             id: nameInput
+            objectName: "editCommunityTokenNameInput"
 
             Layout.fillWidth: true
             Layout.maximumWidth: root.preferredContentWidth
@@ -176,6 +178,7 @@ StatusScrollView {
 
         CustomStatusInput {
             id: descriptionInput
+            objectName: "editCommunityTokenDescriptionInput"
 
             Layout.fillWidth: true
             Layout.maximumWidth: root.preferredContentWidth
@@ -201,7 +204,7 @@ StatusScrollView {
 
         CustomStatusInput {
             id: symbolInput
-
+            objectName: "editCommunityTokenSymbolInput"
 
             Layout.fillWidth: true
             Layout.maximumWidth: root.preferredContentWidth
@@ -311,6 +314,7 @@ StatusScrollView {
 
         CustomSwitchRowComponent {
             id: unlimitedSupplyChecker
+            switchObjectName: "editCommunityTokenUnlimitedSupplySwitch"
 
             enabled: !showFees.checked
             label: qsTr("Unlimited supply")
@@ -326,6 +330,7 @@ StatusScrollView {
 
         CustomStatusInput {
             id: supplyInput
+            objectName: "editCommunityTokenSupplyInput"
 
             Layout.maximumWidth: root.preferredContentWidth
             Layout.rightMargin: root.internalRightPadding
@@ -356,6 +361,7 @@ StatusScrollView {
 
         CustomSwitchRowComponent {
             id: transferableChecker
+            switchObjectName: "editCommunityTokenTransferableSwitch"
 
             visible: !root.isAssetView
             enabled: !showFees.checked
@@ -368,6 +374,7 @@ StatusScrollView {
 
         CustomSwitchRowComponent {
             id: remotelyDestructChecker
+            switchObjectName: "editCommunityTokenRemotelyDestructSwitch"
 
             visible: !root.isAssetView
             enabled: !showFees.checked
@@ -379,6 +386,7 @@ StatusScrollView {
 
         CustomSwitchRowComponent {
             id: showFees
+            switchObjectName: "editCommunityTokenShowFeesSwitch"
             enabled: d.formFilled
             label: qsTr("Show fees")
             description: qsTr("Fees will be enabled once the form is filled")
@@ -432,6 +440,7 @@ StatusScrollView {
 
         StatusButton {
             id: previewButton
+            objectName: "editCommunityTokenPreviewButton"
 
             Layout.preferredHeight: 44
             Layout.fillWidth: true
@@ -509,6 +518,7 @@ StatusScrollView {
         property string label
         property string description
         property alias checked: switch_.checked
+        property alias switchObjectName: switch_.objectName
 
         Layout.fillWidth: true
         Layout.maximumWidth: root.preferredContentWidth
