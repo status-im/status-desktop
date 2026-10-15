@@ -73,6 +73,12 @@ class TestShareToStatus(PeerChatBase):
         assert page.wait_closed(timeout=15), "The share screen stayed open after Send"
         return sent_at
 
+    def leave_picker(self, page: SharePickerPage) -> None:
+        """Cancel puts Status behind the sharing app; bring it back for the next step."""
+        page.tap_cancel()
+        assert page.wait_closed(timeout=15), "The share screen stayed open after Cancel"
+        self.driver.activate_app(self.package)
+
     def leave_the_chat(self) -> None:
         chat_page = self.open_chat_list()
         assert not chat_page.wait_for_message_input(timeout=3), "A chat is still open"
@@ -337,3 +343,44 @@ class TestShareToStatus(PeerChatBase):
             self.driver.activate_app(self.package)
             await self.send_from_phone(_unique("after-cancel"))
             assert self.peer.find_message(self.phone_key, text) is None, f"{text!r} reached the peer"
+
+    @pytest.mark.spec("SC-SHARE-10")
+    async def test_a_sixth_chat_cannot_be_selected(self, share_groups) -> None:
+        """With five chats ticked the sixth takes no tick until one is cleared."""
+        chats = [self.dm_chat_id] + [chat_id for chat_id, _ in share_groups]
+        page = self.open_picker_with_text(_unique("six"))
+
+        async with self.step("Tick five chats"):
+            for chat_id in chats[:5]:
+                await self.tick(page, chat_id)
+
+        sixth = chats[5]
+        async with self.step("The sixth cannot be ticked"):
+            assert page.wait_for_destination(sixth, timeout=self.CROSS_DEVICE_TIMEOUT), "The sixth chat is not listed"
+            assert page.wait_for_selectable(sixth, False), "The sixth row still accepts a tick"
+            page.select(sixth)
+            assert not page.wait_for_selected(sixth, True, timeout=3), "A sixth chat got a tick"
+            assert page.is_selected(sixth) is False, "The sixth row is gone after the tap"
+
+        async with self.step("Untick one and the sixth becomes available"):
+            page.select(chats[4])
+            assert page.wait_for_selected(chats[4], False), "The fifth tick did not clear"
+            assert page.wait_for_selectable(sixth, True), "The sixth row stayed disabled"
+            self.leave_picker(page)
+
+    @pytest.mark.spec("SC-SHARE-23")
+    async def test_send_stays_disabled_until_a_chat_is_selected(self) -> None:
+        """Send is disabled with no chat ticked, enabled with one, disabled again when cleared."""
+        page = self.open_picker_with_text(_unique("gate"))
+
+        async with self.step("Nothing ticked: Send is disabled"):
+            assert page.wait_for_destination(self.dm_chat_id, timeout=self.UI_TIMEOUT)
+            assert page.wait_for_send_enabled(False, timeout=5), "Send is enabled with nothing ticked"
+
+        async with self.step("Tick: Send is enabled; untick: disabled again"):
+            await self.tick(page, self.dm_chat_id)
+            assert page.wait_for_send_enabled(True), "Send stayed disabled after a tick"
+            page.select(self.dm_chat_id)
+            assert page.wait_for_selected(self.dm_chat_id, False), "The tick did not clear"
+            assert page.wait_for_send_enabled(False), "Send stayed enabled with nothing ticked"
+            self.leave_picker(page)
