@@ -13,6 +13,7 @@ from gui.main_window import MainWindow
 
 @pytest.mark.parametrize('bio, links', [pytest.param('This is my bio', constants.social_links)])
 @pytest.mark.smoke
+@pytest.mark.settings_all
 # TODO: add clicking Preview button and check data there
 def test_set_name_bio_social_links(main_screen: MainWindow, aut: AUT, user_account, bio, links):
     with step('Open profile settings and check name, bio and links'):

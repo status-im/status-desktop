@@ -14,6 +14,7 @@ from helpers.multiple_instances_helper import authorize_user_in_aut, get_chat_ke
 
 @pytest.mark.smoke
 @pytest.mark.settings_messaging
+@pytest.mark.settings_all
 # TODO: add step when blocked user sends a message
 def test_block_and_unblock_user_from_settings_and_profile(multiple_instances):
     user_one: UserAccount = RandomUser()

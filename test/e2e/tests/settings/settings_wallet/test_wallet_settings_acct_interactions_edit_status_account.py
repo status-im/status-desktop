@@ -14,6 +14,7 @@ from gui.screens.settings_wallet import AccountDetailsView
     pytest.param(''.join(random.choices(string.ascii_letters +
                                         string.digits, k=20)))
 ])
+@pytest.mark.settings_all
 def test_settings_edit_status_account(main_screen: MainWindow, new_name):
 
     with step('Open profile and wallet setting and check the keypairs list is not empty'):

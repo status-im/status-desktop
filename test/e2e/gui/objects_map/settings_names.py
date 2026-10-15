@@ -170,3 +170,8 @@ rpcStatisticsButton = {"container": settingsContentBase_ScrollView, "id": "rpcSt
 enableCreateCommunityButton_StatusSettingsLineButton = {"container": settingsContentBase_ScrollView, "objectName": "enableCreateCommunityButton", "type": "StatusSettingsLineButton", "visible": True}
 settingsContentBaseScrollViewLightWakuModeBloomSelectorButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "objectName": "lightWakuModeButton", "type": "BloomSelectorButton", "visible": True}
 settingsContentBaseScrollViewRelayWakuModeBloomSelectorButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "objectName": "relayWakuModeButton", "type": "BloomSelectorButton", "visible": True}
+
+# Language view
+languageView = {"container": statusDesktop_mainWindow, "objectName": "languageView", "type": "LanguageView", "visible": True}
+languageViewLanguageSelector = {"container": statusDesktop_mainWindow, "objectName": "languageViewLanguageSelector", "type": "StatusLanguageSelector", "visible": True}
+languageViewLanguageChangeConfirmButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "languageViewLanguageChangeConfirmButton", "type": "StatusButton", "visible": True}
