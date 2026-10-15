@@ -14,6 +14,7 @@
 #include "storybook_nim.h"
 #endif
 
+#include "fakevideosource.h"
 #include "inputmethodtester.h"
 #include "objectcounter.h"
 #include "textdocumenttester.h"
@@ -63,6 +64,7 @@ public slots:
 
         // Test-only helper for driving the IME/input-method path from QML tests.
         qmlRegisterType<InputMethodTester>("Storybook.Testing", 1, 0, "InputMethodTester");
+        qmlRegisterType<FakeVideoSource>("Storybook.Testing", 1, 0, "FakeVideoSource");
         qmlRegisterType<ObjectCounter>("Storybook.Testing", 1, 0, "ObjectCounter");
         qmlRegisterType<TextDocumentTester>("Storybook.Testing", 1, 0, "TextDocumentTester");
 
