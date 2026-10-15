@@ -3,6 +3,8 @@
 #include <QHash>
 #include <QVariantMap>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace {
 
 using Markdown::Node;
@@ -10,27 +12,27 @@ using Markdown::NodeKind;
 
 // Prefix applied to a WalletLink's raw destination (address / ENS name) so that activating the
 // rendered <a> invokes the "send via personal chat" flow (see MessageView.onLinkActivated).
-const QString kSendViaChatPrefix = QStringLiteral("//send-via-personal-chat//");
+constexpr auto kSendViaChatPrefix = "//send-via-personal-chat//"_L1;
 
-QString escape(const QString& s)
+QString escape(QStringView s)
 {
     QString out;
     out.reserve(s.size());
     for (const QChar c : s) {
-        if (c == QLatin1Char('&'))      out += QStringLiteral("&amp;");
-        else if (c == QLatin1Char('<')) out += QStringLiteral("&lt;");
-        else if (c == QLatin1Char('>')) out += QStringLiteral("&gt;");
-        else if (c == QLatin1Char('"')) out += QStringLiteral("&quot;");
+        if (c == QLatin1Char('&'))      out += "&amp;"_L1;
+        else if (c == QLatin1Char('<')) out += "&lt;"_L1;
+        else if (c == QLatin1Char('>')) out += "&gt;"_L1;
+        else if (c == QLatin1Char('"')) out += "&quot;"_L1;
         else                            out += c;
     }
     return out;
 }
 
 // Inline text: escape and turn newlines into <br/> (used outside code).
-QString escapeInline(const QString& s)
+QString escapeInline(QStringView s)
 {
     QString out = escape(s);
-    out.replace(QLatin1Char('\n'), QStringLiteral("<br/>"));
+    out.replace(QLatin1Char('\n'), "<br/>"_L1);
     return out;
 }
 
@@ -68,7 +70,7 @@ QString emojiImagesHtml(const QString& run, int emojiPx, const QString& emojiBas
 // <img>. Safe on escaped text: entities and <br/> are ASCII, never in the emoji ranges.
 QString emojiWrap(const QString& s, int emojiPx, const QString& emojiBaseUrl)
 {
-    if (emojiPx <= 0)
+    if (emojiPx <= 0 || !Markdown::clusterHasEmoji(s))
         return s;
 
     QString out;
@@ -125,7 +127,7 @@ QString renderChildren(const Node& node,
                        const QHash<int, QPair<QString, QString>>& mentions, int emojiPx, const QString& emojiBaseUrl);
 
 // Inline code markup; `content` is already escaped.
-QString codeSpanHtml(const QString& content)
+QString codeSpanHtml(QStringView content)
 {
     return QStringLiteral("<code>%1</code>").arg(content);
 }
@@ -169,7 +171,7 @@ QString renderNode(const Node& node,
 
     case NodeKind::Mention: {
         const auto it = mentions.constFind(static_cast<int>(node.start));
-        const QString name = it != mentions.cend() ? it->first  : QStringLiteral("@mention");
+        const QString name = it != mentions.cend() ? it->first  : "@mention"_L1;
         const QString href = it != mentions.cend() ? it->second : QString();
         // Background is applied by the consumer via an `a.mention { … }` CSS rule.
         return QStringLiteral("<a href=\"%1\" class=\"mention\">%2</a>")
@@ -250,7 +252,7 @@ QString renderSingleLine(const Node& node,
 
     case NodeKind::Mention: {
         const auto it = mentions.constFind(static_cast<int>(node.start));
-        const QString name = it != mentions.cend() ? it->first  : QStringLiteral("@mention");
+        const QString name = it != mentions.cend() ? it->first  : "@mention"_L1;
         const QString href = it != mentions.cend() ? it->second : QString();
         return QStringLiteral("<a href=\"%1\" class=\"mention\">%2</a>")
                 .arg(escape(href), escape(name));
@@ -312,7 +314,7 @@ QString renderPlain(const Node& node, const QHash<int, QPair<QString, QString>>&
 
     case NodeKind::Mention: {
         const auto it = mentions.constFind(static_cast<int>(node.start));
-        return it != mentions.cend() ? it->first : QStringLiteral("@mention");
+        return it != mentions.cend() ? it->first : "@mention"_L1;
     }
 
     case NodeKind::Strong:
@@ -332,7 +334,7 @@ QString renderPlain(const Node& node, const QHash<int, QPair<QString, QString>>&
 // own content keep the formatting they were wrapped in.
 enum EmphasisBits { kBold = 1 << 0, kItalic = 1 << 1, kStrike = 1 << 2 };
 
-unsigned emphasisBitFor(NodeKind kind)
+constexpr unsigned int emphasisBitFor(NodeKind kind)
 {
     switch (kind) {
     case NodeKind::Strong:        return kBold;
@@ -393,8 +395,7 @@ void flushTextBlock(BlockAcc& a)
 {
     if (a.lines.isEmpty())
         return;
-    a.blocks.append(QVariantMap{{QStringLiteral("type"), QStringLiteral("text")},
-                                {QStringLiteral("html"), a.lines.join(QStringLiteral("<br/>"))}});
+    a.blocks.append(QVariantMap{{"type"_L1, "text"_L1}, {"html"_L1, a.lines.join("<br/>"_L1)}});
     a.lines.clear();
 }
 
@@ -443,16 +444,16 @@ void walk(const QVector<Node>& nodes, unsigned emph, BlockAcc& a,
             QString code = collectRawText(c);
             while (code.startsWith(QLatin1Char('\n'))) code.remove(0, 1);
             while (code.endsWith(QLatin1Char('\n')))   code.chop(1);
-            QVariantMap codeBlock{{QStringLiteral("type"), QStringLiteral("code")},
-                                  {QStringLiteral("code"), code},
-                                  {QStringLiteral("bold"), bool(emph & kBold)},
-                                  {QStringLiteral("italic"), bool(emph & kItalic)},
-                                  {QStringLiteral("strikethrough"), bool(emph & kStrike)}};
+            QVariantMap codeBlock{{"type"_L1, "code"_L1},
+                                  {"code"_L1, code},
+                                  {"bold"_L1, bool(emph & kBold)},
+                                  {"italic"_L1, bool(emph & kItalic)},
+                                  {"strikethrough"_L1, bool(emph & kStrike)}};
             // In image-emoji mode, a block that actually contains an emoji also carries an HTML
             // variant (Twemoji <img> in a <pre> that keeps the monospace + whitespace) so the view
             // can render it as rich text. Plain code blocks omit it and stay PlainText, unchanged.
             if (!emojiBaseUrl.isEmpty() && Markdown::clusterHasEmoji(code)) {
-                codeBlock[QStringLiteral("codeHtml")] =
+                codeBlock["codeHtml"_L1] =
                     QStringLiteral("<pre>%1</pre>").arg(wrapCodeEmojis(escape(code), emojiPx, emojiBaseUrl));
             }
             a.blocks.append(codeBlock);
@@ -470,8 +471,8 @@ void walk(const QVector<Node>& nodes, unsigned emph, BlockAcc& a,
             if (inner.curStarted)
                 finalizeLine(inner);
             flushTextBlock(inner);
-            a.blocks.append(QVariantMap{{QStringLiteral("type"), QStringLiteral("quote")},
-                                        {QStringLiteral("blocks"), inner.blocks}});
+            a.blocks.append(QVariantMap{{"type"_L1, "quote"_L1},
+                                        {"blocks"_L1, inner.blocks}});
             a.cur.clear();
             a.curStarted = false;
             a.afterCode = false;

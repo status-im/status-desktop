@@ -16,15 +16,15 @@ class MentionTextObject : public QObject, public QTextObjectInterface
     Q_INTERFACES(QTextObjectInterface)
 
 public:
-    static const int MentionType      = QTextFormat::UserObject   + 1;
-    static const int NameProperty     = QTextFormat::UserProperty + 1;
-    static const int PubKeyProperty   = QTextFormat::UserProperty + 2;
+    static constexpr int MentionType      = QTextFormat::UserObject   + 1;
+    static constexpr int NameProperty     = QTextFormat::UserProperty + 1;
+    static constexpr int PubKeyProperty   = QTextFormat::UserProperty + 2;
 
     // Monotonically increasing id assigned to every mention at insert time. Qt
     // merges adjacent QTextFragments that share an identical QTextCharFormat; a
     // unique id keeps consecutive mentions in separate fragments so glyph-level
     // hit-testing / selection stays correct.
-    static const int UniqueIdProperty = QTextFormat::UserProperty + 3;
+    static constexpr int UniqueIdProperty = QTextFormat::UserProperty + 3;
 
     explicit MentionTextObject(QObject* parent = nullptr);
 

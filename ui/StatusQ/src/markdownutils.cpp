@@ -6,6 +6,8 @@
 
 #include <QFontMetricsF>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace {
 
 // Collects textual Mention nodes (pub key in `destination`) into a position → {displayName, href}
@@ -18,8 +20,8 @@ void collectTextMentions(const Markdown::Node& node, const QVariantMap& names,
         const QString pubKey = node.destination;
         QString name = names.value(pubKey).toString();
         if (name.isEmpty())
-            name = pubKey == QStringLiteral("0x00001") ? QStringLiteral("everyone") : pubKey;
-        out.insert(static_cast<int>(node.start), {QStringLiteral("@") + name, pubKey});
+            name = pubKey == "0x00001"_L1 ? "everyone"_L1 : pubKey;
+        out.insert(static_cast<int>(node.start), {"@"_L1 + name, pubKey});
     }
     for (const Markdown::Node& c : node.children)
         collectTextMentions(c, names, out);

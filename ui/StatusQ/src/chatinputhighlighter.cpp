@@ -21,6 +21,8 @@
 
 #include <algorithm>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace {
 
 // Final render bits stamped per character and consumed by buildFormat().
@@ -37,7 +39,7 @@ constexpr unsigned int kQuote         = 1u << 7; // block-quote line: default te
 constexpr unsigned int kEmphasisMask  = kBold | kItalic | kStrikeThrough;
 
 // Clipboard MIME carrying the internal, mention-preserving representation of a selection.
-constexpr char kChatInputMimeType[] = "application/x-status-chat-input";
+constexpr auto kChatInputMimeType = "application/x-status-chat-input"_L1;
 
 using Markdown::Node;
 using Markdown::NodeKind;
@@ -68,7 +70,7 @@ bool isEmojiImage(const QTextCharFormat& fmt)
 }
 
 // Reads the code point at `i` (advancing `units` over a surrogate pair).
-char32_t codePointAt(const QString& s, qsizetype i, qsizetype& units)
+constexpr char32_t codePointAt(QStringView s, qsizetype i, qsizetype& units)
 {
     const QChar c = s[i];
     if (c.isHighSurrogate() && i + 1 < s.size() && s[i + 1].isLowSurrogate()) {
@@ -84,7 +86,7 @@ char32_t codePointAt(const QString& s, qsizetype i, qsizetype& units)
 
 // True if the block text at [i, ...) starts an emoji code point (never matches the U+FFFC of an
 // existing image/mention object, so conversion is idempotent).
-bool startsEmoji(const QString& s, qsizetype i, qsizetype& units)
+constexpr bool startsEmoji(QStringView s, qsizetype i, qsizetype& units)
 {
     return Markdown::isEmojiCodePoint(codePointAt(s, i, units));
 }
@@ -117,7 +119,7 @@ void collectMentionSpans(const Node& n, QVector<TextMentionSpan>& out)
 
 // Content range of a container node = the span between its opener/closer
 // delimiter children (or the full node range when a delimiter is absent).
-QPair<qsizetype, qsizetype> contentRange(const Node& node)
+constexpr QPair<qsizetype, qsizetype> contentRange(const Node& node)
 {
     qsizetype s = node.start;
     qsizetype e = node.end;
@@ -130,7 +132,7 @@ QPair<qsizetype, qsizetype> contentRange(const Node& node)
 
 // ── AST → per-character render bits ─────────────────────────────────────────────
 
-void stamp(QVector<unsigned int>& flags, qsizetype s, qsizetype e, unsigned int bits)
+constexpr void stamp(QVector<unsigned int>& flags, qsizetype s, qsizetype e, unsigned int bits)
 {
     const qsizetype lo = qMax(qsizetype(0), s);
     const qsizetype hi = qMin(qsizetype(flags.size()), e);
@@ -290,11 +292,11 @@ void collectFormats(const Node& node, QVariantList& out)
             || node.kind == NodeKind::Strikethrough) {
         const auto cr = contentRange(node);
         QVariantMap m;
-        m[QStringLiteral("start")]         = cr.first;
-        m[QStringLiteral("end")]           = cr.second;
-        m[QStringLiteral("bold")]          = node.kind == NodeKind::Strong;
-        m[QStringLiteral("italic")]        = node.kind == NodeKind::Emphasis;
-        m[QStringLiteral("strikethrough")] = node.kind == NodeKind::Strikethrough;
+        m["start"_L1]         = cr.first;
+        m["end"_L1]           = cr.second;
+        m["bold"_L1]          = node.kind == NodeKind::Strong;
+        m["italic"_L1]        = node.kind == NodeKind::Emphasis;
+        m["strikethrough"_L1] = node.kind == NodeKind::Strikethrough;
         out.append(m);
     }
     for (const Node& c : node.children)
@@ -312,8 +314,8 @@ void collectDelimiters(const Node& node, QVariantList& out)
             if (c.kind != NodeKind::Delimiter)
                 continue;
             QVariantMap m;
-            m[QStringLiteral("start")] = c.start;
-            m[QStringLiteral("end")]   = c.end;
+            m["start"_L1] = c.start;
+            m["end"_L1]   = c.end;
             out.append(m);
         }
     }
@@ -326,8 +328,8 @@ void collectCodeSpans(const Node& node, QVariantList& out)
     if (node.kind == NodeKind::CodeSpan || node.kind == NodeKind::CodeBlock) {
         const auto cr = contentRange(node);
         QVariantMap m;
-        m[QStringLiteral("start")] = cr.first;
-        m[QStringLiteral("end")]   = cr.second;
+        m["start"_L1] = cr.first;
+        m["end"_L1]   = cr.second;
         out.append(m);
     }
     for (const Node& c : node.children)
@@ -353,9 +355,9 @@ void collectLinkInfo(const Node& node, QVariantList& out)
 {
     if (node.kind == NodeKind::Link) {
         QVariantMap m;
-        m[QStringLiteral("text")]   = node.destination;
-        m[QStringLiteral("start")]  = node.start;
-        m[QStringLiteral("length")] = node.end - node.start;
+        m["text"_L1]   = node.destination;
+        m["start"_L1]  = node.start;
+        m["length"_L1] = node.end - node.start;
         out.append(m);
     }
     for (const Node& c : node.children)
@@ -366,8 +368,8 @@ void collectQuoteBlocks(const Node& node, QVariantList& out)
 {
     if (node.kind == NodeKind::QuoteBlock) {
         QVariantMap m;
-        m[QStringLiteral("start")] = node.start;
-        m[QStringLiteral("end")]   = node.end;
+        m["start"_L1] = node.start;
+        m["end"_L1]   = node.end;
         out.append(m);
     }
     for (const Node& c : node.children)
@@ -383,7 +385,7 @@ void collectQuoteBlocks(const Node& node, QVariantList& out)
 // end-of-content caret coincides with node.end. Otherwise the caret at the end of such a line
 // (e.g. end of input for "> quote") would wrongly fall outside the quote. When node.end sits right
 // after a '\n' (a following line, or the empty line after a trailing newline) it stays exclusive.
-bool nodeContainsCaret(const Node& node, qsizetype pos, const QString& text)
+constexpr bool nodeContainsCaret(const Node& node, qsizetype pos, QStringView text)
 {
     if (pos <= node.start || pos > node.end)
         return false;
@@ -403,12 +405,12 @@ void collectNodesAt(const Node& node, qsizetype pos, const QString& text, QVaria
 {
     if (nodeContainsCaret(node, pos, text)) {
         switch (node.kind) {
-        case NodeKind::Strong:        out[QStringLiteral("bold")]          = true; break;
-        case NodeKind::Emphasis:      out[QStringLiteral("italic")]        = true; break;
-        case NodeKind::Strikethrough: out[QStringLiteral("strikethrough")] = true; break;
-        case NodeKind::QuoteBlock:    out[QStringLiteral("quote")]         = true; break;
-        case NodeKind::CodeSpan:      out[QStringLiteral("codeSpan")]      = true; break;
-        case NodeKind::CodeBlock:     out[QStringLiteral("codeBlock")]     = true; break;
+        case NodeKind::Strong:        out["bold"_L1]          = true; break;
+        case NodeKind::Emphasis:      out["italic"_L1]        = true; break;
+        case NodeKind::Strikethrough: out["strikethrough"_L1] = true; break;
+        case NodeKind::QuoteBlock:    out["quote"_L1]         = true; break;
+        case NodeKind::CodeSpan:      out["codeSpan"_L1]      = true; break;
+        case NodeKind::CodeBlock:     out["codeBlock"_L1]     = true; break;
         default: break;
         }
     }
@@ -454,15 +456,15 @@ void collectQuotePrefixes(const Node& node, QVector<QPair<qsizetype, qsizetype>>
         collectQuotePrefixes(c, out);
 }
 
-bool isDelimiterChar(QChar c)
+constexpr bool isDelimiterChar(QChar c)
 {
-    return c == u'*' || c == u'~' || c == u'`';
+    return c == '*'_L1 || c == '~'_L1 || c == '`'_L1;
 }
 
 // Local (no-AST) delimiter probe shared by delimitersAt / removeDelimitersAt. Returns the delimiter
 // char flanking `position` and the surrounding run length (the shorter of the left/right runs), or
 // {QChar(), 0} when the caret is not enclosed by a matching delimiter run.
-std::pair<QChar, int> surroundingDelimiterRun(const QString& text, int position)
+constexpr std::pair<QChar, int> surroundingDelimiterRun(QStringView text, int position)
 {
     if (position <= 0 || position >= text.length())
         return {QChar(), 0};
@@ -484,23 +486,23 @@ std::pair<QChar, int> surroundingDelimiterRun(const QString& text, int position)
 // Single source of truth mapping a delimiter run of `ch`×`count` to formatting flags. When `out` is
 // non-null it sets the flags there; returns whether any flag applies (used to gate removal so a lone
 // "~" — which denotes nothing — is left alone).
-bool applyDelimiterFlags(QChar ch, int count, QVariantMap* out)
+constexpr bool applyDelimiterFlags(QChar ch, int count, QVariantMap* out)
 {
     bool any = false;
-    const auto set = [&](const char* key) {
+    const auto set = [&](QLatin1String key) {
         any = true;
         if (out)
-            (*out)[QLatin1String(key)] = true;
+            (*out)[key] = true;
     };
     if (count > 0) {
-        if (ch == u'*') {
-            if (count % 2 == 1) set("italic"); // 1, 3, ... include a single "*"
-            if (count >= 2)     set("bold");   // a "**" pair
-        } else if (ch == u'~') {
-            if (count >= 2)     set("strikethrough"); // "~~"
-        } else if (ch == u'`') {
-            if (count >= 3)     set("codeBlock"); // "```"
-            else                set("codeSpan");  // "`" or "``"
+        if (ch == '*'_L1) {
+            if (count % 2 == 1) set("italic"_L1); // 1, 3, ... include a single "*"
+            if (count >= 2)     set("bold"_L1);   // a "**" pair
+        } else if (ch == '~'_L1) {
+            if (count >= 2)     set("strikethrough"_L1); // "~~"
+        } else if (ch == '`'_L1) {
+            if (count >= 3)     set("codeBlock"_L1); // "```"
+            else                set("codeSpan"_L1);  // "`" or "``"
         }
     }
     return any;
@@ -510,40 +512,40 @@ bool applyDelimiterFlags(QChar ch, int count, QVariantMap* out)
 // `kind` is not present in the run (same presence rules as applyDelimiterFlags). Emphasis is the only
 // stacking case, so `kind` disambiguates it: from "***" italic strips one "*" (leaving "**" bold),
 // bold strips two (leaving "*" italic). The non-stacking kinds strip the whole run.
-int delimiterRemovalCount(QChar ch, int count, const QString& kind)
+constexpr int delimiterRemovalCount(QChar ch, int count, const QString& kind)
 {
     if (count <= 0)
         return 0;
-    if (kind == QLatin1String("italic"))        return (ch == u'*' && count % 2 == 1) ? 1 : 0;
-    if (kind == QLatin1String("bold"))          return (ch == u'*' && count >= 2)     ? 2 : 0;
-    if (kind == QLatin1String("strikethrough")) return (ch == u'~' && count >= 2)     ? count : 0;
-    if (kind == QLatin1String("codeSpan"))      return (ch == u'`' && count < 3)      ? count : 0;
-    if (kind == QLatin1String("codeBlock"))     return (ch == u'`' && count >= 3)     ? count : 0;
+    if (kind == QLatin1String("italic"))        return (ch == '*'_L1 && count % 2 == 1) ? 1 : 0;
+    if (kind == QLatin1String("bold"))          return (ch == '*'_L1 && count >= 2)     ? 2 : 0;
+    if (kind == QLatin1String("strikethrough")) return (ch == '~'_L1 && count >= 2)     ? count : 0;
+    if (kind == QLatin1String("codeSpan"))      return (ch == '`'_L1 && count < 3)      ? count : 0;
+    if (kind == QLatin1String("codeBlock"))     return (ch == '`'_L1 && count >= 3)     ? count : 0;
     return 0;
 }
 
 // The delimiter string wrapped around content to add `kind`, or empty for an unknown / non-delimiter
 // kind (e.g. "quote", handled separately as a per-line prefix).
-QString delimiterStringForKind(const QString& kind)
+QString delimiterStringForKind(QStringView kind)
 {
-    if (kind == QLatin1String("bold"))          return QStringLiteral("**");
-    if (kind == QLatin1String("italic"))        return QStringLiteral("*");
-    if (kind == QLatin1String("strikethrough")) return QStringLiteral("~~");
-    if (kind == QLatin1String("codeSpan"))      return QStringLiteral("`");
-    if (kind == QLatin1String("codeBlock"))     return QStringLiteral("```");
+    if (kind == QLatin1String("bold"))          return "**"_L1;
+    if (kind == QLatin1String("italic"))        return "*"_L1;
+    if (kind == QLatin1String("strikethrough")) return "~~"_L1;
+    if (kind == QLatin1String("codeSpan"))      return "`"_L1;
+    if (kind == QLatin1String("codeBlock"))     return "```"_L1;
     return {};
 }
 
 // Whether every line the selection [selStart, selEnd) at least partially covers begins with "> ".
 // Lines are split on '\n'; a line's content range excludes the newline. Returns false when no line
 // is covered.
-bool selectionLinesAllQuoted(const QString& text, int selStart, int selEnd)
+constexpr bool selectionLinesAllQuoted(QStringView text, int selStart, int selEnd)
 {
     const int len = text.length();
     bool any = false;
     int lineStart = 0;
     for (int i = 0; i <= len; ++i) {
-        if (i < len && text.at(i) != u'\n')
+        if (i < len && text.at(i) != '\n'_L1)
             continue;
 
         const int lineEnd = i; // content end (the newline, or end of text)
@@ -553,7 +555,7 @@ bool selectionLinesAllQuoted(const QString& text, int selStart, int selEnd)
         if (touched) {
             any = true;
             const bool quoted = (lineEnd - lineStart) >= 2
-                && text.at(lineStart) == u'>' && text.at(lineStart + 1) == u' ';
+                                && text.at(lineStart) == '>'_L1 && text.at(lineStart + 1) == ' '_L1;
             if (!quoted)
                 return false;
         }
@@ -594,9 +596,9 @@ QVariant ChatInputLinksModel::data(const QModelIndex& index, int role) const
 QHash<int, QByteArray> ChatInputLinksModel::roleNames() const
 {
     return {
-        {TextRole,   "text"},
-        {StartRole,  "start"},
-        {LengthRole, "length"},
+        {TextRole,   "text"_ba},
+        {StartRole,  "start"_ba},
+        {LengthRole, "length"_ba},
     };
 }
 
@@ -637,9 +639,9 @@ QVariant ChatInputMentionsModel::data(const QModelIndex& index, int role) const
 QHash<int, QByteArray> ChatInputMentionsModel::roleNames() const
 {
     return {
-        {PositionRole, "position"},
-        {NameRole,     "name"},
-        {PubKeyRole,   "pubKey"},
+        {PositionRole, "position"_ba},
+        {NameRole,     "name"_ba},
+        {PubKeyRole,   "pubKey"_ba},
     };
 }
 
@@ -735,7 +737,7 @@ void ChatInputHighlighter::copySelectionToClipboard(int start, int end) const
     flushAccum();
 
     auto* mime = new QMimeData();
-    mime->setData(QString::fromLatin1(kChatInputMimeType), data);
+    mime->setData(kChatInputMimeType, data);
     mime->setText(plainText);
     QGuiApplication::clipboard()->setMimeData(mime);
 }
@@ -769,8 +771,8 @@ void ChatInputHighlighter::pasteFromClipboard(int selectionStart, int selectionE
     }
 
     cursor.beginEditBlock();
-    if (mime->hasFormat(QString::fromLatin1(kChatInputMimeType))) {
-        QByteArray data = mime->data(QString::fromLatin1(kChatInputMimeType));
+    if (mime->hasFormat(kChatInputMimeType)) {
+        QByteArray data = mime->data(kChatInputMimeType);
         QDataStream stream(&data, QIODevice::ReadOnly);
         stream.setVersion(QDataStream::Qt_6_0);
 
@@ -800,7 +802,7 @@ void ChatInputHighlighter::pasteFromClipboard(int selectionStart, int selectionE
                 // Pasting into a quote block: keep this continuation line in the quote by
                 // prefixing it right away, so following tokens append after the "> ".
                 if (inQuote)
-                    cursor.insertText(QStringLiteral("> "));
+                    cursor.insertText("> "_L1);
             }
         }
     } else if (mime->hasText()) {
@@ -811,7 +813,7 @@ void ChatInputHighlighter::pasteFromClipboard(int selectionStart, int selectionE
         // after undo→redo. Pre-existing "> " lines get double-prefixed ("> > "), which is fine.
         QString text = mime->text();
         if (inQuote)
-            text.replace(QLatin1Char('\n'), QStringLiteral("\n> "));
+            text.replace(QLatin1Char('\n'), "\n> "_L1);
         insertEmojiAwareText(cursor, text);
     }
     cursor.endEditBlock();
@@ -835,8 +837,8 @@ bool ChatInputHighlighter::isSingleUrl(const QString& text) const
     if (links.size() != 1)
         return false;
     const QVariantMap link = links.first().toMap();
-    return link.value(QStringLiteral("start")).toInt() == 0
-            && link.value(QStringLiteral("length")).toInt() == trimmed.size();
+    return link.value("start"_L1).toInt() == 0
+           && link.value("length"_L1).toInt() == trimmed.size();
 }
 
 bool ChatInputHighlighter::isPlainTextRange(int start, int end) const
@@ -869,7 +871,7 @@ void ChatInputHighlighter::wrapSelectionInLink(int start, int end, const QString
     cursor.setPosition(start);
     cursor.setPosition(end, QTextCursor::KeepAnchor);
     const QString label = cursor.selectedText();
-    cursor.insertText(QLatin1Char('[') + label + QStringLiteral("](") + url + QLatin1Char(')'));
+    cursor.insertText(QStringLiteral("[%1](%2)").arg(label, url));
 }
 
 QString ChatInputHighlighter::textWithMentions() const
@@ -933,12 +935,12 @@ void ChatInputHighlighter::setTextWithMentions(const QString& text, const QVaria
 
         QString name = names.value(span.pubKey).toString();
         if (name.isEmpty())
-            name = span.pubKey == QStringLiteral("0x00001") ? QStringLiteral("everyone")
-                                                            : span.pubKey;
+            name = span.pubKey == "0x00001"_L1 ? "everyone"_L1
+                                               : span.pubKey;
 
         QTextCharFormat fmt;
         fmt.setObjectType(MentionTextObject::MentionType);
-        fmt.setProperty(MentionTextObject::NameProperty, QStringLiteral("@") + name);
+        fmt.setProperty(MentionTextObject::NameProperty, "@"_L1 + name);
         fmt.setProperty(MentionTextObject::PubKeyProperty, span.pubKey);
         fmt.setProperty(MentionTextObject::UniqueIdProperty, ++m_mentionCounter);
         fmt.setVerticalAlignment(QTextCharFormat::AlignBottom);
@@ -1442,8 +1444,8 @@ bool ChatInputHighlighter::isEmptyQuoteBlock(int position) const
         return false;
     const QTextBlock block = document()->findBlock(position);
     return block.isValid()
-            && quoteLineStarts().contains(static_cast<int>(block.position()))
-            && block.text() == QStringLiteral("> ");
+           && quoteLineStarts().contains(static_cast<int>(block.position()))
+           && block.text() == "> "_L1;
 }
 
 bool ChatInputHighlighter::isLineEndBeforeQuoteBlock(int position) const
@@ -1626,7 +1628,7 @@ void ChatInputHighlighter::applyQuoteBlockFormats(const QSet<int>& quoteLineStar
         return;
 
     const qreal prefixWidth =
-        QFontMetricsF(doc->defaultFont()).horizontalAdvance(QStringLiteral("> "));
+        QFontMetricsF(doc->defaultFont()).horizontalAdvance("> "_L1);
 
     // Merged into the user's edit so undo/redo treats it as one step; safe to run
     // synchronously here — highlightBlock executes inside QSyntaxHighlighter's
@@ -1687,21 +1689,21 @@ QVariantMap ChatInputHighlighter::emphasisAt(int position) const
     const unsigned int bits = (position >= 0 && position < static_cast<int>(m_flags.size()))
                               ? m_flags[position] : 0u;
     return {
-        {QStringLiteral("bold"),          bool(bits & kBold)},
-        {QStringLiteral("italic"),        bool(bits & kItalic)},
-        {QStringLiteral("strikethrough"), bool(bits & kStrikeThrough)},
+        {"bold"_L1,          bool(bits & kBold)},
+        {"italic"_L1,        bool(bits & kItalic)},
+        {"strikethrough"_L1, bool(bits & kStrikeThrough)},
     };
 }
 
 QVariantMap ChatInputHighlighter::nodeAt(int position) const
 {
     QVariantMap out = {
-        {QStringLiteral("bold"),          false},
-        {QStringLiteral("italic"),        false},
-        {QStringLiteral("strikethrough"), false},
-        {QStringLiteral("quote"),         false},
-        {QStringLiteral("codeSpan"),      false},
-        {QStringLiteral("codeBlock"),     false},
+        {"bold"_L1,          false},
+        {"italic"_L1,        false},
+        {"strikethrough"_L1, false},
+        {"quote"_L1,         false},
+        {"codeSpan"_L1,      false},
+        {"codeBlock"_L1,     false},
     };
     // Use the AST cached by highlightBlock — never reparse on a caret query. m_astText is the text
     // that AST was built from, so it stays in sync with m_ast.
@@ -1767,8 +1769,8 @@ QVariantMap ChatInputHighlighter::replaceFormatting(int position, const QString&
     // Swaps the delimiters of the `fromKind` element around `position` for `toKind`'s (e.g. a code
     // span's single backticks → a code block's triple backticks), keeping the content, as one edit
     // block. Returns the resulting content selection (empty ⇒ a caret) so the editor can restore it.
-    QVariantMap result = {{QStringLiteral("selectionStart"), position},
-                          {QStringLiteral("selectionEnd"),   position}};
+    QVariantMap result = {{"selectionStart"_L1, position},
+                          {"selectionEnd"_L1,   position}};
 
     const QString toDelim = delimiterStringForKind(toKind);
     NodeKind targetKind;
@@ -1823,19 +1825,19 @@ QVariantMap ChatInputHighlighter::replaceFormatting(int position, const QString&
     }
     cursor.endEditBlock();
 
-    result[QStringLiteral("selectionStart")] = contentStart + shift;
-    result[QStringLiteral("selectionEnd")]   = contentEnd + shift;
+    result["selectionStart"_L1] = contentStart + shift;
+    result["selectionEnd"_L1]   = contentEnd + shift;
     return result;
 }
 
 QVariantMap ChatInputHighlighter::delimitersAt(int position) const
 {
     QVariantMap out = {
-        {QStringLiteral("bold"),          false},
-        {QStringLiteral("italic"),        false},
-        {QStringLiteral("strikethrough"), false},
-        {QStringLiteral("codeSpan"),      false},
-        {QStringLiteral("codeBlock"),     false},
+        {"bold"_L1,          false},
+        {"italic"_L1,        false},
+        {"strikethrough"_L1, false},
+        {"codeSpan"_L1,      false},
+        {"codeBlock"_L1,     false},
     };
     if (!document())
         return out;
@@ -1848,12 +1850,12 @@ QVariantMap ChatInputHighlighter::delimitersAt(int position) const
 QVariantMap ChatInputHighlighter::delimitersAtSelection(int selectionStart, int selectionEnd) const
 {
     QVariantMap out = {
-        {QStringLiteral("bold"),          false},
-        {QStringLiteral("italic"),        false},
-        {QStringLiteral("strikethrough"), false},
-        {QStringLiteral("codeSpan"),      false},
-        {QStringLiteral("codeBlock"),     false},
-        {QStringLiteral("quote"),         false}, // no surrounding delimiter denotes a quote
+        {"bold"_L1,          false},
+        {"italic"_L1,        false},
+        {"strikethrough"_L1, false},
+        {"codeSpan"_L1,      false},
+        {"codeBlock"_L1,     false},
+        {"quote"_L1,         false}, // no surrounding delimiter denotes a quote
     };
     if (!document())
         return out;
@@ -1866,7 +1868,7 @@ QVariantMap ChatInputHighlighter::delimitersAtSelection(int selectionStart, int 
     selectionEnd = qBound(0, selectionEnd, len);
 
     // Quote is decided by the selected lines, not the delimiters, so compute it before any return.
-    out[QStringLiteral("quote")] = selectionLinesAllQuoted(text, selectionStart, selectionEnd);
+    out["quote"_L1] = selectionLinesAllQuoted(text, selectionStart, selectionEnd);
 
     // Expand the context past every delimiter char flanking the selection, on both ends.
     int start = selectionStart;
@@ -1901,20 +1903,20 @@ QVariantMap ChatInputHighlighter::delimitersAtSelection(int selectionStart, int 
     // tokens come first ("**" before "*", "```" before "`") so a bold pair isn't mistaken for two
     // italics, nor a code fence for a code span. Position of a token within a block is irrelevant,
     // so crossed layers ("~~**A~~**") are both reported.
-    const auto consume = [&](const QString& token, const QString& flag) {
+    auto consume = [&](const QString& token, const QString& flag) {
         const int li = leftBlock.indexOf(token);
         const int ri = rightBlock.indexOf(token);
         if (li >= 0 && ri >= 0) {
             out[flag] = true;
-            leftBlock.replace(li, token.size(), QString(token.size(), u' '));
-            rightBlock.replace(ri, token.size(), QString(token.size(), u' '));
+            leftBlock.replace(li, token.size(), QString(token.size(), QLatin1Char(' ')));
+            rightBlock.replace(ri, token.size(), QString(token.size(), QLatin1Char(' ')));
         }
     };
-    consume(QStringLiteral("**"),  QStringLiteral("bold"));
-    consume(QStringLiteral("*"),   QStringLiteral("italic"));
-    consume(QStringLiteral("```"), QStringLiteral("codeBlock"));
-    consume(QStringLiteral("`"),   QStringLiteral("codeSpan"));
-    consume(QStringLiteral("~~"),  QStringLiteral("strikethrough"));
+    consume("**"_L1,  "bold"_L1);
+    consume("*"_L1,   "italic"_L1);
+    consume("```"_L1, "codeBlock"_L1);
+    consume("`"_L1,   "codeSpan"_L1);
+    consume("~~"_L1,  "strikethrough"_L1);
     return out;
 }
 
@@ -1939,14 +1941,14 @@ void ChatInputHighlighter::removeDelimitersAtSelection(int selectionStart, int s
         // the quote rule of delimitersAtSelection / selectionLinesAllQuoted).
         int lineStart = 0;
         for (int i = 0; i <= len; ++i) {
-            if (i < len && text.at(i) != u'\n')
+            if (i < len && text.at(i) != QLatin1Char('\n'))
                 continue;
             const int lineEnd = i;
             const bool touched = (selectionStart == selectionEnd)
                 ? (selectionStart >= lineStart && selectionStart <= lineEnd)
                 : (selectionStart < lineEnd && selectionEnd > lineStart);
             if (touched && (lineEnd - lineStart) >= 2
-                    && text.at(lineStart) == u'>' && text.at(lineStart + 1) == u' ')
+                && text.at(lineStart) == QLatin1Char('>') && text.at(lineStart + 1) == QLatin1Char(' '))
                 ranges.append({lineStart, lineStart + 2});
             lineStart = i + 1;
         }
@@ -1978,11 +1980,11 @@ void ChatInputHighlighter::removeDelimitersAtSelection(int selectionStart, int s
 
         struct Token { QString str; QString kind; };
         const Token tokens[] = {
-            { QStringLiteral("**"),  QStringLiteral("bold") },
-            { QStringLiteral("*"),   QStringLiteral("italic") },
-            { QStringLiteral("```"), QStringLiteral("codeBlock") },
-            { QStringLiteral("`"),   QStringLiteral("codeSpan") },
-            { QStringLiteral("~~"),  QStringLiteral("strikethrough") },
+            { "**"_L1,  "bold"_L1 },
+            { "*"_L1,   "italic"_L1 },
+            { "```"_L1, "codeBlock"_L1 },
+            { "`"_L1,   "codeSpan"_L1 },
+            { "~~"_L1,  "strikethrough"_L1 },
         };
         for (const Token& t : tokens) {
             const int li = leftBlock.indexOf(t.str);
@@ -1997,8 +1999,8 @@ void ChatInputHighlighter::removeDelimitersAtSelection(int selectionStart, int s
                 break;
             }
             if (onBoth) {
-                leftBlock.replace(li, t.str.size(), QString(t.str.size(), u' '));
-                rightBlock.replace(ri, t.str.size(), QString(t.str.size(), u' '));
+                leftBlock.replace(li, t.str.size(), QString(t.str.size(), ' '_L1));
+                rightBlock.replace(ri, t.str.size(), QString(t.str.size(), ' '_L1));
             }
         }
     }
@@ -2036,7 +2038,7 @@ QVariantMap ChatInputHighlighter::addFormatting(int selectionStart, int selectio
     int newEnd = selectionEnd;
 
     if (!document())
-        return {{QStringLiteral("selectionStart"), newStart}, {QStringLiteral("selectionEnd"), newEnd}};
+        return {{"selectionStart"_L1, newStart}, {"selectionEnd"_L1, newEnd}};
 
     QTextCursor cursor(document());
     // Anchor the block at the caret so undo restores the cursor there: an edit block records the
@@ -2050,7 +2052,7 @@ QVariantMap ChatInputHighlighter::addFormatting(int selectionStart, int selectio
         QVector<int> lineStarts;
         int lineStart = 0;
         for (int i = 0; i <= len; ++i) {
-            if (i < len && text.at(i) != u'\n')
+            if (i < len && text.at(i) != QLatin1Char('\n'))
                 continue;
             const int lineEnd = i;
             const bool touched = (selectionStart == selectionEnd)
@@ -2071,7 +2073,7 @@ QVariantMap ChatInputHighlighter::addFormatting(int selectionStart, int selectio
             cursor.beginEditBlock();
             for (int p : std::as_const(lineStarts)) {
                 cursor.setPosition(p);
-                cursor.insertText(QStringLiteral("> "));
+                cursor.insertText("> "_L1);
             }
             cursor.endEditBlock();
         }
@@ -2091,7 +2093,7 @@ QVariantMap ChatInputHighlighter::addFormatting(int selectionStart, int selectio
         }
     }
 
-    return {{QStringLiteral("selectionStart"), newStart}, {QStringLiteral("selectionEnd"), newEnd}};
+    return {{"selectionStart"_L1, newStart}, {"selectionEnd"_L1, newEnd}};
 }
 
 void ChatInputHighlighter::removeDelimitersAt(int position, const QString& kind)

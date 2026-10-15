@@ -1,8 +1,11 @@
 #include "StatusQ/markdownparser.h"
 
+#include <QHash>
 #include <QRegularExpression>
 
 #include <algorithm>
+
+using namespace Qt::Literals::StringLiterals;
 
 // ── Parsing primitives ────────────────────────────────────────────────────────
 // Low-level scanners shared by the parser. They are pure functions over QString
@@ -16,12 +19,17 @@ constexpr unsigned int kBold          = 1u << 0;
 constexpr unsigned int kItalic        = 1u << 1;
 constexpr unsigned int kStrikeThrough = 1u << 2;
 
+constexpr auto kBacktick = '`'_L1;
+constexpr auto kTilde = '~'_L1;
+constexpr auto kAsterisk = '*'_L1;
+
 struct Delimiter {
     qsizetype pos;
     qsizetype remaining;
     QChar ch;
     bool canOpen;
     bool canClose;
+    qsizetype previous = -1;
 };
 
 struct CodeSpan {
@@ -54,6 +62,31 @@ struct QuoteGroup {
 };
 
 using Ranges = QVector<QPair<qsizetype,qsizetype>>;
+
+// Coalesce exclusions so overlap checks can use a binary search and scanners can
+// skip whole ranges, even when code, links and quote prefixes arrive out of order.
+Ranges mergedRanges(Ranges ranges)
+{
+    std::sort(ranges.begin(), ranges.end());
+    qsizetype count = 0;
+    for (const auto& range : std::as_const(ranges)) {
+        if (count > 0 && range.first <= ranges[count - 1].second)
+            ranges[count - 1].second = qMax(ranges[count - 1].second, range.second);
+        else
+            ranges[count++] = range;
+    }
+    ranges.resize(count);
+    return ranges;
+}
+
+bool overlapsRange(const Ranges& ranges, qsizetype start, qsizetype end)
+{
+    const auto it = std::lower_bound(ranges.cbegin(), ranges.cend(), start,
+                                    [](const auto& range, qsizetype pos) {
+        return range.second <= pos;
+    });
+    return it != ranges.cend() && it->first < end;
+}
 
 const QRegularExpression& kLinkRegex()
 {
@@ -88,6 +121,7 @@ const QRegularExpression& kEnsRegex()
 Ranges linkRangesOf(const QVector<LinkSpan>& links)
 {
     Ranges result;
+    result.reserve(links.size());
     for (const auto& l : links)
         result.append({l.start, l.end});
     return result;
@@ -105,11 +139,12 @@ const QRegularExpression& kExplicitLinkLabelRegex()
 // same http(s) rule as auto-detected links (kLinkRegex), so "[a](foo)" stays literal text. Each
 // span covers the whole "[label](url)" with the label range carried separately (labelStart/End) so
 // the AST can show the label while linking to the url.
-QVector<LinkSpan> scanExplicitLinks(const QString& text)
+QVector<LinkSpan> scanExplicitLinks(QStringView text, const Ranges& urls)
 {
     QVector<LinkSpan> result;
     qsizetype consumedUntil = 0; // avoid overlapping matches inside an accepted link
-    auto it = kExplicitLinkLabelRegex().globalMatch(text);
+    qsizetype urlIndex = 0;
+    auto it = kExplicitLinkLabelRegex().globalMatchView(text);
     while (it.hasNext()) {
         const auto m = it.next();
         if (m.capturedStart() < consumedUntil)
@@ -118,64 +153,66 @@ QVector<LinkSpan> scanExplicitLinks(const QString& text)
         const qsizetype labelEnd   = m.capturedEnd(1);
         const qsizetype urlStart   = m.capturedEnd(); // just past '('
 
-        // The url must match the standard link rule, anchored at urlStart, and be immediately
-        // followed by ')'.
-        const auto um = kLinkRegex().match(text, urlStart, QRegularExpression::NormalMatch,
-                                           QRegularExpression::AnchorAtOffsetMatchOption);
-        if (!um.hasMatch() || um.capturedStart() != urlStart)
+        // Reuse the ordered URL matches instead of re-running the regex (and UTF-16
+        // validation of the whole subject) for every explicit link.
+        while (urlIndex < urls.size() && urls[urlIndex].first < urlStart)
+            ++urlIndex;
+        if (urlIndex == urls.size() || urls[urlIndex].first != urlStart)
             continue;
-        const qsizetype urlEnd = um.capturedEnd();
+        const qsizetype urlEnd = urls[urlIndex].second;
         if (urlEnd >= text.length() || text[urlEnd] != QLatin1Char(')'))
             continue;
 
         const qsizetype start = m.capturedStart(); // '['
         const qsizetype end   = urlEnd + 1;        // just past ')'
-        result.append({um.captured(), start, end, labelStart, labelEnd, NodeKind::Link});
+        result.append({text.sliced(urlStart, urlEnd - urlStart).toString(),
+                       start, end, labelStart, labelEnd, NodeKind::Link});
         consumedUntil = end;
     }
     return result;
 }
 
-QVector<LinkSpan> scanLinks(const QString& text, const Ranges& excludeRanges = {})
+QVector<LinkSpan> scanLinks(QStringView text, const Ranges& excludeRanges = {})
 {
     QVector<LinkSpan> result;
 
-    const auto notExcluded = [&](qsizetype s, qsizetype e, const Ranges& ranges) {
-        for (const auto& r : ranges)
-            if (s < r.second && e > r.first)
-                return false;
-        return true;
-    };
+    const Ranges excluded = mergedRanges(excludeRanges);
+    Ranges urls;
+    auto it = kLinkRegex().globalMatchView(text);
+    while (it.hasNext()) {
+        const auto m = it.next();
+        urls.append({m.capturedStart(), m.capturedEnd()});
+    }
 
     // Explicit [label](url) links first — they take precedence; their whole span is excluded from
     // the auto URL / wallet / ENS scans below so the inner url isn't linkified twice.
-    for (const LinkSpan& l : scanExplicitLinks(text))
-        if (notExcluded(l.start, l.end, excludeRanges))
+    for (const LinkSpan& l : scanExplicitLinks(text, urls))
+        if (!overlapsRange(excluded, l.start, l.end))
             result.append(l);
 
     // Auto-detected URLs — excluded from code/quote (excludeRanges) and from the explicit-link
     // spans just collected. They win over addresses/ENS that would otherwise match inside a URL.
-    Ranges used = excludeRanges;
+    Ranges used = excluded;
     used += linkRangesOf(result);
-    auto it = kLinkRegex().globalMatch(text);
-    while (it.hasNext()) {
-        const auto m = it.next();
-        const qsizetype s = m.capturedStart(), e = m.capturedEnd();
-        if (notExcluded(s, e, used))
-            result.append({m.captured(), s, e, s, e, NodeKind::Link});
+    used = mergedRanges(std::move(used));
+    for (const auto& url : std::as_const(urls)) {
+        const qsizetype s = url.first, e = url.second;
+        if (!overlapsRange(used, s, e))
+            result.append({text.sliced(s, e - s).toString(), s, e, s, e, NodeKind::Link});
     }
 
     // Wallet addresses / ENS names → send-via-personal-chat links. Excluded from code/quote, from
     // explicit links, and from the URL ranges collected above, so an address inside a URL or an
     // explicit link is not linkified twice.
-    used = excludeRanges;
+    used = excluded;
     used += linkRangesOf(result);
+    used = mergedRanges(std::move(used));
     const auto scanWalletLinks = [&](const QRegularExpression& re) {
-        auto wit = re.globalMatch(text);
+        auto wit = re.globalMatchView(text);
         while (wit.hasNext()) {
             const auto m = wit.next();
             const qsizetype s = m.capturedStart(), e = m.capturedEnd();
-            if (notExcluded(s, e, used))
+            if (!overlapsRange(used, s, e))
                 result.append({m.captured(), s, e, s, e, NodeKind::WalletLink});
         }
     };
@@ -205,11 +242,11 @@ struct MentionSpan {
 constexpr qsizetype kPubKeyLen = 132;        // "0x" + 130 hex
 constexpr qsizetype kSystemTagLen = 7;       // "0x" + 5 digits
 
-bool isMentionHexChar(QChar c) { return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f'); }
-bool isMentionDigit(QChar c)   { return c >= '0' && c <= '9'; }
+constexpr bool isMentionHexChar(QChar c) { return (c >= '0'_L1 && c <= '9'_L1) || (c >= 'a'_L1 && c <= 'f'_L1); }
+constexpr bool isMentionDigit(QChar c)   { return c >= '0'_L1 && c <= '9'_L1; }
 
 // end-of-text or one of the status-go terminators.
-bool isTerminatingMentionChar(const QString& text, qsizetype i)
+constexpr bool isTerminatingMentionChar(QStringView text, qsizetype i)
 {
     if (i >= text.length())
         return true;
@@ -221,7 +258,7 @@ bool isTerminatingMentionChar(const QString& text, qsizetype i)
 
 // Tries to match a mention starting at the '@' at `at`. Returns the exclusive end (> at) and
 // fills `pubKey` on success; returns -1 on no match.
-qsizetype matchMention(const QString& text, qsizetype at, QString& pubKey)
+constexpr qsizetype matchMention(QStringView text, qsizetype at, QString& pubKey)
 {
     const qsizetype n = text.length() - at; // chars available from '@' inclusive
 
@@ -231,7 +268,7 @@ qsizetype matchMention(const QString& text, qsizetype at, QString& pubKey)
         for (qsizetype i = 3; i <= kPubKeyLen; ++i)
             if (!isMentionHexChar(text[at + i])) { ok = false; break; }
         if (ok && isTerminatingMentionChar(text, at + kPubKeyLen + 1)) {
-            pubKey = text.mid(at + 1, kPubKeyLen);
+            pubKey = text.sliced(at + 1, kPubKeyLen).toString();
             return at + kPubKeyLen + 1;
         }
     }
@@ -243,7 +280,7 @@ qsizetype matchMention(const QString& text, qsizetype at, QString& pubKey)
         for (qsizetype i = 3; i <= kSystemTagLen; ++i)
             if (!isMentionDigit(text[at + i])) { ok = false; break; }
         if (ok && isTerminatingMentionChar(text, at + kSystemTagLen + 1)) {
-            pubKey = text.mid(at + 1, kSystemTagLen);
+            pubKey = text.sliced(at + 1, kSystemTagLen).toString();
             return at + kSystemTagLen + 1;
         }
     }
@@ -251,9 +288,10 @@ qsizetype matchMention(const QString& text, qsizetype at, QString& pubKey)
     return -1;
 }
 
-QVector<MentionSpan> scanMentions(const QString& text, const Ranges& excludeRanges = {})
+QVector<MentionSpan> scanMentions(QStringView text, const Ranges& excludeRanges = {})
 {
     QVector<MentionSpan> result;
+    const Ranges excluded = mergedRanges(excludeRanges);
     const qsizetype n = text.length();
     for (qsizetype i = 0; i < n; ++i) {
         if (text[i] != QLatin1Char('@'))
@@ -262,10 +300,7 @@ QVector<MentionSpan> scanMentions(const QString& text, const Ranges& excludeRang
         const qsizetype end = matchMention(text, i, pubKey);
         if (end < 0)
             continue;
-        bool excluded = false;
-        for (const auto& r : excludeRanges)
-            if (i < r.second && end > r.first) { excluded = true; break; }
-        if (!excluded) {
+        if (!overlapsRange(excluded, i, end)) {
             result.append({i, end, pubKey});
             i = end - 1; // skip past the consumed mention
         }
@@ -276,79 +311,80 @@ QVector<MentionSpan> scanMentions(const QString& text, const Ranges& excludeRang
 Ranges mentionRangesOf(const QVector<MentionSpan>& mentions)
 {
     Ranges result;
+    result.reserve(mentions.size());
     for (const auto& m : mentions)
         result.append({m.start, m.end});
     return result;
 }
 
-bool isUnicodeWhitespace(QChar c) { return c.isSpace(); }
+constexpr bool isUnicodeWhitespace(QChar c) { return c.isSpace(); }
 bool isUnicodePunctuation(QChar c) { return c.isPunct() || c.isSymbol(); }
 
 // Inline-markup delimiter characters (emphasis *, strikethrough ~, code `). For emphasis
 // flanking these count as word-like, not punctuation, so an emphasis run can hug an adjacent
 // inline element instead of being blocked by its delimiter — e.g. **~~A~~**B, **`A`**B and
 // B**```A```** all keep the outer bold.
-bool isInlineMarkupChar(QChar c)
+constexpr bool isInlineMarkupChar(QChar c)
 {
-    return c == QLatin1Char('*') || c == QLatin1Char('~') || c == QLatin1Char('`');
+    return c == kAsterisk || c == kTilde || c == kBacktick;
 }
 
 // Punctuation for flanking purposes. Inline-markup delimiters (see above) and embedded
 // objects (mentions, U+FFFC) count as word-like, not punctuation, so emphasis can hug them
 // — e.g. **~~A~~**B and A**<mention>B** keep the outer bold.
-bool isFlankingPunctuation(QChar c)
+constexpr bool isFlankingPunctuation(QChar c)
 {
     return c != QChar::ObjectReplacementCharacter
             && !isInlineMarkupChar(c)
             && isUnicodePunctuation(c);
 }
 
-bool isLeftFlanking(const QString& text, qsizetype pos, qsizetype len)
+constexpr bool isLeftFlanking(QStringView text, qsizetype pos, qsizetype len)
 {
-    QChar charAfter  = (pos + len < text.length()) ? text[pos + len] : QChar(' ');
-    QChar charBefore = (pos > 0)                   ? text[pos - 1]   : QChar(' ');
+    QChar charAfter  = (pos + len < text.length()) ? text[pos + len] : ' '_L1;
+    QChar charBefore = (pos > 0)                   ? text[pos - 1]   : ' '_L1;
     if (!isFlankingPunctuation(charAfter))
         return true;
     return isUnicodeWhitespace(charBefore) || isFlankingPunctuation(charBefore);
 }
 
-bool isRightFlanking(const QString& text, qsizetype pos, qsizetype len)
+constexpr bool isRightFlanking(QStringView text, qsizetype pos, qsizetype len)
 {
-    QChar charAfter  = (pos + len < text.length()) ? text[pos + len] : QChar(' ');
-    QChar charBefore = (pos > 0)                   ? text[pos - 1]   : QChar(' ');
+    QChar charAfter  = (pos + len < text.length()) ? text[pos + len] : ' '_L1;
+    QChar charBefore = (pos > 0)                   ? text[pos - 1]   : ' '_L1;
     if (!isFlankingPunctuation(charBefore))
         return true;
     return isUnicodeWhitespace(charAfter) || isFlankingPunctuation(charAfter);
 }
 
-QVector<Delimiter> scanDelimiters(const QString& text, const Ranges& excludeRanges = {})
+QVector<Delimiter> scanDelimiters(QStringView text, const Ranges& excludeRanges = {})
 {
     const qsizetype n = text.length();
 
-    // Mark positions inside excluded (code / link / "> " prefix) ranges once, so the scan
-    // skips them in O(1) instead of testing every range at every position.
-    QVector<bool> excluded(n, false);
-    for (const auto& r : excludeRanges)
-        for (qsizetype k = qMax<qsizetype>(0, r.first); k < qMin(n, r.second); ++k)
-            excluded[k] = true;
+    const Ranges excluded = mergedRanges(excludeRanges);
+    qsizetype rangeIndex = 0;
 
     QVector<Delimiter> delimiters;
     qsizetype i = 0;
     while (i < n) {
-        if (excluded[i]) { ++i; continue; }
+        if (rangeIndex < excluded.size() && i >= excluded[rangeIndex].first) {
+            i = qMax(i, excluded[rangeIndex].second);
+            ++rangeIndex;
+            continue;
+        }
 
         QChar c = text[i];
-        if (c == QLatin1Char('*')) {
+        if (c == kAsterisk) {
             qsizetype start = i;
-            while (i < n && text[i] == QLatin1Char('*'))
+            while (i < n && text[i] == kAsterisk)
                 ++i;
             qsizetype len = i - start;
             bool canOpen  = isLeftFlanking(text, start, len);
             bool canClose = isRightFlanking(text, start, len);
             delimiters.append({start, len, c, canOpen, canClose});
-        } else if (c == QLatin1Char('~')) {
+        } else if (c == kTilde) {
             qsizetype start = i;
-            while (i < n && text[i] == QLatin1Char('~'))
+            while (i < n && text[i] == kTilde)
                 ++i;
             qsizetype len = i - start;
             if (len == 2) {
@@ -366,6 +402,8 @@ QVector<Delimiter> scanDelimiters(const QString& text, const Ranges& excludeRang
 QVector<EmphSpan> processEmphasis(QVector<Delimiter> delimiters)
 {
     QVector<EmphSpan> spans;
+    for (qsizetype i = 0; i < delimiters.size(); ++i)
+        delimiters[i].previous = i - 1;
 
     qsizetype openers_bottom[2][3][2];
     for (int a = 0; a < 2; ++a)
@@ -373,18 +411,29 @@ QVector<EmphSpan> processEmphasis(QVector<Delimiter> delimiters)
             for (int c2 = 0; c2 < 2; ++c2)
                 openers_bottom[a][b][c2] = -1;
 
-    auto chIndex = [](QChar ch) { return ch == QLatin1Char('*') ? 0 : 1; };
+    constexpr auto chIndex = [](QChar ch) { return ch == kAsterisk ? 0 : 1; };
 
+    // Stable backward links avoid moving the vector's tail for every consumed delimiter.
+    // Processing advances monotonically, so the next live delimiter is always current + 1.
+    // Keep the live-list rank separately: opener bottoms use the compacted ranks
+    // of the original algorithm, not the stable storage indices.
     qsizetype current = 0;
+    qsizetype currentRank = 0;
     while (current < delimiters.size()) {
         Delimiter& closer = delimiters[current];
-        if (!closer.canClose) { ++current; continue; }
+        if (!closer.canClose) {
+            ++current;
+            ++currentRank;
+            continue;
+        }
 
         int ci = chIndex(closer.ch);
         qsizetype bottom = openers_bottom[ci][closer.remaining % 3][closer.canOpen ? 1 : 0];
 
         qsizetype found = -1;
-        for (qsizetype j = current - 1; j > bottom; --j) {
+        qsizetype foundRank = currentRank - 1;
+        for (qsizetype j = closer.previous; j >= 0 && foundRank > bottom;
+             j = delimiters[j].previous, --foundRank) {
             const Delimiter& o = delimiters[j];
             if (!o.canOpen || o.ch != closer.ch)
                 continue;
@@ -398,24 +447,27 @@ QVector<EmphSpan> processEmphasis(QVector<Delimiter> delimiters)
         }
 
         if (found == -1) {
-            openers_bottom[ci][closer.remaining % 3][closer.canOpen ? 1 : 0] = current - 1;
-            if (!closer.canOpen)
-                delimiters.removeAt(current);
-            else
-                ++current;
+            openers_bottom[ci][closer.remaining % 3][closer.canOpen ? 1 : 0] = currentRank - 1;
+            if (!closer.canOpen) {
+                if (current + 1 < delimiters.size())
+                    delimiters[current + 1].previous = closer.previous;
+            } else {
+                ++currentRank;
+            }
+            ++current;
             continue;
         }
 
         Delimiter& opener = delimiters[found];
 
         qsizetype useCount;
-        if (opener.ch == QLatin1Char('~'))
+        if (opener.ch == kTilde)
             useCount = 2;
         else
             useCount = (opener.remaining >= 2 && closer.remaining >= 2) ? 2 : 1;
 
         unsigned int bits;
-        if (opener.ch == QLatin1Char('~'))
+        if (opener.ch == kTilde)
             bits = kStrikeThrough;
         else if (useCount == 2)
             bits = kBold;
@@ -428,79 +480,130 @@ QVector<EmphSpan> processEmphasis(QVector<Delimiter> delimiters)
         qsizetype closerDelimEnd   = contentEnd   + useCount;
         spans.append({contentStart, contentEnd, bits, openerDelimStart, closerDelimEnd});
 
-        qsizetype removeFrom = found + 1;
-        qsizetype removeTo   = current - 1;
-        if (removeFrom <= removeTo)
-            delimiters.erase(delimiters.begin() + removeFrom,
-                             delimiters.begin() + removeTo + 1);
-        current = found + 1;
+        closer.previous = found;
+        currentRank = foundRank + 1;
 
         opener.remaining -= useCount;
         if (opener.remaining == 0) {
-            delimiters.removeAt(found);
-            --current;
+            closer.previous = opener.previous;
+            --currentRank;
         }
 
-        Delimiter& closerRef = delimiters[current];
-        closerRef.pos       += useCount;
-        closerRef.remaining -= useCount;
-        if (closerRef.remaining == 0)
-            delimiters.removeAt(current);
+        closer.pos       += useCount;
+        closer.remaining -= useCount;
+        if (closer.remaining == 0) {
+            if (current + 1 < delimiters.size())
+                delimiters[current + 1].previous = closer.previous;
+            ++current;
+        }
     }
 
     return spans;
 }
 
-QVector<CodeSpan> scanCodeSpans(const QString& text)
+void appendIndexedCodeSpans(QStringView text, qsizetype start, QVector<CodeSpan>& result)
+{
+    struct BacktickRun {
+        qsizetype start;
+        qsizetype end;
+        qsizetype next = -1;
+    };
+
+    QVector<BacktickRun> runs;
+    for (qsizetype i = start; i < text.size();) {
+        if (text[i] != kBacktick) {
+            ++i;
+            continue;
+        }
+        const qsizetype start = i;
+        while (i < text.size() && text[i] == kBacktick)
+            ++i;
+        runs.append({start, i});
+    }
+
+    // Index the next run of each length once. Single/triple runs are the common
+    // case and need no hash entry; other lengths still participate in pairing.
+    qsizetype nextSingle = -1;
+    qsizetype nextTriple = -1;
+    QHash<qsizetype, qsizetype> nextOther;
+    for (qsizetype i = runs.size(); i-- > 0;) {
+        BacktickRun& run = runs[i];
+        const qsizetype length = run.end - run.start;
+        if (length == 1) {
+            run.next = nextSingle;
+            nextSingle = i;
+        } else if (length == 3) {
+            run.next = nextTriple;
+            nextTriple = i;
+        } else {
+            const auto it = nextOther.constFind(length);
+            if (it != nextOther.cend())
+                run.next = it.value();
+            nextOther.insert(length, i);
+        }
+    }
+
+    for (qsizetype i = 0; i < runs.size();) {
+        const BacktickRun& opener = runs[i];
+        if (opener.next < 0) {
+            ++i;
+            continue;
+        }
+        const BacktickRun& closer = runs[opener.next];
+        result.append({opener.start, opener.end, closer.start, closer.end});
+        i = opener.next + 1;
+    }
+}
+
+QVector<CodeSpan> scanCodeSpans(QStringView text)
 {
     QVector<CodeSpan> result;
     qsizetype i = 0;
-    const qsizetype len = text.length();
-    while (i < len) {
-        if (text[i] != QLatin1Char('`')) { ++i; continue; }
-        qsizetype openerStart = i;
-        while (i < len && text[i] == QLatin1Char('`')) ++i;
-        qsizetype openerLen    = i - openerStart;
-        qsizetype contentStart = i;
+    while (i < text.size()) {
+        if (text[i] != kBacktick) {
+            ++i;
+            continue;
+        }
+        const qsizetype openerStart = i;
+        while (i < text.size() && text[i] == kBacktick)
+            ++i;
+        const qsizetype contentStart = i;
 
         qsizetype j = i;
-        while (j < len) {
-            if (text[j] != QLatin1Char('`')) { ++j; continue; }
-            qsizetype closerStart = j;
-            while (j < len && text[j] == QLatin1Char('`')) ++j;
-            qsizetype closerLen = j - closerStart;
-            if (closerLen == openerLen) {
-                result.append({openerStart, contentStart, closerStart, j});
-                i = j;
-                break;
-            }
+        while (j < text.size() && text[j] != kBacktick)
+            ++j;
+        if (j == text.size())
+            break;
+        const qsizetype closerStart = j;
+        while (j < text.size() && text[j] == kBacktick)
+            ++j;
+        if (j - closerStart != contentStart - openerStart) {
+            // Adjacent matching runs need only a streaming scan. Once different
+            // lengths intervene, index the remaining suffix to avoid rescanning it.
+            appendIndexedCodeSpans(text, openerStart, result);
+            break;
         }
+        result.append({openerStart, contentStart, closerStart, j});
+        i = j;
     }
     return result;
 }
 
 // Returns the start of the first triple-backtick run that has no matching closer,
 // or -1 if all ``` openers are paired.
-qsizetype findOpenCodeFence(const QString& text)
+constexpr qsizetype findOpenCodeFence(QStringView text)
 {
     qsizetype i = 0;
     const qsizetype len = text.length();
+    qsizetype opener = -1;
     while (i < len) {
-        if (text[i] != QLatin1Char('`')) { ++i; continue; }
+        if (text[i] != kBacktick) { ++i; continue; }
         const qsizetype runStart = i;
-        while (i < len && text[i] == QLatin1Char('`')) ++i;
+        while (i < len && text[i] == kBacktick) ++i;
         if (i - runStart != 3) continue;
-        qsizetype j = i;
-        bool found = false;
-        while (j < len) {
-            if (text[j] != QLatin1Char('`')) { ++j; continue; }
-            const qsizetype cs = j;
-            while (j < len && text[j] == QLatin1Char('`')) ++j;
-            if (j - cs == 3) { found = true; i = j; break; }
-        }
-        if (!found) return runStart;
+        opener = opener < 0 ? runStart : -1;
     }
-    return -1;
+    return opener;
 }
 
 // Finds maximal runs of consecutive "> " lines, with a line-based, fence-aware
@@ -515,11 +618,11 @@ qsizetype findOpenCodeFence(const QString& text)
 // that opens a fence which never closes is only a real code block (suppressing
 // following quotes) when unclosed fences are formatted; otherwise the ``` is plain
 // text and must not swallow a following "> " line.
-QVector<QuoteGroup> scanQuoteGroups(const QString& text, bool formatUnclosedFence)
+QVector<QuoteGroup> scanQuoteGroups(QStringView text, bool formatUnclosedFence)
 {
     enum CodeState { NoCode, InCodeStandalone, InCodeInQuote };
 
-    static const QString fence = QStringLiteral("```");
+    constexpr auto fence = "```"_L1;
 
     QVector<QuoteGroup> groups;
     qsizetype i = 0;
@@ -533,8 +636,8 @@ QVector<QuoteGroup> scanQuoteGroups(const QString& text, bool formatUnclosedFenc
         const qsizetype lineEnd = i;
         if (i < n) ++i;
 
-        const QString line = text.mid(lineStart, lineEnd - lineStart);
-        const bool isQuote = line.startsWith(QStringLiteral("> "));
+        const QStringView line = text.sliced(lineStart, lineEnd - lineStart);
+        const bool isQuote = line.startsWith("> "_L1);
         const CodeState stateAtStart = state;
 
         if (state == NoCode) {
@@ -613,7 +716,7 @@ struct Container {
     QVector<Node> built;  // QuoteBlock only: pre-built children
 };
 
-NodeKind kindFromBits(unsigned int bits)
+constexpr NodeKind kindFromBits(unsigned int bits)
 {
     if (bits & kStrikeThrough) return NodeKind::Strikethrough;
     if (bits & kBold)          return NodeKind::Strong;
@@ -725,8 +828,10 @@ Node materialize(const QString& full, int idx,
         n.destination = c.destination;
         if (c.cS == c.oS && c.cE == c.oE) {
             // Auto-detected link (content == outer): a single Text child = the whole match.
+            n.children.reserve(1);
             n.children.append(leaf(NodeKind::Text, full, c.oS, c.oE));
         } else {
+            n.children.reserve(3);
             // Explicit [label](url): '[' delimiter, the raw label (excluded from scanning, so no
             // nested formatting), then the '](url)' delimiter. Static renderers skip delimiters,
             // yielding <a href="url">label</a>; the editor dims them.
@@ -752,6 +857,7 @@ Node materialize(const QString& full, int idx,
     // ranges from delimiter scanning), so the children hold only "> " prefixes — letting a
     // quoted code block keep its prefixes as Delimiter children. Top-level code has none,
     // yielding a single Text child, as before.
+    n.children.reserve(3);
     if (c.cS > c.oS)
         n.children.append(leaf(NodeKind::Delimiter, full, c.oS, c.cS));
     n.children.append(buildInlineChildren(full, c.cS, c.cE, tree.childrenOf[idx], conts, tree));
@@ -800,7 +906,7 @@ QVector<Container> inlineContainers(const QString& full, qsizetype rs, qsizetype
                                     bool detectLinks, bool detectQuotes,
                                     bool formatUnclosedFence)
 {
-    const QString region = full.mid(rs, re - rs);
+    const QStringView region = QStringView(full).sliced(rs, re - rs);
     const qsizetype regionLen = region.length();
     QVector<Container> conts;
 
@@ -860,8 +966,8 @@ QVector<Container> inlineContainers(const QString& full, qsizetype rs, qsizetype
     auto scanGap = [&](qsizetype gs, qsizetype ge) {
         if (gs >= ge)
             return;
-        const QString gap = region.mid(gs, ge - gs);
-        const QVector<CodeSpan> spans = scanCodeSpans(gap);
+        const QStringView gap = region.sliced(gs, ge - gs);
+        const auto spans = scanCodeSpans(gap);
         for (const CodeSpan& c : spans)
             codeRanges.append({gs + c.openerStart, gs + c.closerEnd});
         addCode(spans, rs + gs);
@@ -874,7 +980,7 @@ QVector<Container> inlineContainers(const QString& full, qsizetype rs, qsizetype
             }
         }
     };
-    for (const auto& q : quoteRanges) {
+    for (const auto& q : std::as_const(quoteRanges)) {
         scanGap(cursor, q.first);
         cursor = q.second;
     }

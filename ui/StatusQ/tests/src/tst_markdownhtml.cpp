@@ -24,6 +24,23 @@ private slots:
 
     void plainText()     { QCOMPARE(h("just text"), "just text"); }
 
+    void emojiSizingWithoutEmojis_data()
+    {
+        QTest::addColumn<QString>("text");
+        QTest::newRow("ascii") << "plain & <escaped> text\nnext line";
+        QTest::newRow("unicode") << QStringLiteral("\u4E2D\u6587 e\u0301");
+        QTest::newRow("formatted") << "**bold** and *italic*\n> quoted text";
+    }
+
+    void emojiSizingWithoutEmojis()
+    {
+        QFETCH(QString, text);
+        const Node doc = parse(text);
+        QCOMPARE(toHtml(doc, {}, 20), toHtml(doc));
+        QCOMPARE(toSingleLineHtml(doc, {}, 20), toSingleLineHtml(doc));
+        QCOMPARE(toBlocks(doc, {}, 20), toBlocks(doc));
+    }
+
     // Delimiters must never appear in the output.
     void delimitersDropped()
     {

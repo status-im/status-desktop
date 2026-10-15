@@ -5,27 +5,29 @@
 #include <QSet>
 #include <QUrl>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace {
 
-QString kindName(Markdown::NodeKind kind)
+constexpr QLatin1String kindName(Markdown::NodeKind kind)
 {
     using K = Markdown::NodeKind;
     switch (kind) {
-    case K::Document:      return QStringLiteral("Document");
-    case K::Paragraph:     return QStringLiteral("Paragraph");
-    case K::QuoteBlock:    return QStringLiteral("QuoteBlock");
-    case K::CodeBlock:     return QStringLiteral("CodeBlock");
-    case K::Strong:        return QStringLiteral("Strong");
-    case K::Emphasis:      return QStringLiteral("Emphasis");
-    case K::Strikethrough: return QStringLiteral("Strikethrough");
-    case K::CodeSpan:      return QStringLiteral("CodeSpan");
-    case K::Link:          return QStringLiteral("Link");
-    case K::WalletLink:    return QStringLiteral("WalletLink");
-    case K::Text:          return QStringLiteral("Text");
-    case K::Delimiter:     return QStringLiteral("Delimiter");
-    case K::Mention:       return QStringLiteral("Mention");
+    case K::Document:      return "Document"_L1;
+    case K::Paragraph:     return "Paragraph"_L1;
+    case K::QuoteBlock:    return "QuoteBlock"_L1;
+    case K::CodeBlock:     return "CodeBlock"_L1;
+    case K::Strong:        return "Strong"_L1;
+    case K::Emphasis:      return "Emphasis"_L1;
+    case K::Strikethrough: return "Strikethrough"_L1;
+    case K::CodeSpan:      return "CodeSpan"_L1;
+    case K::Link:          return "Link"_L1;
+    case K::WalletLink:    return "WalletLink"_L1;
+    case K::Text:          return "Text"_L1;
+    case K::Delimiter:     return "Delimiter"_L1;
+    case K::Mention:       return "Mention"_L1;
     }
-    return QStringLiteral("Unknown");
+    return "Unknown"_L1;
 }
 
 // Escapes a literal so a node fits on a single, readable line.
@@ -68,18 +70,6 @@ void dumpNode(const Markdown::Node& node, int depth, bool withRanges, QString& o
         dumpNode(child, depth + 1, withRanges, out);
 }
 
-// Reads the code point at `i`, advancing `units` over a surrogate pair.
-char32_t codePointAt(QStringView s, int i, int& units)
-{
-    const QChar c = s[i];
-    if (c.isHighSurrogate() && i + 1 < s.size() && s[i + 1].isLowSurrogate()) {
-        units = 2;
-        return QChar::surrogateToUcs4(c, s[i + 1]);
-    }
-    units = 1;
-    return c.unicode();
-}
-
 // Local path the base url (a directory ending in '/') resolves to, covering the two StatusQ
 // deployments: filesystem (file://) and bundled resources (qrc:/).
 QString localDirForUrl(const QString& url)
@@ -104,7 +94,7 @@ const QSet<QString>& twemojiAssetNames(const QString& base)
 
     QSet<QString> names;
     const QDir dir(localDirForUrl(base));
-    const auto entries = dir.entryList(QStringList{QStringLiteral("*.svg")}, QDir::Files);
+    const auto entries = dir.entryList({"*.svg"_L1}, QDir::Files);
     names.reserve(entries.size());
     for (const QString& e : entries)
         names.insert(e.left(e.size() - 4)); // strip ".svg"
@@ -122,32 +112,6 @@ QString dump(const Node& node, bool withRanges)
     if (out.endsWith(QLatin1Char('\n')))
         out.chop(1);
     return out;
-}
-
-bool isEmojiCodePoint(char32_t cp)
-{
-    return (cp >= 0x1F300 && cp <= 0x1FAFF)   // emoticons / pictographs / transport / supplemental / extended-A
-        || (cp >= 0x1F000 && cp <= 0x1F0FF)   // mahjong, dominoes, playing cards
-        || (cp >= 0x2600  && cp <= 0x27BF)    // misc symbols + dingbats
-        || (cp >= 0x1F1E6 && cp <= 0x1F1FF)   // regional indicator letters (flags)
-        || (cp == 0x231A) || (cp == 0x231B)   // ⌚ ⌛
-        || (cp >= 0x23E9  && cp <= 0x23FA)    // media / timer symbols
-        || (cp == 0x24C2)                     // Ⓜ
-        || (cp >= 0x2B00  && cp <= 0x2BFF)    // stars / arrows (⭐ …)
-        || (cp >= 0x20D0  && cp <= 0x20FF)    // combining enclosing marks (keycaps)
-        || (cp >= 0xFE00  && cp <= 0xFE0F)    // variation selectors
-        || (cp == 0x200D);                    // zero-width joiner
-}
-
-bool clusterHasEmoji(QStringView text)
-{
-    for (int i = 0; i < text.size();) {
-        int units = 1;
-        if (isEmojiCodePoint(codePointAt(text, i, units)))
-            return true;
-        i += units;
-    }
-    return false;
 }
 
 bool isOnlyEmoji(const QString& text)
@@ -191,7 +155,8 @@ QString twemojiSvgUrl(const QString& base, QStringView cluster)
     }
     if (name.isEmpty() || !twemojiAssetNames(base).contains(name))
         return {};
-    return base + name + QStringLiteral(".svg");
+    return base + name + ".svg"_L1;
+;
 }
 
 } // namespace Markdown

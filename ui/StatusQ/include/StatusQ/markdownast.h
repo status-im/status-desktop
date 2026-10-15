@@ -72,10 +72,46 @@ QString dump(const Node& node, bool withRanges = true);
 // common emoji blocks plus the joiners/modifiers that are part of an emoji grapheme cluster
 // (ZWJ, variation selectors, regional indicators, keycap combiners) so a whole emoji
 // sequence is treated as one unit. Shared by the live highlighter and the static renderer.
-bool isEmojiCodePoint(char32_t cp);
+constexpr bool isEmojiCodePoint(char32_t cp) {
+    return (cp >= 0x1F300 && cp <= 0x1FAFF) // emoticons / pictographs / transport
+           // / supplemental / extended-A
+           || (cp >= 0x1F000 && cp <= 0x1F0FF) // mahjong, dominoes, playing cards
+           || (cp >= 0x2600 && cp <= 0x27BF)   // misc symbols + dingbats
+           ||
+           (cp >= 0x1F1E6 && cp <= 0x1F1FF) // regional indicator letters (flags)
+           || (cp == 0x231A) || (cp == 0x231B) // ⌚ ⌛
+           || (cp >= 0x23E9 && cp <= 0x23FA)   // media / timer symbols
+           || (cp == 0x24C2)                   // Ⓜ
+           || (cp >= 0x2B00 && cp <= 0x2BFF)   // stars / arrows (⭐ …)
+           ||
+           (cp >= 0x20D0 && cp <= 0x20FF) // combining enclosing marks (keycaps)
+           || (cp >= 0xFE00 && cp <= 0xFE0F) // variation selectors
+           || (cp == 0x200D);                // zero-width joiner
+}
+
+// Reads the code point at `i`, advancing `units` over a surrogate pair.
+constexpr char32_t codePointAt(QStringView s, int i, int& units)
+{
+    const QChar c = s[i];
+    if (c.isHighSurrogate() && i + 1 < s.size() && s[i + 1].isLowSurrogate()) {
+        units = 2;
+        return QChar::surrogateToUcs4(c, s[i + 1]);
+    }
+    units = 1;
+    return c.unicode();
+}
 
 // True when `text` contains at least one emoji code point (isEmojiCodePoint).
-bool clusterHasEmoji(QStringView text);
+constexpr bool clusterHasEmoji(QStringView text)
+{
+    for (int i = 0; i < text.size();) {
+        int units = 1;
+        if (isEmojiCodePoint(codePointAt(text, i, units)))
+            return true;
+        i += units;
+    }
+    return false;
+}
 
 // True when `text` consists solely of emoji code points and whitespace (spaces, tabs and line
 // breaks are allowed between/around the emojis), with at least one emoji present. Used by the
@@ -88,13 +124,12 @@ bool isOnlyEmoji(const QString& text);
 // allocation); it is valid only for the duration of the call, so a callback that keeps it beyond that
 // (stores it, hands it to insertText, …) must `.toString()` a copy.
 template<typename Fn>
-void forEachGraphemeCluster(const QString& text, Fn&& fn)
+void forEachGraphemeCluster(QStringView text, Fn&& fn)
 {
     QTextBoundaryFinder bf(QTextBoundaryFinder::Grapheme, text);
-    const QStringView view(text);
     int cs = 0;
     for (int ce = bf.toNextBoundary(); ce >= 0; ce = bf.toNextBoundary()) {
-        if (ce > cs && !fn(view.mid(cs, ce - cs), cs, ce))
+        if (ce > cs && !fn(text.sliced(cs, ce - cs), cs, ce))
             return;
         cs = ce;
     }

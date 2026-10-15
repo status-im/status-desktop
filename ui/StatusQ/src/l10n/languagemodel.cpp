@@ -2,14 +2,6 @@
 
 #include <QLocale>
 
-namespace
-{
-constexpr auto kLanguageCodeRoleName = "code";
-constexpr auto kfullIsoCodeCodeRoleName = "fullIsoCode";
-constexpr auto kLanguageNameRoleName = "name";
-constexpr auto kLanguagenativeNameRoleName = "nativeName";
-}
-
 using namespace Qt::Literals::StringLiterals;
 
 LanguageModel::LanguageModel(QObject* parent) : QAbstractListModel(parent)
@@ -27,10 +19,10 @@ int LanguageModel::rowCount(const QModelIndex& parent) const { return m_data.siz
 QHash<int, QByteArray> LanguageModel::roleNames() const
 {
     static const QHash<int, QByteArray> roles{
-        {CodeRole, kLanguageCodeRoleName},
-        {NameRole, kLanguageNameRoleName},
-        {NativeNameRole, kLanguagenativeNameRoleName},
-        {FullIsoCode, kfullIsoCodeCodeRoleName},
+        {CodeRole, "code"_ba},
+        {NameRole, "name"_ba},
+        {NativeNameRole, "nativeName"_ba},
+        {FullIsoCode, "fullIsoCode"_ba},
     };
 
     return roles;
