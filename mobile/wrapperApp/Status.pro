@@ -127,7 +127,7 @@ ios {
             -framework UserNotifications
 
     # Base libraries (always included)
-    LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client -lstatusq -lhunspell-1.7 -lMobileWebView -lstatus -lsds -lssl_3 -lcrypto_3 -lSCodes -lZXing -lresolv -lqrcodegen
+    LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client -lstatusq -lhunspell-1.7 -lMobileWebView -lstatus -lsds -lssl_3 -lcrypto_3 -lZXing -lresolv -lqrcodegen
 
     # The Go facade owns the token ABI; keep it private in the final executable.
     QMAKE_LFLAGS += -Wl,-unexported_symbols_list,$$shell_quote($$PWD/../../vendor/status-go/scripts/tkl-unexported-macos.txt)

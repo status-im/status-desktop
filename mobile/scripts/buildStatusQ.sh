@@ -32,7 +32,6 @@ cmake -S "${STATUSQ}" -B "${BUILD_DIR}" \
     -DSTATUSQ_BUNDLE_QML=OFF \
     -DSTATUSQ_TESTMODE=$([[ "${STATUSQ_TESTMODE}" == "true" ]] && echo ON || echo OFF)
 
-make -C "${BUILD_DIR}" SCodes -j "$(nproc)"
 make -C "${BUILD_DIR}" StatusQ -j "$(nproc)"
 
 MOBILEWEBVIEW_JAVA_DIR_FILE="${BUILD_DIR}/mobilewebview_java_dir.txt"
@@ -45,9 +44,6 @@ mkdir -p "${LIB_DIR}"
 
 STATUSQ_LIB=$(find "${BUILD_DIR}" -name "libStatusQ${LIB_SUFFIX}${LIB_EXT}")
 MOBILEWEBVIEW_LIB=$(find "${BUILD_DIR}" -name "libMobileWebView${LIB_SUFFIX}${LIB_EXT}")
-QZXING_LIB=$(find "${BUILD_DIR}" -name "libqzxing.a")
-ZXING_LIB=$(find "${BUILD_DIR}" -name "libZXing${LIB_SUFFIX}${LIB_EXT}")
-SCODES_LIB=$(find "${BUILD_DIR}" -name "libSCodes.a")
 
 cp "${STATUSQ_LIB}" "${LIB_DIR}/libStatusQ${LIB_SUFFIX}${LIB_EXT}"
 if [[ "${STATIC_LIB}" == "ON" ]]; then
@@ -57,10 +53,4 @@ if [[ "${STATIC_LIB}" == "ON" ]]; then
 fi
 if [ -f "${MOBILEWEBVIEW_LIB}" ]; then
     cp "${MOBILEWEBVIEW_LIB}" "${LIB_DIR}/libMobileWebView${LIB_SUFFIX}${LIB_EXT}"
-fi
-if [ -f "${SCODES_LIB}" ]; then
-    cp "${SCODES_LIB}" "${LIB_DIR}/libSCodes.a"
-fi
-if [ -f "${ZXING_LIB}" ]; then
-    cp "${ZXING_LIB}" "${LIB_DIR}/libZXing${LIB_SUFFIX}${LIB_EXT}"
 fi
