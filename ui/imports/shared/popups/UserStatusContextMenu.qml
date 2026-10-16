@@ -64,7 +64,8 @@ StatusDropdown {
                 font.bold: true
                 font.pixelSize: Theme.fontSize(20)
                 elide: Text.ElideRight
-                text: SQUtils.Emoji.parse(root.name, SQUtils.Emoji.size.middle)
+                text: root.name
+                textFormat: Text.PlainText
             }
 
             RowLayout {

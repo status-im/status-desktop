@@ -9,7 +9,6 @@ import StatusQ.Core.Theme
 import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Popups
-import StatusQ.Core.Utils as StatusQUtils
 
 import shared.controls.chat
 import utils
@@ -73,7 +72,8 @@ ItemDelegate {
         ColumnLayout {
             StatusBaseText {
                 Layout.fillWidth: true
-                text: StatusQUtils.Emoji.parse(root.label)
+                text: root.label
+                textFormat: Text.PlainText
                 color: root.isAction ? Theme.palette.primaryColor1 : Theme.palette.directColor1
                 elide: Text.ElideRight
             }

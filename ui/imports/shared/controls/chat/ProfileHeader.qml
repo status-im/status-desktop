@@ -173,6 +173,7 @@ Item {
                 width: parent.width
                 height: parent.height
                 text: root.displayName
+                textFormat: Text.PlainText
                 visible: !root.loading
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight

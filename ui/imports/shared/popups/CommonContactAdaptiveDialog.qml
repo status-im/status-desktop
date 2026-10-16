@@ -6,7 +6,6 @@ import StatusQ.Core.Theme
 import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Popups.Dialog
-import StatusQ.Core.Utils as StatusQUtils
 
 import shared.controls
 import shared.controls.chat
@@ -33,12 +32,12 @@ StatusAdaptiveDialog {
     property Component bodyComponent
 
     // Primary display name resolved from the contact details.
-    readonly property string mainDisplayName: StatusQUtils.Emoji.parse(
-                                                  ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name,
-                                                                           contactDetails.displayName, contactDetails.alias))
+    readonly property string mainDisplayName: ProfileUtils.displayName(
+                                                  contactDetails.localNickname, contactDetails.name,
+                                                  contactDetails.displayName, contactDetails.alias)
     // Secondary display name shown when a local nickname is present.
-    readonly property string optionalDisplayName: StatusQUtils.Emoji.parse(
-                                                      ProfileUtils.displayName("", contactDetails.name, contactDetails.displayName, contactDetails.alias))
+    readonly property string optionalDisplayName: ProfileUtils.displayName(
+                                                      "", contactDetails.name, contactDetails.displayName, contactDetails.alias)
 
     contentComponent: ColumnLayout {
         id: contentLayout

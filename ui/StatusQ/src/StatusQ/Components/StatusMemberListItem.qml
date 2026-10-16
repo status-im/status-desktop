@@ -140,7 +140,7 @@ ItemDelegate {
         function composeSubtitle() {
             var compose = ""
             if(root.userName !== "" && root.nickName !== "")
-                compose = "(" + Emoji.parse(root.userName, "12x12") + ")"
+                compose = "(" + root.userName + ")"
 
             if(compose !== "" && root.pubKey !== "")
                 // Composition
@@ -214,7 +214,8 @@ ItemDelegate {
                     width: Math.min(implicitWidth, parent.width - (iconsLoader.item ? iconsLoader.item.width + parent.spacing : 0))
                     anchors.verticalCenter: parent.verticalCenter
                     elide: Text.ElideRight
-                    text: root.nickName || Emoji.parse(root.userName)
+                    text: root.nickName || root.userName
+                    textFormat: Text.PlainText
                     font.pixelSize: root.font.pixelSize
                     font.weight: Font.Medium
                     color: Theme.palette.directColor4

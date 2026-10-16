@@ -28,7 +28,7 @@ StatusDialog {
     required property bool usesDefaultName
     required property string largeImage
 
-    title: isCurrentUser ? qsTr("Share profile to invite contacts") : qsTr("%1's profile").arg(SQUtils.Emoji.parse(displayName))
+    title: isCurrentUser ? qsTr("Share profile to invite contacts") : qsTr("%1's profile").arg(displayName)
 
     footer: null
 

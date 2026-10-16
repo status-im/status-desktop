@@ -63,8 +63,10 @@ Item {
             font.pixelSize: Theme.primaryTextFontSize
             wrapMode: Text.WordWrap
             color: Theme.palette.primaryColor1
-            text: root.amISender ? qsTr("You") : Emoji.parse(root.sender.displayName)
-            textFormat: Text.AutoText
+            text: root.amISender ? qsTr("You") : root.sender.displayName
+            // A display name comes from another user: render it literally rather than
+            // letting AutoText's heuristic turn markup in it into rich text.
+            textFormat: Text.PlainText
 
             HoverHandler {
                 id: hhandler

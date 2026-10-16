@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 
 import StatusQ.Core
-import StatusQ.Core.Utils as CoreUtils
 import StatusQ.Core.Theme
 import StatusQ.Components
 import StatusQ.Components.private
@@ -36,7 +35,7 @@ RowLayout {
             property var sender: root.messageDetails.sender
             property string messageOriginInfo: root.messageDetails.messageOriginInfo
 
-            primaryText: amISender ? qsTr("You") : CoreUtils.Emoji.parse(sender.displayName)
+            primaryText: amISender ? qsTr("You") : sender.displayName
             primaryTextClickable: true
             primarySideText: messageOriginInfo
             iconsRowComponent: !amISender ? iconsRow : undefined

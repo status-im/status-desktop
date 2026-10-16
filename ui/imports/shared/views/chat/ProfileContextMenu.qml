@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 
-import StatusQ.Core.Utils as StatusQUtils
 import StatusQ.Popups
 
 import shared
@@ -47,7 +46,7 @@ StatusMenu {
         displayNameVisible: false
         displayNamePlusIconsVisible: true
         editButtonVisible: false
-        displayName: StatusQUtils.Emoji.parse(root.displayName, StatusQUtils.Emoji.size.verySmall)
+        displayName: root.displayName
         usesDefaultName: root.usesDefaultName
         compressedPubKey: root.compressedPubKey
         emojiHash: root.emojiHash
