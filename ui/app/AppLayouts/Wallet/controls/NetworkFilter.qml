@@ -108,7 +108,7 @@ StatusComboBox {
                     sourceModel: root.multiSelection ? root.flatNetworks : null
                     filters: OneOfFilter {
                         roleName: "chainId"
-                        array: root.selection
+                        array: networkSelectorView.selection
                     }
                 }
                 delegate: StatusRoundedImage {
@@ -234,15 +234,11 @@ StatusComboBox {
             }
 
             if (root.multiSelection) {
-                if (d.noneSelected) {
-                    return  qsTr("Select networks")
-                }
+                if (d.noneSelected)
+                    return qsTr("Select networks")
             }
 
             return ""
         }
-        property var window: root.control.Window
-        property int windowWidth: window ? window.width: Screen.width
-        property int windowHeight: window ? window.height: Screen.height
     }
 }

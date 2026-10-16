@@ -38,6 +38,6 @@ Rectangle {
     StatusToolTip {
         id: tooltip
         objectName: "tooltip"
-        visible: hoverHandler.hovered
+        visible: hoverHandler.hovered && !!text
     }
 }

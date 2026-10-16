@@ -12264,6 +12264,10 @@ al cargar</translation>
 <context>
     <name>NetworkSelectPopup</name>
     <message>
+        <source>All networks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Manage networks</source>
         <translation>Administrar redes</translation>
     </message>

@@ -12201,6 +12201,10 @@ to load</source>
 <context>
     <name>NetworkSelectPopup</name>
     <message>
+        <source>All networks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Manage networks</source>
         <translation>네트워크 관리</translation>
     </message>
