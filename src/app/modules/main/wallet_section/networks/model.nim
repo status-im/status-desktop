@@ -124,40 +124,26 @@ QtObject:
     return nil
 
   # Returns the chains that need to be enabled or disabled (the second return value)
-  #   to satisty the transitions: all enabled to only chainId enabled and
-  #   only chainId enabled to all enabled
+  #   when the user toggles chainId. Only chainId changes state, except when it is
+  #   the last enabled chain, in which case all chains get enabled again
   proc networksToChangeStateOnUserActionFor*(self: Model, chainId: int, areTestNetworksEnabled: bool): (seq[int], bool) =
     let filteredNetworks = self.getFilteredNetworks(areTestNetworksEnabled)
-    let allEnabled = filteredNetworks.all(n => n.isEnabled)
     var chainIds: seq[int] = @[]
     var enable = false
 
-    if allEnabled:
-      # disable all but chainId
-      for item in filteredNetworks:
-        if item.chainId != chainId:
-          chainIds.add(item.chainId)
-    else:
-      let network = self.getNetworkByChainId(chainId)
-      if network != nil:
-        if network.isEnabled:
-          # Iterate to check for the only chainId enabled case ...
-          for item in filteredNetworks:
-            if item.isEnabled and item.chainId != chainId:
-              # ... as soon as we find another enabled chain mark this by adding it to the list
-              chainIds.add(chainId)
-              break
-
-          # ... if no other chains are enabled, then it's a transition from only chainId enabled to all enabled
-          if chainIds.len == 0:
-            for item in filteredNetworks:
-              if item.chainId != chainId:
-                chainIds.add(item.chainId)
-            enable = true
-        else:
-          # enable chainId
+    let network = self.getNetworkByChainId(chainId)
+    if network != nil:
+      if network.isEnabled:
+        if filteredNetworks.any(n => n.isEnabled and n.chainId != chainId):
           chainIds.add(chainId)
+        else:
+          for item in filteredNetworks:
+            if item.chainId != chainId:
+              chainIds.add(item.chainId)
           enable = true
+      else:
+        chainIds.add(chainId)
+        enable = true
     return (chainIds, enable)
 
   proc delete(self: Model) =
