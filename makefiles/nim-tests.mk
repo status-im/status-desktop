@@ -51,6 +51,8 @@ endif
 
 nim-test-run/test/nim/qrscan_zxing_errors_test.nim: NIM_PARAMS += -d:qrscanZxingLib="$(abspath $(ZXING))"
 nim-test-run/test/nim/qrscan_zxing_errors_test.nim: | $(ZXING)
+# Loads resources.rcc (the bundled NimQtCamera/NimQrScan modules).
+nim-test-run/test/nim/qml_libs_resources_test.nim: | rcc
 
 # Model-spy tests call inspection accessors gated behind
 # `when defined(testing) or defined(QT_MODEL_SPY)` or assert on the granular
