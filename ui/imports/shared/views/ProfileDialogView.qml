@@ -384,7 +384,8 @@ Pane {
                     font.bold: true
                     font.pixelSize: Theme.fontSize(22)
                     elide: Text.ElideRight
-                    text: StatusQUtils.Emoji.parse(d.mainDisplayName, StatusQUtils.Emoji.size.middle)
+                    text: d.mainDisplayName
+                    textFormat: Text.PlainText
                 }
                 StatusContactVerificationIcons {
                     id: verificationIcons
@@ -404,7 +405,8 @@ Pane {
                 StatusBaseText {
                     id: contactSecondaryName
                     color: Theme.palette.baseColor1
-                    text: StatusQUtils.Emoji.parse(d.optionalDisplayName)
+                    text: d.optionalDisplayName
+                    textFormat: Text.PlainText
                     visible: !!d.userNickName
                 }
                 Rectangle {

@@ -55,8 +55,6 @@ Control {
         property int delegateHeightS: 152
         property int delegateWidthM: 202
         property int delegateHeightM: 160
-
-        readonly property string displayNameVerySmallEmoji: StatusQUtils.Emoji.parse(root.mainDisplayName, StatusQUtils.Emoji.size.verySmall)
     }
 
     component PositionSFPM: SortFilterProxyModel {
@@ -122,7 +120,7 @@ Control {
             cellWidth: d.delegateWidthM
             cellHeight: d.delegateHeightM
 
-            mainDisplayName: d.displayNameVerySmallEmoji
+            mainDisplayName: root.mainDisplayName
             readOnly: root.readOnly
             globalAssetsModel: root.globalAssetsModel
             globalCollectiblesModel: root.globalCollectiblesModel
@@ -137,7 +135,7 @@ Control {
             width: parent.width
             height: parent.height
 
-            mainDisplayName: d.displayNameVerySmallEmoji
+            mainDisplayName: root.mainDisplayName
             sendToAccountEnabled: root.sendToAccountEnabled
             accountsModel: accountsProxyModel
             networksStore: root.networksStore
@@ -156,7 +154,7 @@ Control {
             cellWidth: d.delegateWidthS
             cellHeight: d.delegateHeightS
 
-            mainDisplayName: d.displayNameVerySmallEmoji
+            mainDisplayName: root.mainDisplayName
             collectiblesModel: collectiblesProxyModel
             walletStore: root.walletStore
             networksStore: root.networksStore
@@ -174,7 +172,7 @@ Control {
             cellWidth: d.delegateWidthS
             cellHeight: d.delegateHeightS
 
-            mainDisplayName: d.displayNameVerySmallEmoji
+            mainDisplayName: root.mainDisplayName
             socialLinksModel: socialLinksProxyModel
 
             onCopyToClipboard: text => root.copyToClipboard(text)

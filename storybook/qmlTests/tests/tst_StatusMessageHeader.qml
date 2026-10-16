@@ -76,6 +76,31 @@ Item {
             tryCompare(clickSpy, "count", 1)
         }
 
+        // The name is rendered from the emoji font now, not rewritten into Twemoji
+        // <img> markup, so the raw string reaches the label unchanged.
+        function test_displayNameKeepsEmojiAsText() {
+            const header = createTemporaryObject(headerComp, root)
+            verify(!!header)
+            header.sender.displayName = "Alice \u{1F600}"
+            waitForRendering(header)
+
+            compare(displayName(header).text, "Alice \u{1F600}")
+        }
+
+        // A display name comes from another user, so markup in it must be shown
+        // literally. AutoText would hand it to the rich text engine instead - which
+        // also fetches <img> sources.
+        function test_displayNameWithMarkupIsRenderedLiterally() {
+            const header = createTemporaryObject(headerComp, root)
+            verify(!!header)
+            header.sender.displayName = "<b>bob</b>"
+            waitForRendering(header)
+
+            const label = displayName(header)
+            compare(label.textFormat, Text.PlainText)
+            compare(label.text, "<b>bob</b>")
+        }
+
         function test_displayNameIsNotATextEdit() {
             const header = createTemporaryObject(headerComp, root)
             verify(!!header)
