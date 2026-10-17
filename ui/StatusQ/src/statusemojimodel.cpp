@@ -142,7 +142,7 @@ void StatusEmojiModel::setEmojiJson(const QJsonArray &newEmojiJson)
 
     beginResetModel();
     m_emojiJson = newEmojiJson;
-    rebuildAsciiAliasIndex();
+    rebuildLookupIndexes();
     emit emojiJsonChanged();
     endResetModel();
 }
@@ -164,6 +164,11 @@ QString StatusEmojiModel::getEmojiUnicodeFromShortname(const QString &shortname)
 QString StatusEmojiModel::getEmojiFromAsciiAlias(const QString &alias) const
 {
     return m_asciiAliasToEmoji.value(alias);
+}
+
+QString StatusEmojiModel::getEmojiFromHexcode(const QString &hexcode) const
+{
+    return m_hexcodeToEmoji.value(hexcode);
 }
 
 QJsonArray StatusEmojiModel::getSuggestions(const QString &name) const
@@ -194,20 +199,22 @@ int StatusEmojiModel::maxAsciiEmojiAliasLength() const
     return m_maxAsciiEmojiAliasLength;
 }
 
-void StatusEmojiModel::rebuildAsciiAliasIndex()
+void StatusEmojiModel::rebuildLookupIndexes()
 {
     m_asciiAliasToEmoji.clear();
+    m_hexcodeToEmoji.clear();
     m_maxAsciiEmojiAliasLength = 0;
     for (const auto &emojiValue : std::as_const(m_emojiJson)) {
         if (!emojiValue.isObject())
             continue;
 
         const auto emoji = emojiValue.toObject();
+        const auto emojiStr = emoji.value(kEmoji).toString();
+        m_hexcodeToEmoji.insert(emoji.value(kUnicode).toString(), emojiStr);
+
         const auto aliases = emoji.value(kAliasesAscii).toArray();
         if (aliases.isEmpty())
             continue;
-
-        const auto emojiStr = emoji.value(kEmoji).toString();
         for (const auto &aliasValue : aliases) {
             const auto alias = aliasValue.toString();
             // first occurrence wins, same as the former linear search

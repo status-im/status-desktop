@@ -82,19 +82,16 @@ StatusDropdown {
     width: 370
     padding: 0
 
-    function addEmoji(hexcode) {
-        const extensionIndex = hexcode.lastIndexOf('.');
-        let iconCodePoint = hexcode
-        if (extensionIndex > -1) {
-            iconCodePoint = iconCodePoint.substring(0, extensionIndex)
-        }
-
-        const encodedIcon = StatusQUtils.Emoji.getEmojiCodepoint(iconCodePoint)
-
+    // `emoji` is the character as the catalogue stores it, `hexcode` the id the backend
+    // and the recents list are keyed by. The character must come from the model rather
+    // than be rebuilt from the hexcode: the hexcode follows Twemoji's filename
+    // convention, which drops U+FE0F, and without it 106 emoji (❤️ ☀️ ✈️ …) render in a
+    // text font instead of the emoji one.
+    function addEmoji(hexcode, emoji) {
         root.emojiModel.addRecentEmoji(hexcode)
 
         // Adding a space because otherwise, some emojis would fuse since emoji is just a string
-        root.emojiSelected(StatusQUtils.Emoji.parse(encodedIcon, root.emojiSize || undefined) + ' ', true, hexcode)
+        root.emojiSelected(emoji + ' ', true, hexcode)
         root.close()
     }
 
@@ -179,7 +176,7 @@ StatusDropdown {
                     delegate: StatusEmoji {
                         width: 22
                         height: 22
-                        emoji: StatusQUtils.Emoji.getEmojiCodepoint(modelData)
+                        emoji: StatusQUtils.Emoji.emojiModel.getEmojiFromHexcode(modelData)
                         StatusMouseArea {
                             cursorShape: Qt.PointingHandCursor
                             anchors.fill: parent
@@ -200,7 +197,7 @@ StatusDropdown {
                 anchors.rightMargin: d.headerMargin
                 visible: !skinToneEmoji.expandSkinColorOptions
                 // Hand emoji 🖐️ to which we append the skin color selected by the user
-                emoji: StatusQUtils.Emoji.getEmojiCodepoint(
+                emoji: StatusQUtils.Emoji.emojiModel.getEmojiFromHexcode(
                            "1f590" + ((settings.skinColor !== "" && visible) ? ("-" + settings.skinColor) : ""))
                 StatusMouseArea {
                     cursorShape: Qt.PointingHandCursor
@@ -271,7 +268,7 @@ StatusDropdown {
                     Accessible.name: model.emoji
                     emoji: model.emoji
                 }
-                onClicked: root.addEmoji(model.unicode)
+                onClicked: root.addEmoji(model.unicode, model.emoji)
                 HoverHandler {
                     cursorShape: hovered ? Qt.PointingHandCursor : undefined
                 }

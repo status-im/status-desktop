@@ -39,6 +39,10 @@ public:
 
     Q_INVOKABLE QString getEmojiUnicodeFromShortname(const QString &shortname) const;
     Q_INVOKABLE QString getEmojiFromAsciiAlias(const QString &alias) const;
+    // The catalogue's character for a hexcode, e.g. "2764" -> "❤️". The hexcode follows
+    // Twemoji's filename convention and drops U+FE0F, so rebuilding the character from it
+    // yields an unqualified sequence that renders in a text font. Empty if unknown.
+    Q_INVOKABLE QString getEmojiFromHexcode(const QString &hexcode) const;
     Q_INVOKABLE QJsonArray getSuggestions(const QString& name) const;
     Q_INVOKABLE int maxAsciiEmojiAliasLength() const;
     Q_INVOKABLE int getCategoryOffset(int categoryIndex) const;
@@ -55,8 +59,9 @@ private:
     void setEmojiJson(const QJsonArray &newEmojiJson);
     QJsonArray m_emojiJson;
 
-    void rebuildAsciiAliasIndex();
+    void rebuildLookupIndexes();
     QHash<QString, QString> m_asciiAliasToEmoji;
+    QHash<QString, QString> m_hexcodeToEmoji;
     int m_maxAsciiEmojiAliasLength = 0;
 
     QStringList categories() const;

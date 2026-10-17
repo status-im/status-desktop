@@ -35,9 +35,10 @@ Rectangle {
         anchors.centerIn: parent
         width: root.emojiSize
         height: root.emojiSize
-        // emojiId is what the backend knows this reaction by; only the display
-        // side needs the character
-        emoji: SQUtils.Emoji.getEmojiCodepoint(root.emojiId)
+        // emojiId is what the backend knows this reaction by; the character comes from
+        // the catalogue, which has the fully-qualified form (❤️, not ❤)
+        emoji: SQUtils.Emoji.emojiModel.getEmojiFromHexcode(root.emojiId)
+               || SQUtils.Emoji.getEmojiCodepoint(root.emojiId)
     }
 
     StatusMouseArea {

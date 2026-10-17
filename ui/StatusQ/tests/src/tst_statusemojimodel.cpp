@@ -121,6 +121,22 @@ private slots:
         QVERIFY(m_model->getEmojiFromAsciiAlias({}).isEmpty());
     }
 
+    // The hexcode follows Twemoji's filename convention, which drops U+FE0F, so it must
+    // not be turned back into a character by hand: the catalogue holds the fully-qualified
+    // form, and without the selector these render in a text font rather than as emoji.
+    void hexcodeLookupReturnsTheFullyQualifiedCharacter()
+    {
+        QCOMPARE(m_model->getEmojiFromHexcode("2764"), QString::fromUtf8("\u2764\uFE0F"));
+        QCOMPARE(m_model->getEmojiFromHexcode("1f590"), QString::fromUtf8("\U0001F590\uFE0F"));
+        // one that needs no selector, to show the lookup is not just appending one
+        QCOMPARE(m_model->getEmojiFromHexcode("1f602"), QString::fromUtf8("\U0001F602"));
+        // skin tone variants are keyed by their own hexcode
+        QCOMPARE(m_model->getEmojiFromHexcode("1f590-1f3fb"),
+                 QString::fromUtf8("\U0001F590\U0001F3FB"));
+        QVERIFY(m_model->getEmojiFromHexcode("not-a-hexcode").isEmpty());
+        QVERIFY(m_model->getEmojiFromHexcode({}).isEmpty());
+    }
+
     void benchmarkAsciiAliasLookup()
     {
         // mimics ChatTextArea's per-keystroke lookup of the text before the caret

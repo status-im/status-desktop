@@ -105,10 +105,10 @@ QtObject {
     readonly property int lastFlagIndex: 3772
     readonly property int flagsCount: lastFlagIndex - firstFlagIndex + 1
 
-    // Returns a random emoji excluding flags emojis
+    // Returns a random emoji (the character as the catalogue stores it), excluding flags
     // WARNING: use status-go RandomWalletEmoji instead.
     // More details here: https://github.com/status-im/status-go/issues/5663
-    function getRandomEmoji(size) {
+    function getRandomEmoji() {
         const emojisLength = emojiJSON.length
         if (emojisLength <= 0)
             return ""
@@ -118,18 +118,9 @@ QtObject {
         if (whitelistedIndex >= firstFlagIndex) {
             whitelistedIndex += flagsCount
         }
-        var randomEmoji = emojiJSON[whitelistedIndex]
-
-        const extensionIndex = randomEmoji.unicode.lastIndexOf('.');
-        let iconCodePoint = randomEmoji.unicode
-        if (extensionIndex > -1) {
-            iconCodePoint = iconCodePoint.substring(0, extensionIndex)
-        }
-
-        const encodedIcon = getEmojiCodepoint(iconCodePoint)
-
-        // Adding a space because otherwise, some emojis would fuse since emoji is just a string
-        return parse(encodedIcon, size || undefined) + ' '
+        // The character, not a rebuild from `unicode`: that follows Twemoji's filename
+        // convention and drops U+FE0F, which emoji presentation depends on.
+        return emojiJSON[whitelistedIndex].emoji
     }
 
     function getSuggestions(input: string) : var {

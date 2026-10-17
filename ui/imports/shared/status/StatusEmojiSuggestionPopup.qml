@@ -14,6 +14,15 @@ StatusInputListPopup {
 
         return root.modelList[listView.currentIndex].unicode
     }
+    // The character to insert. It has to come from the catalogue rather than be
+    // rebuilt from `unicode`, which follows Twemoji's filename convention and drops
+    // U+FE0F - and without that the emoji renders in a text font.
+    property string emoji: {
+        if(listView.currentIndex < 0 || listView.currentIndex >= root.modelList.length)
+            return ""
+
+        return root.modelList[listView.currentIndex].emoji
+    }
 
     getEmoji: function (modelData) {
         return modelData.emoji

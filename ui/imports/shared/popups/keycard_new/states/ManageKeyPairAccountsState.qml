@@ -26,7 +26,7 @@ Control {
 
     function addAccount() {
         const color = Theme.palette.customisationColorsArray[Math.floor(Math.random() * Theme.palette.customisationColorsArray.length)]
-        const emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
+        const emoji = StatusQUtils.Emoji.getRandomEmoji()
         const colorId = Utils.getIdForColor(Theme.palette, color)
         accountsList.append({
                                 name: "",

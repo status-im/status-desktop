@@ -182,7 +182,7 @@ unclosed fence here (no closing triple-tick)
         textArea.remove(at, cursor)
         // insertTextWithEmojis converts the emoji directly to an inline image in imageEmojis mode
         // (no raw-glyph flash); a plain insert in font mode. Caret ends past the space.
-        textArea.insertTextWithEmojis(at, Emoji.getEmojiCodepoint(unicode.split(".")[0]) + " ")
+        textArea.insertTextWithEmojis(at, Emoji.emojiModel.getEmojiFromHexcode(unicode) + " ")
         d.emojiDismissed = false
     }
 
