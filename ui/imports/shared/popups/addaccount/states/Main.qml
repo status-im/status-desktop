@@ -35,7 +35,7 @@ Item {
 
         if (root.store.addAccountModule.selectedEmoji === "") {
             // TODO: Reuse status-go RandomWalletEmoji
-            root.store.addAccountModule.selectedEmoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
+            root.store.addAccountModule.selectedEmoji = StatusQUtils.Emoji.getRandomEmoji()
         }
 
         accountName.text = root.store.addAccountModule.accountName

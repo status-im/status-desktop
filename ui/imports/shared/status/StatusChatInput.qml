@@ -200,14 +200,15 @@ Control {
         }
 
         // Replaces the ":filter" shortcode being typed with the selected emoji char + a space.
-        // `unicode` is the twemoji code-point file name (e.g. "1f600.svg").
-        function insertEmoji(unicode) {
+        // `emoji` is the catalogue's character: rebuilding it from the hexcode would drop
+        // U+FE0F and insert an unqualified sequence.
+        function insertEmoji(emoji) {
             const cursor = messageInputField.cursorPosition
             const at = cursor - messageInputField.emojiFilter.length - 1 // the ":"
             messageInputField.remove(at, cursor)
             // insertTextWithEmojis converts the emoji directly to an inline image in imageEmojis
             // mode, so the raw glyph never flashes before the image appears.
-            messageInputField.insertTextWithEmojis(at, StatusQUtils.Emoji.getEmojiCodepoint(unicode.split(".")[0]) + " ")
+            messageInputField.insertTextWithEmojis(at, emoji + " ")
         }
 
         // common popups are emoji, gif and stickers
@@ -297,8 +298,9 @@ Control {
             InputMethod.commit()
 
             const pos = atCursor ? messageInputField.cursorPosition : messageInputField.length
-            messageInputField.insertTextWithEmojis(
-                pos, StatusQUtils.Emoji.getEmojiCodepoint(hexcode.split(".")[0]) + " ")
+            // `text` is the catalogue's character (with its trailing space); rebuilding it
+            // from the hexcode would drop U+FE0F and insert an unqualified sequence.
+            messageInputField.insertTextWithEmojis(pos, text)
             messageInputField.forceActiveFocus()
         }
         function onClosed() {
@@ -377,8 +379,8 @@ Control {
     }
 
     function checkTextInsert() {
-        if (emojiSuggestions.visible && emojiSuggestions.unicode !== "") {
-            d.insertEmoji(emojiSuggestions.unicode)
+        if (emojiSuggestions.visible && emojiSuggestions.emoji !== "") {
+            d.insertEmoji(emojiSuggestions.emoji)
             return true
         }
         if (suggestionsBox.visible && !suggestionsBox.loading) {
@@ -596,8 +598,7 @@ Control {
                 index = emojiSuggestions.listView.currentIndex
             }
 
-            const unicode = emojiSuggestions.modelList[index].unicode
-            d.insertEmoji(unicode)
+            d.insertEmoji(emojiSuggestions.modelList[index].emoji)
         }
     }
 
