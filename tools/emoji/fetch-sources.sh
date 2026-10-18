@@ -40,13 +40,18 @@ echo "    $COUNT SVGs -> $WORK/svg"
 echo "==> emojibase ${EB_COMMIT:0:12}"
 mkdir -p "$WORK/emojibase"
 python3 - "$WORK/emojibase" "$EB_REPO" "$EB_COMMIT" <<'PY'
-import json, os, sys, urllib.request
+import hashlib, json, os, sys, urllib.request
 out, repo, commit = sys.argv[1:4]
-for path in json.load(open('manifest.json'))['metadata']['files']:
-    dest = os.path.join(out, os.path.basename(path))
+for entry in json.load(open('manifest.json'))['metadata']['files']:
+    path, want = entry['path'], entry['sha256']
+    name = os.path.basename(path)
+    dest = os.path.join(out, name)
     urllib.request.urlretrieve(
         f"https://raw.githubusercontent.com/{repo}/{commit}/{path}", dest)
-    print(f"    {os.path.basename(path)} ({os.path.getsize(dest) // 1024} KB)")
+    got = hashlib.sha256(open(dest, 'rb').read()).hexdigest()
+    if got != want:
+        sys.exit(f"ERROR: checksum mismatch for {name}\n  expected {want}\n  got      {got}")
+    print(f"    {name} ({os.path.getsize(dest) // 1024} KB)")
 PY
 
 echo "==> done"
