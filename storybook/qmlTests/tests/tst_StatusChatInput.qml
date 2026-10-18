@@ -62,7 +62,7 @@ Item {
                     anchors.centerIn: parent
                     text: "😀"
                     onClicked: {
-                        emojiPopupStub.emojiSelected("😀 ", true, "1f600")
+                        emojiPopupStub.emojiSelected("😀", true, "1f600")
                         emojiPopupStub.close()
                     }
                 }
@@ -361,7 +361,8 @@ Item {
             mouseClick(findChild(emojiPopup, "emojiPopupSelectButton"))
             waitForRendering(controlUnderTest)
 
-            verify(controlUnderTest.getPlainText().includes("😀"))
+            verify(controlUnderTest.getPlainText().includes("😀 "),
+                   "the composer appends a separator, so the next emoji cannot fuse with this one")
             verify(!emojiPopup.visible)
         }
 

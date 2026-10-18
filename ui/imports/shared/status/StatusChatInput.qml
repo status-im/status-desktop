@@ -296,9 +296,10 @@ Control {
             InputMethod.commit()
 
             const pos = atCursor ? messageInputField.cursorPosition : messageInputField.length
-            // `text` is the catalogue's character (with its trailing space); rebuilding it
-            // from the hexcode would drop U+FE0F and insert an unqualified sequence.
-            messageInputField.insert(pos, text)
+            // `text` is the catalogue's character; rebuilding it from the hexcode would drop
+            // U+FE0F and insert an unqualified sequence. The trailing space keeps it from
+            // fusing with whatever emoji follows it in the document.
+            messageInputField.insert(pos, text + " ")
             messageInputField.forceActiveFocus()
         }
         function onClosed() {

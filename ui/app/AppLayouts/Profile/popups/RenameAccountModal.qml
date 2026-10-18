@@ -127,7 +127,11 @@ StatusModal {
                     return
                 }
 
-                popup.renameAccountRequested(accountNameInput.text, Utils.getIdForColor(Theme.palette, accountColorInput.selectedColor), accountNameInput.input.asset.emoji)
+                // trim: an account saved by an older build may carry the space the picker
+                // used to pad its payload with, and renaming is a chance to drop it
+                popup.renameAccountRequested(accountNameInput.text,
+                                             Utils.getIdForColor(Theme.palette, accountColorInput.selectedColor),
+                                             accountNameInput.input.asset.emoji.trim())
                 popup.close()
             }
         }

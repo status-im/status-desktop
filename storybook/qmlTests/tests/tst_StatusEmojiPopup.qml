@@ -59,7 +59,7 @@ Item {
             const emitted = spy.signalArguments[0][0]
             verify(emitted.includes("️"),
                    `payload must keep U+FE0F, got ${JSON.stringify(emitted)}`)
-            compare(emitted, "❤️ ") // trailing space keeps adjacent emoji apart
+            compare(emitted, "❤️")
         }
 
         // The hexcode is a stored identifier: recents are persisted under it and

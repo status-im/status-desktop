@@ -12,7 +12,12 @@ Text {
     // The emoji itself, e.g. "😀".
     property string emoji
 
-    text: root.emoji
+    // Whitespace is never part of an emoji, and stored values sometimes carry a
+    // trailing space (the picker used to pad its payload for text insertion, and
+    // that padding was saved with channel and account emoji). The font has a real
+    // space glyph a full em wide, so leaving it in would push the artwork half an
+    // em out of the box the caller sized.
+    text: root.emoji.trim()
 
     width: 14
     height: 14
