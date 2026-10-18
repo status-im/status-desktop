@@ -170,6 +170,38 @@ private slots:
         QCOMPARE(m_model->getEmojiFromHexcode(other), m_model->getEmojiFromHexcode(one));
     }
 
+    // An entry with no shortname draws a blank row in the suggestion list, and two
+    // entries sharing one cannot be told apart there. joypixels names neither the
+    // Emoji 15.1 additions nor the skin variants, so the generator fills both in.
+    void everyEntryHasAUniqueShortname()
+    {
+        const auto catalogue = m_model->property("emojiJson").toJsonArray();
+        QStringList unnamed, duplicates;
+        QSet<QString> seen;
+        for (const auto &value : catalogue) {
+            const auto entry = value.toObject();
+            const auto shortname = entry.value("shortname").toString();
+            if (shortname.isEmpty())
+                unnamed.append(entry.value("name").toString());
+            else if (seen.contains(shortname))
+                duplicates.append(shortname);
+            else
+                seen.insert(shortname);
+        }
+        QVERIFY2(unnamed.isEmpty(), qPrintable(unnamed.mid(0, 5).join(u", "_s)));
+        QVERIFY2(duplicates.isEmpty(), qPrintable(duplicates.mid(0, 5).join(u", "_s)));
+    }
+
+    void shortnamesDerivedFromLabelsAreTypeable()
+    {
+        QCOMPARE(m_model->getEmojiUnicodeFromShortname(":head_shaking_horizontally:"),
+                 "1f642-200d-2194-fe0f"_L1);
+        // the tone has to come from the `tone` field: emojibase gives these skins the
+        // bare base label, so slugging alone would collide
+        QCOMPARE(m_model->getEmojiUnicodeFromShortname(":person_walking_facing_right_tone1:"),
+                 "1f6b6-1f3fb-200d-27a1-fe0f"_L1);
+    }
+
     void canonicalUnicodeReportsUnknownIds()
     {
         QVERIFY(m_model->canonicalUnicode("not-a-hexcode").isEmpty());
