@@ -209,7 +209,6 @@ Control {
                 if (!root.emojiPopup)
                     return
                 root.emojiPopup.open()
-                root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
                 root.emojiPopup.directParent = accountNameInput
                 root.emojiPopup.relativeY = accountNameInput.height + Theme.halfPadding
             }

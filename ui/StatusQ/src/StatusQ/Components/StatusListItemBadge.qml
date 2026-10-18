@@ -53,7 +53,6 @@ Control {
                 letterIdenticonColor: root.asset.color
                 name: root.primaryText
                 emoji: root.asset.emoji
-                emojiSize: root.asset.emojiSize
             }
             StatusBaseText {
                 font.weight: Font.Medium

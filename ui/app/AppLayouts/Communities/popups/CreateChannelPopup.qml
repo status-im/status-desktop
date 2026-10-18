@@ -151,7 +151,6 @@ StatusStackModal {
         function openEmojiPopup(leftSide = false) {
             root.emojiPopupOpened = true;
             root.emojiPopup.open();
-            root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall;
             root.emojiPopup.directParent = nameInput
             root.emojiPopup.relativeX = leftSide ? 0 : nameInput.width - root.emojiPopup.width
             root.emojiPopup.relativeY = nameInput.height + Theme.smallPadding;

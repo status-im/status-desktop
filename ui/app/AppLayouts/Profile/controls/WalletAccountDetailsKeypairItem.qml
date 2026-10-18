@@ -41,7 +41,6 @@ StatusListItem {
         asset.width: Theme.bigPadding
         asset.height: Theme.bigPadding
         asset.emoji: model.account.emoji
-        asset.emojiSize: Emoji.size.verySmall
         asset.color: StatusColors.transparent
         asset.isLetterIdenticon: true
         title: model.account.name

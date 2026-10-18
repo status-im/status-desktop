@@ -65,7 +65,6 @@ MenuItem {
             isLetterIdenticon: d.originalAssetSettings ? d.originalAssetSettings.isLetterIdenticon : d.defaultAssetSettings.isLetterIdenticon
             charactersLen: d.originalAssetSettings ? d.originalAssetSettings.charactersLen : d.defaultAssetSettings.charactersLen
             emoji: d.originalAssetSettings ? d.originalAssetSettings.emoji : d.defaultAssetSettings.emoji
-            emojiSize: d.originalAssetSettings ? d.originalAssetSettings.emojiSize : d.defaultAssetSettings.emojiSize
 
             //icon b
             bgWidth: d.originalAssetSettings ? d.originalAssetSettings.bgWidth : d.defaultAssetSettings.bgWidth

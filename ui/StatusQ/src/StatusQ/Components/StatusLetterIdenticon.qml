@@ -1,7 +1,6 @@
 import QtQuick
 import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils
 
 Rectangle {
     id: root
@@ -9,7 +8,6 @@ Rectangle {
     property alias identiconText: identiconText
     property string name
     property string emoji
-    property string emojiSize: Emoji.size.small
     property int letterSize: 21
     property int charactersLen: 1
     property color letterIdenticonColor: Theme.palette.miscColor5

@@ -61,7 +61,6 @@ Item {
             }
             let inputCoords = accountName.mapToItem(appMain, 0, 0)
             root.store.emojiPopup.open()
-            root.store.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
             root.store.emojiPopup.directParent = accountName
             root.store.emojiPopup.relativeX = 0
             if (!showLeft) {

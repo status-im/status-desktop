@@ -104,7 +104,6 @@ StatusListItem {
         closeButtonVisible: root.tagDisplayRemoveAccountButton
         asset {
             emoji: acc.emoji ?? ""
-            emojiSize: Emoji.size.verySmall
             isLetterIdenticon: !!(acc.emoji ?? "")
             name: acc.icon ?? ""
             color: Theme.palette.indirectColor1

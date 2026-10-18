@@ -296,7 +296,6 @@ RowLayout {
                               : chatContentModule.chatDetails.color
             : ""
             asset.emoji: emojiIcon
-            asset.emojiSize: "24x24"
             type: chatContentModule ? chatContentModule.chatDetails.type : Constants.chatType.unknown
             pinnedMessagesCount: chatContentModule? chatContentModule.pinnedMessagesModel.count : 0
             muted: chatContentModule? chatContentModule.chatDetails.muted : false

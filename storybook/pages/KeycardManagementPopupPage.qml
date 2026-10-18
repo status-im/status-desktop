@@ -63,7 +63,6 @@ SplitView {
         id: emojiPopupMock
         property var directParent: null
         property real relativeY: 0
-        property int emojiSize: 0
         signal emojiSelected(string emojiText, bool atCursor)
         function open() {}
         function close() {}

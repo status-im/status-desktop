@@ -75,7 +75,6 @@ StatusDropdown {
     }
 
     property alias searchString: searchBox.text
-    property string emojiSize: ""
 
     signal emojiSelected(string emoji, bool atCursor, string hexcode)
 
@@ -110,7 +109,6 @@ StatusDropdown {
 
     onClosed: {
         searchBox.clear()
-        root.emojiSize = ""
         skinToneEmoji.expandSkinColorOptions = false
     }
 
