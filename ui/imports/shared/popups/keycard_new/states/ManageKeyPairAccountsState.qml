@@ -145,7 +145,7 @@ Control {
         enabled: root.emojiPopup !== null
 
         function onEmojiSelected(emojiText, atCursor) {
-            d.observedAccountEmoji = emojiText.trim()
+            d.observedAccountEmoji = emojiText
         }
     }
 

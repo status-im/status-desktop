@@ -164,6 +164,8 @@ StatusStackModal {
                 name: StatusQUtils.Utils.filterXSS(nameInput.input.text),
                 description: StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
                 color: colorPanel.color.toString().toUpperCase(),
+                // trim: a channel saved by an older build carries the space the picker
+                // used to pad its payload with
                 emoji: nameInput.input.asset.emoji.trim(),
                 options: {
                     // TODO
@@ -184,6 +186,7 @@ StatusStackModal {
                 scrollView.scrollBackUp()
                 return
             }
+            // trim: see _getChannelConfig
             const emoji = nameInput.input.asset.emoji.trim()
             if (!isEdit) {
                 root.createCommunityChannel(StatusQUtils.Utils.filterXSS(nameInput.input.text),

@@ -74,11 +74,9 @@ Item {
         target: root.store.emojiPopup
 
         function onEmojiSelected (emojiText, atCursor) {
-            // the popup pads its payload with a space, for insertion into text
-            const emoji = emojiText.trim()
-            root.store.addAccountModule.selectedEmoji = emoji
+            root.store.addAccountModule.selectedEmoji = emojiText
             accountName.input.asset.isLetterIdenticon = false
-            accountName.input.asset.emoji = emoji
+            accountName.input.asset.emoji = emojiText
         }
     }
 

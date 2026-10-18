@@ -89,8 +89,7 @@ StatusDropdown {
     function addEmoji(hexcode, emoji) {
         root.emojiModel.addRecentEmoji(hexcode)
 
-        // Adding a space because otherwise, some emojis would fuse since emoji is just a string
-        root.emojiSelected(emoji + ' ', true, hexcode)
+        root.emojiSelected(emoji, true, hexcode)
         root.close()
     }
 
