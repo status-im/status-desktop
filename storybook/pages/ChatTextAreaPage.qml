@@ -572,8 +572,7 @@ unclosed fence here (no closing triple-tick)
                                                               chatTextView.font,
                                                               textArea.formatUnclosedCodeFence,
                                                               textArea.fullLineHeightEmojis,
-                                                              12 /* emoji enlargement for only-emojis message */,
-                                                              textArea.imageEmojis ? Emoji.base : "" /*emojiBaseUrl*/)
+                                                              12 /* emoji enlargement for only-emojis message */)
                             }
 
                             // Tracks the pointer so the click bubble can appear where you clicked.
@@ -756,8 +755,7 @@ unclosed fence here (no closing triple-tick)
                     return  StringUtils.expandAsciiEmoticonShortcuts(
                                 MarkdownUtils.singleLineHtml(
                                     text,
-                                    mentionResolver.resolveFor(text), font,
-                                    textArea.imageEmojis ? Emoji.base : ""))
+                                    mentionResolver.resolveFor(text), font))
                 }
             }
 

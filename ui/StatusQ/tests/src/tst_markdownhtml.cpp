@@ -552,16 +552,6 @@ private slots:
         return b[i].toMap()["html"].toString();
     }
 
-    // file:// base url for the real Twemoji svg dir (see TWEMOJI_SVG_DIR compile definition), so
-    // image-mode tests exercise the actual bundled asset set.
-    static QString twemojiBase()
-    {
-        QString base = QUrl::fromLocalFile(QStringLiteral(TWEMOJI_SVG_DIR)).toString();
-        if (!base.endsWith(QLatin1Char('/')))
-            base += QLatin1Char('/');
-        return base;
-    }
-
     // With a positive emojiPx an emoji run in text is wrapped in a font-size span.
     void blocks_emojiWrappedWhenSized()
     {
@@ -599,47 +589,6 @@ private slots:
         QCOMPARE(blockHtml(b), "<span style=\"font-size:18px\">" + one + "</span>");
     }
 
-    // The base url + asset set drives image mode: a real Twemoji svg dir is provided, so the flag
-    // resolves to its combined subdivision-flag svg — never the bare U+1F3F4 black-flag svg.
-    void blocks_emojiFlagImageUsesCombinedAsset()
-    {
-        const QString base = twemojiBase();
-        const QString england = QString::fromUcs4(
-            U"\U0001F3F4\U000E0067\U000E0062\U000E0065\U000E006E\U000E0067\U000E007F");
-        const QString html = blockHtml(toBlocks(parse(england), {}, 18, base));
-        QVERIFY2(html.contains("1f3f4-e0067-e0062-e0065-e006e-e0067-e007f.svg"), qPrintable(html));
-        QVERIFY2(!html.contains("/1f3f4.svg"), qPrintable(html)); // not the bare black flag
-    }
-
-    // Keycap in image mode resolves to its combined "31-20e3" svg, not a chopped base digit.
-    void blocks_emojiKeycapImageUsesCombinedAsset()
-    {
-        const QString base = twemojiBase();
-        const QString one = QString::fromUcs4(U"\U00000031\U0000FE0F\U000020E3"); // 1️⃣
-        const QString html = blockHtml(toBlocks(parse(one), {}, 18, base));
-        QVERIFY2(html.contains("31-20e3.svg"), qPrintable(html));
-    }
-
-    // Presentation guard: © (U+00A9) ships an svg (a9.svg) but defaults to *text* presentation, so a
-    // bare © must stay literal text — not become a colour emoji image — even in image mode.
-    void blocks_emojiBareTextSymbolNotImaged()
-    {
-        const QString base = twemojiBase();
-        const QString copyright = QString::fromUcs4(U"\U000000A9"); // © without VS16
-        const QString html = blockHtml(toBlocks(parse("(c) " + copyright), {}, 18, base));
-        QVERIFY2(!html.contains("a9.svg"), qPrintable(html));
-        QVERIFY2(html.contains(copyright), qPrintable(html)); // preserved as text
-    }
-
-    // ...but the explicit emoji-presentation form ©️ (© + VS16 U+FE0F) does image to a9.svg.
-    void blocks_emojiTextSymbolWithVs16Imaged()
-    {
-        const QString base = twemojiBase();
-        const QString copyrightEmoji = QString::fromUcs4(U"\U000000A9\U0000FE0F"); // ©️
-        const QString html = blockHtml(toBlocks(parse(copyrightEmoji), {}, 18, base));
-        QVERIFY2(html.contains("a9.svg"), qPrintable(html));
-    }
-
     // emojiPx == 0 (default) leaves the text untouched.
     void blocks_emojiNotWrappedWhenDisabled()
     {
@@ -660,41 +609,6 @@ private slots:
         QVERIFY2(!html.contains("font-size"), qPrintable(html));
     }
 
-    static QVariantMap firstCodeBlock(const QVariantList& b)
-    {
-        for (const QVariant& v : b)
-            if (v.toMap()["type"].toString() == "code")
-                return v.toMap();
-        return {};
-    }
-
-    // A code block carries a rich-text `codeHtml` (<pre> with the emoji wrapped) only when image
-    // emoji are enabled and the block actually contains an emoji.
-    void blocks_codeBlockHtmlInImageMode()
-    {
-        const QString grin = QString::fromUcs4(U"\U0001F600");
-        const QVariantMap m = firstCodeBlock(
-            toBlocks(parse("```\n" + grin + "\n```"), {}, 18, QStringLiteral("qrc:/x/")));
-        QVERIFY(m.contains("codeHtml"));
-        QVERIFY(m["codeHtml"].toString().startsWith("<pre>"));
-        QCOMPARE(m["code"].toString(), grin); // raw content still present for copy/PlainText
-    }
-
-    // No image mode (empty base url) ⇒ no codeHtml; the block stays plain.
-    void blocks_codeBlockNoHtmlInFontMode()
-    {
-        const QString grin = QString::fromUcs4(U"\U0001F600");
-        const QVariantMap m = firstCodeBlock(toBlocks(parse("```\n" + grin + "\n```"), {}, 18));
-        QVERIFY(!m.contains("codeHtml"));
-    }
-
-    // Image mode but no emoji in the block ⇒ no codeHtml (stays PlainText, unchanged).
-    void blocks_codeBlockNoHtmlWithoutEmoji()
-    {
-        const QVariantMap m = firstCodeBlock(
-            toBlocks(parse("```\nx = 1\n```"), {}, 18, QStringLiteral("qrc:/x/")));
-        QVERIFY(!m.contains("codeHtml"));
-    }
 };
 
 QTEST_MAIN(TestMarkdownHtml)

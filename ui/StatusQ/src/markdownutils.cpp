@@ -55,8 +55,7 @@ QString MarkdownUtils::dumpAst(const QString& text, bool formatUnclosedCodeFence
 
 QVariantList MarkdownUtils::toBlocks(const QString& text, const QVariantMap& mentions,
                                      const QFont& font, bool formatUnclosedCodeFence,
-                                     bool fullLineHeightEmojis, int emojiSizeOffset,
-                                     const QString& emojiBaseUrl) const
+                                     bool fullLineHeightEmojis, int emojiSizeOffset) const
 {
     Markdown::Options opts;
     opts.formatUnclosedCodeFence = formatUnclosedCodeFence;
@@ -71,11 +70,11 @@ QVariantList MarkdownUtils::toBlocks(const QString& text, const QVariantMap& men
     // height (only the emoji runs, so blank lines keep their normal height).
     if (emojiSizeOffset > 0 && Markdown::isOnlyEmoji(text))
         emojiPx = qRound(lineHeight) + emojiSizeOffset;
-    return Markdown::toBlocks(root, mentionMap, emojiPx, emojiBaseUrl);
+    return Markdown::toBlocks(root, mentionMap, emojiPx);
 }
 
 QString MarkdownUtils::singleLineHtml(const QString& text, const QVariantMap& mentions,
-                                      const QFont& font, const QString& emojiBaseUrl) const
+                                      const QFont& font) const
 {
     const Markdown::Node root = Markdown::parse(text, {});
 
@@ -84,7 +83,7 @@ QString MarkdownUtils::singleLineHtml(const QString& text, const QVariantMap& me
 
     // Emojis are sized to the line height; the emoji-only enlargement is intentionally not applied.
     const int emojiPx = qRound(QFontMetricsF(font).height());
-    return Markdown::toSingleLineHtml(root, mentionMap, emojiPx, emojiBaseUrl);
+    return Markdown::toSingleLineHtml(root, mentionMap, emojiPx);
 }
 
 QString MarkdownUtils::plainText(const QString& text, const QVariantMap& mentions) const
