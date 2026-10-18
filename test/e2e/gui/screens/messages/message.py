@@ -434,36 +434,17 @@ class Message:
         QObject(real_name=driver.objectMap.realName(self.object)).right_click()
         return MessageContextMenuPopup().wait_until_appears()
 
-    @allure.step('Get emoji reactions pathes')
+    @allure.step('Get emoji reaction ids')
     def get_emoji_reactions_pathes(self):
-        reactions_pathes = []
+        reaction_ids = []
         try:
             for child in walk_children(self.object, self._UI_PARSE_DEPTH):
                 try:
-                    child_id = getattr(child, 'id', '')
-                    if child_id == 'reactionDelegate':
-                        # Search for StatusIcon inside reactionDelegate and extract emoji ID from icon path
-                        try:
-                            for item in walk_children(child, 16):
-                                try:
-                                    icon_path = None
-                                    if hasattr(item, 'icon'):
-                                        icon_path = str(getattr(item, 'icon', ''))
-                                    elif hasattr(item, 'source'):
-                                        icon_path = str(getattr(item, 'source', ''))
-
-                                    if icon_path:
-                                        # Extract emoji ID from path like "qrc:/assets/twemoji/svg/1f600.svg"
-                                        match = re.search(r'/([a-fA-F0-9]+)\.svg', icon_path)
-                                        if match:
-                                            reactions_pathes.append(match.group(1))
-                                            break
-                                except (AttributeError, RuntimeError, LookupError):
-                                    # Skip items that can't be accessed safely
-                                    continue
-                        except (RuntimeError, AttributeError, LookupError):
-                            # Skip reactionDelegate children if walking fails
-                            continue
+                    # Each reaction chip is named after the id the backend knows it by,
+                    # e.g. "messageReaction_1f600"
+                    object_name = str(getattr(child, 'objectName', ''))
+                    if object_name.startswith('messageReaction_'):
+                        reaction_ids.append(object_name[len('messageReaction_'):])
                 except (AttributeError, RuntimeError, LookupError):
                     # Skip children that can't be accessed safely
                     continue
@@ -471,4 +452,4 @@ class Message:
             # If walking children fails, return empty list
             pass
 
-        return reactions_pathes
+        return reaction_ids

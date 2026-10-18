@@ -1,10 +1,8 @@
-import re
 
 import allure
 
 import configs
 import driver
-from driver.objects_access import walk_children
 from gui.elements.object import QObject
 from gui.objects_map import messaging_names
 
@@ -44,24 +42,16 @@ class MessageContextMenuPopup(QObject):
         else:
             # Remove occurrence for first element
             temp_real_name.pop('occurrence', None)
-        
+
         # Find the emoji element
         emoji_obj = driver.waitForObject(temp_real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-        
-        # Search for icon path inside the emoji element
-        for item in walk_children(emoji_obj):
-            icon_path = None
-            if hasattr(item, 'icon'):
-                icon_path = str(item.icon)
-            elif hasattr(item, 'source'):
-                icon_path = str(item.source)
-            
-            if icon_path:
-                # Extract emoji ID from path like "qrc:/assets/twemoji/svg/1f600.svg"
-                match = re.search(r'/([a-f0-9]+)\.svg', icon_path)
-                if match:
-                    return match.group(1)
-        
+
+        # The reaction carries the id the backend knows it by; it is rendered from the
+        # emoji font, so there is no image path to parse
+        emoji_id = str(getattr(emoji_obj, 'emojiId', ''))
+        if emoji_id:
+            return emoji_id
+
         raise LookupError(f'Could not find emoji code for occurrence {occurrence}')
 
     @allure.step('Add reaction to message')

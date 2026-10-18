@@ -39,7 +39,8 @@ SplitView {
                     name: qsTr("US Dollars")
                     symbol: "$"
                     category: ""
-                    imageSource: "../../assets/twemoji/svg/1f1fa-1f1f8.svg"
+                    imageSource: ""
+                    emoji: "🇺🇸"
                     selected: false
                     isToken: false
                 }
@@ -50,7 +51,8 @@ SplitView {
                     name: qsTr("British Pound")
                     symbol: "£"
                     category: ""
-                    imageSource: "../../assets/twemoji/svg/1f1ec-1f1e7.svg"
+                    imageSource: ""
+                    emoji: "🇬🇧"
                     selected: false
                     isToken: false
                 }
@@ -61,7 +63,8 @@ SplitView {
                     name: qsTr("Euros")
                     symbol: "€"
                     category: ""
-                    imageSource: "../../assets/twemoji/svg/1f1ea-1f1fa.svg"
+                    imageSource: ""
+                    emoji: "🇪🇺"
                     selected: true
                     isToken: false
                 }

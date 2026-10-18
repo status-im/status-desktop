@@ -46,6 +46,8 @@ Button {
         readonly property int delegateHeight: 70
 
         readonly property var currentEntry: itemData?.item ?? null
+        // Fiat entries carry a flag emoji instead of an image; tokens carry an image
+        readonly property string currentEmoji: currentEntry?.emoji ?? ""
         readonly property var itemData: ModelEntry {
             id: itemData
             sourceModel: root.currenciesModel
@@ -82,9 +84,16 @@ Button {
 
     contentItem: RowLayout {
         spacing: root.spacing
+        StatusEmoji {
+            Layout.preferredWidth: 20
+            Layout.preferredHeight: 20
+            visible: !!d.currentEmoji
+            emoji: d.currentEmoji
+        }
         StatusImage {
             Layout.preferredWidth: 20
             Layout.preferredHeight: 20
+            visible: !d.currentEmoji
             source: root.icon.source
         }
         StatusBaseText {
@@ -162,9 +171,17 @@ Button {
                             Layout.fillWidth: true
                             RowLayout {
                                 Layout.fillWidth: true
+                                StatusEmoji {
+                                    Layout.preferredWidth: 16
+                                    Layout.preferredHeight: 16
+                                    // the role is optional: a model of tokens only may not have it
+                                    visible: !!emoji
+                                    emoji: model.emoji ?? ""
+                                }
                                 StatusImage {
                                     Layout.preferredWidth: 16
                                     Layout.preferredHeight: 16
+                                    visible: !model.emoji
                                     source: model.imageSource
                                 }
                                 StatusBaseText {

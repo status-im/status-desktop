@@ -90,12 +90,15 @@ Flow {
             contentItem: RowLayout {
                 spacing: reactionDelegate.spacing
 
-                StatusIcon {
+                StatusEmoji {
                     objectName: "emojiReaction"
                     Layout.preferredWidth: d.iconSize
                     Layout.preferredHeight: d.iconSize
 
-                    icon: Assets.emoji(model.emoji)
+                    // model.emoji is the reaction's hexcode id; the character comes from the
+                    // catalogue, which has the fully-qualified form (❤️, not ❤)
+                    emoji: StatusQUtils.Emoji.emojiModel.getEmojiFromHexcode(model.emoji)
+                           || StatusQUtils.Emoji.getEmojiCodepoint(model.emoji)
                 }
 
                 StatusBaseText {
