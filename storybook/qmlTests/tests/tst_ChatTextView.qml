@@ -715,63 +715,27 @@ Item {
             verify(renders(control, 'a[href="https://b.example"]'), "hovered-link rule missing")
         }
 
-        // ── image emojis (Twemoji) via toBlocks(emojiBaseUrl) ─────────────────────
+        // ── emoji rendering ──────────────────────────────────────────────────────
 
-        // 😎 is U+1F60E → twemoji file 1f60e.svg.
+        // 😎 is U+1F60E.
         readonly property string emoji: "\u{1F60E}"
 
-        // With an emoji base url, toBlocks emits a Twemoji <img> and no raw emoji glyph.
-        function test_imageEmojis_rendersImage() {
+        // Emoji are the raw glyph in a font-size span, rendered by the bundled emoji font.
+        function test_emoji_keepsGlyphInAFontSizeSpan() {
             control.blocks = MarkdownUtils.toBlocks(
-                        "A" + emoji + "B", ({}), control.font, false, true, 0, Emoji.base)
+                        "A" + emoji + "B", ({}), control.font, false, true, 0)
             tryVerify(() => control.implicitHeight > 0)
 
-            verify(renders(control, "<img"), "expected an <img> for the emoji")
-            verify(renders(control, "1f60e.svg"), "expected the twemoji svg source")
-            verify(!renders(control, emoji), "raw emoji glyph should be absent in image mode")
+            verify(renders(control, emoji), "the raw emoji is kept")
+            verify(renders(control, "font-size"), "wrapped in a font-size span")
+            verify(!renders(control, "<img"), "no image emoji any more")
         }
 
-        // With an empty base url, toBlocks keeps font-based emoji (raw glyph in a font-size span).
-        function test_imageEmojis_fontModeKeepsGlyph() {
-            control.blocks = MarkdownUtils.toBlocks(
-                        "A" + emoji + "B", ({}), control.font, false, true, 0, "")
-            tryVerify(() => control.implicitHeight > 0)
-
-            verify(renders(control, emoji), "font mode keeps the raw emoji")
-            verify(!renders(control, "<img"), "font mode has no <img>")
-        }
-
-        // An emoji inside an inline code span is also rendered as a Twemoji <img> in image mode
-        // (the <code> content is routed through the same image wrapper), not left as a font glyph.
-        function test_imageEmojis_inCodeSpan() {
-            control.blocks = MarkdownUtils.toBlocks(
-                        "`" + emoji + "`", ({}), control.font, false, true, 0, Emoji.base)
-            tryVerify(() => control.implicitHeight > 0)
-
-            verify(renders(control, "<code"), "inline code span present")
-            verify(renders(control, "<img"), "emoji rendered as image inside the code span")
-            verify(renders(control, "1f60e.svg"), "twemoji svg source")
-            verify(!renders(control, emoji), "raw emoji glyph should be absent in image mode")
-        }
-
-        // An emoji inside a fenced code block is rendered as a Twemoji <img> in image mode: the
-        // block carries a `codeHtml` (<pre>) variant and the code renderer switches to RichText.
-        function test_imageEmojis_inCodeBlock() {
-            control.blocks = MarkdownUtils.toBlocks(
-                        "```\n" + emoji + "\n```", ({}), control.font, false, true, 0, Emoji.base)
-            tryVerify(() => control.implicitHeight > 0)
-
-            verify(renders(control, "<img"), "emoji rendered as image inside the code block")
-            verify(renders(control, "1f60e.svg"), "twemoji svg source")
-            verify(!renders(control, emoji), "raw emoji glyph should be absent in image mode")
-        }
-
-        // Copy parity: selecting an image emoji recovers its Unicode (not U+FFFC), matching font
-        // mode — so copy behaves the same in both modes.
-        function test_imageEmojis_copyRecoversUnicode() {
+        // Copy yields the emoji itself.
+        function test_emoji_copyYieldsTheCharacter() {
             control.selectable = true
             control.blocks = MarkdownUtils.toBlocks(
-                        "A" + emoji + "B", ({}), control.font, false, true, 0, Emoji.base)
+                        "A" + emoji + "B", ({}), control.font, false, true, 0)
             tryVerify(() => control.implicitHeight > 0)
 
             mousePress(control, 0, 3)
