@@ -44,7 +44,5 @@ RESOURCES += resources.qrc \
             StatusQ/src/assets/png/png.qrc \
             StatusQ/src/assets/png/png-desktop.qrc \
             StatusQ/src/assets/png/png-mobile.qrc \
-            StatusQ/src/assets/twemoji/twemoji.qrc \
-            StatusQ/src/assets/twemoji/twemoji-svg.qrc \
             StatusQ/src/statusq.qrc \
             StatusQ/src/StatusQ/Core/Utils/emojiList.qrc

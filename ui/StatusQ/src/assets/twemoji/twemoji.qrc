@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/assets/twemoji">
-        <file>LICENSE</file>
-        <file>twemoji.js</file>
-    </qresource>
-</RCC>

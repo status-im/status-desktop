@@ -999,7 +999,7 @@ Control {
                         placeholderText: root.chatInputPlaceholder
 
                         // Emoji shortcode suggestions: ChatTextArea exposes enteringEmoji/emojiFilter
-                        // (>= 2 chars); feed the twemoji suggestion popup off it.
+                        // (>= 2 chars); feed the emoji suggestion popup off it.
                         onEmojiFilterChanged: {
                             // Only open when there are actual matches; otherwise the popup would be
                             // visible-but-empty and hijack Enter (checkTextInsert) into deleting the

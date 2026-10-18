@@ -12,14 +12,9 @@ QtObject {
         "small": "18x18",
         "verySmall": "16x16"
     }
-    readonly property string base: Qt.resolvedUrl("../../../assets/twemoji/svg/")
     readonly property alias emojiJSON: emojiModel.emojiJson
 
     readonly property StatusEmojiModel emojiModel: StatusEmojiModel { id: emojiModel }
-
-    function svgImage(unicode) {
-        return `${base}/${unicode}.svg`
-    }
 
     function getEmojiCodepoint(iconCodePoint) {
         // Split the codepoint to get all the parts and then encode them from hex to utf8
