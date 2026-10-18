@@ -15,9 +15,12 @@
     "tag": "emojibase-data@15.3.2",
     "commit": "b7a85b9ced60a2398a7c2574237d24f379fd75ca",
     "files": [
-      "packages/data/en/data.raw.json",
-      "packages/data/en/shortcodes/joypixels.raw.json",
-      "packages/data/en/messages.raw.json"
+      { "path": "packages/data/en/data.raw.json",
+        "sha256": "3cf5762064f884c015d3f3dac09e42936c397b1deb67e6971a99a6ed98dd84f8" },
+      { "path": "packages/data/en/shortcodes/joypixels.raw.json",
+        "sha256": "8dbbcc40d2fc964bb64cfbbae4c7b6c676c8f5239e354769b64f0f5324095ef1" },
+      { "path": "packages/data/en/messages.raw.json",
+        "sha256": "59643066b93d7f981db4fccc1de3e093e96a0bbe63f1fde98904e92b190697d6" }
     ],
     "expected_entries": 3773,
     "unicode_field": "raw lowercased emojibase hexcode; no twemoji filename normalization"
