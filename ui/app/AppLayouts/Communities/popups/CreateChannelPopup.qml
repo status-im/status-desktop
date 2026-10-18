@@ -165,7 +165,7 @@ StatusStackModal {
                 name: StatusQUtils.Utils.filterXSS(nameInput.input.text),
                 description: StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
                 color: colorPanel.color.toString().toUpperCase(),
-                emoji: StatusQUtils.Emoji.deparse(nameInput.input.asset.emoji),
+                emoji: nameInput.input.asset.emoji.trim(),
                 options: {
                     // TODO
                 }
@@ -185,7 +185,7 @@ StatusStackModal {
                 scrollView.scrollBackUp()
                 return
             }
-            let emoji = StatusQUtils.Emoji.deparse(nameInput.input.asset.emoji)
+            const emoji = nameInput.input.asset.emoji.trim()
             if (!isEdit) {
                 root.createCommunityChannel(StatusQUtils.Utils.filterXSS(nameInput.input.text),
                                             StatusQUtils.Utils.filterXSS(descriptionTextArea.text),

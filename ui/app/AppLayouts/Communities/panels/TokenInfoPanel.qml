@@ -148,7 +148,7 @@ Control {
                         spacing: 3
 
                         StatusBaseText {
-                            text: StatusQUtils.Emoji.fromCodePoint("1f525") // :fire: emoji
+                            text: "🔥"
                             font.pixelSize: Theme.tertiaryTextFontSize
                             visible: previewBox.isLoading
                             color: Theme.palette.directColor1

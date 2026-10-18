@@ -42,7 +42,10 @@ Flow {
             }
 
             const authors = Qt.locale(Qt.uiLanguage).createSeparatedList(listOfUsers) // "a, b, c and d"
-            return qsTr("%1 reacted with %2").arg(authors).arg(StatusQUtils.Emoji.fromCodePoint(emoji))
+            // the catalogue has the fully-qualified character; decoding the id drops U+FE0F
+            const character = StatusQUtils.Emoji.emojiModel.getEmojiFromHexcode(emoji)
+                              || StatusQUtils.Emoji.getEmojiCodepoint(emoji)
+            return qsTr("%1 reacted with %2").arg(authors).arg(character)
         }
 
         // design values

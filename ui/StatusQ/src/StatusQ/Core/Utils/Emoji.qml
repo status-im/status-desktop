@@ -4,8 +4,6 @@ import QtQuick
 
 import StatusQ
 
-import "../../../assets/twemoji/twemoji.js" as Twemoji
-
 QtObject {
     readonly property var size: {
         "veryBig": "86x86",
@@ -19,74 +17,8 @@ QtObject {
 
     readonly property StatusEmojiModel emojiModel: StatusEmojiModel { id: emojiModel }
 
-    function parse(text, renderSize = size.small) {
-        const renderSizes = renderSize.split("x");
-        if (!renderSize.includes("x") || renderSizes.length !== 2) {
-            throw new Error("Invalid value for 'renderSize' parameter: ", renderSize);
-        }
-        Twemoji.twemoji.base = base
-        Twemoji.twemoji.ext = `.svg`
-
-        return Twemoji.twemoji.parse(text, {
-            callback: (iconId, options) => {
-                return options.base + iconId + options.ext;
-            },
-            attributes: function() {
-              return {
-                width: renderSizes[0],
-                height: renderSizes[1],
-                style: "vertical-align: top"
-              }
-            }
-        })
-    }
-    function iconSource(text) {
-        if (!text) return
-        const parsed = parse(text);
-        const match = parsed.match('src="(.*\.svg).*"');
-        return (match && match.length >= 2) ? match[1] : undefined;
-    }
     function svgImage(unicode) {
         return `${base}/${unicode}.svg`
-    }
-    function iconId(text) {
-        if (!text) return
-        const parsed = parse(text);
-        const match = parsed.match('src=".*\/(.+?).svg');
-        return (match && match.length >= 2) ? match[1] : undefined;
-    }
-    // NOTE: doing the same thing as iconId but without checking Twemoji internal checks
-    function iconHex(text) {
-        if (!text) return
-        return text.codePointAt(0).toString(16);
-    }
-    function fromCodePoint(value) {
-        return Twemoji.twemoji.convert.fromCodePoint(value)
-    }
-
-    // This regular expression looks for html tag `img` with following attributes in any order:
-    //  - `src` containig with "/assets/twemoji/" substring
-    //  - `alt` (this one is captured)
-    readonly property var emojiRegexp: /<img(?=[^>]*\balt="([^"]*)")(?=[^>]*\bsrc="[^>]*\/assets\/twemoji\/[^>]*")[^>]*>/g
-
-    function deparse(value) {
-        return value.replace(emojiRegexp, "$1");
-    }
-    function hasEmoji(value) {
-        let match = value.match(emojiRegexp)
-        return match && match.length > 0
-    }
-    function nbEmojis(value) {
-        let match = value.match(emojiRegexp)
-        return match ? match.length : 0
-    }
-    function getEmojis(value) {
-        return value.match(emojiRegexp, "$1");
-    }
-    function getEmojiUnicode(shortname) {
-        const _emoji = emojiModel.getEmojiUnicodeFromShortname(shortname);
-        if (!!_emoji)
-            return _emoji;
     }
 
     function getEmojiCodepoint(iconCodePoint) {

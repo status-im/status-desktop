@@ -97,6 +97,11 @@ QString MarkdownUtils::plainText(const QString& text, const QVariantMap& mention
     return Markdown::toPlainText(root, mentionMap);
 }
 
+bool MarkdownUtils::hasEmoji(const QString& text) const
+{
+    return Markdown::clusterHasEmoji(text);
+}
+
 QStringList MarkdownUtils::mentions(const QString& text) const
 {
     QStringList out;

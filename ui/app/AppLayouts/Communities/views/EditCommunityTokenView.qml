@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 
+import StatusQ
+
 import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Controls
@@ -91,7 +93,7 @@ StatusScrollView {
         }
 
         function hasEmoji(text) {
-            return SQUtils.Emoji.hasEmoji(SQUtils.Emoji.parse(text));
+            return MarkdownUtils.hasEmoji(text)
         }
     }
 

@@ -75,10 +75,11 @@ Item {
         target: root.store.emojiPopup
 
         function onEmojiSelected (emojiText, atCursor) {
-            let emoji = StatusQUtils.Emoji.deparse(emojiText)
+            // the popup pads its payload with a space, for insertion into text
+            const emoji = emojiText.trim()
             root.store.addAccountModule.selectedEmoji = emoji
             accountName.input.asset.isLetterIdenticon = false
-            accountName.input.asset.emoji = emojiText
+            accountName.input.asset.emoji = emoji
         }
     }
 

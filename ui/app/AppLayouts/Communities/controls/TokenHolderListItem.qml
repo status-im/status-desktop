@@ -232,7 +232,7 @@ ItemDelegate {
                     Layout.fillWidth: true
                     horizontalAlignment: Qt.AlignRight
 
-                    text: StatusQUtils.Emoji.fromCodePoint("1f525") // :fire: emoji
+                    text: "🔥"
                     font.pixelSize: Theme.tertiaryTextFontSize
                     visible: root.remotelyDestructInProgress
                     color: Theme.palette.directColor1
