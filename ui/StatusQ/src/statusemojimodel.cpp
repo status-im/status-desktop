@@ -38,26 +38,36 @@ StatusEmojiModel::StatusEmojiModel(QObject *parent)
     : QAbstractListModel(parent)
 {
     // lazy load the emoji_json from the QRC resource, not to block the CTOR
-    QMetaObject::invokeMethod(this, [this]() {
-        QFile f(":/StatusQ/Core/Utils/emojiList.json"_L1);
-        if (!f.open(QFile::ReadOnly | QFile::Text)) {
-            qWarning() << "Failed to open EmojiJSON DB from file:" << f.fileName();
-            return;
-        }
-        const auto jsonDB = f.readAll();
-        QJsonParseError err;
-        QJsonDocument doc = QJsonDocument::fromJson(jsonDB, &err);
-        if (err.error != QJsonParseError::NoError) {
-            qWarning() << "Failed to parse EmojiJSON:" << err.error << err.errorString() << "; at offset:" << err.offset;
-            return;
-        }
-        if (!doc.isArray()) {
-            qWarning() << "Malformed EmojiJSON, not a JSON array: " << f.fileName();
-            return;
-        }
-        setEmojiJson(doc.array());
-        addRecentEmojisToModel(m_recentEmojis);
-    }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this, [this]() { ensureLoaded(); }, Qt::QueuedConnection);
+}
+
+// Parses the catalogue if the queued load has not run yet. Queries must not depend on that
+// timing: a lookup made before it (an emoticon typed right after the input appears, say) would
+// otherwise silently answer "no such emoji".
+void StatusEmojiModel::ensureLoaded() const
+{
+    if (!m_emojiJson.isEmpty())
+        return;
+
+    QFile f(":/StatusQ/Core/Utils/emojiList.json"_L1);
+    if (!f.open(QFile::ReadOnly | QFile::Text)) {
+        qWarning() << "Failed to open EmojiJSON DB from file:" << f.fileName();
+        return;
+    }
+    const auto jsonDB = f.readAll();
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(jsonDB, &err);
+    if (err.error != QJsonParseError::NoError) {
+        qWarning() << "Failed to parse EmojiJSON:" << err.error << err.errorString() << "; at offset:" << err.offset;
+        return;
+    }
+    if (!doc.isArray()) {
+        qWarning() << "Malformed EmojiJSON, not a JSON array: " << f.fileName();
+        return;
+    }
+    auto* self = const_cast<StatusEmojiModel*>(this);
+    self->setEmojiJson(doc.array());
+    self->addRecentEmojisToModel(m_recentEmojis);
 }
 
 int StatusEmojiModel::rowCount(const QModelIndex &parent) const
@@ -149,6 +159,7 @@ void StatusEmojiModel::setEmojiJson(const QJsonArray &newEmojiJson)
 
 QString StatusEmojiModel::getEmojiUnicodeFromShortname(const QString &shortname) const
 {
+    ensureLoaded();
     const auto it = std::find_if(m_emojiJson.cbegin(),
                                  m_emojiJson.cend(),
                                  [&shortname](const auto &emoji) {
@@ -163,16 +174,19 @@ QString StatusEmojiModel::getEmojiUnicodeFromShortname(const QString &shortname)
 
 QString StatusEmojiModel::getEmojiFromAsciiAlias(const QString &alias) const
 {
+    ensureLoaded();
     return m_asciiAliasToEmoji.value(alias);
 }
 
 QString StatusEmojiModel::getEmojiFromHexcode(const QString &hexcode) const
 {
+    ensureLoaded();
     return m_hexcodeToEmoji.value(hexcode);
 }
 
 QJsonArray StatusEmojiModel::getSuggestions(const QString &name) const
 {
+    ensureLoaded();
     const auto anyContains = [&name](const QJsonArray &values) {
         return std::any_of(values.cbegin(), values.cend(), [&name](const auto &value) {
             return value.toString().contains(name);
@@ -196,6 +210,7 @@ QJsonArray StatusEmojiModel::getSuggestions(const QString &name) const
 
 int StatusEmojiModel::maxAsciiEmojiAliasLength() const
 {
+    ensureLoaded();
     return m_maxAsciiEmojiAliasLength;
 }
 

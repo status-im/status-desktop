@@ -59,6 +59,10 @@ private:
     void setEmojiJson(const QJsonArray &newEmojiJson);
     QJsonArray m_emojiJson;
 
+    // Parses the catalogue if the queued load has not happened yet; every query calls it so
+    // results never depend on load timing.
+    void ensureLoaded() const;
+
     void rebuildLookupIndexes();
     QHash<QString, QString> m_asciiAliasToEmoji;
     QHash<QString, QString> m_hexcodeToEmoji;

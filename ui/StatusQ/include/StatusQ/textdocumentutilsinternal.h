@@ -27,11 +27,6 @@ public:
     // `position`. The caller is expected to gate this on the actual keystroke.
     Q_INVOKABLE void handleTripleBacktick(QQuickTextDocument* document, int position);
 
-    // Returns the text of [start, end), converting any inline emoji image object back to its
-    // Unicode emoji (recovered from the Twemoji svg name), so copy is identical in font- and
-    // image-emoji modes. Non-image content is returned as-is.
-    Q_INVOKABLE QString selectionText(QQuickTextDocument* document, int start, int end) const;
-
     // Returns the position one grapheme cluster back from `position`, so a caller can
     // delete an emoji sequence in one go. Qt's own cursor-position logic is used, the
     // same one that already makes forward Delete and arrow keys cluster-aware, rather

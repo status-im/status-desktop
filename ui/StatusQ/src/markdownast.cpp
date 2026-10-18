@@ -1,9 +1,6 @@
 #include "StatusQ/markdownast.h"
 
-#include <QDir>
 #include <QHash>
-#include <QSet>
-#include <QUrl>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -71,36 +68,6 @@ void dumpNode(const Markdown::Node& node, int depth, bool withRanges, QString& o
 }
 
 // Local path the base url (a directory ending in '/') resolves to, covering the two StatusQ
-// deployments: filesystem (file://) and bundled resources (qrc:/).
-QString localDirForUrl(const QString& url)
-{
-    const QUrl u(url);
-    if (u.scheme() == QLatin1String("qrc"))
-        return QLatin1Char(':') + u.path();
-    if (u.isLocalFile())
-        return u.toLocalFile();
-    return url;
-}
-
-// Basenames (without ".svg") of the Twemoji assets bundled under `base`, listed once per base and
-// cached. This asset set is the source of truth for which grapheme clusters render as an emoji
-// image.
-const QSet<QString>& twemojiAssetNames(const QString& base)
-{
-    static QHash<QString, QSet<QString>> cache;
-    const auto it = cache.constFind(base);
-    if (it != cache.constEnd())
-        return it.value();
-
-    QSet<QString> names;
-    const QDir dir(localDirForUrl(base));
-    const auto entries = dir.entryList({"*.svg"_L1}, QDir::Files);
-    names.reserve(entries.size());
-    for (const QString& e : entries)
-        names.insert(e.left(e.size() - 4)); // strip ".svg"
-    return *cache.insert(base, std::move(names));
-}
-
 } // namespace
 
 namespace Markdown {
@@ -132,31 +99,6 @@ bool isOnlyEmoji(const QString& text)
         return true;
     });
     return onlyEmoji && hasEmoji;
-}
-
-QString twemojiSvgUrl(const QString& base, QStringView cluster)
-{
-    // Presentation guard: image only clusters carrying an emoji code point, so default-text symbols
-    // that happen to ship an svg (© U+00A9, ® U+00AE, ™ U+2122) stay text unless written with VS16.
-    if (base.isEmpty() || !clusterHasEmoji(cluster))
-        return {};
-
-    const bool hasZwj = cluster.contains(QChar(0x200D));
-    QString name;
-    for (int i = 0; i < cluster.size();) {
-        int units = 1;
-        const char32_t cp = codePointAt(cluster, i, units);
-        i += units;
-        if (!hasZwj && cp == 0xFE0F) // twemoji.js toCodePoint: drop VS16 unless the cluster is a ZWJ seq
-            continue;
-        if (!name.isEmpty())
-            name += QLatin1Char('-');
-        name += QString::number(cp, 16);
-    }
-    if (name.isEmpty() || !twemojiAssetNames(base).contains(name))
-        return {};
-    return base + name + ".svg"_L1;
-;
 }
 
 } // namespace Markdown

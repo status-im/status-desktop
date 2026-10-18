@@ -206,9 +206,7 @@ Control {
             const cursor = messageInputField.cursorPosition
             const at = cursor - messageInputField.emojiFilter.length - 1 // the ":"
             messageInputField.remove(at, cursor)
-            // insertTextWithEmojis converts the emoji directly to an inline image in imageEmojis
-            // mode, so the raw glyph never flashes before the image appears.
-            messageInputField.insertTextWithEmojis(at, emoji + " ")
+            messageInputField.insert(at, emoji + " ")
         }
 
         // common popups are emoji, gif and stickers
@@ -300,7 +298,7 @@ Control {
             const pos = atCursor ? messageInputField.cursorPosition : messageInputField.length
             // `text` is the catalogue's character (with its trailing space); rebuilding it
             // from the hexcode would drop U+FE0F and insert an unqualified sequence.
-            messageInputField.insertTextWithEmojis(pos, text)
+            messageInputField.insert(pos, text)
             messageInputField.forceActiveFocus()
         }
         function onClosed() {

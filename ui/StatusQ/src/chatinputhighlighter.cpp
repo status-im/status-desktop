@@ -15,7 +15,6 @@
 #include <QTextBlockFormat>
 #include <QTextCharFormat>
 #include <QTextCursor>
-#include <QTextImageFormat>
 #include <QVariantMap>
 #include <QVector>
 
@@ -57,18 +56,6 @@ Markdown::Options optionsFor(bool unclosedFence)
 // Custom char-format property holding an emoji image object's original Unicode text, used to
 // recover the real emoji for extraction/copy and to toggle back to font rendering. Well clear
 // of the mention properties (UserProperty + 1..3).
-constexpr int kEmojiUnicodeProperty = QTextFormat::UserProperty + 20;
-// A unique id per inserted emoji image. Qt merges adjacent fragments with identical char formats;
-// without a distinct id, two identical emoji next to each other collapse into one fragment and only
-// the first image is painted. (Same trick as MentionTextObject::UniqueIdProperty.)
-constexpr int kEmojiUniqueIdProperty = QTextFormat::UserProperty + 21;
-
-// True when `fmt` is one of our inline emoji image objects.
-bool isEmojiImage(const QTextCharFormat& fmt)
-{
-    return fmt.isImageFormat() && fmt.hasProperty(kEmojiUnicodeProperty);
-}
-
 // Reads the code point at `i` (advancing `units` over a surrogate pair).
 constexpr char32_t codePointAt(QStringView s, qsizetype i, qsizetype& units)
 {
@@ -81,29 +68,11 @@ constexpr char32_t codePointAt(QStringView s, qsizetype i, qsizetype& units)
     return c.unicode();
 }
 
-// Cluster → svg url resolution (asset set + presentation guard) lives in Markdown::twemojiSvgUrl,
-// shared with the static renderer.
-
 // True if the block text at [i, ...) starts an emoji code point (never matches the U+FFFC of an
 // existing image/mention object, so conversion is idempotent).
 constexpr bool startsEmoji(QStringView s, qsizetype i, qsizetype& units)
 {
     return Markdown::isEmojiCodePoint(codePointAt(s, i, units));
-}
-
-// Inline image format for one emoji: the Twemoji svg sized to the line height, carrying the original
-// Unicode for extraction/copy and a unique id so adjacent identical emoji stay separate fragments.
-QTextImageFormat emojiImageFormat(const QString& emoji, const QString& url, int lineHeight,
-                                  int uniqueId)
-{
-    QTextImageFormat fmt;
-    fmt.setName(url);
-    fmt.setWidth(lineHeight);
-    fmt.setHeight(lineHeight);
-    fmt.setVerticalAlignment(QTextCharFormat::AlignBottom);
-    fmt.setProperty(kEmojiUnicodeProperty, emoji);
-    fmt.setProperty(kEmojiUniqueIdProperty, uniqueId);
-    return fmt;
 }
 
 // A textual mention detected in a parsed string: [start,end) over "@0x…" and its pub key.
@@ -726,10 +695,6 @@ void ChatInputHighlighter::copySelectionToClipboard(int start, int end) const
             const QString pubKey = fmt.property(MentionTextObject::PubKeyProperty).toString();
             stream << quint8(1) << name << pubKey;
             plainText += name; // mentions collapse to their name for external paste
-        } else if (isEmojiImage(fmt)) {
-            // Emoji images copy as their Unicode text (a plain text run): external paste gets the
-            // emoji, internal paste re-inserts text that the reactive step re-imagifies.
-            accum += fmt.property(kEmojiUnicodeProperty).toString();
         } else {
             accum += ch;
         }
@@ -782,7 +747,7 @@ void ChatInputHighlighter::pasteFromClipboard(int selectionStart, int selectionE
             if (type == 0) {
                 QString text;
                 stream >> text;
-                insertEmojiAwareText(cursor, text); // emoji → image inline; replaces any selection
+                cursor.insertText(text);
             } else if (type == 1) {
                 QString name, pubKey;
                 stream >> name >> pubKey;
@@ -814,7 +779,7 @@ void ChatInputHighlighter::pasteFromClipboard(int selectionStart, int selectionE
         QString text = mime->text();
         if (inQuote)
             text.replace(QLatin1Char('\n'), "\n> "_L1);
-        insertEmojiAwareText(cursor, text);
+        cursor.insertText(text);
     }
     cursor.endEditBlock();
 }
@@ -893,8 +858,6 @@ QString ChatInputHighlighter::textWithMentions() const
             out += QLatin1Char('\n');
         else if (fmt.objectType() == MentionTextObject::MentionType)
             out += QLatin1Char('@') + fmt.property(MentionTextObject::PubKeyProperty).toString();
-        else if (isEmojiImage(fmt))
-            out += fmt.property(kEmojiUnicodeProperty).toString();
         else
             out += ch;
     }
@@ -917,14 +880,14 @@ void ChatInputHighlighter::setTextWithMentions(const QString& text, const QVaria
     cursor.removeSelectedText();
 
     // Inserts plain text, turning '\n' into new blocks (the editor's block-per-line model) and
-    // emoji directly into images when imageEmojis is on (so a loaded draft doesn't flicker).
+   
     const auto insertPlain = [&](const QString& s) {
         const QStringList lines = s.split(QLatin1Char('\n'));
         for (int i = 0; i < lines.size(); ++i) {
             if (i > 0)
                 cursor.insertBlock();
             if (!lines[i].isEmpty())
-                insertEmojiAwareText(cursor, lines[i]);
+                cursor.insertText(lines[i]);
         }
     };
 
@@ -1070,167 +1033,7 @@ void ChatInputHighlighter::setFullLineHeightEmojis(bool enabled)
     emit fullLineHeightEmojisChanged();
 }
 
-bool ChatInputHighlighter::imageEmojis() const
-{
-    return m_imageEmojis;
-}
-
-void ChatInputHighlighter::setImageEmojis(bool enabled)
-{
-    if (m_imageEmojis == enabled) return;
-    m_imageEmojis = enabled;
-    if (document()) {
-        // Convert the current content immediately (own undo step); typed emoji thereafter are
-        // converted reactively from highlightBlock.
-        if (enabled)
-            convertEmojisToImages(/*joinUndo=*/false);
-        else
-            convertImagesToEmojis();
-    }
-    m_cachedText.clear();
-    rehighlight();
-    emit imageEmojisChanged();
-}
-
-QString ChatInputHighlighter::twemojiBaseUrl() const
-{
-    return m_twemojiBaseUrl;
-}
-
-void ChatInputHighlighter::setTwemojiBaseUrl(const QString& url)
-{
-    if (m_twemojiBaseUrl == url) return;
-    m_twemojiBaseUrl = url;
-    // Re-run the conversion so already-typed emoji pick up a base set after content exists.
-    if (m_imageEmojis && document()) {
-        convertEmojisToImages(/*joinUndo=*/false);
-        m_cachedText.clear();
-        rehighlight();
-    }
-    emit twemojiBaseUrlChanged();
-}
-
-bool ChatInputHighlighter::hasRawEmojis() const
-{
-    const QTextDocument* doc = document();
-    if (!doc)
-        return false;
-    for (QTextBlock b = doc->begin(); b != doc->end(); b = b.next()) {
-        const QString t = b.text();
-        for (qsizetype i = 0; i < t.size();) {
-            qsizetype units = 1;
-            if (startsEmoji(t, i, units))
-                return true;
-            i += units;
-        }
-    }
-    return false;
-}
-
-void ChatInputHighlighter::convertEmojisToImages(bool joinUndo)
-{
-    QTextDocument* doc = document();
-    if (!doc || doc->isRedoAvailable())
-        return;
-
-    const int lineHeight = qMax(1, qRound(QFontMetricsF(doc->defaultFont()).height()));
-
-    // Collect every emoji (grapheme cluster) the app ships an svg for as a document
-    // range with its Twemoji url.
-    struct Run { int start; int end; QString text; QString url; };
-    QVector<Run> runs;
-    for (QTextBlock b = doc->begin(); b != doc->end(); b = b.next()) {
-        const int base = b.position();
-        Markdown::forEachGraphemeCluster(b.text(), [&](QStringView cluster, int cs, int ce) {
-            const QString url = Markdown::twemojiSvgUrl(m_twemojiBaseUrl, cluster);
-            if (!url.isEmpty()) // retained past the callback ⇒ materialise an owning copy
-                runs.append({ base + cs, base + ce, cluster.toString(), url });
-            return true;
-        });
-    }
-    if (runs.isEmpty())
-        return;
-
-    QTextCursor cursor(doc);
-    if (joinUndo)
-        cursor.joinPreviousEditBlock();
-    else
-        cursor.beginEditBlock();
-    // Right-to-left so earlier positions stay valid as runs are replaced.
-    for (int idx = runs.size() - 1; idx >= 0; --idx) {
-        const Run& r = runs[idx];
-        QTextCursor rc(doc);
-        rc.setPosition(r.start);
-        rc.setPosition(r.end, QTextCursor::KeepAnchor);
-        rc.removeSelectedText();
-        rc.insertImage(emojiImageFormat(r.text, r.url, lineHeight, ++m_emojiCounter));
-    }
-    cursor.endEditBlock();
-    m_emojiImageLineHeight = lineHeight;
-}
-
-bool ChatInputHighlighter::insertEmojiObject(QTextCursor& cursor, const QString& emoji)
-{
-    if (!m_imageEmojis || !document())
-        return false;
-    const QString url = Markdown::twemojiSvgUrl(m_twemojiBaseUrl, emoji);
-    if (url.isEmpty())
-        return false;
-    const int lineHeight = qMax(1, qRound(QFontMetricsF(document()->defaultFont()).height()));
-    cursor.insertImage(emojiImageFormat(emoji, url, lineHeight, ++m_emojiCounter));
-    m_emojiImageLineHeight = lineHeight;
-    return true;
-}
-
-void ChatInputHighlighter::insertEmojiAwareText(QTextCursor& cursor, const QString& text)
-{
-    if (!m_imageEmojis) {
-        cursor.insertText(text); // font mode: plain, selection-aware insert
-        return;
-    }
-
-    // insertImage() (unlike insertText) doesn't replace a selection, so drop it up front — an
-    // emoji-first insert would otherwise leave the replaced text behind.
-    if (cursor.hasSelection())
-        cursor.removeSelectedText();
-
-    // Segment into grapheme clusters; each cluster the app ships an svg for becomes an inline image,
-    // everything else is buffered and inserted verbatim (one insertText per text span preserves '\n'
-    // handling). Asset existence — not a code-point range — decides what is an emoji, so whole
-    // sequences (subdivision flags, keycaps, ZWJ) resolve to their combined svg.
-    QString pending;
-    const auto flushPending = [&] {
-        if (!pending.isEmpty()) {
-            cursor.insertText(pending);
-            pending.clear();
-        }
-    };
-    Markdown::forEachGraphemeCluster(text, [&](QStringView cluster, int, int) {
-        if (Markdown::twemojiSvgUrl(m_twemojiBaseUrl, cluster).isEmpty()) {
-            pending.append(cluster);
-        } else {
-            flushPending();
-            const QString emoji = cluster.toString(); // needed by insertImage / insertText (own QString)
-            if (!insertEmojiObject(cursor, emoji)) // asset present ⇒ succeeds; defensive fallback
-                cursor.insertText(emoji);
-        }
-        return true;
-    });
-    flushPending();
-}
-
-void ChatInputHighlighter::insertTextWithEmojis(int position, const QString& text)
-{
-    if (!document())
-        return;
-    QTextCursor cursor(document());
-    cursor.setPosition(qBound(0, position, document()->characterCount() - 1));
-    cursor.beginEditBlock();
-    insertEmojiAwareText(cursor, text);
-    cursor.endEditBlock();
-}
-
-void ChatInputHighlighter::replaceTextWithEmojis(int start, int end, const QString& text)
+void ChatInputHighlighter::replaceText(int start, int end, const QString& text)
 {
     if (!document())
         return;
@@ -1243,94 +1046,7 @@ void ChatInputHighlighter::replaceTextWithEmojis(int start, int end, const QStri
     cursor.beginEditBlock();
     if (cursor.hasSelection())
         cursor.removeSelectedText();
-    insertEmojiAwareText(cursor, text);
-    cursor.endEditBlock();
-}
-
-int ChatInputHighlighter::emojiImageCount() const
-{
-    const QTextDocument* doc = document();
-    if (!doc)
-        return 0;
-    int count = 0;
-    for (QTextBlock b = doc->begin(); b != doc->end(); b = b.next())
-        for (auto it = b.begin(); !it.atEnd(); ++it) {
-            const QTextFragment frag = it.fragment();
-            if (frag.isValid() && isEmojiImage(frag.charFormat()))
-                ++count; // one fragment == one separately-rendered emoji image
-        }
-    return count;
-}
-
-void ChatInputHighlighter::convertImagesToEmojis()
-{
-    QTextDocument* doc = document();
-    if (!doc)
-        return;
-
-    struct Img { int pos; QString text; };
-    QVector<Img> imgs;
-    for (QTextBlock b = doc->begin(); b != doc->end(); b = b.next()) {
-        for (auto it = b.begin(); !it.atEnd(); ++it) {
-            const QTextFragment frag = it.fragment();
-            if (!frag.isValid() || !isEmojiImage(frag.charFormat()))
-                continue;
-            for (int p = frag.position(); p < frag.position() + frag.length(); ++p)
-                imgs.append({ p, frag.charFormat().property(kEmojiUnicodeProperty).toString() });
-        }
-    }
-    if (imgs.isEmpty())
-        return;
-
-    QTextCursor cursor(doc);
-    cursor.beginEditBlock();
-    std::sort(imgs.begin(), imgs.end(), [](const Img& a, const Img& b) { return a.pos > b.pos; });
-    for (const Img& im : std::as_const(imgs)) {
-        QTextCursor rc(doc);
-        rc.setPosition(im.pos);
-        rc.setPosition(im.pos + 1, QTextCursor::KeepAnchor);
-        rc.insertText(im.text, QTextCharFormat()); // replace the image ORC with plain emoji text
-    }
-    cursor.endEditBlock();
-    m_emojiImageLineHeight = 0;
-}
-
-void ChatInputHighlighter::resizeEmojiImages()
-{
-    QTextDocument* doc = document();
-    if (!doc || doc->isRedoAvailable())
-        return;
-
-    const int lineHeight = qMax(1, qRound(QFontMetricsF(doc->defaultFont()).height()));
-    if (lineHeight == m_emojiImageLineHeight)
-        return;
-
-    struct Img { int pos; QTextImageFormat fmt; };
-    QVector<Img> imgs;
-    for (QTextBlock b = doc->begin(); b != doc->end(); b = b.next()) {
-        for (auto it = b.begin(); !it.atEnd(); ++it) {
-            const QTextFragment frag = it.fragment();
-            if (!frag.isValid() || !isEmojiImage(frag.charFormat()))
-                continue;
-            QTextImageFormat img = frag.charFormat().toImageFormat();
-            img.setWidth(lineHeight);
-            img.setHeight(lineHeight);
-            for (int p = frag.position(); p < frag.position() + frag.length(); ++p)
-                imgs.append({ p, img });
-        }
-    }
-    m_emojiImageLineHeight = lineHeight;
-    if (imgs.isEmpty())
-        return;
-
-    QTextCursor cursor(doc);
-    cursor.beginEditBlock();
-    for (const Img& im : std::as_const(imgs)) {
-        QTextCursor rc(doc);
-        rc.setPosition(im.pos);
-        rc.setPosition(im.pos + 1, QTextCursor::KeepAnchor);
-        rc.setCharFormat(im.fmt);
-    }
+    cursor.insertText(text);
     cursor.endEditBlock();
 }
 
@@ -1548,26 +1264,6 @@ void ChatInputHighlighter::highlightBlock(const QString& text)
                                       Qt::QueuedConnection);
     }
 
-    // Image emojis: reactively convert newly-typed emoji to inline images, or rescale existing
-    // ones after a font-size change. Kept out of the text-change guard above so a font change
-    // (rehighlight with unchanged text) still resizes; the flag dedupes the per-block passes into
-    // one queued edit. Runs out-of-band since it mutates the document.
-    if (m_imageEmojis && document() && !m_emojiUpdateQueued) {
-        const int lh = qMax(1, qRound(QFontMetricsF(document()->defaultFont()).height()));
-        if (hasRawEmojis() || lh != m_emojiImageLineHeight) {
-            m_emojiUpdateQueued = true;
-            QMetaObject::invokeMethod(this, [this] {
-                m_emojiUpdateQueued = false;
-                if (!m_imageEmojis)
-                    return;
-                if (hasRawEmojis())
-                    convertEmojisToImages(/*joinUndo=*/true);
-                else
-                    resizeEmojiImages();
-            }, Qt::QueuedConnection);
-        }
-    }
-
     const int       blockStart = currentBlock().position();
     const qsizetype blockLen   = text.length();
 
@@ -1673,8 +1369,7 @@ void ChatInputHighlighter::demoteMentionsInCode()
         QTextCursor mc(doc);
         mc.setPosition(positions[idx]);
         mc.setPosition(positions[idx] + 1, QTextCursor::KeepAnchor);
-        // The parser reports every U+FFFC (incl. emoji image objects) as a mention; only demote
-        // real mentions — otherwise an emoji image inside code would be blanked out.
+        // The parser reports every U+FFFC as a mention; only demote real mention objects.
         if (mc.charFormat().objectType() != MentionTextObject::MentionType)
             continue;
         const QString name =
