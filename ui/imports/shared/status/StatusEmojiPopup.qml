@@ -126,7 +126,7 @@ StatusDropdown {
     Settings {
         id: settings
         category: "AppMainLocalSettings_%1".arg(root.userUID)
-        property string skinColor  // NB: must be a string for the twemoji lib to work; we don't want the `#` in the name
+        property string skinColor  // a name, not a `#rrggbb` value
     }
 
     Binding {

@@ -6,6 +6,7 @@ they are built from is pinned in [`manifest.json`](manifest.json).
 | Artifact | Built from | Lands in |
 |---|---|---|
 | `StatusTwemoji-COLRv0.ttf` | Twemoji SVGs | `ui/StatusQ/src/assets/fonts/` |
+| `StatusTwemoji-COLRv0.LICENSE` | Twemoji's own LICENSE, verbatim | `ui/StatusQ/src/assets/fonts/` |
 | `emojiList.json` | emojibase raw data | `ui/StatusQ/src/StatusQ/Core/Utils/` |
 
 ## Rebuilding
@@ -30,6 +31,11 @@ changes.
 Keep the artwork and metadata versions compatible: the font comes from Twemoji,
 the picker list from emojibase, and an entry the font has no glyph for shows up
 as tofu in the picker.
+
+The font is a derivative of the Twemoji artwork, so its licence ships with it:
+`StatusTwemoji-COLRv0.LICENSE` sits next to the font and `fonts.qrc` embeds it
+as `:/assets/licenses/StatusTwemoji-COLRv0.LICENSE` (not under `/assets/fonts`,
+where every file is expected to be a loadable font).
 
 ## Why these settings
 

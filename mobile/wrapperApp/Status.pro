@@ -49,8 +49,6 @@ RESOURCES += \
     $$PWD/../../ui/StatusQ/src/assets/img/img.qrc \
     $$PWD/../../ui/StatusQ/src/assets/png/png.qrc \
     $$PWD/../../ui/StatusQ/src/assets/png/png-mobile.qrc \
-    $$PWD/../../ui/StatusQ/src/assets/twemoji/twemoji.qrc \
-    $$PWD/../../ui/StatusQ/src/assets/twemoji/twemoji-svg.qrc \
     $$WEBSCRIPTS_QRC
 
 QML_IMPORT_PATH += $$PWD/../../ui/imports \

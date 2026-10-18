@@ -143,9 +143,7 @@ if (${STATUSQ_SHADOW_BUILD})
         list(APPEND STATUSQ_QRC_FILES
             src/statusq.qrc
             src/assets/img/img.qrc
-            src/assets/png/png.qrc
-            src/assets/twemoji/twemoji.qrc
-            src/assets/twemoji/twemoji-svg.qrc)
+            src/assets/png/png.qrc)
 
         # Platform-specific PNG bundles
         if(ANDROID OR IOS)

@@ -266,7 +266,7 @@ unclosed fence here (no closing triple-tick)
         }
     }
 
-    // The twemoji suggestions shown in the emoji popup — filtered live by the editor's emojiFilter.
+    // The suggestions shown in the emoji popup — filtered live by the editor's emojiFilter.
     readonly property var emojiSuggestions:
         textArea.enteringEmoji ? Emoji.getSuggestions(textArea.emojiFilter) : []
 
@@ -390,12 +390,10 @@ unclosed fence here (no closing triple-tick)
 
                 contentItem: Row {
                     spacing: 8
-                    Image {
+                    StatusEmoji {
                         width: 20
                         height: 20
-                        sourceSize.width: 20
-                        sourceSize.height: 20
-                        source: Emoji.svgImage(modelData.unicode)
+                        emoji: modelData.emoji
                     }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
