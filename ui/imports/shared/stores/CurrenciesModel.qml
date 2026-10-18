@@ -7,7 +7,8 @@ ListModel {
         name: qsTr("US Dollars")
         symbol: "$"
         category: ""
-        imageSource: "../../assets/twemoji/svg/1f1fa-1f1f8.svg"
+        imageSource: ""
+        emoji: "🇺🇸"
         selected: false
         isToken: false
     }
@@ -18,7 +19,8 @@ ListModel {
         name: qsTr("British Pound")
         symbol: "£"
         category: ""
-        imageSource: "../../assets/twemoji/svg/1f1ec-1f1e7.svg"
+        imageSource: ""
+        emoji: "🇬🇧"
         selected: false
         isToken: false
     }
@@ -29,7 +31,8 @@ ListModel {
         name: qsTr("Euros")
         symbol: "€"
         category: ""
-        imageSource: "../../assets/twemoji/svg/1f1ea-1f1fa.svg"
+        imageSource: ""
+        emoji: "🇪🇺"
         selected: false
         isToken: false
     }
@@ -40,7 +43,8 @@ ListModel {
         name: qsTr("Russian ruble")
         symbol: "₽"
         category: ""
-        imageSource: "../../assets/twemoji/svg/1f1f7-1f1fa.svg"
+        imageSource: ""
+        emoji: "🇷🇺"
         selected: false
         isToken: false
     }
@@ -51,7 +55,8 @@ ListModel {
         name: qsTr("South Korean won")
         symbol: "₩"
         category: ""
-        imageSource: "../../assets/twemoji/svg/1f1f0-1f1f7.svg"
+        imageSource: ""
+        emoji: "🇰🇷"
         selected: false
         isToken: false
     }
@@ -63,6 +68,7 @@ ListModel {
         symbol: "Ξ"
         category: qsTr("Tokens")
         imageSource: "../../assets/png/tokens/ETH.png"
+        emoji: ""
         selected: false
         isToken: true
     }
@@ -74,6 +80,7 @@ ListModel {
         symbol: "฿"
         category: qsTr("Tokens")
         imageSource: "../../assets/png/tokens/WBTC.png"
+        emoji: ""
         selected: false
         isToken: true
     }
@@ -84,7 +91,8 @@ ListModel {
         name: qsTr("United Arab Emirates dirham")
         symbol: "د.إ"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1e6-1f1ea.svg"
+        imageSource: ""
+        emoji: "🇦🇪"
         selected: false
         isToken: false
     }
@@ -95,7 +103,8 @@ ListModel {
         name: qsTr("Argentine peso")
         symbol: "$"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1e6-1f1f7.svg"
+        imageSource: ""
+        emoji: "🇦🇷"
         selected: false
         isToken: false
     }
@@ -106,7 +115,8 @@ ListModel {
         name: qsTr("Australian dollar")
         symbol: "$"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1e6-1f1fa.svg"
+        imageSource: ""
+        emoji: "🇦🇺"
         selected: false
         isToken: false
     }
@@ -117,7 +127,8 @@ ListModel {
         name: qsTr("Bangladeshi taka")
         symbol: "Tk"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1e7-1f1e9.svg"
+        imageSource: ""
+        emoji: "🇧🇩"
         selected: false
         isToken: false
     }
@@ -128,7 +139,8 @@ ListModel {
         name: qsTr("Bahraini dinar")
         symbol: "BD"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1e7-1f1ed.svg"
+        imageSource: ""
+        emoji: "🇧🇭"
         selected: false
         isToken: false
     }
@@ -139,7 +151,8 @@ ListModel {
         name: qsTr("Brazillian real")
         symbol: "R$"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1e7-1f1f7.svg"
+        imageSource: ""
+        emoji: "🇧🇷"
         selected: false
         isToken: false
     }
@@ -150,7 +163,8 @@ ListModel {
         name: qsTr("Canadian dollar")
         symbol: "$"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1e8-1f1e6.svg"
+        imageSource: ""
+        emoji: "🇨🇦"
         selected: false
         isToken: false
     }
@@ -161,7 +175,8 @@ ListModel {
         name: qsTr("Swiss franc")
         symbol: "CHF"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1e8-1f1ed.svg"
+        imageSource: ""
+        emoji: "🇨🇭"
         selected: false
         isToken: false
     }
@@ -172,7 +187,8 @@ ListModel {
         name: qsTr("Chilean peso")
         symbol: "$"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1e8-1f1f1.svg"
+        imageSource: ""
+        emoji: "🇨🇱"
         selected: false
         isToken: false
     }
@@ -183,7 +199,8 @@ ListModel {
         name: qsTr("Chinese yuan")
         symbol: "¥"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1e8-1f1f3.svg"
+        imageSource: ""
+        emoji: "🇨🇳"
         selected: false
         isToken: false
     }
@@ -194,7 +211,8 @@ ListModel {
         name: qsTr("Czech koruna")
         symbol: "Kč"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1e8-1f1ff.svg"
+        imageSource: ""
+        emoji: "🇨🇿"
         selected: false
         isToken: false
     }
@@ -205,7 +223,8 @@ ListModel {
         name: qsTr("Danish krone")
         symbol: "kr"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1e9-1f1f0.svg"
+        imageSource: ""
+        emoji: "🇩🇰"
         selected: false
         isToken: false
     }
@@ -216,7 +235,8 @@ ListModel {
         name: qsTr("Georgian lari")
         symbol: "₾"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1ec-1f1ea.svg"
+        imageSource: ""
+        emoji: "🇬🇪"
         selected: false
         isToken: false
     }
@@ -227,7 +247,8 @@ ListModel {
         name: qsTr("Hong Kong dollar")
         symbol: "$"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1ed-1f1f0.svg"
+        imageSource: ""
+        emoji: "🇭🇰"
         selected: false
         isToken: false
     }
@@ -238,7 +259,8 @@ ListModel {
         name: qsTr("Hungarian forint")
         symbol: "Ft"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1ed-1f1fa.svg"
+        imageSource: ""
+        emoji: "🇭🇺"
         selected: false
         isToken: false
     }
@@ -249,7 +271,8 @@ ListModel {
         name: qsTr("Indonesian rupiah")
         symbol: "Rp"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1ee-1f1e9.svg"
+        imageSource: ""
+        emoji: "🇮🇩"
         selected: false
         isToken: false
     }
@@ -260,7 +283,8 @@ ListModel {
         name: qsTr("Israeli new shekel")
         symbol: "₪"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1ee-1f1f1.svg"
+        imageSource: ""
+        emoji: "🇮🇱"
         selected: false
         isToken: false
     }
@@ -271,7 +295,8 @@ ListModel {
         name: qsTr("Indian rupee")
         symbol: "₹"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1ee-1f1f3.svg"
+        imageSource: ""
+        emoji: "🇮🇳"
         selected: false
         isToken: false
     }
@@ -282,7 +307,8 @@ ListModel {
         name: qsTr("Japanese yen")
         symbol: "¥"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1ef-1f1f5.svg"
+        imageSource: ""
+        emoji: "🇯🇵"
         selected: false
         isToken: false
     }
@@ -293,7 +319,8 @@ ListModel {
         name: qsTr("Kuwaiti dinar")
         symbol: "د.ك"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f0-1f1fc.svg"
+        imageSource: ""
+        emoji: "🇰🇼"
         selected: false
         isToken: false
     }
@@ -304,7 +331,8 @@ ListModel {
         name: qsTr("Sri Lankan rupee")
         symbol: "₨"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f1-1f1f0.svg"
+        imageSource: ""
+        emoji: "🇱🇰"
         selected: false
         isToken: false
     }
@@ -315,7 +343,8 @@ ListModel {
         name: qsTr("Mexican peso")
         symbol: "$"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f2-1f1fd.svg"
+        imageSource: ""
+        emoji: "🇲🇽"
         selected: false
         isToken: false
     }
@@ -326,7 +355,8 @@ ListModel {
         name: qsTr("Malaysian ringgit")
         symbol: "RM"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f2-1f1fe.svg"
+        imageSource: ""
+        emoji: "🇲🇾"
         selected: false
         isToken: false
     }
@@ -337,7 +367,8 @@ ListModel {
         name: qsTr("Nigerian naira")
         symbol: "₦"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f3-1f1ec.svg"
+        imageSource: ""
+        emoji: "🇳🇬"
         selected: false
         isToken: false
     }
@@ -348,7 +379,8 @@ ListModel {
         name: qsTr("Norwegian krone")
         symbol: "kr"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f3-1f1f4.svg"
+        imageSource: ""
+        emoji: "🇳🇴"
         selected: false
         isToken: false
     }
@@ -359,7 +391,8 @@ ListModel {
         name: qsTr("New Zealand dollar")
         symbol: "$"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f3-1f1ff.svg"
+        imageSource: ""
+        emoji: "🇳🇿"
         selected: false
         isToken: false
     }
@@ -370,7 +403,8 @@ ListModel {
         name: qsTr("Philippine peso")
         symbol: "₱"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f5-1f1ed.svg"
+        imageSource: ""
+        emoji: "🇵🇭"
         selected: false
         isToken: false
     }
@@ -381,7 +415,8 @@ ListModel {
         name: qsTr("Pakistani rupee")
         symbol: "₨"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f5-1f1f0.svg"
+        imageSource: ""
+        emoji: "🇵🇰"
         selected: false
         isToken: false
     }
@@ -392,7 +427,8 @@ ListModel {
         name: qsTr("Polish złoty")
         symbol: "zł"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f5-1f1f1.svg"
+        imageSource: ""
+        emoji: "🇵🇱"
         selected: false
         isToken: false
     }
@@ -403,7 +439,8 @@ ListModel {
         name: qsTr("Saudi riyal")
         symbol: "﷼"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f8-1f1e6.svg"
+        imageSource: ""
+        emoji: "🇸🇦"
         selected: false
         isToken: false
     }
@@ -414,7 +451,8 @@ ListModel {
         name: qsTr("Swedish krona")
         symbol: "kr"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f8-1f1ea.svg"
+        imageSource: ""
+        emoji: "🇸🇪"
         selected: false
         isToken: false
     }
@@ -425,7 +463,8 @@ ListModel {
         name: qsTr("Singapore dollar")
         symbol: "$"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f8-1f1ec.svg"
+        imageSource: ""
+        emoji: "🇸🇬"
         selected: false
         isToken: false
     }
@@ -436,7 +475,8 @@ ListModel {
         name: qsTr("Thai baht")
         symbol: "฿"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f9-1f1ed.svg"
+        imageSource: ""
+        emoji: "🇹🇭"
         selected: false
         isToken: false
     }
@@ -447,7 +487,8 @@ ListModel {
         name: qsTr("New Taiwan dollar")
         symbol: "NT$"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f9-1f1fc.svg"
+        imageSource: ""
+        emoji: "🇹🇼"
         selected: false
         isToken: false
     }
@@ -458,7 +499,8 @@ ListModel {
         name: qsTr("Turkish lira")
         symbol: "₺"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1f9-1f1f7.svg"
+        imageSource: ""
+        emoji: "🇹🇷"
         selected: false
         isToken: false
     }
@@ -469,7 +511,8 @@ ListModel {
         name: qsTr("Ukrainian hryvnia")
         symbol: "₴"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1fa-1f1e6.svg"
+        imageSource: ""
+        emoji: "🇺🇦"
         selected: false
         isToken: false
     }
@@ -480,7 +523,8 @@ ListModel {
         name: qsTr("Vietnamese đồng")
         symbol: "₫"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1fb-1f1f3.svg"
+        imageSource: ""
+        emoji: "🇻🇳"
         selected: false
         isToken: false
     }
@@ -491,7 +535,8 @@ ListModel {
         name: qsTr("South African rand")
         symbol: "R"
         category: qsTr("Other Fiat")
-        imageSource: "../../assets/twemoji/svg/1f1ff-1f1e6.svg"
+        imageSource: ""
+        emoji: "🇿🇦"
         selected: false
         isToken: false
     }
