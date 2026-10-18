@@ -8,6 +8,8 @@
 
 #include <StatusQ/statusemojimodel.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 class tst_StatusEmojiModel : public QObject
 {
     Q_OBJECT
@@ -135,6 +137,65 @@ private slots:
                  QString::fromUtf8("\U0001F590\U0001F3FB"));
         QVERIFY(m_model->getEmojiFromHexcode("not-a-hexcode").isEmpty());
         QVERIFY(m_model->getEmojiFromHexcode({}).isEmpty());
+    }
+
+    // The catalogue follows emojibase, which spells a keycap "0031-fe0f-20e3"; the ids
+    // this app persisted before (recents) and the ones peers send for reactions use
+    // Twemoji's filename spelling, "31-20e3". Both have to find the same entry, or an old
+    // reaction renders through the unqualified-codepoint fallback.
+    void hexcodeLookupAcceptsEverySpelling_data()
+    {
+        QTest::addColumn<QString>("one");
+        QTest::addColumn<QString>("other");
+
+        QTest::newRow("keycap") << "31-20e3" << "0031-fe0f-20e3";
+        QTest::newRow("keycap hash") << "23-20e3" << "0023-fe0f-20e3";
+        QTest::newRow("copyright") << "a9" << "00a9";
+        QTest::newRow("registered") << "ae" << "00ae";
+        QTest::newRow("eye in speech bubble")
+            << "1f441-200d-1f5e8" << "1f441-fe0f-200d-1f5e8-fe0f";
+        QTest::newRow("upper case") << "1f602" << "1F602";
+        QTest::newRow("selector on a plain id") << "1f602" << "1f602-fe0f";
+    }
+
+    void hexcodeLookupAcceptsEverySpelling()
+    {
+        QFETCH(QString, one);
+        QFETCH(QString, other);
+
+        const auto id = m_model->canonicalUnicode(one);
+        QVERIFY2(!id.isEmpty(), qPrintable(one));
+        QCOMPARE(m_model->canonicalUnicode(other), id);
+        QVERIFY(!m_model->getEmojiFromHexcode(one).isEmpty());
+        QCOMPARE(m_model->getEmojiFromHexcode(other), m_model->getEmojiFromHexcode(one));
+    }
+
+    void canonicalUnicodeReportsUnknownIds()
+    {
+        QVERIFY(m_model->canonicalUnicode("not-a-hexcode").isEmpty());
+        QVERIFY(m_model->canonicalUnicode("ffffff").isEmpty());
+        QVERIFY(m_model->canonicalUnicode({}).isEmpty());
+    }
+
+    // Recents are persisted as ids, so a list written by an older version must still
+    // show up - once, under the id the catalogue uses now.
+    void recentEmojisStoredUnderAnOldIdAreHealed()
+    {
+        StatusEmojiModel model;
+        QSignalSpy loaded(&model, &StatusEmojiModel::emojiJsonChanged);
+        QVERIFY(loaded.wait());
+
+        const auto keycap = model.canonicalUnicode("31-20e3");
+        QVERIFY(!keycap.isEmpty());
+
+        model.setProperty("recentEmojis", QStringList{"31-20e3", "0031-fe0f-20e3", "2764"});
+
+        QCOMPARE(model.property("recentEmojis").toStringList(),
+                 (QStringList{keycap, "2764"}));
+        QCOMPARE(model.data(model.index(0, 0), StatusEmojiModel::UnicodeRole).toString(),
+                 keycap);
+        QCOMPARE(model.data(model.index(0, 0), StatusEmojiModel::CategoryRole).toString(),
+                 "recent"_L1);
     }
 
     void benchmarkAsciiAliasLookup()

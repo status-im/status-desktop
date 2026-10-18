@@ -32,6 +32,24 @@ constexpr auto MAX_EMOJI_NUMBER = 36;
 constexpr auto kRecentCategoryName = "recent"_L1;
 
 constexpr auto kRecentEmojisSettingsEntry = "recentEmojis"_L1;
+
+// The spelling-insensitive form of a hexcode: no variation selectors, no leading zeros.
+// The catalogue follows emojibase, which writes "0031-fe0f-20e3"; ids persisted by older
+// versions and ids seen on the wire use Twemoji's filename spelling, "31-20e3". Both must
+// find the same entry. The generator guarantees these are unique across the catalogue.
+QString canonicalForm(const QString &hexcode)
+{
+    QStringList parts;
+    for (const auto &part : hexcode.toLower().split(u'-', Qt::SkipEmptyParts)) {
+        if (part == "fe0f"_L1)
+            continue;
+        qsizetype digit = 0; // drop leading zeros, keeping at least one digit
+        while (digit + 1 < part.size() && part.at(digit) == u'0')
+            ++digit;
+        parts.append(part.mid(digit));
+    }
+    return parts.join(u'-');
+}
 }
 
 StatusEmojiModel::StatusEmojiModel(QObject *parent)
@@ -181,7 +199,29 @@ QString StatusEmojiModel::getEmojiFromAsciiAlias(const QString &alias) const
 QString StatusEmojiModel::getEmojiFromHexcode(const QString &hexcode) const
 {
     ensureLoaded();
-    return m_hexcodeToEmoji.value(hexcode);
+    const auto entry = entryForHexcode(hexcode);
+    return entry.isObject() ? entry.toObject().value(kEmoji).toString() : QString();
+}
+
+QString StatusEmojiModel::canonicalUnicode(const QString &hexcode) const
+{
+    ensureLoaded();
+    const auto entry = entryForHexcode(hexcode);
+    return entry.isObject() ? entry.toObject().value(kUnicode).toString() : QString();
+}
+
+QJsonValue StatusEmojiModel::entryForHexcode(const QString &hexcode) const
+{
+    auto it = m_hexcodeToIndex.constFind(hexcode);
+    if (it == m_hexcodeToIndex.cend()) {
+        const auto known = m_canonicalToHexcode.value(canonicalForm(hexcode));
+        if (known.isEmpty())
+            return {QJsonValue::Null};
+        it = m_hexcodeToIndex.constFind(known);
+        if (it == m_hexcodeToIndex.cend())
+            return {QJsonValue::Null};
+    }
+    return m_emojiJson.at(*it);
 }
 
 QJsonArray StatusEmojiModel::getSuggestions(const QString &name) const
@@ -217,15 +257,19 @@ int StatusEmojiModel::maxAsciiEmojiAliasLength() const
 void StatusEmojiModel::rebuildLookupIndexes()
 {
     m_asciiAliasToEmoji.clear();
-    m_hexcodeToEmoji.clear();
+    m_hexcodeToIndex.clear();
+    m_canonicalToHexcode.clear();
     m_maxAsciiEmojiAliasLength = 0;
-    for (const auto &emojiValue : std::as_const(m_emojiJson)) {
+    for (int i = 0; i < m_emojiJson.size(); ++i) {
+        const auto emojiValue = m_emojiJson.at(i);
         if (!emojiValue.isObject())
             continue;
 
         const auto emoji = emojiValue.toObject();
         const auto emojiStr = emoji.value(kEmoji).toString();
-        m_hexcodeToEmoji.insert(emoji.value(kUnicode).toString(), emojiStr);
+        const auto hexcode = emoji.value(kUnicode).toString();
+        m_hexcodeToIndex.insert(hexcode, i);
+        m_canonicalToHexcode.insert(canonicalForm(hexcode), hexcode);
 
         const auto aliases = emoji.value(kAliasesAscii).toArray();
         if (aliases.isEmpty())
@@ -315,6 +359,13 @@ void StatusEmojiModel::cleanAndResizeRecentEmojis()
 {
     if (m_recentEmojis.isEmpty())
         return;
+    // Rewrite ids an older version stored under a different spelling, so the list
+    // self-heals and the two spellings cannot both sit in it.
+    for (auto &hexcode : m_recentEmojis) {
+        const auto entry = entryForHexcode(hexcode);
+        if (entry.isObject())
+            hexcode = entry.toObject().value(kUnicode).toString();
+    }
     m_recentEmojis.removeDuplicates();
     if (m_recentEmojis.size() > MAX_EMOJI_NUMBER) {
         while (m_recentEmojis.size() > MAX_EMOJI_NUMBER)
@@ -324,22 +375,9 @@ void StatusEmojiModel::cleanAndResizeRecentEmojis()
 
 void StatusEmojiModel::addRecentEmojisToModel(const QStringList &emojiHexcodes)
 {
-    const auto emojiForHexcode = [&](const QString &hexcode) -> QJsonValue {
-        const auto it = std::find_if(m_emojiJson.cbegin(),
-                                     m_emojiJson.cend(),
-                                     [hexcode](const auto &emoji) {
-                                         return emoji.isObject()
-                                                && emoji.toObject().value(kUnicode).toString()
-                                                       == hexcode;
-                                     });
-        if (it != m_emojiJson.cend())
-            return *it;
-        return {QJsonValue::Null};
-    };
-
     QJsonArray recentEmojiArr;
     for (const auto &hexcode : emojiHexcodes) {
-        const auto emoji = emojiForHexcode(hexcode);
+        const auto emoji = entryForHexcode(hexcode);
         if (!emoji.isNull() && emoji.isObject()) {
             auto emojiObj = emoji.toObject();
             emojiObj[kCategory] = kRecentCategoryName;
