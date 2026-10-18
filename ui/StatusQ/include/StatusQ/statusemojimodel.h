@@ -3,6 +3,7 @@
 #include <QAbstractListModel>
 #include <QHash>
 #include <QJsonArray>
+#include <QJsonValue>
 
 class StatusEmojiModel : public QAbstractListModel
 {
@@ -39,10 +40,17 @@ public:
 
     Q_INVOKABLE QString getEmojiUnicodeFromShortname(const QString &shortname) const;
     Q_INVOKABLE QString getEmojiFromAsciiAlias(const QString &alias) const;
-    // The catalogue's character for a hexcode, e.g. "2764" -> "❤️". The hexcode follows
-    // Twemoji's filename convention and drops U+FE0F, so rebuilding the character from it
-    // yields an unqualified sequence that renders in a text font. Empty if unknown.
+    // The catalogue's character for a hexcode, e.g. "2764" -> "❤️". Rebuilding the
+    // character from the hexcode instead would yield an unqualified sequence that renders
+    // in a text font. Any spelling of the id is accepted (see canonicalUnicode), so ids
+    // stored by older versions still resolve. Empty if unknown.
     Q_INVOKABLE QString getEmojiFromHexcode(const QString &hexcode) const;
+
+    // The id the catalogue knows this emoji by, for any spelling of it: ids persisted by
+    // older versions (recents) and ids coming from the backend (reactions) may carry or
+    // omit U+FE0F and leading zeros, e.g. "31-20e3" is today's "0031-fe0f-20e3". Empty if
+    // unknown.
+    Q_INVOKABLE QString canonicalUnicode(const QString &hexcode) const;
     Q_INVOKABLE QJsonArray getSuggestions(const QString& name) const;
     Q_INVOKABLE int maxAsciiEmojiAliasLength() const;
     Q_INVOKABLE int getCategoryOffset(int categoryIndex) const;
@@ -65,8 +73,13 @@ private:
 
     void rebuildLookupIndexes();
     QHash<QString, QString> m_asciiAliasToEmoji;
-    QHash<QString, QString> m_hexcodeToEmoji;
+    QHash<QString, int> m_hexcodeToIndex;
+    // normalised id -> the id the catalogue uses, so every spelling resolves
+    QHash<QString, QString> m_canonicalToHexcode;
     int m_maxAsciiEmojiAliasLength = 0;
+
+    // The catalogue entry for any spelling of `hexcode`, or a null value.
+    QJsonValue entryForHexcode(const QString &hexcode) const;
 
     QStringList categories() const;
     QStringList categoryIcons() const;
