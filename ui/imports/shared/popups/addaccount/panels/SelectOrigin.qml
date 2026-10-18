@@ -58,7 +58,6 @@ StatusSelect {
             closeButtonVisible: false
             asset {
                 emoji: model.account.emoji
-                emojiSize: Emoji.size.verySmall
                 isLetterIdenticon: !!model.account.emoji
                 name: model.account.icon
                 color: Theme.palette.indirectColor1
@@ -124,7 +123,6 @@ StatusSelect {
             closeButtonVisible: false
             asset {
                 emoji: model.account.emoji
-                emojiSize: Emoji.size.verySmall
                 isLetterIdenticon: !!model.account.emoji
                 name: model.account.icon
                 color: Theme.palette.indirectColor1

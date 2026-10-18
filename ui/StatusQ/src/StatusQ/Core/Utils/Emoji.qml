@@ -5,13 +5,6 @@ import QtQuick
 import StatusQ
 
 QtObject {
-    readonly property var size: {
-        "veryBig": "86x86",
-        "big": "72x72",
-        "middle": "32x32",
-        "small": "18x18",
-        "verySmall": "16x16"
-    }
     readonly property alias emojiJSON: emojiModel.emojiJson
 
     readonly property StatusEmojiModel emojiModel: StatusEmojiModel { id: emojiModel }

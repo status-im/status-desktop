@@ -149,7 +149,6 @@ SplitView {
 
                     parent: root
 
-                    property var emojiSize
 
                     Button {
                         text: "😃"
