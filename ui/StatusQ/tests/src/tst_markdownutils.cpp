@@ -14,6 +14,31 @@ class TestMarkdownUtils : public QObject
     MarkdownUtils utils;
 
 private slots:
+    void hasEmoji_data()
+    {
+        QTest::addColumn<QString>("text");
+        QTest::addColumn<bool>("expected");
+
+        QTest::newRow("empty") << QString() << false;
+        QTest::newRow("plain text") << QStringLiteral("Totally Legit Token") << false;
+        QTest::newRow("digits and symbols") << QStringLiteral("TLT-123 #4 *") << false;
+        QTest::newRow("emoji alone") << QString::fromUtf8("\U0001F600") << true;
+        QTest::newRow("emoji in text") << QString::fromUtf8("cool \U0001F600 token") << true;
+        QTest::newRow("zwj sequence")
+            << QString::fromUtf8("\U0001F468\u200D\U0001F469\u200D\U0001F467") << true;
+        // text-presentation emoji, with and without the variation selector
+        QTest::newRow("heart qualified") << QString::fromUtf8("\u2764\uFE0F") << true;
+        QTest::newRow("heart bare") << QString::fromUtf8("\u2764") << true;
+    }
+
+    // Replaces a predicate that worked by matching Twemoji <img> tags in generated HTML.
+    void hasEmoji()
+    {
+        QFETCH(QString, text);
+        QFETCH(bool, expected);
+        QCOMPARE(utils.hasEmoji(text), expected);
+    }
+
     void noMentions()
     {
         QCOMPARE(utils.mentions(QStringLiteral("just some **bold** text, no mentions")),
