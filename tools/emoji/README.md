@@ -7,23 +7,34 @@ they are built from is pinned in [`manifest.json`](manifest.json).
 |---|---|---|
 | `StatusTwemoji-COLRv0.ttf` | Twemoji SVGs | `ui/StatusQ/src/assets/fonts/` |
 | `StatusTwemoji-COLRv0.LICENSE` | Twemoji's own LICENSE, verbatim | `ui/StatusQ/src/assets/fonts/` |
-| `emojiList.json` | emojibase raw data | `ui/StatusQ/src/StatusQ/Core/Utils/` |
+| `emojiList.json` | emojibase raw data | `ui/StatusQ/src/StatusQ/Core/Utils/` and `test/e2e/ext/test_files/emojis_unicodes_list.json` |
 
 ## Rebuilding
 
 ```sh
-./fetch-sources.sh     # downloads the pinned sources into .work/ (checksummed)
-./build-font.sh        # ~7 min; writes the font and prints a summary
+./fetch-sources.sh      # downloads the pinned sources into .work/ (checksummed)
+./build-font.sh         # ~7 min; writes the font and prints a summary
+./build-catalogue.py    # writes emojiList.json and the e2e copy
 ```
 
-Then run the StatusQ emoji conformance test before committing. The generated
-font is committed to the repo, so this is only needed when `manifest.json`
-changes.
+Then run the StatusQ emoji conformance test before committing. Both artifacts
+are committed to the repo, so this is only needed when `manifest.json` changes.
+
+`build-catalogue.py --check` regenerates in memory and fails if the committed
+files are not what the pinned sources produce; `python3 -m unittest discover -s
+tools/emoji` covers the generator itself. The generator refuses to write a
+catalogue that would break the app: it checks the entry count, that ids are
+unique (also once normalised, which is how stored ids are resolved), that every
+entry has a unique well-formed shortname, that categories match the list
+`StatusEmojiModel::categories()` hard-codes and form one block each, and that
+the flag indices still match the constants in `Emoji.qml`.
 
 ## Bumping a version
 
-1. Edit `manifest.json` (and the tarball checksum for new artwork).
-2. Re-run both scripts, plus the catalogue generator for metadata bumps.
+1. Edit `manifest.json`, including the checksums: the tarball sha256 for new
+   artwork, the per-file sha256 for new metadata.
+2. Re-run all three scripts (`build-catalogue.py` for a metadata bump, the font
+   scripts for an artwork bump) and review the diff.
 3. Run the conformance test: it checks ZWJ sequences, VS16 sequences, skin
    tones, flags and keycaps, and that every `emojiList.json` entry resolves to
    a real glyph.
@@ -31,6 +42,13 @@ changes.
 Keep the artwork and metadata versions compatible: the font comes from Twemoji,
 the picker list from emojibase, and an entry the font has no glyph for shows up
 as tofu in the picker.
+
+Shortcodes come from emojibase's joypixels preset, which does not name the Emoji
+15.1 additions (head shaking, "… facing right", broken chain, lime, family) -
+and neither do its cldr and emojibase presets. Those fall back to a slug of the
+CLDR label, `:head_shaking_horizontally:`, with joypixels' `_tone1`…`_tone5`
+suffix for skin variants. Without a shortname the suggestion list draws a blank
+row, so the generator fails rather than emit one.
 
 The font is a derivative of the Twemoji artwork, so its licence ships with it:
 `StatusTwemoji-COLRv0.LICENSE` sits next to the font and `fonts.qrc` embeds it
