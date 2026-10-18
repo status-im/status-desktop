@@ -175,14 +175,13 @@ unclosed fence here (no closing triple-tick)
     }
 
     // Replaces the ":filter" being typed with the selected emoji character + a trailing space.
-    // `unicode` is the twemoji code-point file name (e.g. "1f600.svg").
-    function acceptEmoji(unicode) {
+    // `hexcode` is the catalogue's code-point id (a suggestion's `unicode` field). Caret ends
+    // past the space.
+    function acceptEmoji(hexcode) {
         const cursor = textArea.cursorPosition
         const at = cursor - textArea.emojiFilter.length - 1 // the ":"
         textArea.remove(at, cursor)
-        // insertTextWithEmojis converts the emoji directly to an inline image in imageEmojis mode
-        // (no raw-glyph flash); a plain insert in font mode. Caret ends past the space.
-        textArea.insertTextWithEmojis(at, Emoji.emojiModel.getEmojiFromHexcode(unicode) + " ")
+        textArea.insert(at, Emoji.emojiModel.getEmojiFromHexcode(hexcode) + " ")
         d.emojiDismissed = false
     }
 
@@ -463,7 +462,6 @@ unclosed fence here (no closing triple-tick)
                             font.pixelSize: fontSizeSlider.value
                             codeBackground: Theme.palette.baseColor4
                             quoteBarVisible: quoteBarSwitch.checked
-                            imageEmojis: true
                             asciiEmojiConversion: asciiEmojiSwitch.checked
 
                             characterLimit: limitSpinBox.value
@@ -790,11 +788,6 @@ unclosed fence here (no closing triple-tick)
                     text: "Full line height emojis"
                     checked: textArea.fullLineHeightEmojis
                     onToggled: textArea.fullLineHeightEmojis = checked
-                }
-                Switch {
-                    text: "Image emojis (Twemoji)"
-                    checked: textArea.imageEmojis
-                    onToggled: textArea.imageEmojis = checked
                 }
                 Switch {
                     id: asciiEmojiSwitch

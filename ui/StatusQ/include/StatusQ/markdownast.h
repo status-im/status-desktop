@@ -135,9 +135,4 @@ void forEachGraphemeCluster(QStringView text, Fn&& fn)
     }
 }
 
-// Maps one emoji grapheme cluster to the bundled Twemoji svg url under `base` (a directory url ending
-// in '/', file:// or qrc:), following twemoji.js' rule. The set of available svg basenames under a
-// base is listed once and cached, and is the source of truth for what renders as an image.
-QString twemojiSvgUrl(const QString& base, QStringView cluster);
-
 } // namespace Markdown

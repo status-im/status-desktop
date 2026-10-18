@@ -19,8 +19,6 @@ StatusTextArea {
 
     property alias formatUnclosedCodeFence: highlighter.formatUnclosedCodeFence
     property alias fullLineHeightEmojis: highlighter.fullLineHeightEmojis
-    // When true, emoji render as inline Twemoji images instead of via the OS emoji font.
-    property alias imageEmojis: highlighter.imageEmojis
     property alias codeBackground: highlighter.codeBackground
     property alias delimiterColor: highlighter.delimiterColor
     property alias linkColor: highlighter.linkColor
@@ -75,20 +73,11 @@ StatusTextArea {
         const match = d.asciiEmojiBeforeCaret()
         if (!match)
             return
-        highlighter.replaceTextWithEmojis(match.start, root.cursorPosition, match.emoji)
+        highlighter.replaceText(match.start, root.cursorPosition, match.emoji)
     }
 
     function insertMention(pos, name, pubKey) {
         highlighter.insertMention(pos, name, pubKey)
-    }
-    // Inserts `text` at `pos`, converting emoji directly to inline images in imageEmojis mode (no
-    // raw-Unicode flicker); a plain insert otherwise.
-    function insertTextWithEmojis(pos, text) {
-        highlighter.insertTextWithEmojis(pos, text)
-    }
-    // Number of separately-rendered inline emoji image objects currently in the input.
-    function emojiImageCount() {
-        return highlighter.emojiImageCount()
     }
     // Returns the content as plain text with mention pills as their "@"+pubKey wire form.
     // (Named to avoid shadowing TextArea's built-in getText(start, end).)
@@ -249,9 +238,6 @@ StatusTextArea {
         delimiterColor: root.Theme.palette.baseColor1
         linkColor: root.Theme.palette.primaryColor1
         quoteTextColor: root.Theme.palette.baseColor1
-        // Base url of the Twemoji svg assets, resolved by the Emoji singleton so it works in both
-        // filesystem and qrc deployments (needed by imageEmojis).
-        twemojiBaseUrl: Emoji.base
     }
 
     // Mobile quote-block continuation. The OSK new-line button commits "\n" via

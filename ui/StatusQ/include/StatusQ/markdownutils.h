@@ -48,9 +48,7 @@ public:
     // resolved from `mentions` as in toBlocks. See Markdown::toPlainText.
     Q_INVOKABLE QString plainText(const QString& text, const QVariantMap& mentions = {}) const;
 
-    // True when `text` contains at least one emoji code point. A text-based predicate:
-    // the old one worked by matching Twemoji <img> tags in generated HTML.
-    // See Markdown::clusterHasEmoji.
+    // True when `text` contains at least one emoji code point. See Markdown::clusterHasEmoji.
     Q_INVOKABLE bool hasEmoji(const QString& text) const;
 
     // Returns the pub keys of all mentions in `text`, unique and in first-seen order
