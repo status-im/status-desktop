@@ -123,6 +123,7 @@ add_executable(QmlTests
     qmlTests/main.cpp
     qmlTests/inputmethodtester.h
     qmlTests/objectcounter.h
+    qmlTests/textdocumenttester.h
     ${TEST_QML_FILES})
 
 target_compile_definitions(QmlTests PRIVATE
