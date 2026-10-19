@@ -1,0 +1,9 @@
+English (United States), SCOWL-derived Hunspell dictionary
+Source: https://github.com/LibreOffice/dictionaries/tree/67032ee957631908098a72edf48dc81cac27e369/en
+Files: en_US.aff, en_US.dic, README_en_US.txt (unmodified)
+Copyright and redistribution terms: README_en_US.txt
+
+Hunspell is fetched at build time from:
+https://github.com/hunspell/hunspell/tree/5497ebc625955d64a8ecc23c25c81405a1f8a309
+License: MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later;
+see COPYING, COPYING.MPL, COPYING.LGPL in the fetched source.

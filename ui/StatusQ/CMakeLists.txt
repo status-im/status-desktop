@@ -212,6 +212,7 @@ add_library(StatusQ ${LIB_TYPE}
         include/StatusQ/rendersizedimage.h
         include/StatusQ/rxvalidator.h
         include/StatusQ/shareutils.h
+        include/StatusQ/spellchecker.h
         include/StatusQ/stablearraysorter.h
         include/StatusQ/statuscolors.h
         include/StatusQ/statusemojimodel.h
@@ -227,6 +228,7 @@ add_library(StatusQ ${LIB_TYPE}
         src/audioutils.cpp
         src/browserbackendcapabilities.cpp
         src/chatinputhighlighter.cpp
+        src/spellchecker.cpp
         src/clipboardutils.cpp
         src/incubationhints.cpp
         src/constantrole.cpp
@@ -368,6 +370,27 @@ endif()
 
 include(FetchContent)
 set(FETCHCONTENT_TRY_FIND_PACKAGE_MODE NEVER)
+
+# Keep Hunspell private and static, including in shared StatusQ builds.
+function(statusq_add_hunspell)
+    set(BUILD_SHARED_LIBS OFF)
+    FetchContent_Declare(
+        Hunspell
+        GIT_REPOSITORY https://github.com/hunspell/hunspell.git
+        GIT_TAG 5497ebc625955d64a8ecc23c25c81405a1f8a309
+    )
+    FetchContent_MakeAvailable(Hunspell)
+endfunction()
+statusq_add_hunspell()
+target_link_libraries(StatusQ PRIVATE hunspell)
+qt_add_resources(StatusQ "statusq_dictionaries"
+    PREFIX "/StatusQ/dictionaries"
+    BASE "${CMAKE_CURRENT_SOURCE_DIR}/src/assets/dictionaries"
+    FILES
+        src/assets/dictionaries/en_US.aff
+        src/assets/dictionaries/en_US.dic
+        src/assets/dictionaries/README_en_US.txt
+)
 
 if(IOS OR ANDROID OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
     FetchContent_Declare(
