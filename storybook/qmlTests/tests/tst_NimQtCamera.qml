@@ -13,7 +13,7 @@ TestCase {
     function createTap(name) {
         return Qt.createQmlObject(`
             import QtQuick
-            import NimQtCamera 1.0
+            import NimQtCamera
             FrameTap {}`, root, name)
     }
 

@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.20)
 project(NimEnvTest NONE)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../NimEnv.cmake)
 
+# Sample values, never accessed: Windows-form lists (drive letters, ';', a
+# space) are the case the helper exists for; the test runs on every OS.
 set(_path "C:/Windows/System32;C:/Program Files/LLVM/bin;C:/Qt/bin")
 set(_pc "C:/a/pkgconfig;C:/b/pkgconfig")
 storybook_nim_env_var(_pc_env PKG_CONFIG_PATH "C:/tree/pkgconfig" "${_pc}")

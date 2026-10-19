@@ -2,8 +2,8 @@ import QtQuick
 import QtTest
 import QtMultimedia
 
-import NimQtCamera 1.0
-import NimQrScan 1.0
+import NimQtCamera
+import NimQrScan
 import Storybook.Testing
 
 // Camera preview → NimQtCamera.FrameTap → host glue (qr_camera_frames.nim) →
