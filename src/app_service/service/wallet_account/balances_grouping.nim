@@ -1,14 +1,15 @@
 ## Pure grouping of per-account token balances (the `result` object of a
 ## build-tokens response) into AssetGroupItems, keyed by token group.
 ##
-## Balances can arrive before the token service has applied its first refresh,
-## when most token keys don't resolve yet. Those accounts' balances are held in
-## PendingBalances (latest response per account) and re-applied once the token
-## map is ready, instead of being dropped.
+## Balances can arrive before the token service has applied its newest refresh,
+## when token keys may not resolve yet. Those accounts' balances are held in
+## PendingBalances (latest response per account) and re-applied whenever a token
+## map is applied; unknowns are dropped only once the map is final.
 
 import json, tables, sequtils, sugar, strutils, stint
 
 import app_service/service/token/items/token
+import app_service/service/token/token_refresh_generation
 import dto/asset_group_item
 
 type
@@ -21,10 +22,13 @@ type
     accounts*: seq[string]
     assets*: seq[AssetGroupItem]
     allTokensHaveError*: bool
-    unknownTokenKeys*: seq[string] # skipped after the token map was ready
+    unknownTokenKeys*: seq[string] # skipped once the token map was final
 
 proc hasPending*(self: PendingBalances): bool =
   self.byAccount.len > 0
+
+proc shouldReplay*(self: PendingBalances, readiness: TokenMapReadiness): bool =
+  self.hasPending and readiness != tmrNone
 
 proc takeAll*(self: var PendingBalances): JsonNode =
   ## Drain the held balances as a `result` object ready to be grouped again.
@@ -34,7 +38,7 @@ proc takeAll*(self: var PendingBalances): JsonNode =
   self.byAccount.clear()
 
 proc groupAccountBalances*(current: seq[AssetGroupItem], resultObj: JsonNode, lookup: TokenLookup,
-    tokensReady: bool, pending: var PendingBalances): GroupedBalances =
+    readiness: TokenMapReadiness, pending: var PendingBalances): GroupedBalances =
   result.allTokensHaveError = true
 
   var groupedAssetsBalances: Table[string, AssetGroupItem] # [crossChainId (or tokenKey if crossChainId is empty), AssetGroupItem]
@@ -73,7 +77,7 @@ proc groupAccountBalances*(current: seq[AssetGroupItem], resultObj: JsonNode, lo
 
         let token = lookup(tokenItem.key)
         if token.isNil:
-          if tokensReady:
+          if readiness == tmrFinal:
             result.unknownTokenKeys.add(tokenItem.key)
           else:
             pending.byAccount[accountAddress] = balanceDetailsObj
