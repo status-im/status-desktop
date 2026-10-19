@@ -1,3 +1,6 @@
+# Run by NimEnv/CMakeLists.txt through `cmake -E env`: each variable must
+# arrive whole. The values are sample strings in Windows form (';' separators,
+# drive letters, a space); no path is read, and the test runs on every OS.
 set(_expected_pc "C:/tree/pkgconfig;C:/a/pkgconfig;C:/b/pkgconfig")
 set(_expected_path "C:/wrap;C:/Windows/System32;C:/Program Files/LLVM/bin;C:/Qt/bin")
 if (NOT "$ENV{PKG_CONFIG_PATH}" STREQUAL "${_expected_pc}")

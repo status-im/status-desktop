@@ -11,8 +11,8 @@ import StatusQ.Core.Theme
 import StatusQ.Core.Utils as SQUtils
 
 import MobileUI
-import NimQtCamera 1.0
-import NimQrScan 1.0
+import NimQtCamera
+import NimQrScan
 
 import utils
 

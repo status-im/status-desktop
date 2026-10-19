@@ -6,8 +6,8 @@ import StatusQ.Components
 
 import Storybook
 
-import NimQtCamera 1.0
-import NimQrScan 1.0
+import NimQtCamera
+import NimQrScan
 
 // StatusQrCodeScanner is presentation only; decoding is wired here the way
 // the app's QRCodeScanner does it: FrameTap → QrScanner, cropped to the corners.
