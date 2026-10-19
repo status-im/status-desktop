@@ -48,6 +48,45 @@ Item {
             wait(0)
         }
 
+        Component { id: searchSpyComponent; SignalSpy { signalName: "openAppSearch" } }
+
+        function test_threadSearchUsesItsOwnScope_data() {
+            return [{tag: "desktop", portrait: false}, {tag: "portrait", portrait: true}]
+        }
+
+        function test_threadSearchUsesItsOwnScope(data) {
+            harness.loader.active = true
+            const loader = harness.loader.item
+            tryVerify(() => loader.status === Loader.Ready, 120000)
+            const view = harness.findChildByTypePrefix(loader, "ChatView")
+            view.threadsFeatureEnabled = true
+            view.sectionLayout.criteria = data.portrait ? [true, true] : [false, false]
+            const model = view.rootStore.chatCommunitySectionModule.model
+            let threadId = ""
+            for (let i = 0; i < model.count; ++i) {
+                const row = model.get(i)
+                if (row.type === Constants.chatType.communityChat && row.itemId !== view.activeItemId) {
+                    threadId = row.itemId
+                    break
+                }
+            }
+            verify(!!threadId)
+            const parentChatId = view.activeItemId
+            harness.mock.setActiveChat(threadId)
+            harness.mock.setActiveChat(parentChatId)
+            view.rootStore.openThreadPanel(threadId, "Thread", parentChatId)
+            tryCompare(view.rightPanel, "status", Loader.Ready)
+            if (data.portrait)
+                view.sectionLayout.currentIndex = StatusSectionLayout.RightPanel
+            const header = data.portrait ? view.threadToolbarHeader : view.rightPanel.item
+            const button = findChild(header, data.portrait ? "searchThreadToolbarButton" : "searchThreadButton")
+            verify(!!button)
+            const spy = createTemporaryObject(searchSpyComponent, this, {target: view})
+            button.clicked(null)
+            compare(spy.count, 1)
+            compare(Array.from(spy.signalArguments[0]), [parentChatId, threadId])
+        }
+
         function test_reviewPortraitToolbarBackReturnsToInfo() {
             harness.loader.active = true
             const loader = harness.loader.item

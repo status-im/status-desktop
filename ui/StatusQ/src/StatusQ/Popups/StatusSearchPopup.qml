@@ -18,6 +18,7 @@ StatusModal {
     showFooter: false
 
     property string searchText: contentItem.searchText
+    property string emptySearchLabel: ""
     property string noResultsLabel: qsTr("No results")
     property string defaultSearchLocationText: qsTr("Anywhere")
     property bool loading: false
@@ -43,9 +44,11 @@ StatusModal {
                                 iconName = "",
                                 iconColor = "",
                                 isUserIcon = false,
-                                colorId = 0) {
+                                colorId = 0,
+                                threadText = "") {
         searchSelectionButton.primaryText = text
         searchSelectionButton.secondaryText = secondaryText
+        searchSelectionButton.threadText = threadText
         searchSelectionButton.asset.imgIsIdenticon = isIdenticon
         searchSelectionButton.asset.isImage = !!imageSource
         searchSelectionButton.asset.name = !!imageSource ? imageSource : iconName
@@ -149,6 +152,7 @@ StatusModal {
 
                     property string primaryText: ""
                     property string secondaryText: ""
+                    property string threadText: ""
                     property StatusAssetSettings asset: StatusAssetSettings {
                         width: 16
                         height: 16
@@ -162,7 +166,7 @@ StatusModal {
                     anchors.leftMargin: 16
                     anchors.verticalCenter: parent.verticalCenter
 
-                    implicitWidth: (contentItemRowLayout.width + 24)
+                    implicitWidth: Math.min(contentItemRowLayout.implicitWidth + 24, parent.width - 64)
                     implicitHeight: 32
 
                     background: Rectangle {
@@ -183,7 +187,9 @@ StatusModal {
 
                             RowLayout {
                                 id: contentItemRowLayout
-                                anchors.centerIn: parent
+                                anchors.fill: parent
+                                anchors.leftMargin: 12
+                                anchors.rightMargin: 12
                                 spacing: 2
                                 StatusBaseText {
                                     color: Theme.palette.directColor1
@@ -206,6 +212,9 @@ StatusModal {
                                 StatusBaseText {
                                     Layout.alignment: Qt.AlignVCenter
                                     color: Theme.palette.directColor1
+                                    Layout.maximumWidth: 180
+                                    Layout.fillWidth: true
+                                    elide: Text.ElideRight
                                     text: searchOptionsMenuButton.primaryText
                                     font.weight: Font.Medium
                                     font.pixelSize: Theme.additionalTextSize
@@ -230,7 +239,35 @@ StatusModal {
                                     Layout.alignment: Qt.AlignVCenter
                                     color: Theme.palette.directColor1
                                     visible: !!searchOptionsMenuButton.secondaryText
+                                    Layout.maximumWidth: 180
+                                    Layout.fillWidth: true
+                                    elide: Text.ElideRight
                                     text: searchOptionsMenuButton.secondaryText
+                                    font.weight: Font.Medium
+                                    font.pixelSize: Theme.additionalTextSize
+                                }
+                                StatusIcon {
+                                    Layout.preferredWidth: 16
+                                    Layout.preferredHeight: 16
+                                    visible: !!searchOptionsMenuButton.threadText
+                                    color: Theme.palette.baseColor1
+                                    icon: "next"
+                                }
+                                StatusIcon {
+                                    Layout.preferredWidth: 16
+                                    Layout.preferredHeight: 16
+                                    visible: !!searchOptionsMenuButton.threadText
+                                    color: Theme.palette.directColor1
+                                    icon: "thread"
+                                }
+                                StatusBaseText {
+                                    objectName: "searchScopeThreadText"
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 180
+                                    elide: Text.ElideRight
+                                    visible: !!searchOptionsMenuButton.threadText
+                                    text: searchOptionsMenuButton.threadText
+                                    color: Theme.palette.directColor1
                                     font.weight: Font.Medium
                                     font.pixelSize: Theme.additionalTextSize
                                 }
@@ -348,10 +385,10 @@ StatusModal {
 
                 StatusBaseText {
                     anchors.centerIn: parent
-                    text: root.noResultsLabel
+                    text: inputText.text === "" ? root.emptySearchLabel : root.noResultsLabel
                     color: Theme.palette.baseColor1
                     font.pixelSize: Theme.additionalTextSize
-                    visible: ((inputText.text !== "") && (view.count === 0) && !root.loading)
+                    visible: !root.loading && (inputText.text === "" ? root.emptySearchLabel !== "" : view.count === 0)
                 }
             }
         }

@@ -3,11 +3,12 @@ import json, strutils, chronicles, sequtils, tables, std/algorithm
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
-import ./models/[result_model, result_item, chat_search_item, chat_search_model, location_menu_model, location_menu_item, location_menu_sub_item]
+import ./models/[result_model, result_item, chat_search_item, chat_search_model, location_menu_model, location_menu_item, location_menu_sub_item, location_menu_sub_model]
 import ../../shared_models/message_item
 from ../../shared_models/section_item import SectionType
 
 import ../../../global/global_singleton
+import ../../../global/feature_flags
 import app/core/eventemitter
 import app_service/common/types
 import app_service/service/contacts/service as contact_service
@@ -36,6 +37,7 @@ type
     moduleLoaded: bool
     chatsLoaded: bool
     communitiesLoaded: bool
+    threadLocationChatId: string
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, contactsService: contact_service.Service,
   chatService: chat_service.Service, communityService: community_service.Service, messageService: message_service.Service):
@@ -165,36 +167,84 @@ method prepareLocationMenuModel*(self: Module) =
 
   self.view.locationMenuModel().setItems(items)
 
-method onActiveChatChange*(self: Module, sectionId: string, chatId: string) =
-  self.controller.setActiveSectionIdAndChatId(sectionId, chatId)
+method prepareThreadLocationsForSection*(self: Module, sectionId: string) =
+  if not THREADS_ENABLED:
+    return
+  let section = self.view.locationMenuModel().getItemForValue(sectionId)
+  if not section.isNil:
+    self.controller.loadThreadLocationsForChats(section.subItems.chatIds())
 
-method setSearchLocation*(self: Module, location: string, subLocation: string) =
-  self.controller.setSearchLocation(location, subLocation)
+method onActiveChatChange*(self: Module, sectionId: string, chatId: string, threadId: string = "") =
+  self.controller.setActiveSectionIdAndChatId(sectionId, chatId, threadId)
 
-method getSearchLocationObject*(self: Module): string =
-  ## This method returns location and subLocation with their details so we
-  ## may set initial search location on the side of qml.
-  var jsonObject = %* {
-    "location": "",
-    "subLocation": ""
-  }
+method setSearchLocation*(self: Module, location: string, subLocation: string, threadId: string = "") =
+  self.controller.setSearchLocation(location, subLocation, if THREADS_ENABLED: threadId else: "")
 
-  if(self.controller.activeSectionId().len == 0):
-    return Json.encode(jsonObject)
+method prepareThreadLocationMenuModel*(self: Module, chatId: string) =
+  self.threadLocationChatId = chatId
+  self.view.threadLocationMenuModel().setItems(@[])
+  self.view.setThreadLocationsState(THREADS_ENABLED and chatId.len > 0, false)
+  if THREADS_ENABLED and chatId.len > 0:
+    self.controller.loadThreadLocations(chatId)
 
-  let item = self.view.locationMenuModel().getItemForValue(self.controller.activeSectionId())
-  if(not item.isNil):
+method onThreadLocationsLoaded*(self: Module, threads: seq[ThreadDto], completedChatIds: seq[string]) =
+  var availability = initTable[string, bool]()
+  for chatId in completedChatIds:
+    availability[chatId] = false
+  for thread in threads:
+    if availability.hasKey(thread.chatId):
+      availability[thread.chatId] = true
+  self.view.locationMenuModel().updateThreadAvailability(availability)
+
+  if self.threadLocationChatId.len == 0 or self.threadLocationChatId notin completedChatIds:
+    return
+  var items: seq[location_menu_sub_item.SubItem]
+  for thread in threads:
+    if thread.chatId != self.threadLocationChatId:
+      continue
+    items.add(location_menu_sub_item.initSubItem(thread.threadId, thread.name, "", "thread", "",
+      false, false, 0, 0))
+  items.sort(proc(a, b: location_menu_sub_item.SubItem): int =
+    result = cmp(a.text.toLower, b.text.toLower)
+    if result == 0:
+      result = cmp(a.value, b.value))
+  self.view.threadLocationMenuModel().setItems(items)
+  self.view.setThreadLocationsState(false, false)
+
+method onThreadLocationsFailed*(self: Module, chatId: string) =
+  if chatId == self.threadLocationChatId:
+    self.view.setThreadLocationsState(false, true)
+
+method getSearchLocationObject*(self: Module, chatId: string = "", threadId: string = ""): string =
+  var sectionId = self.controller.activeSectionId()
+  let parentChatId = if chatId.len > 0: chatId else: self.controller.activeChatId()
+  let selectedThreadId = if threadId.len > 0: threadId
+    elif chatId.len == 0: self.controller.activeThreadId()
+    else: ""
+  var thread: ThreadDto
+  if THREADS_ENABLED and selectedThreadId.len > 0:
+    thread = self.controller.getThreadById(parentChatId, selectedThreadId)
+
+  if parentChatId.len > 0:
+    let chat = self.controller.getChatDetails("", parentChatId)
+    if chat.id.len > 0:
+      sectionId = if chat.communityId.len > 0: chat.communityId else: singletonInstance.userProfile.getPubKey()
+
+  var jsonObject = %* { "location": "", "subLocation": "", "thread": "" }
+  let item = self.view.locationMenuModel().getItemForValue(sectionId)
+  if not item.isNil:
     jsonObject["location"] = item.toJsonNode()
-
-    if(self.controller.activeChatId().len > 0):
-      let subItem = item.getSubItemForValue(self.controller.activeChatId())
-      if(not subItem.isNil):
-        jsonObject["subLocation"] = subItem.toJsonNode()
-
+    let subItem = item.getSubItemForValue(parentChatId)
+    if not subItem.isNil:
+      jsonObject["subLocation"] = subItem.toJsonNode()
+      if THREADS_ENABLED and selectedThreadId.len > 0:
+        jsonObject["thread"] = %* { "value": selectedThreadId,
+          "text": thread.name }
   return Json.encode(jsonObject)
 
 method searchMessages*(self: Module, searchTerm: string) =
   if (searchTerm.len == 0):
+    self.controller.invalidateSearch()
     self.view.searchResultModel().clear()
     self.view.emitAppSearchCompletedSignal()
     return
@@ -202,6 +252,8 @@ method searchMessages*(self: Module, searchTerm: string) =
   self.controller.searchMessages(searchTerm)
 
 proc getResultItemFromChats(self: Module, sectionId: string, chats: seq[ChatDto], sectionName: string): seq[result_item.Item] =
+  if self.controller.searchThreadId().len > 0:
+    return
   if (self.controller.searchSubLocation().len == 0 and self.controller.searchLocation().len == 0) or
       self.controller.searchLocation() == sectionId:
     
@@ -245,6 +297,7 @@ proc getResultItemFromChats(self: Module, sectionId: string, chats: seq[ChatDto]
 
 method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
   var items: seq[result_item.Item]
+  var resultThreads = initTable[(string, string), ThreadDto]()
 
   # Add Personal section chats
   let myPubKey = singletonInstance.userProfile.getPubKey()
@@ -254,7 +307,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
   # Add Communities
   let searchTerm = self.controller.searchTerm().toLower
   for community in self.controller.joinedAndSpectatedCommunities():
-    if self.controller.searchLocation().len == 0 and
+    if self.controller.searchLocation().len == 0 and self.controller.searchThreadId().len == 0 and
         community.name.toLower.contains(searchTerm):
       let item = result_item.initItem(
         community.id,
@@ -294,6 +347,13 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       continue
 
     let chatDto = self.controller.getChatDetails("", m.chatId)
+    let resultThreadId = if THREADS_ENABLED:
+      (if self.controller.searchThreadId().len > 0: self.controller.searchThreadId() else: m.threadId)
+      else: ""
+    let threadKey = (m.chatId, resultThreadId)
+    if resultThreadId.len > 0 and not resultThreads.hasKey(threadKey):
+      resultThreads[threadKey] = self.controller.getThreadById(m.chatId, resultThreadId)
+    let resultThread = resultThreads.getOrDefault(threadKey)
     var (senderName, senderImage, _) = self.controller.getContactNameAndImage(m.`from`)
     if(m.`from` == singletonInstance.userProfile.getPubKey()):
       senderName = "You"
@@ -308,14 +368,14 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       if(chatDto.chatType == ChatType.OneToOne):
         (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
       let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
-        SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color, chatName, "", chatImage,
+        SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color, chatName, resultThread.name, chatImage,
         chatDto.color, false, true, colorId)
 
       self.controller.addResultItemDetails(m.id, singletonInstance.userProfile.getPubKey(),
-        chatDto.id, m.id)
+        chatDto.id, m.id, resultThreadId)
       items.add(item)
     else:
-      let channelName = "#" & chatDto.name
+      let channelName = "#" & chatDto.name & (if resultThread.name.len > 0: " › " & resultThread.name else: "")
       let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
         SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color,
         community.name,
@@ -323,7 +383,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
         community.images.thumbnail,
         community.color, false, true, colorId)
 
-      self.controller.addResultItemDetails(m.id, chatDto.communityId, chatDto.id, m.id)
+      self.controller.addResultItemDetails(m.id, chatDto.communityId, chatDto.id, m.id, resultThreadId)
       items.add(item)
 
   self.view.searchResultModel().set(items)

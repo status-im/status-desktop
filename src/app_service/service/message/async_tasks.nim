@@ -404,16 +404,24 @@ proc asyncSearchMessagesInChatTask(argEncoded: string) {.gcsafe, nimcall.} =
 #################################################
 type
   AsyncSearchMessagesInChatsAndCommunitiesTaskArg = ref object of AsyncSearchMessagesTaskArg
+    requestId: string
     communityIds: seq[string]
     chatIds: seq[string]
+    threadId: string
 
 proc asyncSearchMessagesInChatsAndCommunitiesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSearchMessagesInChatsAndCommunitiesTaskArg](argEncoded)
 
   try:
-    let rpcResponse = status_go.fetchAllMessagesFromChatsAndCommunitiesWhichMatchTerm(arg.communityIds, arg.chatIds,
-    arg.searchTerm, arg.caseSensitive)
+    let rpcResponse =
+      if arg.threadId.len > 0:
+        status_go.fetchAllMessagesFromThreadWhichMatchTerm(arg.chatIds[0], arg.threadId,
+          arg.searchTerm, arg.caseSensitive)
+      else:
+        status_go.fetchAllMessagesFromChatsAndCommunitiesWhichMatchTerm(arg.communityIds, arg.chatIds,
+          arg.searchTerm, arg.caseSensitive)
     arg.finish(%*{
+      "requestId": arg.requestId,
       "communityIds": arg.communityIds,
       "chatIds": arg.chatIds,
       "messages": rpcResponse.result,
@@ -421,6 +429,7 @@ proc asyncSearchMessagesInChatsAndCommunitiesTask(argEncoded: string) {.gcsafe, 
     })
   except Exception as e:
     arg.finish(%* {
+      "requestId": arg.requestId,
       "communityIds": arg.communityIds,
       "chatIds": arg.chatIds,
       "error": e.msg,

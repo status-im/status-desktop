@@ -89,6 +89,9 @@ type
     unviewedMentionsCount*: int
     messages*: seq[MessageDto]
 
+  SearchMessagesArgs* = ref object of MessagesArgs
+    requestId*: string
+
   MessagesLoadedArgs* = ref object of Args
     chatId*: string
     threadId*: string
@@ -307,6 +310,13 @@ QtObject:
     self.chatThreadSummariesLoadingChats.excl(chatId)
     self.chatThreadSummariesPendingUpdates.del(chatId)
     self.chatThreadsRevision[chatId] = self.chatThreadsRevision.getOrDefault(chatId) + 1
+
+  proc getThreadById*(self: Service, chatId, threadId: string): ThreadDto =
+    if chatId.len == 0 or threadId.len == 0:
+      return
+    for _, thread in self.chatThreadsByParentIdByChat.getOrDefault(chatId):
+      if thread.threadId == threadId:
+        return thread
 
   proc loadChatThreadsForChatsIfNeeded*(self: Service, chatIds: seq[string]) =
     if not THREADS_ENABLED:
@@ -1389,11 +1399,13 @@ QtObject:
 
   proc onAsyncSearchMessages*(self: Service, response: string) {.slot.} =
     var chatId = ""
+    var requestId = ""
     try:
       let responseObj = response.parseJson
       if responseObj.kind != JObject:
         raise newException(CatchableError, "search messages response is not an json object")
 
+      discard responseObj.getProp("requestId", requestId)
       let errorString = responseObj{"error"}.getStr()
       if errorString != "":
         raise newException(CatchableError, errorString)
@@ -1413,11 +1425,11 @@ QtObject:
 
       var messages = map(messagesArray.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
 
-      let data = MessagesArgs(chatId: chatId, messages: messages)
+      let data = SearchMessagesArgs(chatId: chatId, messages: messages, requestId: requestId)
       self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, data)
     except Exception as e:
       error "error: ", procName="onAsyncSearchMessages", errDescription = e.msg
-      self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, MessagesArgs(chatId: chatId))
+      self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, SearchMessagesArgs(chatId: chatId, requestId: requestId))
 
   proc asyncSearchMessages*(self: Service, chatId: string, searchTerm: string, caseSensitive: bool) =
     ## Asynchronous search for messages which contain the searchTerm and belong to the chat with chatId.
@@ -1440,7 +1452,7 @@ QtObject:
     self.threadpool.start(arg)
 
   proc asyncSearchMessages*(self: Service, communityIds: seq[string], chatIds: seq[string], searchTerm: string,
-    caseSensitive: bool) =
+    caseSensitive: bool, threadId: string = "", requestId: string = "") =
     ## Asynchronous search for messages which contain the searchTerm and belong to any chat/channel from chatIds array
     ## or any channel of community from communityIds array.
 
@@ -1452,13 +1464,19 @@ QtObject:
       error "the searched term cannot be empty", procName="asyncSearchMessages"
       return
 
+    if threadId.len > 0 and (chatIds.len != 1 or communityIds.len > 0):
+      error "thread search requires exactly one parent chat", procName="asyncSearchMessages"
+      return
+
     let arg = AsyncSearchMessagesInChatsAndCommunitiesTaskArg(
       tptr: asyncSearchMessagesInChatsAndCommunitiesTask,
       vptr: cast[uint](self.vptr),
       slot: "onAsyncSearchMessages",
       communityIds: communityIds,
       chatIds: chatIds,
+      threadId: threadId,
       searchTerm: searchTerm,
+      requestId: requestId,
       caseSensitive: caseSensitive
     )
     self.threadpool.start(arg)

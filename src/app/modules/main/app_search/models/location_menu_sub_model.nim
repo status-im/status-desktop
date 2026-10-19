@@ -15,6 +15,7 @@ type
     Position
     LastMessageTimestamp
     ColorId
+    HasThreads
 
 QtObject:
   type
@@ -57,6 +58,7 @@ QtObject:
       SubModelRole.Position.int:"position",
       SubModelRole.LastMessageTimestamp.int:"lastMessageTimestamp",
       SubModelRole.ColorId.int:"colorId",
+      SubModelRole.HasThreads.int:"hasThreads",
     }.toTable
 
   method data(self: SubModel, index: QModelIndex, role: int): QVariant =
@@ -87,6 +89,20 @@ QtObject:
       result = newQVariant(item.lastMessageTimestamp)
     of SubModelRole.ColorId:
       result = newQVariant(item.colorId)
+    of SubModelRole.HasThreads:
+      result = newQVariant(item.hasThreads)
+
+  proc chatIds*(self: SubModel): seq[string] =
+    for item in self.items:
+      result.add(item.value)
+
+  proc updateThreadAvailability*(self: SubModel, availability: Table[string, bool]) =
+    for row, item in self.items:
+      if availability.hasKey(item.value) and item.hasThreads != availability[item.value]:
+        item.hasThreads = availability[item.value]
+        let index = self.createIndex(row, 0, nil)
+        defer: index.delete()
+        self.dataChanged(index, index, @[SubModelRole.HasThreads.int])
 
   proc setItems*(self: SubModel, items: seq[SubItem]) =
     self.beginResetModel()

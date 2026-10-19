@@ -135,7 +135,7 @@ StackLayout {
     signal groupMembersUpdateRequested(string membersPubKeysList)
 
     signal profileButtonClicked()
-    signal openAppSearch()
+    signal openAppSearch(string chatId, string threadId)
     signal buyStickerPackRequested(string packId, int price)
     signal tokenPaymentRequested(string recipientAddress, string tokenKey, string rawAmount)
 
@@ -424,9 +424,7 @@ StackLayout {
             onProfileButtonClicked: {
                 root.profileButtonClicked()
             }
-            onOpenAppSearch: {
-                root.openAppSearch()
-            }
+            onOpenAppSearch: (chatId, threadId) => root.openAppSearch(chatId, threadId)
             onRequestToJoinClicked: {
                 Global.communityIntroPopupRequested(communityId, root.sectionItemModel.name, root.sectionItemModel.introMessage,
                                                     root.sectionItemModel.image, root.isInvitationPending)

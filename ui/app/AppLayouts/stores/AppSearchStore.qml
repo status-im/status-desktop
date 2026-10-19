@@ -6,6 +6,9 @@ QtObject {
     property var appSearchModule
 
     property var locationMenuModel: root.appSearchModule.locationMenuModel
+    readonly property var threadLocationMenuModel: root.appSearchModule.threadLocationMenuModel
+    readonly property bool threadLocationsLoading: root.appSearchModule.threadLocationsLoading
+    readonly property bool threadLocationsError: root.appSearchModule.threadLocationsError
     property var resultModel: root.appSearchModule.resultModel
     property bool searchInProgress: false
 
@@ -23,10 +26,10 @@ QtObject {
         root.appSearchModule.searchMessages(searchTerm)
     }
 
-    function setSearchLocation(location, subLocation) {
+    function setSearchLocation(location, subLocation, threadId = "") {
         if(!root.appSearchModule)
             return
-        root.appSearchModule.setSearchLocation(location, subLocation)
+        root.appSearchModule.setSearchLocation(location, subLocation, threadId)
     }
 
     function prepareLocationMenuModel() {
@@ -35,10 +38,20 @@ QtObject {
         root.appSearchModule.prepareLocationMenuModel()
     }
 
-    function getSearchLocationObject() {
+    function getSearchLocationObject(chatId = "", threadId = "") {
         if(!root.appSearchModule)
             return ""
-        return root.appSearchModule.getSearchLocationObject()
+        return root.appSearchModule.getSearchLocationObject(chatId, threadId)
+    }
+
+    function prepareThreadLocationMenuModel(chatId) {
+        if (root.appSearchModule)
+            root.appSearchModule.prepareThreadLocationMenuModel(chatId)
+    }
+
+    function prepareThreadLocationsForSection(sectionId) {
+        if (root.appSearchModule)
+            root.appSearchModule.prepareThreadLocationsForSection(sectionId)
     }
 
     function resultItemClicked(itemId) {

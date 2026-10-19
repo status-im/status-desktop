@@ -2061,7 +2061,15 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Search messages in this thread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Anywhere</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thread</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3359,6 +3367,10 @@ Do you wish to override the security check and continue?</source>
 </context>
 <context>
     <name>ChatView</name>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>in %1</source>
         <extracomment>Thread header: %1 is the parent channel or chat name.</extracomment>
@@ -16990,6 +17002,22 @@ to load</source>
     <name>StatusSearchLocationMenu</name>
     <message>
         <source>Anywhere</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading threads…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t load threads. Retry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No threads</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

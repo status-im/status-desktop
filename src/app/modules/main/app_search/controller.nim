@@ -1,4 +1,4 @@
-import tables, chronicles
+import tables, chronicles, uuids
 import io_interface
 
 import ../../../global/app_signals
@@ -20,6 +20,7 @@ type ResultItemDetails = object
   sectionId*: string
   channelId*: string
   messageId*: string
+  threadId*: string
 
 proc isEmpty(self: ResultItemDetails): bool =
   self.sectionId.len == 0 and
@@ -36,9 +37,12 @@ type
     messageService: message_service.Service
     activeSectionId: string
     activeChatId: string
+    activeThreadId: string
     searchLocation: string
     searchSubLocation: string
     searchTerm: string
+    searchThreadId: string
+    searchRequestId: string
     resultItems: Table[string, ResultItemDetails] # [resultItemId, ResultItemDetails]
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, contactsService: contact_service.Service,
@@ -64,8 +68,18 @@ proc newestMessage(messages: openArray[MessageDto]): MessageDto =
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_SEARCH_MESSAGES_LOADED) do(e:Args):
-    let args = MessagesArgs(e)
-    self.delegate.onSearchMessagesDone(args.messages)
+    let args = SearchMessagesArgs(e)
+    if self.searchRequestId.len > 0 and args.requestId == self.searchRequestId:
+      self.delegate.onSearchMessagesDone(args.messages)
+
+  self.events.on(SIGNAL_CHAT_THREADS_FOR_CHATS_LOADED) do(e: Args):
+    let args = ChatThreadsForChatsLoadedArgs(e)
+    self.delegate.onThreadLocationsLoaded(args.threads, args.completedChatIds)
+
+  self.events.on(SIGNAL_CHAT_THREADS_LOADING_FAILED) do(e: Args):
+    let args = ChatThreadsLoadingFailedArgs(e)
+    if not args.summariesRequested:
+      self.delegate.onThreadLocationsFailed(args.chatId)
 
   self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
     var args = ChatUpdateArgs(e)
@@ -123,9 +137,13 @@ proc activeSectionId*(self: Controller): string =
 proc activeChatId*(self: Controller): string =
   return self.activeChatId
 
-proc setActiveSectionIdAndChatId*(self: Controller, sectionId: string, chatId: string) =
+proc activeThreadId*(self: Controller): string =
+  self.activeThreadId
+
+proc setActiveSectionIdAndChatId*(self: Controller, sectionId: string, chatId: string, threadId: string = "") =
     self.activeSectionId = sectionId
     self.activeChatId = chatId
+    self.activeThreadId = threadId
 
 proc searchTerm*(self: Controller): string =
   return self.searchTerm
@@ -136,9 +154,27 @@ proc searchLocation*(self: Controller): string =
 proc searchSubLocation*(self: Controller): string =
   return self.searchSubLocation
 
-proc setSearchLocation*(self: Controller, location: string, subLocation: string) =
+proc searchThreadId*(self: Controller): string =
+  self.searchThreadId
+
+proc invalidateSearch*(self: Controller) =
+  self.searchRequestId = ""
+  self.searchTerm = ""
+
+proc getThreadById*(self: Controller, chatId, threadId: string): ThreadDto =
+  self.messageService.getThreadById(chatId, threadId)
+
+proc loadThreadLocations*(self: Controller, chatId: string) =
+  self.messageService.loadChatThreadsForChatsIfNeeded(@[chatId])
+
+proc loadThreadLocationsForChats*(self: Controller, chatIds: seq[string]) =
+  self.messageService.loadChatThreadsForChatsIfNeeded(chatIds)
+
+proc setSearchLocation*(self: Controller, location: string, subLocation: string, threadId: string = "") =
     ## Setting location and subLocation to an empty string means we're
     ## searching in all available chats/channels/communities.
+    self.invalidateSearch()
+    self.searchThreadId = threadId
     self.searchLocation = location
     self.searchSubLocation = subLocation
 
@@ -162,6 +198,11 @@ proc getChatDetails*(self: Controller, communityId, chatId: string): lent ChatDt
 proc searchMessages*(self: Controller, searchTerm: string) =
   self.resultItems.clear
   self.searchTerm = searchTerm
+  self.searchRequestId = $genUUID()
+
+  if self.searchThreadId.len > 0 and self.searchSubLocation.len == 0:
+    self.delegate.onSearchMessagesDone(@[])
+    return
 
   var chats: seq[string]
   var communities: seq[string]
@@ -192,7 +233,8 @@ proc searchMessages*(self: Controller, searchTerm: string) =
     self.delegate.onSearchMessagesDone(@[])
     return
 
-  self.messageService.asyncSearchMessages(communities, chats, self.searchTerm, false)
+  self.messageService.asyncSearchMessages(communities, chats, self.searchTerm, false,
+    self.searchThreadId, self.searchRequestId)
 
 proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
     tuple[name: string, image: string, largeImage: string] =
@@ -202,8 +244,8 @@ proc getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, largeImage: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
-proc addResultItemDetails*(self: Controller, itemId: string, sectionId = "", channelId = "", messageId = "") =
-  self.resultItems[itemId] = ResultItemDetails(sectionId: sectionId, channelId: channelId, messageId: messageId)
+proc addResultItemDetails*(self: Controller, itemId: string, sectionId = "", channelId = "", messageId = "", threadId = "") =
+  self.resultItems[itemId] = ResultItemDetails(sectionId: sectionId, channelId: channelId, messageId: messageId, threadId: threadId)
 
 proc resultItemClicked*(self: Controller, itemId: string) =
   let itemDetails = self.resultItems.getOrDefault(itemId)
@@ -214,7 +256,8 @@ proc resultItemClicked*(self: Controller, itemId: string) =
 
   let data = ActiveSectionChatArgs(sectionId: itemDetails.sectionId,
     chatId: itemDetails.channelId,
-    messageId: itemDetails.messageId)
+    messageId: itemDetails.messageId,
+    threadId: itemDetails.threadId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
 
 proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], communityChats: openArray[ChatDto]): string =

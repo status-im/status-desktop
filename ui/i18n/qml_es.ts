@@ -2062,8 +2062,16 @@ de &quot;%1&quot; a &quot;%2&quot;</translation>
         <translation>Sin resultados</translation>
     </message>
     <message>
+        <source>Search messages in this thread</source>
+        <translation>Buscar mensajes en este hilo</translation>
+    </message>
+    <message>
         <source>Anywhere</source>
         <translation>Cualquier lugar</translation>
+    </message>
+    <message>
+        <source>Thread</source>
+        <translation>Hilo</translation>
     </message>
 </context>
 <context>
@@ -3361,6 +3369,10 @@ Do you wish to override the security check and continue?</source>
 </context>
 <context>
     <name>ChatView</name>
+    <message>
+        <source>Search</source>
+        <translation>Buscar</translation>
+    </message>
     <message>
         <source>in %1</source>
         <extracomment>Thread header: %1 is the parent channel or chat name.</extracomment>
@@ -17011,6 +17023,22 @@ al cargar</translation>
     <message>
         <source>Anywhere</source>
         <translation>Cualquier lugar</translation>
+    </message>
+    <message>
+        <source>Search in</source>
+        <translation>Buscar en</translation>
+    </message>
+    <message>
+        <source>Loading threads…</source>
+        <translation>Cargando hilos…</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t load threads. Retry</source>
+        <translation>No se pudieron cargar los hilos. Reintentar</translation>
+    </message>
+    <message>
+        <source>No threads</source>
+        <translation>No hay hilos</translation>
     </message>
 </context>
 <context>
