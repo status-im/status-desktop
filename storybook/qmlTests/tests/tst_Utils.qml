@@ -96,6 +96,27 @@ Item {
     }
 
     TestCase {
+        name: "Utils_isStatusDeepLink"
+
+        function test_recognizesOnlyStatusDeepLinks_data() {
+            return [
+                {tag: "Status custom scheme", link: "status-app://cc/community-id", expected: true},
+                {tag: "Status HTTPS link", link: "https://status.app/cc/community-id", expected: true},
+                {tag: "Status HTTP link", link: "http://status.app/cc/community-id", expected: true},
+                {tag: "lookalike host", link: "https://status.app.attacker.example/cc/community-id", expected: false},
+                {tag: "Status host in query", link: "https://attacker.example/?next=status.app", expected: false},
+                {tag: "custom scheme in query", link: "https://attacker.example/?next=status-app://cc/community-id", expected: false},
+                {tag: "unsupported Status scheme", link: "ftp://status.app/cc/community-id", expected: false},
+                {tag: "invalid URL", link: "status.app/cc/community-id", expected: false}
+            ]
+        }
+
+        function test_recognizesOnlyStatusDeepLinks(data) {
+            compare(Utils.isStatusDeepLink(data.link), data.expected)
+        }
+    }
+
+    TestCase {
         name: "Utils_gifLinks"
 
         function test_isGifLink_data() {

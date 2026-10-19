@@ -1640,7 +1640,10 @@ QtObject {
             NewsMessagePopup {
                 activityCenterNotifications: root.activityCenterStore.activityCenterNotifications
                 onLinkClicked: (link) => {
-                                   Global.requestOpenLink(link)
+                                   if (Utils.isStatusDeepLink(link))
+                                       Global.activateDeepLink(link)
+                                   else
+                                       Global.requestOpenLink(link)
                                    close()
                                }
             }
