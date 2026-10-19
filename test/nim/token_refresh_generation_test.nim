@@ -102,3 +102,31 @@ suite "refresh generation — stale result before any apply":
     let c = g.onCompletion(r.gen, applyStale = true)
     check c.action == rcaApply
     check not g.inFlight
+
+suite "token map readiness":
+  test "an empty map never makes the token map ready":
+    check nextTokenMapReadiness(tmrNone, rcaApply, mapCount = 0) == tmrNone
+    check nextTokenMapReadiness(tmrNone, rcaApplyAndRefire, mapCount = 0) == tmrNone
+
+  test "a superseded map is usable but not final":
+    let r = nextTokenMapReadiness(tmrNone, rcaApplyAndRefire, mapCount = 10)
+    check r == tmrSuperseded
+    check nextTokenMapReadiness(r, rcaApply, mapCount = 0) == tmrSuperseded
+    check nextTokenMapReadiness(r, rcaApply, mapCount = 12) == tmrFinal
+
+  test "a dropped result does not change readiness":
+    check nextTokenMapReadiness(tmrNone, rcaDropAndRefire, mapCount = 10) == tmrNone
+
+  test "a final map stays final":
+    check nextTokenMapReadiness(tmrFinal, rcaApply, mapCount = 0) == tmrFinal
+
+  test "stale results keep being applied until the map is final":
+    var g = initRefreshGenerationState()
+    let r1 = g.requestRefresh()
+    discard g.requestRefresh()
+    var readiness = tmrNone
+    let c1 = g.onCompletion(r1.gen, applyStale = readiness.appliesStale)
+    readiness = nextTokenMapReadiness(readiness, c1.action, mapCount = 10)
+    discard g.requestRefresh()          # newer trigger while the re-fire runs
+    let c2 = g.onCompletion(c1.gen, applyStale = readiness.appliesStale)
+    check c2.action == rcaApplyAndRefire

@@ -6,6 +6,7 @@
 import unittest, json, tables, stint
 
 import app_service/service/token/items/token
+import app_service/service/token/token_refresh_generation
 import app_service/service/wallet_account/dto/asset_group_item
 import app_service/service/wallet_account/balances_grouping
 
@@ -38,35 +39,51 @@ suite "balances received before the token map is ready":
   test "unresolved balances are held and applied once the map is ready":
     var pending: PendingBalances
     let early = groupAccountBalances(@[], response(balance(snt, "100"), balance(usdc, "200")),
-      lookupFor(@[snt]), tokensReady = false, pending)
+      lookupFor(@[snt]), readiness = tmrNone, pending)
     check balancesByToken(early.assets) == {snt: "100"}.toTable
     check pending.hasPending
 
     let replayed = groupAccountBalances(early.assets, pending.takeAll(),
-      lookupFor(@[snt, usdc]), tokensReady = true, pending)
+      lookupFor(@[snt, usdc]), readiness = tmrFinal, pending)
     check replayed.accounts == @[account]
     check balancesByToken(replayed.assets) == {snt: "100", usdc: "200"}.toTable
     check not pending.hasPending
 
   test "only the latest response per account is held":
     var pending: PendingBalances
-    discard groupAccountBalances(@[], response(balance(usdc, "1")), lookupFor(@[]), tokensReady = false, pending)
-    discard groupAccountBalances(@[], response(balance(usdc, "2")), lookupFor(@[]), tokensReady = false, pending)
+    discard groupAccountBalances(@[], response(balance(usdc, "1")), lookupFor(@[]), readiness = tmrNone, pending)
+    discard groupAccountBalances(@[], response(balance(usdc, "2")), lookupFor(@[]), readiness = tmrNone, pending)
     let held = pending.takeAll()
     require held.len == 1
     check held[account][0]["rawBalance"].getStr == "2"
 
   test "a newer fully resolved response drops the held one":
     var pending: PendingBalances
-    discard groupAccountBalances(@[], response(balance(usdc, "1")), lookupFor(@[]), tokensReady = false, pending)
-    discard groupAccountBalances(@[], response(balance(usdc, "2")), lookupFor(@[usdc]), tokensReady = true, pending)
+    discard groupAccountBalances(@[], response(balance(usdc, "1")), lookupFor(@[]), readiness = tmrNone, pending)
+    discard groupAccountBalances(@[], response(balance(usdc, "2")), lookupFor(@[usdc]), readiness = tmrFinal, pending)
     check not pending.hasPending
 
 suite "balances received after the token map is ready":
   test "unknown tokens are skipped and not held":
     var pending: PendingBalances
     let grouped = groupAccountBalances(@[], response(balance(snt, "100"), balance(unknown, "5")),
-      lookupFor(@[snt]), tokensReady = true, pending)
+      lookupFor(@[snt]), readiness = tmrFinal, pending)
     check balancesByToken(grouped.assets) == {snt: "100"}.toTable
     check grouped.unknownTokenKeys == @["1-" & unknown]
     check not pending.hasPending
+
+suite "balances received while a superseded token map is applied":
+  test "resolvable balances apply and unresolved ones stay held":
+    var pending: PendingBalances
+    let grouped = groupAccountBalances(@[], response(balance(snt, "100"), balance(usdc, "200")),
+      lookupFor(@[snt]), readiness = tmrSuperseded, pending)
+    check balancesByToken(grouped.assets) == {snt: "100"}.toTable
+    check grouped.unknownTokenKeys.len == 0
+    check pending.hasPending
+
+  test "held balances are replayed once any map exists":
+    var pending: PendingBalances
+    discard groupAccountBalances(@[], response(balance(usdc, "1")), lookupFor(@[]), readiness = tmrNone, pending)
+    check not pending.shouldReplay(tmrNone)
+    check pending.shouldReplay(tmrSuperseded)
+    check pending.shouldReplay(tmrFinal)

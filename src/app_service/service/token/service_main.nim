@@ -71,7 +71,7 @@ proc prefetchSwapSupportRetrieved(self: Service, response: string) {.slot.} =
   except Exception as ex:
     error "prefetchSwapSupportRetrieved", err = ex.msg
 
-proc applyRefreshTokensResult(self: Service, res: RefreshTokensApplyResult) =
+proc applyRefreshTokensResult(self: Service, res: RefreshTokensApplyResult, action: RefreshCompletionAction) =
   # Slim GUI-thread apply: swap in the structures the worker already built
   # off-thread — same swap-not-clear gate, same knownMissingKeys.clear() on a real
   # tokens-of-interest refresh, same preferences merge, same market rebuild and
@@ -106,7 +106,8 @@ proc applyRefreshTokensResult(self: Service, res: RefreshTokensApplyResult) =
     self.allTokensByGroupKey = move res.allTokensByGroupKey
   else:
     debug "ignoring empty all-tokens refresh; keeping existing all tokens cache"
-  self.tokensOfInterestLoaded = true
+  self.tokensOfInterestReadiness = nextTokenMapReadiness(self.tokensOfInterestReadiness, action,
+    res.tokensOfInterestCount)
   self.rebuildMarketData()
   self.fetchTokensDetails() # TODO: if the only place where we can see these details is account's details page, we should fetch this on demand, no need to have local cache
   # notify modules
@@ -122,10 +123,10 @@ proc onAsyncRefreshTokensDone(self: Service, response: string) {.slot.} =
   # in-flight gate. On a nil handoff use the in-flight generation (not a stale
   # sentinel) so it cannot re-fire forever.
   let completedGen = if not res.isNil: res.generation else: self.refreshTokensGen.currentGeneration
-  # Until a first map is applied, a stale result is still better than none: apply
+  # Until a final map is applied, a stale result is still better than none: apply
   # it so held balances resolve, and let the re-fire replace it.
   let c = self.refreshTokensGen.onCompletion(completedGen,
-    applyStale = not self.tokensOfInterestLoaded)
+    applyStale = self.tokensOfInterestReadiness.appliesStale)
   if c.action in {rcaDropAndRefire, rcaApplyAndRefire}:
     debug "stale async refresh tokens response; re-firing newest",
       completedGen = completedGen, applied = c.action == rcaApplyAndRefire
@@ -142,7 +143,7 @@ proc onAsyncRefreshTokensDone(self: Service, response: string) {.slot.} =
   if res.error.len > 0:
     error "async refresh tokens failed", errDescription = res.error
     return
-  self.applyRefreshTokensResult(res)
+  self.applyRefreshTokensResult(res, c.action)
 
 proc onAsyncFetchAllTokenListsDone(self: Service, response: string) {.slot.} =
   let res = takeTyped[AllTokenListsApplyResult](response)
@@ -450,8 +451,8 @@ proc getTokenBySymbolOnChain*(self: Service, symbol: string, chainId: int): Toke
   return nil
 ################################################################################
 
-proc areTokensOfInterestLoaded*(self: Service): bool =
-  return self.tokensOfInterestLoaded
+proc getTokensOfInterestReadiness*(self: Service): TokenMapReadiness =
+  return self.tokensOfInterestReadiness
 
 proc getTokenByKey*(self: Service, key: string): TokenItem =
   if not common_utils.isTokenKey(key):

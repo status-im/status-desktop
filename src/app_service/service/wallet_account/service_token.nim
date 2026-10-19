@@ -15,7 +15,7 @@ proc applyAccountsBalances(self: Service, resultObj: JsonNode) =
       self.groupedAssets,
       resultObj,
       proc(key: string): TokenItem = self.tokenService.getTokenByKey(key),
-      self.tokenService.areTokensOfInterestLoaded(),
+      self.tokenService.getTokensOfInterestReadiness(),
       self.pendingBalances
     )
     for tokenKey in grouped.unknownTokenKeys:
@@ -39,7 +39,7 @@ proc onAllTokensBuilt(self: Service, response: string) {.slot.} =
   self.applyAccountsBalances(resultObj)
 
 proc applyPendingBalances(self: Service) =
-  if not self.pendingBalances.hasPending or not self.tokenService.areTokensOfInterestLoaded():
+  if not self.pendingBalances.shouldReplay(self.tokenService.getTokensOfInterestReadiness()):
     return
   self.applyAccountsBalances(self.pendingBalances.takeAll())
 

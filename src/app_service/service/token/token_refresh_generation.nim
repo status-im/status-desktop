@@ -7,7 +7,7 @@
 ##  - a task is started only when none is in flight;
 ##  - the in-flight completion re-fires once if newer triggers arrived while it
 ##    ran, and its own (now stale) result is dropped without applying — unless
-##    the caller has nothing applied yet, in which case the stale result is
+##    the caller has no final result applied yet, in which case the stale result is
 ##    applied first and the re-fire then replaces it.
 ## Net: N queued triggers -> exactly one apply of the newest data. Pure, so it is
 ## unit-tested without a live Service; the service owns the actual task start/apply.
@@ -15,7 +15,12 @@
 type RefreshCompletionAction* = enum
   rcaApply          ## the completed result is the newest — apply it
   rcaDropAndRefire  ## the completed result is stale — drop it and start a fresh task
-  rcaApplyAndRefire ## the completed result is stale but nothing was applied yet — apply it, then start a fresh task
+  rcaApplyAndRefire ## the completed result is stale but no final result was applied yet — apply it, then start a fresh task
+
+type TokenMapReadiness* = enum
+  tmrNone       ## no non-empty map applied yet
+  tmrSuperseded ## a stale non-empty map is applied; resolve what it can, hold the rest
+  tmrFinal      ## the newest generation was applied with a non-empty map
 
 type RefreshGenerationState* = object
   desiredGen: int   ## bumped on every trigger; the newest generation wanted
@@ -59,3 +64,15 @@ proc onCompletion*(self: var RefreshGenerationState,
     return (action: action, gen: self.desiredGen)
   self.inFlightState = false
   return (action: rcaApply, gen: completedGen)
+
+proc nextTokenMapReadiness*(current: TokenMapReadiness, action: RefreshCompletionAction,
+    mapCount: int): TokenMapReadiness =
+  ## `mapCount` is the applied result's own tokens-of-interest count.
+  if action == rcaDropAndRefire or mapCount == 0 or current == tmrFinal:
+    return current
+  if action == rcaApply:
+    return tmrFinal
+  return tmrSuperseded
+
+proc appliesStale*(readiness: TokenMapReadiness): bool =
+  readiness != tmrFinal
