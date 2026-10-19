@@ -9,7 +9,8 @@
 ##    ran, and its own (now stale) result is dropped without applying — unless
 ##    the caller has no final result applied yet, in which case the stale result is
 ##    applied first and the re-fire then replaces it.
-## Net: N queued triggers -> exactly one apply of the newest data. Pure, so it is
+## Net: N queued triggers -> exactly one apply of the newest data, preceded by
+## stale applies only while no final result exists. Pure, so it is
 ## unit-tested without a live Service; the service owns the actual task start/apply.
 
 type RefreshCompletionAction* = enum
