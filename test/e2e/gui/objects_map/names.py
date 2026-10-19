@@ -399,6 +399,14 @@ headerActionsCloseButton_StatusFlatRoundButton = {"container": statusDesktop_mai
                                                   "type": "StatusFlatRoundButton", "visible": True}
 pinMessageDetails_in_pinnedPopup = {"container": pinnedMessagesPopup, "objectName": "statusPinMessageDetails",
                                     "type": "StatusPinMessageDetails", "visible": True}
+chatInfoPinsList = {"container": statusDesktop_mainWindow, "objectName": "chatInfoPinsList",
+                    "type": "StatusListView", "visible": True}
+pinMessageDetails_in_pinsPanel = {"container": chatInfoPinsList, "objectName": "statusPinMessageDetails",
+                                  "type": "StatusPinMessageDetails", "visible": True}
+pinnedMessagesPanel_unpin = {"container": statusDesktop_mainWindow_overlay, "objectName": "pinnedMessagesPopup_unpin",
+                             "type": "StatusMenuItem", "visible": True}
+chatToolbar_infoButton = {"container": statusDesktop_mainWindow, "objectName": "membersButton",
+                          "type": "StatusFlatRoundButton", "visible": True}
 
 # Introduce Yourself popup
 introduceYourselfPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "IntroduceYourselfPopup",
