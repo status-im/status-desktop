@@ -392,13 +392,6 @@ submit_shared_addresses_to_join_StatusButton = {"container": statusDesktop_mainW
                                                 "enabled": True}
 
 # Pinned messages
-pinnedMessagesPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "PinnedMessagesPopup",
-                       "type": "PopupItem", "visible": True}
-headerActionsCloseButton_StatusFlatRoundButton = {"container": statusDesktop_mainWindow_overlay,
-                                                  "objectName": "headerActionsCloseButton",
-                                                  "type": "StatusFlatRoundButton", "visible": True}
-pinMessageDetails_in_pinnedPopup = {"container": pinnedMessagesPopup, "objectName": "statusPinMessageDetails",
-                                    "type": "StatusPinMessageDetails", "visible": True}
 chatInfoPinsList = {"container": statusDesktop_mainWindow, "objectName": "chatInfoPinsList",
                     "type": "StatusListView", "visible": True}
 pinMessageDetails_in_pinsPanel = {"container": chatInfoPinsList, "objectName": "statusPinMessageDetails",
@@ -558,8 +551,6 @@ mainWallet_Saved_Addreses_Popup_Address_Add_Button = {"container": statusDesktop
 # Context Menu
 contextMenu_PopupItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "StatusMenu", "type": "PopupItem",
                          "visible": True}
-pinnedMessagesPopup_unpin_StatusMenuItem = {"container": contextMenu_PopupItem, "text": "Unpin",
-                                            "type": "StatusMenuItem", "visible": True}
 contextMenuItem = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "unnamed": 1,
                    "visible": True}
 contextMenuItem_AddWatchOnly = {"container": statusDesktop_mainWindow_overlay, "enabled": True,

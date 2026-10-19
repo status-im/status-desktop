@@ -500,6 +500,7 @@ Item {
                 gifUnfurlingEnabled: root.gifUnfurlingEnabled
                 neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
                 model: SortFilterProxyModel {
+                    id: pinsModel
                     sourceModel: root.chatContentModule?.pinnedMessagesModel ?? null
                     filters: SQUtils.SearchFilter {
                         roleName: "unparsedText"
@@ -517,11 +518,12 @@ Item {
                 onOpenGifPopupRequest: (params, cbOnGifSelected, cbOnClose) => root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
             }
             StatusBaseText {
+                objectName: "chatInfoPinsState"
                 anchors.centerIn: parent
                 width: parent.width - 2 * Theme.padding
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
-                visible: pinsList.count === 0
+                visible: pinsModel.count === 0
                 color: Theme.palette.secondaryText
                 text: rightPanelLoader.item?.searchText ? qsTr("No pinned messages found") : qsTr("Pinned messages will appear here.")
             }

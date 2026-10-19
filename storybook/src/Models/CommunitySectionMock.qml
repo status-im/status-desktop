@@ -293,6 +293,7 @@ QtObject {
                 signal threadOpenRequested(string threadId, string threadName)
 
                 function getChatId() { return contentModule.chatId }
+                function jumpToMessage(messageId) { scrollToMessage(messageId) }
                 function loadMoreMessages() {}
                 function updateKeepUnread(flag) {}
                 function createThread(parentMessageId) {
