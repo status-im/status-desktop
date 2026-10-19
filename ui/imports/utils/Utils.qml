@@ -358,7 +358,18 @@ QtObject {
     }
 
     function isStatusDeepLink(link) {
-        return link.includes(Constants.deepLinkPrefix) || link.includes(Constants.externalStatusLink)
+        const linkString = String(link || "")
+        if (linkString.startsWith(Constants.deepLinkPrefix)) {
+            return true
+        }
+
+        try {
+            const url = new URL(linkString)
+            return (url.protocol === "http:" || url.protocol === "https:")
+                    && url.hostname === Constants.externalStatusLink
+        } catch (error) {
+            return false
+        }
     }
 
     function removeGifUrls(message) {
