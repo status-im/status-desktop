@@ -1,6 +1,6 @@
 import nimqml
 
-import app_service/service/message/dto/message
+import app_service/service/message/dto/[message, thread]
 import app_service/service/chat/service
 import app_service/service/community/service
 import app_service/service/contacts/dto/status_update
@@ -20,7 +20,8 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onActiveChatChange*(self: AccessInterface, sectionId: string, chatId: string) {.base.} =
+method onActiveChatChange*(self: AccessInterface, sectionId: string, chatId: string,
+    threadId: string = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onSearchMessagesDone*(self: AccessInterface, messages: seq[MessageDto]) {.base.} =
@@ -32,10 +33,10 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method prepareLocationMenuModel*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setSearchLocation*(self: AccessInterface, location: string, subLocation: string) {.base.} =
+method setSearchLocation*(self: AccessInterface, location: string, subLocation: string, threadId: string = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getSearchLocationObject*(self: AccessInterface): string {.base.} =
+method getSearchLocationObject*(self: AccessInterface, chatId: string = "", threadId: string = ""): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method searchMessages*(self: AccessInterface, searchTerm: string) {.base.} =
@@ -75,4 +76,16 @@ method updateLastMessage*(self: AccessInterface, chatId, communityId: string, ch
   raise newException(ValueError, "No implementation available")
 
 method updateLastOwnMessageTimestamp*(self: AccessInterface, chatId: string, lastOwnMessageTimestamp: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method prepareThreadLocationMenuModel*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method prepareThreadLocationsForSection*(self: AccessInterface, sectionId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onThreadLocationsLoaded*(self: AccessInterface, threads: seq[ThreadDto], completedChatIds: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onThreadLocationsFailed*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")

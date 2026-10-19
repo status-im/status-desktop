@@ -2074,8 +2074,16 @@ z &quot;%1&quot; na &quot;%2&quot;</translation>
         <translation>Žádné výsledky</translation>
     </message>
     <message>
+        <source>Search messages in this thread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Anywhere</source>
         <translation>Kdekoliv</translation>
+    </message>
+    <message>
+        <source>Thread</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3375,6 +3383,10 @@ Přejete si obejít bezpečnostní kontrolu a pokračovat?</translation>
 </context>
 <context>
     <name>ChatView</name>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished">Hledat</translation>
+    </message>
     <message>
         <source>in %1</source>
         <extracomment>Thread header: %1 is the parent channel or chat name.</extracomment>
@@ -17093,6 +17105,22 @@ selhalo</translation>
     <message>
         <source>Anywhere</source>
         <translation>Kdekoliv</translation>
+    </message>
+    <message>
+        <source>Search in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading threads…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t load threads. Retry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No threads</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

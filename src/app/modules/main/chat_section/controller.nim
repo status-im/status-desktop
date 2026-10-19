@@ -96,6 +96,9 @@ proc asyncCheckPermissionsToJoin*(self: Controller) =
 proc asyncCheckChannelPermissions*(self: Controller, communityId: string, chatId: string) =
   self.chatService.asyncCheckChannelPermissions(communityId, chatId)
 
+proc getThreadById*(self: Controller, chatId, threadId: string): ThreadDto =
+  self.messageService.getThreadById(chatId, threadId)
+
 proc loadChatThreadsForChats*(self: Controller, chatIds: seq[string]) =
   self.messageService.loadChatThreadsForChatsIfNeeded(chatIds)
 

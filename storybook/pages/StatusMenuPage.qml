@@ -43,6 +43,7 @@ Item {
             StatusSearchLocationMenu {
                 id: searchPopupMenu
                 locationModel: ModelsData.optionsModel
+                personalChatsSectionId: "item_1"
             }
         }
 

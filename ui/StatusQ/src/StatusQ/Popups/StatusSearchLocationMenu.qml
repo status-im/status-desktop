@@ -7,7 +7,6 @@ import QtQml.Models
 import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Controls
-import StatusQ.Core.Utils as StatusQUtils
 
 import SortFilterProxyModel
 
@@ -15,9 +14,18 @@ StatusMenu {
     id: root
 
     property var locationModel
+    property string personalChatsSectionId
     readonly property int numDefaultItems: 2
+    property bool threadsEnabled: false
+    property var threadLocationModel
+    property bool threadLocationsLoading: false
+    property bool threadLocationsError: false
+    property string threadLocationChatId
 
-    signal itemClicked(string firstLevelItemValue, string secondLevelItemValue)
+    signal threadLocationsRequested(string chatId)
+    signal threadLocationSectionRequested(string sectionId)
+
+    signal itemClicked(string firstLevelItemValue, string secondLevelItemValue, string threadId)
 
     signal resetSearchSelection()
 
@@ -28,13 +36,14 @@ StatusMenu {
                               string iconName,
                               string iconColor,
                               bool isUserIcon,
-                              int colorId)
+                              int colorId,
+                              string threadText)
 
     StatusAction {
         text: qsTr("Anywhere")
         onTriggered: {
             root.resetSearchSelection();
-            root.itemClicked("", "");
+            root.itemClicked("", "", "");
         }
     }
 
@@ -43,6 +52,7 @@ StatusMenu {
     StatusMenuInstantiator {
         model: root.locationModel
         menu: root
+        indexOffset: root.numDefaultItems
 
         delegate: DelegateChooser {
             role: "hasSubItems"
@@ -64,8 +74,8 @@ StatusMenu {
                                                 assetSettings.name,
                                                 assetSettings.color,
                                                 model.isUserIcon,
-                                                model.colorId)
-                        root.itemClicked(model.value, "")
+                                                model.colorId, "")
+                        root.itemClicked(model.value, "", "")
                     }
                 }
             }
@@ -89,10 +99,17 @@ StatusMenu {
                     assetSettings.imgIsIdenticon: false
                     assetSettings.isLetterIdenticon: !model.imageSource && !model.iconName
 
+                    onAboutToShow: {
+                        if (root.threadsEnabled)
+                            root.threadLocationSectionRequested(parentValue)
+                    }
+
                     StatusMenuInstantiator {
                         id: menuLoader
 
                         readonly property string parentValue: subMenuDelegate.parentValue
+                        readonly property bool belongsToPersonalChatsSection:
+                            parentValue === root.personalChatsSectionId
                         readonly property string parentTitleText: subMenuDelegate.title
                         readonly property string parentIconName: subMenuDelegate.parentIconName
                         readonly property string parentImageSource: subMenuDelegate.parentImageSource
@@ -114,39 +131,116 @@ StatusMenu {
                             ]
                         }
 
-                        delegate: StatusSearchPopupMenuItem {
-                            value: model.value
-                            text: model.text
+                        function selectChat(chat, threadId = "", threadName = "") {
+                            root.resetSearchSelection()
+                            if (menuLoader.belongsToPersonalChatsSection) {
+                                root.setSearchSelection(chat.text, "", chat.imageSource, false,
+                                                        chat.iconName, chat.iconColor,
+                                                        chat.isUserIcon, chat.colorId, threadName)
+                            } else {
+                                root.setSearchSelection(menuLoader.parentTitleText, chat.text,
+                                                        menuLoader.parentImageSource,
+                                                        menuLoader.parentIsIdenticon,
+                                                        menuLoader.parentIconName,
+                                                        menuLoader.parentIdenticonColor,
+                                                        false, -1, threadName)
+                            }
+                            root.itemClicked(menuLoader.parentValue, chat.value, threadId)
+                            root.dismiss()
+                        }
 
+                        delegate: DelegateChooser {
+                            role: "hasThreads"
+                            DelegateChoice {
+                                roleValue: true
+                                delegate: root.threadsEnabled ? threadChannelComponent : channelComponent
+                            }
+                            DelegateChoice {
+                                delegate: channelComponent
+                            }
+                        }
+                    }
+
+                    Component {
+                        id: channelComponent
+                        StatusSearchPopupMenuItem {
+                            required property var model
+                            text: model.text
                             assetSettings.name: model.isImage ? model.imageSource : ""
                             assetSettings.emoji: !model.isUserIcon ? model.imageSource : ""
                             assetSettings.color: model.isUserIcon ? Theme.palette.userCustomizationColors[model.colorId] : model.iconColor
                             assetSettings.bgColor: model.iconColor
                             assetSettings.charactersLen: model.isUserIcon ? 2 : 1
+                            onTriggered: menuLoader.selectChat(model)
+                        }
+                    }
 
-                            onTriggered: {
-                                root.resetSearchSelection()
-                                if (menuLoader.parentTitleText === "Chat") {
-                                    root.setSearchSelection(model.text,
-                                                            "",
-                                                            model.imageSource,
-                                                            false,
-                                                            model.iconName,
-                                                            model.iconColor,
-                                                            model.isUserIcon,
-                                                            model.colorId)
-                                } else {
-                                    root.setSearchSelection(menuLoader.parentTitleText,
-                                                            model.text,
-                                                            menuLoader.parentImageSource,
-                                                            menuLoader.parentIsIdenticon,
-                                                            menuLoader.parentIconName,
-                                                            menuLoader.parentIdenticonColor,
-                                                            "",
-                                                            -1)
+                    Component {
+                        id: threadChannelComponent
+                        StatusMenu {
+                            id: channelMenu
+                            required property var model
+                            title: model.text
+                            assetSettings.name: model.isImage ? model.imageSource : ""
+                            assetSettings.isImage: model.isImage
+                            assetSettings.emoji: !model.isUserIcon ? model.imageSource : ""
+                            assetSettings.color: model.isUserIcon ? Theme.palette.userCustomizationColors[model.colorId] : model.iconColor
+                            assetSettings.bgColor: model.iconColor
+                            assetSettings.charactersLen: model.isUserIcon ? 2 : 1
+
+                            onAboutToShow: {
+                                root.threadLocationChatId = model.value
+                                root.threadLocationsRequested(model.value)
+                            }
+
+                            StatusMenuItem {
+                                objectName: "searchInParentChat"
+                                text: channelMenu.title
+                                Accessible.name: channelMenu.title
+                                contentItem: Item {
+                                    implicitWidth: 180
+                                    implicitHeight: headerLabels.implicitHeight
+                                    Column {
+                                        id: headerLabels
+                                        width: parent.width
+                                        spacing: 4
+                                        StatusBaseText {
+                                            width: parent.width
+                                            text: qsTr("Search in")
+                                            color: Theme.palette.baseColor1
+                                        }
+                                        StatusBaseText {
+                                            width: parent.width
+                                            text: (menuLoader.belongsToPersonalChatsSection ? "" : "#") + channelMenu.title
+                                            elide: Text.ElideRight
+                                        }
+                                    }
                                 }
-                                root.itemClicked(subMenuDelegate.parentValue, value)
-                                root.dismiss()
+                                onTriggered: menuLoader.selectChat(channelMenu.model)
+                            }
+                            StatusMenuSeparator {}
+                            StatusMenuItem {
+                                visible: root.threadLocationsLoading || root.threadLocationsError || threadItems.count === 0
+                                height: visible ? implicitHeight : 0
+                                enabled: root.threadLocationsError
+                                text: root.threadLocationsLoading ? qsTr("Loading threads…") :
+                                      root.threadLocationsError ? qsTr("Couldn't load threads. Retry") : qsTr("No threads")
+                                onTriggered: root.threadLocationsRequested(channelMenu.model.value)
+                            }
+                            StatusMenuInstantiator {
+                                id: threadItems
+                                menu: channelMenu
+                                indexOffset: 3
+                                model: channelMenu.visible && root.threadLocationChatId === channelMenu.model.value
+                                       ? root.threadLocationModel : null
+                                delegate: StatusSearchPopupMenuItem {
+                                    required property var model
+                                    text: model.text
+                                    assetSettings.name: "thread"
+                                    assetSettings.isImage: false
+                                    assetSettings.isLetterIdenticon: false
+                                    onTriggered: menuLoader.selectChat(channelMenu.model, model.value, model.text)
+                                }
                             }
                         }
                     }

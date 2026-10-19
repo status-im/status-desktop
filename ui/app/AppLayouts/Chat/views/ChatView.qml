@@ -254,7 +254,7 @@ Item {
     signal communityInfoButtonClicked()
     signal communityManageButtonClicked()
     signal profileButtonClicked()
-    signal openAppSearch()
+    signal openAppSearch(string chatId, string threadId)
 
     signal requestToJoinClicked
     signal invitationPendingClicked
@@ -318,7 +318,18 @@ Item {
 
     readonly property Item threadToolbarHeader: Loader {
         active: !!d.openThreadId
-        sourceComponent: threadHeaderComponent
+        sourceComponent: RowLayout {
+            Loader {
+                Layout.fillWidth: true
+                sourceComponent: threadHeaderComponent
+            }
+            StatusFlatRoundButton {
+                objectName: "searchThreadToolbarButton"
+                icon.name: "search"
+                tooltip.text: qsTr("Search")
+                onClicked: root.openAppSearch(d.openThreadParentChatId, d.openThreadId)
+            }
+        }
     }
 
     // Title and parent chat of the open thread, shown in the section toolbar
@@ -604,16 +615,27 @@ Item {
                     sourceComponent: threadHeaderComponent
                 }
 
-                StatusFlatRoundButton {
-                    objectName: "closeThreadPanelButton"
-                    icon.name: "close"
-                    tooltip.text: qsTr("Close thread")
-                    onClicked: {
-                        const returnToInfo = d.threadOpenedFromInfo
-                        if (!returnToInfo)
-                            root.showUsersListRequested(false)
-                        d.closeThreadPanel()
-                        d.threadOpenedFromInfo = false
+                RowLayout {
+                    spacing: 0
+
+                    StatusFlatRoundButton {
+                        objectName: "searchThreadButton"
+                        icon.name: "search"
+                        tooltip.text: qsTr("Search")
+                        onClicked: root.openAppSearch(d.openThreadParentChatId, d.openThreadId)
+                    }
+
+                    StatusFlatRoundButton {
+                        objectName: "closeThreadPanelButton"
+                        icon.name: "close"
+                        tooltip.text: qsTr("Close thread")
+                        onClicked: {
+                            const returnToInfo = d.threadOpenedFromInfo
+                            if (!returnToInfo)
+                                root.showUsersListRequested(false)
+                            d.closeThreadPanel()
+                            d.threadOpenedFromInfo = false
+                        }
                     }
                 }
             }
@@ -754,7 +776,8 @@ Item {
             amIChatAdmin: root.amIChatAdmin
             showMembersButtonHighlighted: root.showUsersList && !d.openThreadId
 
-            onSearchButtonClicked: root.openAppSearch()
+            onSearchButtonClicked: root.openAppSearch(root.chatContentModule?.getMyChatId() ?? "",
+                                                       root.chatContentModule?.messagesModule.threadId ?? "")
             onDisplayEditChannelPopup: {
                 // contactColumnLoader is asynchronous — drop the request if
                 // the panel is still incubating
@@ -904,7 +927,7 @@ Item {
 
             onShareOwnProfileRequested: Global.shareProfileDialogRequested(root.myPublicKey)
             onOpenAppSearch: {
-                root.openAppSearch()
+                root.openAppSearch("", "")
             }
             onAddRemoveGroupMemberClicked: {
                 if (headerContentLoader.item && headerContentLoader.item instanceof ChatHeaderContentView) {

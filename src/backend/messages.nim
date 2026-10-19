@@ -58,6 +58,11 @@ proc fetchAllMessagesFromChatWhichMatchTerm*(chatId: string, searchTerm: string,
   let payload = %* [chatId, searchTerm, caseSensitive]
   result = callPrivateRPC("allMessagesFromChatWhichMatchTerm".prefix, payload)
 
+proc fetchAllMessagesFromThreadWhichMatchTerm*(chatId, threadId, searchTerm: string,
+    caseSensitive: bool): RpcResponse[JsonNode] =
+  result = callPrivateRPC("allMessagesFromThreadWhichMatchTerm".prefix,
+    %* [chatId, threadId, searchTerm, caseSensitive])
+
 proc fetchAllMessagesFromChatsAndCommunitiesWhichMatchTerm*(communityIds: seq[string], chatIds: seq[string],
   searchTerm: string, caseSensitive: bool): RpcResponse[JsonNode] =
   let payload = %* [communityIds, chatIds, searchTerm, caseSensitive]

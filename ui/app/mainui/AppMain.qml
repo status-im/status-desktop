@@ -1623,12 +1623,12 @@ Item {
         id: appSearch
         active: false
 
-        function openSearchPopup() {
+        function openSearchPopup(chatId = "", threadId = "") {
             if (homePageLoader.active)
                 return
             if (!active)
                 active = true
-            item.openSearchPopup()
+            item.openSearchPopup(chatId, threadId)
         }
 
         function closeSearchPopup() {
@@ -1639,17 +1639,24 @@ Item {
         }
 
         sourceComponent: AppSearch {
+            personalChatsSectionId: d.myPublicKey
+            threadsEnabled: appMain.featureFlagsStore.threadsEnabled
+            threadLocationMenuModel: appMain.appSearchStore.threadLocationMenuModel
+            threadLocationsLoading: appMain.appSearchStore.threadLocationsLoading
+            threadLocationsError: appMain.appSearchStore.threadLocationsError
+            prepareThreadLocationMenuModelFn: appMain.appSearchStore.prepareThreadLocationMenuModel
+            prepareThreadLocationsForSectionFn: appMain.appSearchStore.prepareThreadLocationsForSection
             locationMenuModel: appMain.appSearchStore.locationMenuModel
             resultModel: appMain.appSearchStore.resultModel
             searchInProgress: appMain.appSearchStore.searchInProgress
-            setSearchLocationFn: function(location, subLocation) {
-                appMain.appSearchStore.setSearchLocation(location, subLocation)
+            setSearchLocationFn: function(location, subLocation, threadId) {
+                appMain.appSearchStore.setSearchLocation(location, subLocation, threadId)
             }
             prepareLocationMenuModelFn: function() {
                 appMain.appSearchStore.prepareLocationMenuModel()
             }
-            getSearchLocationObjectFn: function() {
-                return appMain.appSearchStore.getSearchLocationObject()
+            getSearchLocationObjectFn: function(chatId, threadId) {
+                return appMain.appSearchStore.getSearchLocationObject(chatId, threadId)
             }
             isChatKeyFn: function(value) {
                 return appMain.utilsStore.isChatKey(value)
@@ -2382,7 +2389,7 @@ Item {
                         isPortraitMode: appMain.isPortraitMode
                         leftPanelWidthOverride: mainLayoutItem.leftPanelWidthOverride
 
-                        onOpenAppSearchRequested: appSearch.openSearchPopup()
+                        onOpenAppSearchRequested: (chatId, threadId) => appSearch.openSearchPopup(chatId, threadId)
                         onSupportBotChatRequested: () => {
                             d.goToSupportChatBot()
                         }
@@ -2587,7 +2594,7 @@ Item {
                             isPortraitMode: appMain.isPortraitMode
                             leftPanelWidthOverride: mainLayoutItem.leftPanelWidthOverride
 
-                            onOpenAppSearchRequested: appSearch.openSearchPopup()
+                            onOpenAppSearchRequested: (chatId, threadId) => appSearch.openSearchPopup(chatId, threadId)
                             onSupportBotChatRequested: () => {
                                 d.goToSupportChatBot()
                             }

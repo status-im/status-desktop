@@ -1332,8 +1332,8 @@ method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVar
 method switchTo*[T](self: Module[T], sectionId, chatId: string) =
   self.controller.switchTo(sectionId, chatId, "")
 
-method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string) =
-  self.appSearchModule.onActiveChatChange(sectionId, chatId)
+method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string, threadId: string = "") =
+  self.appSearchModule.onActiveChatChange(sectionId, chatId, threadId)
 
 method onChatLeft*[T](self: Module[T], chatId: string) =
   self.appSearchModule.updateSearchLocationIfPointToChatWithId(chatId)
@@ -2368,11 +2368,14 @@ method addressWasShown*[T](self: Module[T], address: string) =
     return
   self.walletAccountService.addressWasShown(address)
 
-method openSectionChatAndMessage*[T](self: Module[T], sectionId: string, chatId: string, messageId: string): bool =
+method openSectionChatAndMessage*[T](self: Module[T], sectionId: string, chatId: string, messageId: string, threadId: string = ""): bool =
   if sectionId notin self.chatSectionModules:
     return false
 
-  return self.chatSectionModules[sectionId].openCommunityChatAndScrollToMessage(chatId, messageId)
+  if threadId.len > 0:
+    self.view.emitNavigateToMessageDetailsSignal()
+
+  return self.chatSectionModules[sectionId].openCommunityChatAndScrollToMessage(chatId, messageId, threadId)
 
 method updateRequestToJoinState*[T](self: Module[T], sectionId: string, requestToJoinState: RequestToJoinState) =
   if sectionId in self.chatSectionModules:

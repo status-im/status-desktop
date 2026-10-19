@@ -7,6 +7,21 @@ import StatusQ.Popups
 Item {
     id: root
 
+    property bool threadsEnabled: false
+    property string personalChatsSectionId
+    property var threadLocationMenuModel
+    property bool threadLocationsLoading: false
+    property bool threadLocationsError: false
+    property var prepareThreadLocationMenuModelFn
+    property var prepareThreadLocationsForSectionFn
+
+    QtObject {
+        id: d
+        property string initialChatId
+        property string initialThreadId
+        property string selectedThreadId
+    }
+
     required property var locationMenuModel
     required property var resultModel
     required property bool searchInProgress
@@ -17,7 +32,7 @@ Item {
     required property var openProfilePopupFn
 
     readonly property var searchMessagesDebounced: Backpressure.debounce(searchPopup, 400, function () {
-        if (searchPopup.searchText === "")
+        if (!searchPopup.opened || searchPopup.searchText === "")
             return
 
         root.searchMessages(searchPopup.searchText)
@@ -32,7 +47,9 @@ Item {
         root.searchMessages("")
     }
 
-    function openSearchPopup(){
+    function openSearchPopup(chatId = "", threadId = "") {
+        d.initialChatId = chatId
+        d.initialThreadId = threadId
         searchPopup.open()
     }
 
@@ -52,11 +69,24 @@ Item {
 
     StatusSearchLocationMenu {
         id: searchPopupMenu
+        objectName: "appSearchLocationMenu"
         
         locationModel: root.locationMenuModel
+        personalChatsSectionId: root.personalChatsSectionId
+        threadsEnabled: root.threadsEnabled
+        threadLocationModel: root.threadLocationMenuModel
+        threadLocationsLoading: root.threadLocationsLoading
+        threadLocationsError: root.threadLocationsError
+        onThreadLocationsRequested: chatId => root.prepareThreadLocationMenuModelFn(chatId)
+        onThreadLocationSectionRequested: sectionId => {
+            if (root.prepareThreadLocationsForSectionFn)
+                root.prepareThreadLocationsForSectionFn(sectionId)
+        }
 
-        onItemClicked: (firstLevelItemValue, secondLevelItemValue) => {
-            root.setSearchLocationFn(firstLevelItemValue, secondLevelItemValue)
+        onItemClicked: (firstLevelItemValue, secondLevelItemValue, threadId) => {
+            d.selectedThreadId = threadId
+            root.clearSearchResults()
+            root.setSearchLocationFn(firstLevelItemValue, secondLevelItemValue, threadId)
             searchPopup.forceActiveFocus()
             if(searchPopup.searchText !== "")
                 root.searchMessagesDebounced()
@@ -66,7 +96,7 @@ Item {
             searchPopup.resetSearchSelection()
         }
 
-        onSetSearchSelection: (text, secondaryText, imageSource, isIdenticon, iconName, iconColor, isUserIcon, colorId) => {
+        onSetSearchSelection: (text, secondaryText, imageSource, isIdenticon, iconName, iconColor, isUserIcon, colorId, threadText) => {
             searchPopup.setSearchSelection(text,
                                             secondaryText,
                                             imageSource,
@@ -74,14 +104,17 @@ Item {
                                             iconName,
                                             iconColor,
                                             isUserIcon,
-                                            colorId)
+                                            colorId,
+                                            threadText)
         }
     }
 
     StatusSearchPopup {
         id: searchPopup
+        objectName: "appSearchPopup"
         fillHeightOnBottomSheet: true
         noResultsLabel: qsTr("No results")
+        emptySearchLabel: d.selectedThreadId ? qsTr("Search messages in this thread") : ""
         defaultSearchLocationText: qsTr("Anywhere")
         searchOptionsPopupMenu: searchPopupMenu
         searchResults: root.resultModel
@@ -90,11 +123,9 @@ Item {
             return LocaleUtils.formatDateTime(parseInt(ts, 10), Locale.ShortFormat)
         }
         onSearchTextChanged: {
-            if (searchPopup.searchText !== "") {
+            root.clearSearchResults()
+            if (searchPopup.searchText !== "")
                 root.searchMessagesDebounced()
-            } else {
-                root.clearSearchResults()
-            }
         }
         onAboutToHide: {
             if (searchPopupMenu.visible) {
@@ -107,57 +138,45 @@ Item {
             root.closed();
         }
         onResetSearchLocationClicked: {
+            d.selectedThreadId = ""
+            root.clearSearchResults()
             searchPopup.resetSearchSelection();
-            root.setSearchLocationFn("", "")
+            root.setSearchLocationFn("", "", "")
             root.searchMessagesDebounced()
         }
         onOpened: {
-            searchPopup.resetSearchSelection();
+            searchPopup.resetSearchSelection()
+            d.selectedThreadId = ""
             root.prepareLocationMenuModelFn()
+            const json = root.getSearchLocationObjectFn(d.initialChatId, d.initialThreadId)
+            if (!json)
+                return
 
-            const jsonObj = root.getSearchLocationObjectFn()
-
-            if (!jsonObj) {
+            const scope = JSON.parse(json)
+            const location = scope.location
+            const chat = scope.subLocation
+            const thread = root.threadsEnabled ? scope.thread : null
+            if (!chat) {
+                // Keep an unavailable explicit thread from broadening into an Anywhere search.
+                d.selectedThreadId = root.threadsEnabled ? d.initialThreadId : ""
+                root.setSearchLocationFn("", d.selectedThreadId ? d.initialChatId : "", d.selectedThreadId)
+                if (d.selectedThreadId)
+                    searchPopup.setSearchSelection(qsTr("Thread"), "", "", false, "thread")
                 return
             }
+            d.selectedThreadId = thread?.value ?? ""
+            root.setSearchLocationFn(location?.value ?? "", chat.value, d.selectedThreadId)
 
-            let obj = JSON.parse(jsonObj)
-            if (obj.location === "" || (obj.location !== "" && !obj.subLocation)) {
-                if(obj.subLocation === "") {
-                    root.setSearchLocationFn("", "")
-                } else {
-                    searchPopup.setSearchSelection(obj.subLocation.text,
-                                                   "",
-                                                   obj.subLocation.imageSource,
-                                                   false,
-                                                   obj.subLocation.iconName,
-                                                   obj.subLocation.identiconColor)
-
-                    root.setSearchLocationFn("", obj.subLocation.value)
-                }
-            } else {
-                if (obj.location.title === "Chat" && !!obj.subLocation) {
-                    searchPopup.setSearchSelection(obj.subLocation.text,
-                                                   "",
-                                                   obj.subLocation.imageSource,
-                                                   false,
-                                                   obj.subLocation.iconName,
-                                                   obj.subLocation.identiconColor,
-                                                   obj.subLocation.isUserIcon,
-                                                   obj.subLocation.colorId)
-
-                    root.setSearchLocationFn(obj.location.value, obj.subLocation.value)
-                } else {
-                    searchPopup.setSearchSelection(obj.location.title,
-                                                   obj.subLocation.text,
-                                                   obj.location.imageSource,
-                                                   false,
-                                                   obj.location.iconName,
-                                                   obj.location.identiconColor)
-
-                    root.setSearchLocationFn(obj.location.value, obj.subLocation.value)
-                }
-            }
+            const belongsToPersonalChatsSection = !location || location.value === root.personalChatsSectionId
+            searchPopup.setSearchSelection(belongsToPersonalChatsSection ? chat.text : location.title,
+                                           belongsToPersonalChatsSection ? "" : chat.text,
+                                           belongsToPersonalChatsSection ? chat.imageSource : location.imageSource,
+                                           false,
+                                           belongsToPersonalChatsSection ? chat.iconName : location.iconName,
+                                           belongsToPersonalChatsSection ? chat.iconColor : location.iconColor,
+                                           belongsToPersonalChatsSection && chat.isUserIcon,
+                                           chat.colorId ?? 0,
+                                           thread?.value ? (thread.text || qsTr("Thread")) : "")
         }
         onResultItemClicked: (itemId) => {
             searchPopup.close()

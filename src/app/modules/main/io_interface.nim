@@ -140,7 +140,8 @@ method onContactsLoaded*(
   ){.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onActiveChatChange*(self: AccessInterface, sectionId: string, chatId: string) {.base.} =
+method onActiveChatChange*(self: AccessInterface, sectionId: string, chatId: string,
+    threadId: string = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onActivityNotificationsUpdated*(self: AccessInterface) {.base.} =
@@ -465,7 +466,7 @@ method onCommunityTokensDetailsLoaded*(self: AccessInterface, communityId: strin
 method addressWasShown*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method openSectionChatAndMessage*(self: AccessInterface, sectionId: string, chatId: string, messageId: string): bool {.base.} =
+method openSectionChatAndMessage*(self: AccessInterface, sectionId: string, chatId: string, messageId: string, threadId: string = ""): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method updateRequestToJoinState*(self: AccessInterface, sectionId: string, requestToJoinState: RequestToJoinState) {.base.} =

@@ -7,14 +7,15 @@ Instantiator {
     id: root
 
     property var menu
+    property int indexOffset: 0
 
     onObjectAdded: function(index, object) {
         if (object instanceof Menu)
-            menu.addMenu(object)
+            menu.insertMenu(root.indexOffset + index, object)
         else if (object instanceof Action)
-            menu.addAction(object)
+            menu.insertAction(root.indexOffset + index, object)
         else
-            menu.addItem(object)
+            menu.insertItem(root.indexOffset + index, object)
     }
 
     onObjectRemoved: function(index, object) {

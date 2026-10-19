@@ -56,7 +56,7 @@ StatusSectionLoader {
     required property bool isPortraitMode
     property bool navToMsgDetails: root.rootStore.navToMsgDetails
 
-    signal openAppSearchRequested()
+    signal openAppSearchRequested(string chatId, string threadId)
     signal supportBotChatRequested()
 
     // Back-navigation contract for AppMain's back chain. The chrome is
@@ -400,7 +400,7 @@ StatusSectionLoader {
         function onProfileButtonClicked() {
             Global.changeAppSectionBySectionType(Constants.appSection.profile)
         }
-        function onOpenAppSearch() { root.openAppSearchRequested() }
+        function onOpenAppSearch(chatId, threadId) { root.openAppSearchRequested(chatId, threadId) }
         function onBuyStickerPackRequested(packId, price) {
             root.popupHandler.buyStickerPack(packId, price)
         }

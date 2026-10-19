@@ -1,5 +1,5 @@
 import nimqml
-import models/[result_model, location_menu_model, chat_search_model]
+import models/[result_model, location_menu_model, location_menu_sub_model, chat_search_model]
 import io_interface
 
 QtObject:
@@ -8,6 +8,9 @@ QtObject:
       delegate: io_interface.AccessInterface
       searchResultModel: result_model.Model
       locationMenuModel: location_menu_model.Model
+      threadLocationMenuModel: SubModel
+      threadLocationsLoading: bool
+      threadLocationsError: bool
       chatSearchModel: chat_search_model.Model
       chatSearchModelVariant: QVariant
 
@@ -18,6 +21,7 @@ QtObject:
     result.delegate = delegate
     result.searchResultModel = result_model.newModel()
     result.locationMenuModel = location_menu_model.newModel()
+    result.threadLocationMenuModel = newSubModel()
     result.chatSearchModel = chat_search_model.newModel(delegate)
     result.chatSearchModelVariant = newQVariant(result.chatSearchModel)
 
@@ -45,11 +49,43 @@ QtObject:
   proc prepareLocationMenuModel*(self: View) {.slot.} =
     self.delegate.prepareLocationMenuModel()
 
-  proc setSearchLocation*(self: View, location: string = "", subLocation: string = "") {.slot.} =
-    self.delegate.setSearchLocation(location, subLocation)
+  proc prepareThreadLocationsForSection*(self: View, sectionId: string) {.slot.} =
+    self.delegate.prepareThreadLocationsForSection(sectionId)
 
-  proc getSearchLocationObject*(self: View): string {.slot.} =
-    self.delegate.getSearchLocationObject()
+  proc setSearchLocation*(self: View, location: string = "", subLocation: string = "", threadId: string = "") {.slot.} =
+    self.delegate.setSearchLocation(location, subLocation, threadId)
+
+  proc getSearchLocationObject*(self: View, chatId: string = "", threadId: string = ""): string {.slot.} =
+    self.delegate.getSearchLocationObject(chatId, threadId)
+
+  proc threadLocationMenuModel*(self: View): SubModel =
+    self.threadLocationMenuModel
+
+  proc getThreadLocationMenuModel(self: View): QVariant {.slot.} =
+    newQVariant(self.threadLocationMenuModel)
+  QtProperty[QVariant] threadLocationMenuModel:
+    read = getThreadLocationMenuModel
+
+  proc threadLocationsStateChanged(self: View) {.signal.}
+  proc getThreadLocationsLoading(self: View): bool {.slot.} =
+    self.threadLocationsLoading
+  QtProperty[bool] threadLocationsLoading:
+    read = getThreadLocationsLoading
+    notify = threadLocationsStateChanged
+
+  proc getThreadLocationsError(self: View): bool {.slot.} =
+    self.threadLocationsError
+  QtProperty[bool] threadLocationsError:
+    read = getThreadLocationsError
+    notify = threadLocationsStateChanged
+
+  proc setThreadLocationsState*(self: View, loading, error: bool) =
+    self.threadLocationsLoading = loading
+    self.threadLocationsError = error
+    self.threadLocationsStateChanged()
+
+  proc prepareThreadLocationMenuModel*(self: View, chatId: string) {.slot.} =
+    self.delegate.prepareThreadLocationMenuModel(chatId)
 
   proc searchMessages*(self: View, searchTerm: string) {.slot.} =
     self.delegate.searchMessages(searchTerm)

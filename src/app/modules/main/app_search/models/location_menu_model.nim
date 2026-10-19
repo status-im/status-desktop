@@ -1,7 +1,7 @@
 import app/modules/shared_models/model_utils
 import nimqml, tables, strutils
 
-import location_menu_item, location_menu_sub_item
+import location_menu_item, location_menu_sub_item, location_menu_sub_model
 
 type
   ModelRole {.pure.} = enum
@@ -70,6 +70,10 @@ QtObject:
     for i in self.items:
       if (i.value == value):
         return i
+
+  proc updateThreadAvailability*(self: Model, availability: Table[string, bool]) =
+    for item in self.items:
+      item.subItems.updateThreadAvailability(availability)
 
   proc delete(self: Model) =
     self.QAbstractListModel.delete

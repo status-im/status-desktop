@@ -52,7 +52,7 @@ StatusSectionLoader {
     property bool navToMsgDetails: root.rootStore.navToMsgDetails
 
     // Bridges the chat profile button to the global app-section navigation.
-    signal openAppSearchRequested()
+    signal openAppSearchRequested(string chatId, string threadId)
 
     signal supportBotChatRequested()
 
@@ -308,7 +308,7 @@ StatusSectionLoader {
         function onProfileButtonClicked() {
             Global.changeAppSectionBySectionType(Constants.appSection.profile)
         }
-        function onOpenAppSearch() { root.openAppSearchRequested() }
+        function onOpenAppSearch(chatId, threadId) { root.openAppSearchRequested(chatId, threadId) }
         function onBuyStickerPackRequested(packId, price) {
             root.popupHandler.buyStickerPack(packId, price)
         }

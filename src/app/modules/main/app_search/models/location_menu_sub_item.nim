@@ -10,6 +10,7 @@ type
     colorId: int
     position: int
     lastMessageTimestamp: int
+    hasThreads*: bool
 
 proc initSubItem*(
     value,
@@ -56,6 +57,7 @@ proc toJsonNode*(self: SubItem): JsonNode =
     "isUserIcon": self.isUserIcon,
     "isImage": self.isImage,
     "colorId": self.colorId,
+    "hasThreads": self.hasThreads,
   }
 
 proc position*(self: SubItem): int =
