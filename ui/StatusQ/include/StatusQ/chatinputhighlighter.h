@@ -1,6 +1,7 @@
 #pragma once
 
 #include "StatusQ/markdownast.h"
+#include "StatusQ/spellchecker.h"
 
 #include <QAbstractListModel>
 #include <QColor>
@@ -63,6 +64,12 @@ class ChatInputHighlighter : public QSyntaxHighlighter
     Q_PROPERTY(QColor quoteTextColor
                READ quoteTextColor WRITE setQuoteTextColor
                NOTIFY quoteTextColorChanged)
+    Q_PROPERTY(QColor textColor
+               READ textColor WRITE setTextColor
+               NOTIFY textColorChanged)
+    Q_PROPERTY(QColor spellCheckUnderlineColor
+               READ spellCheckUnderlineColor WRITE setSpellCheckUnderlineColor
+               NOTIFY spellCheckUnderlineColorChanged)
     Q_PROPERTY(bool formatUnclosedCodeFence
                READ formatUnclosedCodeFence WRITE setFormatUnclosedCodeFence
                NOTIFY formatUnclosedCodeFenceChanged)
@@ -71,9 +78,14 @@ class ChatInputHighlighter : public QSyntaxHighlighter
                NOTIFY fullLineHeightEmojisChanged)
     Q_PROPERTY(QAbstractListModel* linksModel READ linksModel CONSTANT)
     Q_PROPERTY(QAbstractListModel* mentionsModel READ mentionsModel CONSTANT)
+    Q_PROPERTY(SpellChecker* spellChecker READ spellChecker CONSTANT)
 
 public:
     explicit ChatInputHighlighter(QObject* parent = nullptr);
+
+    SpellChecker* spellChecker() const { return m_spellChecker; }
+    Q_INVOKABLE QVariantMap replaceSpellingSuggestion(const QString& replacement,
+                                                      int selectionStart, int selectionEnd);
 
     QQuickTextDocument* quickTextDocument() const;
     void setQuickTextDocument(QQuickTextDocument*);
@@ -89,6 +101,12 @@ public:
 
     QColor quoteTextColor() const;
     void setQuoteTextColor(QColor color);
+
+    QColor textColor() const;
+    void setTextColor(QColor color);
+
+    QColor spellCheckUnderlineColor() const;
+    void setSpellCheckUnderlineColor(const QColor& color);
 
     bool formatUnclosedCodeFence() const;
     void setFormatUnclosedCodeFence(bool enabled);
@@ -248,6 +266,8 @@ signals:
     void delimiterColorChanged();
     void linkColorChanged();
     void quoteTextColorChanged();
+    void textColorChanged();
+    void spellCheckUnderlineColorChanged();
     void formatUnclosedCodeFenceChanged();
     void fullLineHeightEmojisChanged();
 
@@ -255,6 +275,7 @@ protected:
     void highlightBlock(const QString& text) override;
 
 private:
+    SpellChecker* m_spellChecker;
     QTextCharFormat buildFormat(unsigned int bits) const;
 
     // Applies a hanging indent to quote-line blocks so wrapped lines align with
@@ -276,6 +297,9 @@ private:
     QQuickTextDocument* m_quickTextDocument{nullptr};
     QVector<unsigned int> m_flags; // per-document-character emphasis bits
     QString m_cachedText; // last full document text parsed into m_flags
+    QString m_documentText;
+    bool m_documentTextDirty{true};
+    bool m_redoAvailable{false};
     mutable Markdown::Node m_ast;       // cached full-document AST (for position queries)
     mutable QString m_astText;          // document text the cached AST was parsed from
     mutable bool m_astValid{false};     // whether m_ast/m_astText are current
@@ -283,6 +307,8 @@ private:
     QColor m_delimiterColor{Qt::darkGray};
     QColor m_linkColor{Qt::blue};
     QColor m_quoteTextColor{}; // invalid = no quote-text dimming unless set
+    QColor m_textColor{Qt::black};
+    QColor m_spellCheckUnderlineColor{Qt::red};
     bool m_formatUnclosedCodeFence{false};
     bool m_fullLineHeightEmojis{true};
     ChatInputLinksModel* m_linksModel{nullptr};

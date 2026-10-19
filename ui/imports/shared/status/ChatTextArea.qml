@@ -23,6 +23,31 @@ StatusTextArea {
     property alias delimiterColor: highlighter.delimiterColor
     property alias linkColor: highlighter.linkColor
     property alias quoteTextColor: highlighter.quoteTextColor
+    property alias spellCheckUnderlineColor: highlighter.spellCheckUnderlineColor
+    property bool spellCheckEnabled: true
+    property string spellCheckLanguage: "en_US"
+    property bool spellCheckSkipCapitalizedWords: true
+    readonly property alias spellChecker: highlighter.spellChecker
+
+    function replaceSpellingSuggestion(replacement) {
+        if (root.readOnly)
+            return
+        const newLength = root.length - spellChecker.suggestionWord.length + replacement.length
+        if (newLength > root.characterLimit) {
+            root.attemptToExceedHardLimit()
+            return
+        }
+        const backwards = root.cursorPosition === root.selectionStart
+        const selection = highlighter.replaceSpellingSuggestion(
+                            replacement, root.selectionStart, root.selectionEnd)
+        if (selection.selectionStart === selection.selectionEnd) {
+            root.cursorPosition = selection.selectionStart
+            d.ensureCursorRectanglePosition()
+        } else {
+            root.select(backwards ? selection.selectionEnd : selection.selectionStart,
+                        backwards ? selection.selectionStart : selection.selectionEnd)
+        }
+    }
 
     // Background color needed for proper rendering of quote block's vertical line.
     property color backgroundColor: Theme.palette.background
@@ -235,9 +260,18 @@ StatusTextArea {
         id: highlighter
 
         quickTextDocument: root.textDocument
+        textColor: root.color
         delimiterColor: root.Theme.palette.baseColor1
         linkColor: root.Theme.palette.primaryColor1
         quoteTextColor: root.Theme.palette.baseColor1
+        spellChecker {
+            enabled: root.spellCheckEnabled
+            language: root.spellCheckLanguage
+            skipCapitalizedWords: root.spellCheckSkipCapitalizedWords
+            cursorPosition: root.cursorPosition
+            composing: root.preeditText.length > 0
+        }
+        spellCheckUnderlineColor: Theme.palette.dangerColor1
     }
 
     // Mobile quote-block continuation. The OSK new-line button commits "\n" via

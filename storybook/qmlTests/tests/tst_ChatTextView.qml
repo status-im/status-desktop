@@ -257,7 +257,7 @@ Item {
             compare(control.selectedText, "", "fourth click should deselect")
         }
 
-        // Loosing focus clears the selection.
+        // Losing focus clears the selection.
         function test_clickingAnotherViewDeselectsPrevious() {
             const blocks = [
                 { type: "text", html: "first line" },
@@ -269,17 +269,21 @@ Item {
                                                  { selectable: true, blocks: blocks, y: 200 })
             verify(first && second)
             tryVerify(() => first.implicitHeight > 0 && second.implicitHeight > 0)
+            verify(waitForRendering(first))
+            verify(waitForRendering(second))
 
             // Select in the first view.
             mousePress(first, 0, 3)
             mouseMove(first, first.width - 4, first.implicitHeight - 4)
             mouseRelease(first, first.width - 4, first.implicitHeight - 4)
             verify(first.selectedText.length > 0, "first view not selected")
+            verify(first.activeFocus, "selection must focus the first view")
 
             // A plain click (no drag) in the second view must clear the first's selection.
             mousePress(second, 5, 3)
             mouseRelease(second, 5, 3)
             compare(second.selectedText, "", "click should not select the second view")
+            verify(second.activeFocus, "click must transfer focus to the second view")
 
             tryCompare(first, "selectedText", "")
         }

@@ -625,9 +625,46 @@ void ChatInputMentionsModel::setMentions(const QVector<MentionItem>& mentions)
 
 ChatInputHighlighter::ChatInputHighlighter(QObject* parent)
     : QSyntaxHighlighter(parent)
+    , m_spellChecker(new SpellChecker(this))
     , m_linksModel(new ChatInputLinksModel(this))
     , m_mentionsModel(new ChatInputMentionsModel(this))
 {
+    connect(m_spellChecker, &SpellChecker::issuesChanged, this, [this] {
+        if (!document())
+            return;
+        // Apply all block underlines before laying out the document again.
+        const bool layoutEnabled = document()->isLayoutEnabled();
+        document()->setLayoutEnabled(false);
+        rehighlight();
+        document()->setLayoutEnabled(layoutEnabled);
+    }, Qt::QueuedConnection);
+}
+
+QVariantMap ChatInputHighlighter::replaceSpellingSuggestion(const QString& replacement,
+                                                            int selectionStart, int selectionEnd)
+{
+    const QVariantMap unchanged{{"selectionStart"_L1, selectionStart},
+                                {"selectionEnd"_L1, selectionEnd}};
+    if (!document() || !m_spellChecker->suggestions().contains(replacement))
+        return unchanged;
+    const int start = m_spellChecker->suggestionStart();
+    const QString word = m_spellChecker->suggestionWord();
+    const auto issue = m_spellChecker->issueAt(start);
+    if (issue.isEmpty() || issue.value("word"_L1).toString() != word
+        || document()->toPlainText().mid(start, word.size()) != word)
+        return unchanged;
+
+    QTextCursor selection(document());
+    selection.setPosition(selectionStart);
+    selection.setPosition(selectionEnd, QTextCursor::KeepAnchor);
+    QTextCursor cursor(document());
+    cursor.beginEditBlock();
+    cursor.setPosition(start);
+    cursor.setPosition(start + word.size(), QTextCursor::KeepAnchor);
+    cursor.insertText(replacement);
+    cursor.endEditBlock();
+    return {{"selectionStart"_L1, selection.selectionStart()},
+            {"selectionEnd"_L1, selection.selectionEnd()}};
 }
 
 QAbstractListModel* ChatInputHighlighter::linksModel() const
@@ -928,22 +965,49 @@ void ChatInputHighlighter::setQuickTextDocument(QQuickTextDocument* doc)
     if (m_quickTextDocument && m_quickTextDocument->textDocument())
         disconnect(m_quickTextDocument->textDocument(), nullptr, this, nullptr);
     m_quickTextDocument = doc;
+    m_documentTextDirty = true;
     if (doc) {
         QTextDocument* textDoc = doc->textDocument();
+        // Invalidate before QSyntaxHighlighter receives the change: the document
+        // revision is not yet updated during synchronous contentsChange delivery.
+        connect(textDoc, &QTextDocument::contentsChange,
+                this, [this](int, int charsRemoved, int charsAdded) {
+                    if (charsRemoved > 0 || charsAdded > 0) {
+                        m_documentTextDirty = true;
+                        QMetaObject::invokeMethod(this, "rehighlight",
+                                                  Qt::QueuedConnection);
+                    }
+                });
         setDocument(textDoc);
+        m_redoAvailable = textDoc->isRedoAvailable();
+        connect(textDoc, &QTextDocument::redoAvailable, this,
+                [this](bool available) { m_redoAvailable = available; });
+        // availableRedoSteps excludes the next redo command.
+        connect(textDoc, &QTextDocument::contentsChanged, this,
+                [this, textDoc, undoSteps = textDoc->availableUndoSteps(),
+                 redoSteps = textDoc->availableRedoSteps() + int(textDoc->isRedoAvailable())]() mutable {
+                    const int undo = textDoc->availableUndoSteps();
+                    const int redo = textDoc->availableRedoSteps() + int(textDoc->isRedoAvailable());
+                    // New edits announce redo invalidation before contentsChanged;
+                    // replay announces availability after delivering the restored text.
+                    const bool replay = undo < undoSteps
+                        || (m_redoAvailable && redo < redoSteps
+                            && undo + redo == undoSteps + redoSteps);
+                    undoSteps = undo;
+                    redoSteps = redo;
+                    if (replay) {
+                        m_spellChecker->setText(textDoc->toPlainText());
+                        m_spellChecker->recheck();
+                    }
+                });
         // Reserve layout space for mention objects (the pill itself is drawn by a
         // QML overlay); the handler is owned by this highlighter.
         textDoc->documentLayout()->registerHandler(
             MentionTextObject::MentionType, new MentionTextObject(this));
-        connect(textDoc, &QTextDocument::contentsChange,
-                this, [this](int, int charsRemoved, int charsAdded) {
-                    if (charsRemoved > 0 || charsAdded > 0)
-                        QMetaObject::invokeMethod(this, "rehighlight",
-                                                  Qt::QueuedConnection);
-                });
     } else {
         setDocument(nullptr);
     }
+    m_spellChecker->setText(doc ? doc->textDocument()->toPlainText() : QString());
     emit quickTextDocumentChanged();
 }
 
@@ -1002,6 +1066,34 @@ void ChatInputHighlighter::setQuoteTextColor(QColor color)
     m_cachedText.clear();
     rehighlight();
     emit quoteTextColorChanged();
+}
+
+QColor ChatInputHighlighter::textColor() const
+{
+    return m_textColor;
+}
+
+void ChatInputHighlighter::setTextColor(QColor color)
+{
+    if (m_textColor == color)
+        return;
+    m_textColor = color;
+    rehighlight();
+    emit textColorChanged();
+}
+
+QColor ChatInputHighlighter::spellCheckUnderlineColor() const
+{
+    return m_spellCheckUnderlineColor;
+}
+
+void ChatInputHighlighter::setSpellCheckUnderlineColor(const QColor& color)
+{
+    if (m_spellCheckUnderlineColor == color)
+        return;
+    m_spellCheckUnderlineColor = color;
+    rehighlight();
+    emit spellCheckUnderlineColorChanged();
 }
 
 bool ChatInputHighlighter::formatUnclosedCodeFence() const
@@ -1231,7 +1323,14 @@ void ChatInputHighlighter::highlightBlock(const QString& text)
     if (!document())
         return;
 
-    const QString fullText = document()->toPlainText();
+    // Rehighlighting visits every block. Flattening the whole document for each
+    // visit becomes quadratic for messages with many paragraphs.
+    if (m_documentTextDirty) {
+        m_documentText = document()->toPlainText();
+        m_documentTextDirty = false;
+    }
+    const QString& fullText = m_documentText;
+    m_spellChecker->setText(fullText);
 
     if (fullText != m_cachedText) {
         m_cachedText = fullText;
@@ -1314,6 +1413,34 @@ void ChatInputHighlighter::highlightBlock(const QString& text)
         });
         if (runStart >= 0)
             setFormat(runStart, text.size() - runStart, emojiFormat);
+    }
+
+    // Merge with the already-composed markdown format, never replacing its properties.
+    const auto issues = m_spellChecker->issues();
+    const auto first = std::lower_bound(issues.cbegin(), issues.cend(), blockStart,
+                                        [](const QVariant& value, int position) {
+                                            return value.toMap().value("start"_L1).toInt() < position;
+                                        });
+    for (auto it = first; it != issues.cend(); ++it) {
+        const auto issue = it->toMap();
+        const int start = issue.value("start"_L1).toInt() - blockStart;
+        if (start >= blockLen)
+            break;
+        const int end = qMin(blockLen, issue.value("start"_L1).toInt() + issue.value("length"_L1).toInt() - blockStart);
+        for (int position = start; position < end; ++position) {
+            auto spellingFormat = format(position);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 12, 0)
+            spellingFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
+#else
+            // Before Qt 6.12, Qt Quick only renders single glyph-run underlines.
+            spellingFormat.setUnderlineStyle(QTextCharFormat::SingleUnderline);
+            // Its color-range merge ignores underline-only formats.
+            if (!spellingFormat.hasProperty(QTextFormat::ForegroundBrush))
+                spellingFormat.setForeground(m_textColor);
+#endif
+            spellingFormat.setUnderlineColor(m_spellCheckUnderlineColor);
+            setFormat(position, 1, spellingFormat);
+        }
     }
 }
 

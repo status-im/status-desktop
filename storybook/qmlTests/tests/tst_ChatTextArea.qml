@@ -67,6 +67,18 @@ Item {
         signalName: "pasteImageRequested"
     }
 
+    SignalSpy {
+        id: spellingIssuesSpy
+        target: testCase.control ? testCase.control.spellChecker : null
+        signalName: "issuesChanged"
+    }
+
+    SignalSpy {
+        id: spellingFinishedSpy
+        target: testCase.control ? testCase.control.spellChecker : null
+        signalName: "checkFinished"
+    }
+
     TestCase {
         id: testCase
         name: "ChatTextArea"
@@ -77,6 +89,165 @@ Item {
         function init() {
             control = createTemporaryObject(componentUnderTest, root)
             verify(control)
+        }
+
+        function test_spellCheck_waitsForCompletedWord() {
+            control.forceActiveFocus()
+            keyClick(Qt.Key_W)
+            keyClick(Qt.Key_R)
+            keyClick(Qt.Key_L)
+            keyClick(Qt.Key_D)
+            verify(waitForRendering(control))
+            compare(control.spellChecker.issues.length, 0)
+            keyClick(Qt.Key_Space)
+            tryVerify(() => control.spellChecker.issues.length === 1)
+            compare(control.spellChecker.issues[0].word, "wrld")
+        }
+
+        function test_spellCheck_undoRedo_data() {
+            return [{tag: "direct", shortcut: false}, {tag: "shortcut", shortcut: true}]
+        }
+
+        function test_spellCheck_undoRedo(data) {
+            control.forceActiveFocus()
+            control.text = "wrld "
+            control.cursorPosition = control.length
+            tryVerify(() => control.spellChecker.issues.length === 1)
+            control.spellChecker.requestSuggestions(1)
+            tryVerify(() => !control.spellChecker.suggestionsPending)
+            control.replaceSpellingSuggestion("world")
+            compare(control.text, "world ")
+            compare(control.spellChecker.issues.length, 0)
+            if (data.shortcut)
+                keySequence(StandardKey.Undo)
+            else
+                control.undo()
+            compare(control.text, "wrld ")
+            tryVerify(() => control.spellChecker.issues.length === 1)
+            spellingFinishedSpy.clear()
+            if (data.shortcut)
+                keySequence(StandardKey.Redo)
+            else
+                control.redo()
+            compare(control.text, "world ")
+            tryVerify(() => spellingFinishedSpy.count > 0)
+            tryVerify(() => control.spellChecker.issues.length === 0)
+        }
+
+        function test_spellCheck_redoWithoutBoundary() {
+            control.forceActiveFocus()
+            control.insert(0, "wrld")
+            control.cursorPosition = control.length
+            verify(waitForRendering(control))
+            compare(control.spellChecker.issues.length, 0)
+            control.undo()
+            compare(control.text, "")
+            control.redo()
+            compare(control.text, "wrld")
+            tryVerify(() => control.spellChecker.issues.length === 1)
+            control.undo()
+            spellingFinishedSpy.clear()
+            keyClick(Qt.Key_A)
+            verify(waitForRendering(control))
+            compare(spellingFinishedSpy.count, 0, "A new edit after undo is not redo")
+        }
+
+        function test_spellCheck_visibleUnderline_data() {
+            return [
+                {tag: "qt-red", renderType: TextEdit.QtRendering, underlineColor: "#ff0000"},
+                {tag: "qt-green", renderType: TextEdit.QtRendering, underlineColor: "#12ab34"},
+                {tag: "native-red", renderType: TextEdit.NativeRendering, underlineColor: "#ff0000"},
+                {tag: "native-green", renderType: TextEdit.NativeRendering, underlineColor: "#12ab34"}
+            ]
+        }
+
+        function test_spellCheck_visibleUnderline(data) {
+            control.renderType = data.renderType
+            control.spellCheckUnderlineColor = data.underlineColor
+            control.forceActiveFocus()
+            control.text = "This is a trpo"
+            control.cursorPosition = control.length
+            verify(waitForRendering(control))
+            compare(control.spellChecker.issues.length, 0)
+            keyClick(Qt.Key_Space)
+            tryVerify(() => control.spellChecker.issues.length === 1)
+            compare(control.spellChecker.issues[0].word, "trpo")
+            verify(waitForRendering(control))
+
+            function underlinePixels() {
+                const image = grabImage(control)
+                const color = control.spellCheckUnderlineColor
+                const tolerance = 30
+                let count = 0
+                for (let y = 0; y < image.height; ++y) {
+                    for (let x = 0; x < image.width; ++x) {
+                        if (Math.abs(image.red(x, y) - color.r * 255) < tolerance
+                                && Math.abs(image.green(x, y) - color.g * 255) < tolerance
+                                && Math.abs(image.blue(x, y) - color.b * 255) < tolerance)
+                            ++count
+                    }
+                }
+                return count
+            }
+
+            tryVerify(() => underlinePixels() > 0, 1000, "Completed typo must have an underline in the configured color")
+            spellingIssuesSpy.clear()
+            for (const key of [Qt.Key_Left, Qt.Key_Right]) {
+                for (let step = 0; step < 6; ++step) {
+                    keyClick(key)
+                    compare(control.spellChecker.issues.length, 1)
+                    verify(waitForRendering(control))
+                    verify(underlinePixels() > 0, "Caret navigation must keep the visible underline")
+                }
+            }
+            compare(spellingIssuesSpy.count, 0, "Caret navigation must not clear or recompute issues")
+            control.cursorPosition = control.length
+            for (const key of [Qt.Key_H, Qt.Key_E, Qt.Key_L, Qt.Key_L, Qt.Key_O]) {
+                keyClick(key)
+                verify(waitForRendering(control))
+                verify(underlinePixels() > 0, "Typing another word must keep the existing underline")
+                compare(spellingIssuesSpy.count, 0, "Letters must not clear existing spelling issues")
+            }
+            control.spellCheckEnabled = false
+            tryVerify(() => underlinePixels() === 0, 1000, "Disabling spell check must remove the underline")
+        }
+
+        function test_spellCheck_imeComposition() {
+            control.forceActiveFocus()
+            control.text = "wrld "
+            control.cursorPosition = 2
+            imeTester.setPreedit(control, "o")
+            compare(control.spellChecker.composing, true)
+            verify(waitForRendering(control))
+            compare(control.spellChecker.issues.length, 0)
+            imeTester.setPreedit(control, "")
+            control.cursorPosition = control.length
+            tryVerify(() => control.spellChecker.issues.length === 1)
+        }
+
+        function test_spellCheck_correctionPreservesReverseSelection() {
+            control.text = "hello wrld friend "
+            control.select(18, 11)
+            tryVerify(() => control.spellChecker.issues.length === 1)
+            control.spellChecker.requestSuggestions(7)
+            tryVerify(() => !control.spellChecker.suggestionsPending)
+            control.replaceSpellingSuggestion("world")
+            compare(control.text, "hello world friend ")
+            compare(control.selectedText, "friend ")
+            compare(control.cursorPosition, 12)
+        }
+
+        function test_spellCheck_correctionRespectsLimit() {
+            control.text = "wrld "
+            control.cursorPosition = control.length
+            control.characterLimit = control.length
+            tryVerify(() => control.spellChecker.issues.length === 1)
+            control.spellChecker.requestSuggestions(1)
+            tryVerify(() => !control.spellChecker.suggestionsPending)
+            limitSpy.clear()
+            control.replaceSpellingSuggestion("world")
+            compare(control.text, "wrld ")
+            compare(limitSpy.count, 1)
         }
 
         // ── triple-backtick interception ────────────────────────────────────────
