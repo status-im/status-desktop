@@ -3,7 +3,7 @@ import typing
 import allure
 
 import driver
-from gui.components.community.pinned_messages_popup import PinnedMessagesPopup
+from gui.components.community.pinned_messages_panel import PinnedMessagesPanel
 from gui.components.context_menu import ContextMenu
 from gui.components.messaging.leave_group_popup import LeaveGroupPopup
 from gui.elements.button import Button
@@ -99,10 +99,10 @@ class ToolBar(QObject):
                         driver.mouseClick(child)
                         break
 
-    @allure.step('Open Pinned messages popup')
-    def open_pinned_messages_popup(self):
+    @allure.step('Open pinned messages panel')
+    def open_pinned_messages_panel(self):
         self.pinned_message_tooltip.click()
-        return PinnedMessagesPopup().wait_until_appears()
+        return PinnedMessagesPanel().wait_until_appears()
 
 
 class Members(QObject):

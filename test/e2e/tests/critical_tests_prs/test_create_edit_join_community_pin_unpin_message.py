@@ -178,9 +178,9 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
             assert background_color == ColorCodes.ORANGE.value
 
 
-        with step(f'User {user_two.name} unpin message from pinned messages popup'):
+        with step(f'User {user_two.name} unpin message from pinned messages panel'):
             switch_to_aut(aut_two, main_screen)
-            pinned_msgs = messages_screen.tool_bar.open_pinned_messages_popup()
+            pinned_msgs = messages_screen.tool_bar.open_pinned_messages_panel()
             pinned_msgs.unpin_message().close()
             main_screen.minimize()
 
