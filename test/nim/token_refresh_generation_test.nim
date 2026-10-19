@@ -130,3 +130,10 @@ suite "token map readiness":
     discard g.requestRefresh()          # newer trigger while the re-fire runs
     let c2 = g.onCompletion(c1.gen, applyStale = readiness.appliesStale)
     check c2.action == rcaApplyAndRefire
+    readiness = nextTokenMapReadiness(readiness, c2.action, mapCount = 11)
+    check readiness == tmrSuperseded
+    let c3 = g.onCompletion(c2.gen, applyStale = readiness.appliesStale)
+    check c3.action == rcaApply
+    readiness = nextTokenMapReadiness(readiness, c3.action, mapCount = 12)
+    check readiness == tmrFinal
+    check not readiness.appliesStale
