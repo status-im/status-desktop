@@ -106,6 +106,8 @@ proc applyRefreshTokensResult(self: Service, res: RefreshTokensApplyResult, acti
     self.allTokensByGroupKey = move res.allTokensByGroupKey
   else:
     debug "ignoring empty all-tokens refresh; keeping existing all tokens cache"
+  if action == rcaApply and res.tokensOfInterestCount == 0 and self.tokensOfInterestReadiness == tmrSuperseded:
+    debug "newest tokens refresh has an empty map; token map stays superseded"
   self.tokensOfInterestReadiness = nextTokenMapReadiness(self.tokensOfInterestReadiness, action,
     res.tokensOfInterestCount)
   self.rebuildMarketData()
