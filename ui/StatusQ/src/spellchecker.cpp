@@ -11,6 +11,7 @@
 #include <QRegularExpression>
 #include <QTemporaryDir>
 #include <QThread>
+#include <algorithm>
 #include <memory>
 
 using namespace Qt::Literals::StringLiterals;
@@ -221,7 +222,7 @@ SpellChecker::SpellChecker(QObject* parent) : QObject(parent)
             return;
         m_inFlight = false;
         if (generation == m_generation && supported()) {
-            m_checkPending = false;
+            setCheckPending(false);
             if (m_issues != issues) {
                 m_issues = issues;
                 emit issuesChanged();
@@ -251,6 +252,14 @@ SpellChecker::SpellChecker(QObject* parent) : QObject(parent)
     });
 }
 
+void SpellChecker::setCheckPending(bool value)
+{
+    if (m_checkPending == value)
+        return;
+    m_checkPending = value;
+    emit checkPendingChanged();
+}
+
 bool SpellChecker::supported() const
 {
     return m_enabled && (m_language == "en_US"_L1 || m_language == "en"_L1);
@@ -260,7 +269,7 @@ void SpellChecker::invalidate()
 {
     ++m_generation;
     clearSuggestions();
-    m_checkPending = supported() && !m_text.isEmpty();
+    setCheckPending(supported() && !m_text.isEmpty());
     if (!m_issues.isEmpty()) {
         m_issues.clear();
         emit issuesChanged();
@@ -319,6 +328,12 @@ void SpellChecker::setCursorPosition(int value)
     if (m_cursorPosition == value)
         return;
     m_cursorPosition = value;
+    // Text and caret notifications arrive in either order; evaluate after both.
+    if (m_incompleteStart >= 0 && !m_caretCheckQueued) {
+        m_caretCheckQueued = true;
+        QMetaObject::invokeMethod(this, &SpellChecker::completeWordIfCaretLeft,
+                                  Qt::QueuedConnection);
+    }
     emit cursorPositionChanged();
 }
 
@@ -339,8 +354,6 @@ void SpellChecker::setText(const QString& text)
 {
     if (m_text == text)
         return;
-    // The end of the changed range identifies the edited token independently
-    // of whether TextEdit emits its text or cursor notification first.
     int oldEnd = m_text.size();
     int newEnd = text.size();
     while (oldEnd > 0 && newEnd > 0 && m_text[oldEnd - 1] == text[newEnd - 1]) {
@@ -351,31 +364,64 @@ void SpellChecker::setText(const QString& text)
     while (start < oldEnd && start < newEnd && m_text[start] == text[start])
         ++start;
     const int delta = text.size() - m_text.size();
+    const auto inserted = QStringView(text).mid(start, newEnd - start);
+    m_text = text;
+
+    static const QRegularExpression boundary(
+        "[^\\p{L}\\p{M}\\p{N}_'\\x{2019}-]"_L1,
+        QRegularExpression::UseUnicodePropertiesOption);
+    // Pastes, programmatic replacements and typed separators complete every
+    // word. A single typed or deleted character only edits the word around it.
+    const bool complete = inserted.size() > 1 || boundary.matchView(inserted).hasMatch();
+    const auto [tokenStart, tokenEnd] = complete ? std::pair{-1, -1} : tokenAt(newEnd);
+
     QVariantList retained;
+    QVariantMap flagged;
     for (const auto& value : std::as_const(m_issues)) {
         auto issue = value.toMap();
         const int issueStart = issue.value("start"_L1).toInt();
         const int issueEnd = issueStart + issue.value("length"_L1).toInt();
-        if (issueEnd <= start) {
-            retained.append(issue);
-        } else if (issueStart >= oldEnd) {
-            issue.insert("start"_L1, issueStart + delta);
+        const bool before = issueEnd <= start;
+        const bool after = issueStart >= oldEnd;
+        const int mappedStart = after ? issueStart + delta : issueStart;
+        const int mappedEnd = before ? issueEnd : issueEnd + delta;
+        if (mappedStart < tokenEnd && mappedEnd > tokenStart) {
+            if (flagged.isEmpty())
+                flagged = issue;
+        } else if (before || after) {
+            issue.insert("start"_L1, mappedStart);
             retained.append(issue);
         }
     }
-    m_text = text;
-    updateIncompleteWord(newEnd);
+
+    const bool wasFlagged = !flagged.isEmpty();
+    if (wasFlagged) {
+        // Keep an edited misspelling underlined until its new spelling is known.
+        flagged.insert("start"_L1, tokenStart);
+        flagged.insert("length"_L1, tokenEnd - tokenStart);
+        flagged.insert("word"_L1, text.mid(tokenStart, tokenEnd - tokenStart));
+        const auto position = std::lower_bound(retained.begin(), retained.end(), tokenStart,
+            [](const QVariant& issue, int value) {
+                return issue.toMap().value("start"_L1).toInt() < value;
+            });
+        retained.insert(position, flagged);
+    }
+    if (complete || wasFlagged) {
+        m_incompleteStart = -1;
+        m_incompleteEnd = -1;
+    } else {
+        m_incompleteStart = tokenStart;
+        m_incompleteEnd = tokenEnd;
+    }
+
     ++m_generation;
     clearSuggestions();
     if (m_issues != retained) {
         m_issues = retained;
         emit issuesChanged();
     }
-    static const QRegularExpression boundary(
-        "[^\\p{L}\\p{M}\\p{N}_'\\x{2019}-]"_L1,
-        QRegularExpression::UseUnicodePropertiesOption);
-    m_checkPending = supported() && !m_text.isEmpty()
-        && (m_checkPending || boundary.match(text.mid(start, newEnd - start)).hasMatch());
+    setCheckPending(supported() && !m_text.isEmpty()
+        && (m_checkPending || complete || wasFlagged));
     if (m_checkPending && !m_composing)
         m_timer.start();
     else
@@ -384,27 +430,58 @@ void SpellChecker::setText(const QString& text)
 
 void SpellChecker::recheck()
 {
+    m_incompleteStart = -1;
     m_incompleteEnd = -1;
     ++m_generation;
     clearSuggestions();
-    m_checkPending = supported() && !m_text.isEmpty();
+    setCheckPending(supported() && !m_text.isEmpty());
     if (m_checkPending && !m_composing)
         m_timer.start();
     else
         m_timer.stop();
 }
 
-void SpellChecker::updateIncompleteWord(int position)
+void SpellChecker::acceptReplacement(int start, int length)
 {
+    QVariantList retained;
+    for (const auto& value : std::as_const(m_issues)) {
+        const auto issue = value.toMap();
+        const int issueStart = issue.value("start"_L1).toInt();
+        if (issueStart >= start + length || issueStart + issue.value("length"_L1).toInt() <= start)
+            retained.append(issue);
+    }
+    if (m_issues != retained) {
+        m_issues = retained;
+        emit issuesChanged();
+    }
+}
+
+void SpellChecker::completeWordIfCaretLeft()
+{
+    m_caretCheckQueued = false;
+    if (m_incompleteStart < 0
+        || (m_cursorPosition >= m_incompleteStart && m_cursorPosition <= m_incompleteEnd))
+        return;
+    m_incompleteStart = -1;
     m_incompleteEnd = -1;
+    // Results excluding the word are now stale; unaffected underlines stay.
+    ++m_generation;
+    setCheckPending(supported() && !m_text.isEmpty());
+    if (m_checkPending && !m_composing)
+        m_timer.start();
+}
+
+std::pair<int, int> SpellChecker::tokenAt(int position) const
+{
     auto matches = wordTokens().globalMatchView(m_text);
     while (matches.hasNext()) {
         const auto match = matches.next();
-        if (position >= match.capturedStart() && position <= match.capturedEnd()) {
-            m_incompleteEnd = match.capturedEnd();
+        if (match.capturedStart() > position)
             break;
-        }
+        if (position <= match.capturedEnd())
+            return {match.capturedStart(), match.capturedEnd()};
     }
+    return {-1, -1};
 }
 
 QVariantMap SpellChecker::issueAt(int position) const

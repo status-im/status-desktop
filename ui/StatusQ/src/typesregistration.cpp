@@ -3,6 +3,7 @@
 #include "StatusQ/clipboardutils.h"
 #include "StatusQ/incubationhints.h"
 #include "StatusQ/constantrole.h"
+#include "StatusQ/contextmenueventfilter.h"
 #include "StatusQ/fastexpressionfilter.h"
 #include "StatusQ/fastexpressionrole.h"
 #include "StatusQ/fastexpressionsorter.h"
@@ -78,6 +79,7 @@ void registerStatusQTypes() {
     qmlRegisterUncreatableType<SpellChecker>("StatusQ", 0, 1, "SpellChecker",
                                             QStringLiteral("Owned by ChatInputHighlighter"));
     qmlRegisterType<InputMethodEventFilter>("StatusQ", 0, 1, "InputMethodEventFilter");
+    qmlRegisterType<ContextMenuEventFilter>("StatusQ", 0, 1, "ContextMenuEventFilter");
     qmlRegisterUncreatableType<InputMethodEvent>(
                 "StatusQ", 0, 1, "InputMethodEvent",
                 QStringLiteral("InputMethodEvent is created by InputMethodEventFilter"));

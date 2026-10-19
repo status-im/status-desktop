@@ -10340,6 +10340,14 @@ corruption, loss of your Status profile and the inability to restart Status.</so
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Check spelling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skip capitalized words and acronyms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>We need your help to translate Status, so that together we can bring privacy and free speech to the people everywhere, including those who need it most.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17089,6 +17097,14 @@ to load</source>
 </context>
 <context>
     <name>StatusTextEditMenu</name>
+    <message>
+        <source>Checking spelling...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No suggestions</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Cut</source>
         <translation type="unfinished"></translation>

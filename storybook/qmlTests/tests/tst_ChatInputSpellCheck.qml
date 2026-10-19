@@ -61,7 +61,7 @@ Item {
         function test_disabledDoesNotCheck() {
             checker.enabled = false
             editor.text = "wrld "
-            wait(100)
+            compare(checker.checkPending, false)
             compare(finishedSpy.count, 0)
             compare(checker.issues.length, 0)
         }
@@ -81,12 +81,13 @@ Item {
         }
 
         function test_completedWords() {
-            checker.cursorPosition = 4
-            editor.text = "wrld"
-            wait(100)
-            compare(finishedSpy.count, 0)
+            for (const letter of "wrld") {
+                editor.insert(editor.length, letter)
+                checker.cursorPosition = editor.length
+                compare(checker.checkPending, false)
+            }
             compare(checker.issues.length, 0)
-            editor.text = "wrld "
+            editor.insert(editor.length, " ")
             checker.cursorPosition = 5
             tryVerify(() => checker.issues.length === 1)
             checker.cursorPosition = 2
@@ -130,19 +131,24 @@ Item {
             load("wrld" + data.separator, 1)
         }
 
-        function test_editingBeforeExistingSeparator() {
+        function test_editedWordCheckedWhenCaretLeaves() {
             load("world friend ", 0)
             checker.cursorPosition = 1
             editor.remove(1, 2)
             checker.cursorPosition = 1
-            wait(100)
-            compare(finishedSpy.count, 1)
+            compare(checker.checkPending, false)
             compare(checker.issues.length, 0)
             checker.cursorPosition = 5
-            wait(100)
-            compare(finishedSpy.count, 1)
-            editor.insert(4, ".")
             tryVerify(() => checker.issues.length === 1)
+            compare(checker.issues[0].word, "wrld")
+        }
+
+        function test_pastedWordIsCheckedImmediately() {
+            checker.cursorPosition = 0
+            editor.insert(0, "wrld")
+            checker.cursorPosition = 4
+            tryVerify(() => checker.issues.length === 1)
+            compare(checker.issues[0].word, "wrld")
         }
 
         function test_caretMovementKeepsIssuesAndSuggestions() {
@@ -156,7 +162,7 @@ Item {
                 compare(checker.issues.length, 1)
                 compare(checker.suggestionWord, "wrld")
             }
-            wait(100)
+            compare(checker.checkPending, false)
             compare(finishedSpy.count, 0)
             compare(checker.issues.length, 1)
         }
@@ -175,18 +181,15 @@ Item {
             for (const letter of "trpo") {
                 editor.insert(editor.length, letter)
                 checker.cursorPosition = editor.length
-                wait(60)
-                compare(finishedSpy.count, 0)
+                compare(checker.checkPending, false)
                 compare(checker.issues.length, 1)
                 compare(checker.issues[0].word, "wrld")
                 verify(documentTester.formatAt(editor.textDocument, 0).spelling)
             }
             checker.cursorPosition = 2
             compare(checker.issues.length, 1)
-            wait(100)
-            compare(finishedSpy.count, 0)
-            editor.insert(editor.length, ".")
             tryVerify(() => checker.issues.length === 2)
+            compare(checker.issues[0].word, "wrld")
             compare(checker.issues[1].word, "trpo")
             checker.cursorPosition = editor.length
             compare(checker.issues.length, 2)
@@ -199,9 +202,50 @@ Item {
             checker.cursorPosition = 1
             compare(checker.issues.length, 1)
             compare(checker.issues[0].start, 7)
-            wait(100)
+            compare(checker.checkPending, false)
             compare(finishedSpy.count, 0)
             verify(documentTester.formatAt(editor.textDocument, 7).spelling)
+        }
+
+        function test_editingFlaggedWordRechecksIt_data() {
+            return [
+                {tag: "corrected suffix", text: "improv ", position: 6, insertion: "e",
+                    removal: 0, expected: "improve ", issues: 0},
+                {tag: "misspelled suffix", text: "threee ", position: 6, insertion: "e",
+                    removal: 0, expected: "threeee ", issues: 1},
+                {tag: "misspelled prefix", text: "improv ", position: 0, insertion: "a",
+                    removal: 0, expected: "aimprov ", issues: 1},
+                {tag: "corrected deletion", text: "threee ", position: 5, insertion: "",
+                    removal: 1, expected: "three ", issues: 0},
+                {tag: "misspelled middle", text: "wrld ", position: 2, insertion: "x",
+                    removal: 0, expected: "wrxld ", issues: 1}
+            ]
+        }
+
+        function test_editingFlaggedWordRechecksIt(data) {
+            load(data.text, 1)
+            checker.cursorPosition = data.position
+            if (data.removal > 0)
+                editor.remove(data.position, data.position + data.removal)
+            else
+                editor.insert(data.position, data.insertion)
+            checker.cursorPosition = data.position + data.insertion.length
+            compare(editor.text, data.expected)
+            const length = data.expected.length - 1
+            compare(checker.issues.length, 1, "the underline stays until the recheck")
+            compare(checker.issues[0].start, 0)
+            compare(checker.issues[0].length, length)
+            verify(checker.checkPending)
+            tryVerify(() => !checker.checkPending)
+            compare(checker.issues.length, data.issues)
+            tryVerify(() => {
+                for (let position = 0; position < length; ++position) {
+                    if ((documentTester.formatAt(editor.textDocument, position).spelling === true)
+                            !== data.issues > 0)
+                        return false
+                }
+                return true
+            })
         }
 
         function test_exclusions() {
@@ -288,10 +332,9 @@ Item {
 
         function test_latestTextWins() {
             editor.text = "wrld ".repeat(2000)
-            wait(35)
             editor.text = "hello world "
             checker.enabled = false
-            wait(100)
+            compare(checker.checkPending, false)
             compare(checker.issues.length, 0)
             checker.enabled = true
             finishedSpy.clear()

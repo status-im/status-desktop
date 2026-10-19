@@ -10308,6 +10308,14 @@ Status 프로필 손실, Status를 재시작할 수 없는 문제가 발생합�
         <translation>언어</translation>
     </message>
     <message>
+        <source>Check spelling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skip capitalized words and acronyms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>We need your help to translate Status, so that together we can bring privacy and free speech to the people everywhere, including those who need it most.</source>
         <translation>우리는 Status를 번역하는 데 당신의 도움이 필요합니다. 함께 전 세계, 특히 가장 필요로 하는 이들에게 프라이버시와 표현의 자유를届け요.</translation>
     </message>
@@ -17026,6 +17034,14 @@ to load</source>
 </context>
 <context>
     <name>StatusTextEditMenu</name>
+    <message>
+        <source>Checking spelling...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No suggestions</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Cut</source>
         <translation>잘라내기</translation>

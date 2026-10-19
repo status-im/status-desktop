@@ -17,6 +17,7 @@ import utils
 
 import shared.controls.chat
 import shared.panels
+import shared.stores
 
 import QtModelsToolkit
 
@@ -88,6 +89,13 @@ Control {
     property bool fillAvailableHeight: false
 
     property alias textInput: messageInputField
+    property alias spellCheckEnabled: messageInputField.spellCheckEnabled
+    property alias spellCheckLanguage: messageInputField.spellCheckLanguage
+    property alias spellCheckSkipCapitalizedWords: messageInputField.spellCheckSkipCapitalizedWords
+
+    SpellCheckStore {
+        id: spellCheckSettings
+    }
 
     // Background color of the surface the input sits on. Propagated to the text area so the
     // quote-block bar's cell blends with it.
@@ -967,6 +975,9 @@ Control {
 
                         characterLimit: root.messageLimitHard
                         asciiEmojiConversion: true
+                        spellCheckEnabled: spellCheckSettings.enabled
+                        spellCheckLanguage: spellCheckSettings.language
+                        spellCheckSkipCapitalizedWords: spellCheckSettings.skipCapitalizedWords
 
                         // Paddings are used only for left/right sides because
                         // when used nn top/bottom they cause artificial cut-off
@@ -1304,6 +1315,11 @@ Control {
         // same public methods the Ctrl+C/X/V shortcuts use so the
         // two stay consistent.
         sourceComponent: StatusTextEditMenu {
+            objectName: "chatInputEditMenu"
+            spellingTarget: !messageInputField.readOnly && messageInputField.spellChecker.suggestionStart >= 0
+            spellingPending: messageInputField.spellChecker.suggestionsPending
+            spellingSuggestions: spellingTarget ? messageInputField.spellChecker.suggestions : []
+            onSpellingSuggestionRequested: replacement => messageInputField.replaceSpellingSuggestion(replacement)
             canCut: !messageInputField.readOnly && !messageInputField.noSelection
             canCopy: !messageInputField.noSelection
             // Never probe the clipboard on iOS: any read triggers the
@@ -1319,7 +1335,25 @@ Control {
             onPasteRequested: messageInputField.pasteText()
             onSelectAllRequested: messageInputField.selectAll()
 
-            Component.onCompleted: messageInputField.ContextMenu.menu = this
+            onClosed: messageInputField.spellChecker.clearSuggestions()
+        }
+    }
+
+    ContextMenuEventFilter {
+        target: !StatusQUtils.Utils.isMobile ? messageInputField : null
+        onRequested: (position, keyboard) => {
+            contextMenuLoader.active = true
+            if (contextMenuLoader.status !== Loader.Ready)
+                return
+            const rect = messageInputField.cursorRectangle
+            const point = keyboard ? Qt.point(rect.x, rect.y + rect.height) : position
+            let character = keyboard ? messageInputField.cursorPosition
+                                     : messageInputField.positionAt(point.x, point.y, TextEdit.CursorOnCharacter)
+            if (keyboard && character > 0 && Object.keys(messageInputField.spellChecker.issueAt(character)).length === 0)
+                character--
+            if (!messageInputField.readOnly)
+                messageInputField.spellChecker.requestSuggestions(character)
+            contextMenuLoader.item.popup(messageInputField, point)
         }
     }
 }

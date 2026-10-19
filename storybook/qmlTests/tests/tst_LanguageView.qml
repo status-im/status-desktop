@@ -40,6 +40,16 @@ Item {
         signalName: "changeLanguageRequested"
     }
 
+    SignalSpy {
+        id: spellCheckSpy
+        signalName: "spellCheckEnabledChangeRequested"
+    }
+
+    SignalSpy {
+        id: capitalizationSpy
+        signalName: "spellCheckSkipCapitalizedWordsChangeRequested"
+    }
+
     property LanguageView controlUnderTest: null
 
     TestCase {
@@ -51,6 +61,10 @@ Item {
             verify(!!controlUnderTest)
             languageSpy.target = controlUnderTest
             languageSpy.clear()
+            spellCheckSpy.target = controlUnderTest
+            spellCheckSpy.clear()
+            capitalizationSpy.target = controlUnderTest
+            capitalizationSpy.clear()
         }
 
         function cleanup() {
@@ -92,6 +106,21 @@ Item {
 
             compare(languageSpy.count, 1)
             compare(languageSpy.signalArguments[0][0], "ko")
+        }
+
+        function test_spellCheckDefaultsAndToggles() {
+            const enabled = findChild(controlUnderTest, "languageViewSpellCheckEnabled")
+            const skip = findChild(controlUnderTest, "languageViewSpellCheckSkipCapitalizedWords")
+            verify(enabled.checked)
+            verify(skip.checked)
+            mouseClick(skip)
+            compare(capitalizationSpy.count, 1)
+            compare(capitalizationSpy.signalArguments[0][0], false)
+            mouseClick(enabled)
+            compare(spellCheckSpy.count, 1)
+            compare(spellCheckSpy.signalArguments[0][0], false)
+            controlUnderTest.spellCheckEnabled = false
+            verify(!skip.enabled)
         }
 
         function test_cancel_keepsCurrentLanguage() {

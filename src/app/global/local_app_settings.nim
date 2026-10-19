@@ -56,7 +56,6 @@ QtObject:
     write = setLanguage
     notify = languageChanged
 
-
   proc geometryChanged*(self: LocalAppSettings) {.signal.}
   proc getGeometry*(self: LocalAppSettings): QVariant {.slot.} =
     self.settings.value(LAS_KEY_GEOMETRY)

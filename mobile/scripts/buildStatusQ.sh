@@ -50,6 +50,11 @@ ZXING_LIB=$(find "${BUILD_DIR}" -name "libZXing${LIB_SUFFIX}${LIB_EXT}")
 SCODES_LIB=$(find "${BUILD_DIR}" -name "libSCodes.a")
 
 cp "${STATUSQ_LIB}" "${LIB_DIR}/libStatusQ${LIB_SUFFIX}${LIB_EXT}"
+if [[ "${STATIC_LIB}" == "ON" ]]; then
+    # Static archives do not include the object files of linked dependencies.
+    HUNSPELL_LIB=$(find "${BUILD_DIR}" -name "libhunspell-1.7.a")
+    cp "${HUNSPELL_LIB}" "${LIB_DIR}/libhunspell-1.7.a"
+fi
 if [ -f "${MOBILEWEBVIEW_LIB}" ]; then
     cp "${MOBILEWEBVIEW_LIB}" "${LIB_DIR}/libMobileWebView${LIB_SUFFIX}${LIB_EXT}"
 fi

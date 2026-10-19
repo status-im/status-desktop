@@ -10,4 +10,5 @@ QtObject {
     // default behavior (testEnvironment pre-validates community forms)
     property bool testEnvironment: false
     property bool refreshTokenEnabled: false
+    property string language: "en"
 }

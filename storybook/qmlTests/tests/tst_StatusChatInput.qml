@@ -6,11 +6,13 @@ import StatusQ.Core.Utils as SQUtils
 
 import shared.status
 import utils
+import Storybook.Testing
 
 Item {
     id: root
     width: 800
     height: 400
+    TextDocumentTester { id: documentTester }
 
     Component {
         id: gifPickerComponent
@@ -144,6 +146,93 @@ Item {
         function getInputText() {
             const input = controlUnderTest.textInput
             return input.getText(0, input.length)
+        }
+
+        function openSpellingMenu(text, position) {
+            const input = controlUnderTest.textInput
+            input.forceActiveFocus()
+            input.text = text
+            input.cursorPosition = input.length
+            tryVerify(() => input.spellChecker.issues.length > 0)
+            const rect = input.positionToRectangle(position)
+            documentTester.requestContextMenu(input, Qt.point(rect.x + 1, rect.y + rect.height / 2))
+            const menu = findChild(controlUnderTest, "chatInputEditMenu")
+            verify(menu)
+            tryCompare(menu, "opened", true)
+            tryCompare(input.spellChecker, "suggestionsPending", false)
+            return menu
+        }
+
+        function test_spellingMenu_replacesWordUnderPointer() {
+            const input = controlUnderTest.textInput
+            const menu = openSpellingMenu("hello wrld friend ", 8)
+            compare(input.spellChecker.suggestionStart, 6)
+            verify(menu.spellingSuggestions.indexOf("world") >= 0)
+            const index = menu.spellingSuggestions.indexOf("world")
+            const item = menu.itemAt(index)
+            verify(item)
+            mouseClick(item)
+            compare(getInputText(), "hello world friend ")
+            tryCompare(menu, "visible", false)
+            compare(input.cursorPosition, 19)
+            input.undo()
+            compare(getInputText(), "hello wrld friend ")
+        }
+
+        function test_spellingMenu_noSuggestions() {
+            const menu = openSpellingMenu("zzzzqqqqzzzzqqqq ", 3)
+            compare(menu.spellingSuggestions.length, 0)
+            const placeholder = findChild(menu, "spellingSuggestionsPlaceholder")
+            verify(placeholder)
+            verify(placeholder.visible)
+            compare(placeholder.text, "No suggestions")
+            verify(!placeholder.enabled)
+            menu.close()
+        }
+
+        function test_spellingMenu_extensionClearsEntireUnderline() {
+            const input = controlUnderTest.textInput
+            const menu = openSpellingMenu("wiggly space to improv ", 18)
+            const index = menu.spellingSuggestions.indexOf("improve")
+            verify(index >= 0)
+            mouseClick(menu.itemAt(index))
+            compare(getInputText(), "wiggly space to improve ")
+            tryCompare(menu, "visible", false)
+            tryVerify(() => input.spellChecker.issues.length === 0)
+            tryVerify(() => {
+                for (let position = 16; position < 22; ++position) {
+                    if (documentTester.formatAt(input.textDocument, position).spelling)
+                        return false
+                }
+                return true
+            })
+        }
+
+        function test_spellingSettings_updateExistingEditor() {
+            const input = controlUnderTest.textInput
+            input.text = "wrld "
+            input.cursorPosition = input.length
+            tryVerify(() => input.spellChecker.issues.length === 1)
+            localAccountSensitiveSettings.spellCheckEnabled = false
+            compare(input.spellCheckEnabled, false)
+            compare(input.spellChecker.issues.length, 0)
+            localAccountSensitiveSettings.spellCheckEnabled = true
+            tryVerify(() => input.spellChecker.issues.length === 1)
+            input.text = "Wrld "
+            input.cursorPosition = input.length
+            tryVerify(() => input.spellChecker.issues.length === 0)
+            localAccountSensitiveSettings.spellCheckSkipCapitalizedWords = false
+            compare(input.spellCheckSkipCapitalizedWords, false)
+            tryVerify(() => input.spellChecker.issues.length === 1)
+            localAccountSensitiveSettings.spellCheckSkipCapitalizedWords = true
+            tryVerify(() => input.spellChecker.issues.length === 0)
+            input.text = "wrld "
+            input.cursorPosition = input.length
+            tryVerify(() => input.spellChecker.issues.length === 1)
+            localAppSettings.language = "fr"
+            compare(input.spellChecker.issues.length, 0)
+            localAppSettings.language = "en"
+            tryVerify(() => input.spellChecker.issues.length === 1)
         }
 
         function openFormattingToolbar(toolBar) {

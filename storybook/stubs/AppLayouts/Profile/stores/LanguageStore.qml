@@ -1,3 +1,6 @@
 import QtQuick
+import shared.stores
 
-QtObject {}
+QtObject {
+    readonly property SpellCheckStore spellCheckSettings: SpellCheckStore {}
+}

@@ -123,6 +123,8 @@ SplitView {
             }
 
             enabled: enabledCheckBox.checked
+            spellCheckEnabled: spellCheckEnabledCheckBox.checked
+            spellCheckSkipCapitalizedWords: spellCheckSkipCapitalizedCheckBox.checked
 
             linkPreviewModel: fakeLinksModel
             paymentRequestModel: paymentRequestModel
@@ -199,13 +201,27 @@ SplitView {
     LogsAndControlsPanel {
         id: logsAndControlsPanel
 
-        SplitView.minimumHeight: 330
-        SplitView.preferredHeight: 330
+        SplitView.minimumHeight: 350
+        SplitView.preferredHeight: 350
 
         logsView.logText: logs.logText
 
         ColumnLayout {
             anchors.fill: parent
+
+            RowLayout {
+                CheckBox {
+                    id: spellCheckEnabledCheckBox
+                    text: qsTr("Check spelling")
+                    checked: true
+                }
+                CheckBox {
+                    id: spellCheckSkipCapitalizedCheckBox
+                    text: qsTr("Skip capitalized words and acronyms")
+                    checked: true
+                    enabled: spellCheckEnabledCheckBox.checked
+                }
+            }
 
             RowLayout {
                 Layout.fillWidth: true

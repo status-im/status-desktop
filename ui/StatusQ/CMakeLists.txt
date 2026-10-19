@@ -184,6 +184,7 @@ add_library(StatusQ ${LIB_TYPE}
         include/StatusQ/clipboardutils.h
         include/StatusQ/incubationhints.h
         include/StatusQ/constantrole.h
+        include/StatusQ/contextmenueventfilter.h
         include/StatusQ/fastexpressionfilter.h
         include/StatusQ/fastexpressionrole.h
         include/StatusQ/fastexpressionsorter.h
@@ -390,6 +391,8 @@ qt_add_resources(StatusQ "statusq_dictionaries"
         src/assets/dictionaries/en_US.aff
         src/assets/dictionaries/en_US.dic
         src/assets/dictionaries/README_en_US.txt
+        src/assets/dictionaries/HUNSPELL_COPYING.MPL
+        src/assets/dictionaries/SOURCES
 )
 
 if(IOS OR ANDROID OR CMAKE_SYSTEM_NAME MATCHES "Darwin")

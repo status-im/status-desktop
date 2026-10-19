@@ -663,6 +663,7 @@ QVariantMap ChatInputHighlighter::replaceSpellingSuggestion(const QString& repla
     cursor.setPosition(start + word.size(), QTextCursor::KeepAnchor);
     cursor.insertText(replacement);
     cursor.endEditBlock();
+    m_spellChecker->acceptReplacement(start, replacement.size());
     return {{"selectionStart"_L1, selection.selectionStart()},
             {"selectionEnd"_L1, selection.selectionEnd()}};
 }

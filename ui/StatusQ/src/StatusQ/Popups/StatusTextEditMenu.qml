@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQml.Models
 
 import StatusQ.Core.Utils
 import StatusQ.Popups
@@ -24,33 +25,70 @@ StatusMenu {
 
     // There is content to select — enables Select All.
     property bool canSelectAll: true
+    property bool spellingTarget: false
+    property bool spellingPending: false
+    property var spellingSuggestions: []
 
     signal cutRequested()
     signal copyRequested()
     signal pasteRequested()
     signal selectAllRequested()
+    signal spellingSuggestionRequested(string replacement)
 
     hideDisabledItems: false
+    visualizeShortcuts: true
+    itemVerticalPadding: 12
+
+    Instantiator {
+        model: root.spellingSuggestions
+        delegate: StatusAction {
+            required property string modelData
+            text: modelData
+            objectName: "spellingSuggestion_" + modelData
+            onTriggered: {
+                const menu = root
+                menu.spellingSuggestionRequested(modelData)
+                menu.close()
+            }
+        }
+        onObjectAdded: (index, object) => root.insertAction(index, object)
+        onObjectRemoved: (index, object) => root.removeAction(object)
+    }
+    StatusMenuItem {
+        objectName: "spellingSuggestionsPlaceholder"
+        visible: root.spellingTarget && root.spellingSuggestions.length === 0
+        height: visible ? implicitHeight : 0
+        enabled: false
+        text: root.spellingPending ? qsTr("Checking spelling...") : qsTr("No suggestions")
+    }
+    StatusMenuSeparator {
+        visible: root.spellingTarget
+        height: visible ? implicitHeight : 0
+    }
 
     StatusAction {
         text: qsTr("Cut")
         enabled: root.canCut
+        shortcut: StandardKey.Cut
         onTriggered: root.cutRequested()
     }
     StatusAction {
         text: qsTr("Copy")
         enabled: root.canCopy
+        shortcut: StandardKey.Copy
         onTriggered: root.copyRequested()
     }
     StatusAction {
         text: qsTr("Paste")
         enabled: root.canPaste
+        shortcut: StandardKey.Paste
         onTriggered: root.pasteRequested()
     }
     StatusMenuSeparator {}
     StatusAction {
         text: qsTr("Select All")
         enabled: root.canSelectAll
+        shortcut: StandardKey.SelectAll
         onTriggered: root.selectAllRequested()
     }
 }
