@@ -23,6 +23,7 @@
 #include "StatusQ/statuscolors.h"
 #include "StatusQ/statusemojimodel.h"
 #include "StatusQ/chatinputhighlighter.h"
+#include "StatusQ/spellchecker.h"
 #include "StatusQ/inputmethodeventfilter.h"
 #include "StatusQ/stringutilsinternal.h"
 #include "StatusQ/systemutilsinternal.h"
@@ -74,6 +75,8 @@ extern "C" void statusq_linkAccessibilityCrashFilter();
 
 void registerStatusQTypes() {
     qmlRegisterType<ChatInputHighlighter>("StatusQ", 0, 1, "ChatInputHighlighter");
+    qmlRegisterUncreatableType<SpellChecker>("StatusQ", 0, 1, "SpellChecker",
+                                            QStringLiteral("Owned by ChatInputHighlighter"));
     qmlRegisterType<InputMethodEventFilter>("StatusQ", 0, 1, "InputMethodEventFilter");
     qmlRegisterUncreatableType<InputMethodEvent>(
                 "StatusQ", 0, 1, "InputMethodEvent",
@@ -240,6 +243,7 @@ void registerStatusQTypes() {
 
     Q_INIT_RESOURCE(emojiList);
     Q_INIT_RESOURCE(fonts);
+    Q_INIT_RESOURCE(statusq_dictionaries);
 
     qtmt::registerQmlTypes();
     qqsfpm::registerTypes();
