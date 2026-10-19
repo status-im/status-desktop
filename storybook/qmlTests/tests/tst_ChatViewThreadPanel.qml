@@ -19,11 +19,18 @@ Item {
         anchors.fill: parent
     }
 
+    SignalSpy {
+        id: jumpSpy
+        signalName: "scrollToMessage"
+    }
+
     TestCase {
         name: "ChatViewThreadPanel"
         when: windowShown
 
         function init() {
+            jumpSpy.target = null
+            jumpSpy.clear()
             harness.mock.joined = true
             harness.mock.memberRole = Constants.memberRole.none
             harness.mock.membersCount = 50
@@ -34,6 +41,7 @@ Item {
         }
 
         function cleanup() {
+            jumpSpy.target = null
             harness.loader.active = false
             wait(0) // Finish deferred view destruction before replacing the stores.
             harness.mock.uninstall()
@@ -216,11 +224,18 @@ Item {
             compare(panel.threadsModel, null)
             compare(findChild(panel, "chatInfoTabs").currentIndex, ChatInfoPanel.Pins)
             const pins = view.chatContentModule.pinnedMessagesModel
-            pins.append({ id: "older", unparsedText: "Design tokens", timestamp: 10 })
-            pins.append({ id: "newer", unparsedText: "Roadmap", timestamp: 20 })
             const list = findChild(panel, "chatInfoPinsList")
+            const statusText = findChild(panel, "chatInfoPinsState")
             verify(!!list)
+            verify(!!statusText)
+            tryCompare(statusText, "visible", true)
+            compare(statusText.text, qsTr("Pinned messages will appear here."))
+            pins.append({ id: "older", unparsedText: "Design tokens",
+                          messageText: "Design tokens", timestamp: 10 })
+            pins.append({ id: "newer", unparsedText: "Roadmap",
+                          messageText: "Roadmap", timestamp: 20 })
             tryCompare(list, "count", 2)
+            tryCompare(statusText, "visible", false)
             compare(SQUtils.ModelUtils.get(list.model, 0, "id"), "newer")
             mouseClick(findChild(panel, "membersSearchButton"))
             const search = findChild(panel, "chatInfoSearchBox")
@@ -229,8 +244,21 @@ Item {
             compare(SQUtils.ModelUtils.get(list.model, 0, "id"), "older")
             pins.setProperty(0, "unparsedText", "Updated content")
             tryCompare(list, "count", 0)
+            tryCompare(statusText, "visible", true)
+            compare(statusText.text, qsTr("No pinned messages found"))
             search.text = ""
             tryCompare(list, "count", 2)
+
+            const messages = view.chatContentModule.messagesModule
+            jumpSpy.target = messages
+            tryVerify(() => !!list.itemAtIndex(0))
+            const mouseArea = findChild(list.itemAtIndex(0), "pinnedMessagesPopup_delegateMouseArea")
+            verify(!!mouseArea)
+            mouseClick(mouseArea)
+            tryCompare(jumpSpy, "count", 1)
+            compare(jumpSpy.signalArguments[0][0], "newer")
+            compare(panel.currentTab, ChatInfoPanel.Pins)
+            verify(view.showUsersList)
 
             view.rootStore.openThreadPanel("thread-info", "Thread", view.activeItemId)
             const state = findChild(view, "chatViewInternal")
@@ -240,6 +268,11 @@ Item {
             verify(view.showUsersList)
             tryCompare(view.rightPanel, "status", Loader.Ready)
             compare(view.rightPanel.item.currentTab, ChatInfoPanel.Pins)
+            const infoButton = findChild(view, "membersButton")
+            verify(infoButton.highlighted)
+            mouseClick(infoButton)
+            tryCompare(view, "showUsersList", false)
+            tryCompare(view.rightPanel, "status", Loader.Null)
         }
 
         function test_infoHeaderSharesPortraitToolbar() {
@@ -282,6 +315,20 @@ Item {
             compare(title.text, "Threads")
             mouseClick(findChild(panel, "chatInfoPinsTab"))
             compare(title.text, "Pins")
+            const pins = view.chatContentModule.pinnedMessagesModel
+            pins.append({ id: "pinned", unparsedText: "Pinned",
+                          messageText: "Pinned", timestamp: 10 })
+            const pinsList = findChild(panel, "chatInfoPinsList")
+            tryVerify(() => !!pinsList.itemAtIndex(0))
+            jumpSpy.target = view.chatContentModule.messagesModule
+            mouseClick(findChild(pinsList.itemAtIndex(0), "pinnedMessagesPopup_delegateMouseArea"))
+            tryCompare(jumpSpy, "count", 1)
+            compare(jumpSpy.signalArguments[0][0], "pinned")
+            compare(view.sectionLayout.currentIndex, StatusSectionLayout.CentralPanel)
+            verify(view.showUsersList)
+            compare(panel.currentTab, ChatInfoPanel.Pins)
+
+            view.sectionLayout.currentIndex = StatusSectionLayout.RightPanel
             mouseClick(findChild(header, "membersSearchButton"))
             const search = findChild(panel, "chatInfoSearchBox")
             tryCompare(search, "visible", true)
