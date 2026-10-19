@@ -84,7 +84,10 @@ StatusAdaptiveDialog {
         }
 
         StatusBaseText {
-            text: root.notification ? CoreUtils.StringUtils.plainText(root.notification.newsContent) : ""
+            text: root.notification
+                  ? "<style>li { margin-left: 0; }</style>" + root.notification.newsContent
+                  : ""
+            textFormat: Text.RichText
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
             onLinkActivated: link => root.linkClicked(link)
