@@ -10350,6 +10350,14 @@ corruption, loss of your Status profile and the inability to restart Status.</so
         <translation>Langue</translation>
     </message>
     <message>
+        <source>Check spelling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skip capitalized words and acronyms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>We need your help to translate Status, so that together we can bring privacy and free speech to the people everywhere, including those who need it most.</source>
         <translation>Nous avons besoin de votre aide pour traduire Status, afin que nous puissions ensemble apporter la confidentialité et la liberté d’expression aux personnes du monde entier, y compris celles qui en ont le plus besoin.</translation>
     </message>
@@ -17105,6 +17113,14 @@ avec un retour à la ligne</translation>
 </context>
 <context>
     <name>StatusTextEditMenu</name>
+    <message>
+        <source>Checking spelling...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No suggestions</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Cut</source>
         <translation>Couper</translation>

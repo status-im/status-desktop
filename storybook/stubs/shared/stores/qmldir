@@ -8,4 +8,5 @@ PermissionsStore 1.0 PermissionsStore.qml
 ProfileStore 1.0 ProfileStore.qml
 RootStore 1.0 RootStore.qml
 UtilsStore 1.0 UtilsStore.qml
+SpellCheckStore 1.0 ../../../../ui/imports/shared/stores/SpellCheckStore.qml
 BrowserConnectStore 1.0 BrowserConnectStore.qml

@@ -38,7 +38,7 @@ public:
             const int offset = position - block.position();
             if (offset >= range.start && offset < range.start + range.length) {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 12, 0)
-                constexpr auto spellingStyle = QTextCharFormat::WaveUnderline;
+                constexpr auto spellingStyle = QTextCharFormat::SpellCheckUnderline;
 #else
                 constexpr auto spellingStyle = QTextCharFormat::SingleUnderline;
 #endif

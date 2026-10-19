@@ -436,6 +436,10 @@ StatusSectionLayout {
         Component {
             id: languageViewComp
             LanguageView {
+                spellCheckEnabled: root.languageStore.spellCheckSettings.enabled
+                spellCheckSkipCapitalizedWords: root.languageStore.spellCheckSettings.skipCapitalizedWords
+                onSpellCheckEnabledChangeRequested: value => root.languageStore.spellCheckSettings.setEnabled(value)
+                onSpellCheckSkipCapitalizedWordsChangeRequested: value => root.languageStore.spellCheckSettings.setSkipCapitalizedWords(value)
                 currentLanguage: root.languageStore.currentLanguage
                 availableLanguages: root.languageStore.availableLanguages
                 currentCurrency: root.currencyStore.currentCurrency

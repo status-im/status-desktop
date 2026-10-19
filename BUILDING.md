@@ -46,6 +46,13 @@ If you're looking for instructions to build Status Mobile instead, go [here](/mo
 
 ## 1️⃣ Prerequisites
 
+StatusQ fetches a pinned Hunspell revision with CMake FetchContent and builds it
+statically for offline chat spell checking. No system Hunspell installation is
+needed. The English dictionary and license notices are bundled in Qt resources;
+only the initial dependency fetch needs network access.
+For iOS, the mobile StatusQ build also stages `libhunspell-1.7.a`, which the
+qmake wrapper links explicitly alongside the static StatusQ archive.
+
 ### Windows
 
 #### Install Chocolatey
@@ -378,4 +385,3 @@ If you get stuck or something doesn't work:
 
 - Ask in `#feedback-desktop` channel on [Status](https://status.app/cc/G-EAAORobqgnsUPSVCLaSJr855iXTIdQiY1Q0ckBe8dWWEBpUAs9s8DTjWEpvsmpE83Izx1JWQuZrWWKUoxiXCwdtB-wPBzyvv_n9a0F61xTaPZE7BEJDC7Ly_WcmQ4tHRAKnPfXE_JUtEX_3NhnXQN0eh4ue0D77dWvaDpDrSi0U0CaGLZ-pqD_iV0z9RMFE2LKulDZdwL40etJ8lxjyTFoxS0lUhdWKinIOk8qBmJJpCmsqMrSklEU#zQ3shZeEJqTC1xhGUjxuS4rtHSrhJ8vUYp64v6qWkLpvdy9L9)
 - Open an [issue on GitHub](https://github.com/status-im/status-app/issues/new/choose)
-

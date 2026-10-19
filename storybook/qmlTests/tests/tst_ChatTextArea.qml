@@ -104,6 +104,26 @@ Item {
             compare(control.spellChecker.issues[0].word, "wrld")
         }
 
+        function test_spellCheck_typingIntoFlaggedWordKeepsUnderline() {
+            control.forceActiveFocus()
+            keyClick(Qt.Key_T)
+            keyClick(Qt.Key_H)
+            keyClick(Qt.Key_R)
+            keyClick(Qt.Key_E)
+            keyClick(Qt.Key_E)
+            keyClick(Qt.Key_E)
+            keyClick(Qt.Key_Space)
+            tryVerify(() => control.spellChecker.issues.length === 1)
+            keyClick(Qt.Key_Left)
+            keyClick(Qt.Key_E)
+            compare(control.text, "threeee ")
+            compare(control.spellChecker.issues.length, 1)
+            compare(control.spellChecker.issues[0].length, 7)
+            tryVerify(() => !control.spellChecker.checkPending)
+            compare(control.spellChecker.issues.length, 1)
+            compare(control.spellChecker.issues[0].word, "threeee")
+        }
+
         function test_spellCheck_undoRedo_data() {
             return [{tag: "direct", shortcut: false}, {tag: "shortcut", shortcut: true}]
         }

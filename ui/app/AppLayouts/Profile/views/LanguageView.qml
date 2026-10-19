@@ -22,11 +22,15 @@ SettingsContentBase {
 
     required property string currentCurrency
     required property var currenciesModel
+    property bool spellCheckEnabled: true
+    property bool spellCheckSkipCapitalizedWords: true
 
     objectName: "languageView"
 
     signal changeLanguageRequested(string newLanguageCode)
     signal changeCurrencyRequested(string newCurrency)
+    signal spellCheckEnabledChangeRequested(bool value)
+    signal spellCheckSkipCapitalizedWordsChangeRequested(bool value)
 
     ColumnLayout {
         spacing: Constants.settingsSection.itemSpacing
@@ -70,6 +74,21 @@ SettingsContentBase {
                 onLanguageSelected: (languageCode) =>
                                     languageConfirmationDialog.createObject(root, {oldCode: root.currentLanguage, newCode: languageCode}).open()
             }
+        }
+
+        StatusCheckBox {
+            objectName: "languageViewSpellCheckEnabled"
+            text: qsTr("Check spelling")
+            checked: root.spellCheckEnabled
+            onToggled: root.spellCheckEnabledChangeRequested(checked)
+        }
+
+        StatusCheckBox {
+            objectName: "languageViewSpellCheckSkipCapitalizedWords"
+            text: qsTr("Skip capitalized words and acronyms")
+            checked: root.spellCheckSkipCapitalizedWords
+            enabled: root.spellCheckEnabled
+            onToggled: root.spellCheckSkipCapitalizedWordsChangeRequested(checked)
         }
 
         StatusWarningBox {

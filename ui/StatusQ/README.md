@@ -68,6 +68,57 @@ Use `StatusIcon.color` for icon tinting, `Rectangle.gradient` for linear
 gradients, and `QtQuick.Shapes` for conical gradients; these do not need an
 additional mask or color-overlay effect.
 
+### Offline chat spell checking
+
+`ChatInputHighlighter.spellChecker` exposes each editor's configuration, issues,
+and asynchronous suggestions. Hunspell is a pinned, private static FetchContent
+dependency; its dictionary is shared on one worker thread. The bundled `en_US`
+dictionary and license notices are always Qt resources, including hot-reload
+builds. Hunspell requires filesystem paths, so the worker extracts only these
+public dictionary assets into a private temporary directory for its lifetime.
+Message text is never written to disk or sent over the network by spell checking.
+
+The application passes the display language and per-profile preferences through
+`SpellCheckStore`. Preferences live in `LocalAccountSensitiveSettings`, while the
+display language remains in `LocalAppSettings`. Only `en` and `en_US` enable the
+current dictionary; other languages disable checking without falling back to
+English. Both spell checking
+and skipping capitalized words default to enabled. The latter is a heuristic:
+it skips any token containing uppercase letters, not named-entity recognition.
+
+Checks are coalesced with a 30 ms timer and run off the UI thread. Document and
+configuration generations prevent outdated results from being applied. Code,
+links, mentions, numeric tokens, and the word being composed are excluded;
+consecutive duplicate words are reported separately. Underlines are merged with
+Markdown formatting rather than stored in the document or undo history.
+Caret navigation preserves completed-word underlines, and unaffected issues are
+repositioned across edits. Typing or deleting one character in an unflagged word
+leaves it unchecked until a boundary is typed or the caret leaves the word.
+Editing a flagged word keeps the underline across the whole word and rechecks it
+immediately. Pastes, other multi-character insertions, whitespace, and punctuation
+trigger a check of every word. Applying a suggestion removes its underline
+immediately. Undo and redo also recheck the restored document, including the word
+at the caret.
+`ChatInputHighlighter.spellCheckUnderlineColor` (also exposed by `ChatTextArea`)
+defaults to red and updates existing underlines immediately when changed.
+Qt 6.12 and newer use red wavy underlines. Earlier versions fall back to red
+single underlines because Qt Quick does not support other underline styles.
+Bind `ChatInputHighlighter.textColor` to the editor's `color`: on Qt before 6.12,
+Qt Quick also needs an explicit foreground to render the separate underline color.
+Full-document text is cached between block visits, and underline updates batch
+layout work so paragraph-heavy messages do not trigger a layout for every word.
+
+Desktop suggestions extend the existing edit menu and make one undoable
+replacement. A context-event filter preserves the actual pointer position:
+Qt's TextEdit otherwise rewrites context-menu coordinates to the caret.
+Mobile retains its native edit menu without application spelling suggestions.
+
+Coverage lives in Storybook's `tst_ChatInputSpellCheck.qml`,
+`tst_StatusChatInput.qml`, and `tst_LanguageView.qml`. In Storybook's chat-input
+page, complete a misspelled word with a space to see its underline, then
+right-click it for suggestions. The language settings control spell checking
+for existing editors immediately.
+
 ## Viewing and testing components
 
 To make viewing and testing components easy, we've added a sandbox application to this repository in which StatusQ components are being build. This is the first place where components see the light of the world and can be run in a proper application environment.

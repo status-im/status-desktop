@@ -5,6 +5,8 @@
 #include <QTimer>
 #include <QVariantList>
 
+#include <utility>
+
 // One editor's asynchronous spell-check session. The dictionary and worker are shared.
 class SpellChecker : public QObject
 {
@@ -14,6 +16,7 @@ class SpellChecker : public QObject
     Q_PROPERTY(bool skipCapitalizedWords READ skipCapitalizedWords WRITE setSkipCapitalizedWords NOTIFY skipCapitalizedWordsChanged)
     Q_PROPERTY(int cursorPosition READ cursorPosition WRITE setCursorPosition NOTIFY cursorPositionChanged)
     Q_PROPERTY(bool composing READ composing WRITE setComposing NOTIFY composingChanged)
+    Q_PROPERTY(bool checkPending READ checkPending NOTIFY checkPendingChanged)
     Q_PROPERTY(QVariantList issues READ issues NOTIFY issuesChanged)
     Q_PROPERTY(QStringList suggestions READ suggestions NOTIFY suggestionsChanged)
     Q_PROPERTY(bool suggestionsPending READ suggestionsPending NOTIFY suggestionsChanged)
@@ -32,6 +35,7 @@ public:
     void setCursorPosition(int value);
     bool composing() const { return m_composing; }
     void setComposing(bool value);
+    bool checkPending() const { return m_checkPending; }
     QVariantList issues() const { return m_issues; }
     QStringList suggestions() const { return m_suggestions; }
     bool suggestionsPending() const { return m_suggestionsPending; }
@@ -40,6 +44,8 @@ public:
 
     void setText(const QString& text);
     void recheck();
+    // Drops underlines over a dictionary suggestion before its recheck finishes.
+    void acceptReplacement(int start, int length);
 
     Q_INVOKABLE QVariantMap issueAt(int position) const;
     Q_INVOKABLE void requestSuggestions(int position);
@@ -51,6 +57,7 @@ signals:
     void skipCapitalizedWordsChanged();
     void cursorPositionChanged();
     void composingChanged();
+    void checkPendingChanged();
     void issuesChanged();
     void checkFinished();
     void suggestionsChanged();
@@ -59,7 +66,9 @@ signals:
 private:
     bool supported() const;
     void invalidate();
-    void updateIncompleteWord(int position);
+    void setCheckPending(bool value);
+    void completeWordIfCaretLeft();
+    std::pair<int, int> tokenAt(int position) const;
     void dispatch();
     void dispatchSuggestions();
 
@@ -70,8 +79,10 @@ private:
     QString m_language = QStringLiteral("en_US");
     bool m_skipCapitalizedWords = true;
     int m_cursorPosition = -1;
+    int m_incompleteStart = -1;
     int m_incompleteEnd = -1;
     bool m_checkPending = false;
+    bool m_caretCheckQueued = false;
     bool m_composing = false;
     bool m_inFlight = false;
     QString m_text;
