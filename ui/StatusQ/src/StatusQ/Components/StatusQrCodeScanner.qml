@@ -57,7 +57,16 @@ Item {
     property bool imagePickerVisible: false
     property bool imagePickerEnabled: true
 
+    property bool flashlightAvailable: capture.cameraAvailable && capture.torchSupported
+
+    property bool flashlightOn: false
+
     signal imagePickerRequested()
+
+    onCapturingChanged: {
+        if (!capturing)
+            flashlightOn = false
+    }
 
     enum State {
         None,
@@ -85,7 +94,9 @@ Item {
             anchors.fill: parent
             visible: true
             clip: true
+            objectName: "qrCodeCapture"
             active: root.capturing
+            torchOn: root.flashlightOn
         }
 
         Loader {
@@ -125,8 +136,8 @@ Item {
     }
 
     StatusButton {
-        id: qrUploadImageButton
-        objectName: "qrUploadImageButton"
+        id: flashlightButton
+        objectName: "qrFlashlightButton"
 
         anchors {
             left: parent.left
@@ -134,13 +145,39 @@ Item {
             margins: 12
         }
 
-        width: 52
-        height: 52
-        normalColor: Theme.palette.baseColor5
+        width: 40
+        height: 40
+        normalColor: root.flashlightOn ? StatusColors.white : Theme.palette.baseColor2
         hoverColor: Theme.palette.hoverColor(normalColor)
+        opacity: cameraComboBox.opacity
+        visible: root.flashlightAvailable
+        icon.name: root.flashlightOn ? "flashlight-on" : "flashlight-off"
+        icon.color: root.flashlightOn ? Theme.palette.primaryColor1 : Theme.palette.directColor1
+        tooltip.text: root.flashlightOn ? qsTr("Turn off the flashlight")
+                                        : qsTr("Turn on the flashlight")
+        onClicked: root.flashlightOn = !root.flashlightOn
+    }
+
+    StatusButton {
+        id: qrUploadImageButton
+        objectName: "qrUploadImageButton"
+
+        anchors {
+            left: flashlightButton.visible ? flashlightButton.right : parent.left
+            bottom: parent.bottom
+            leftMargin: 12
+            bottomMargin: 12
+        }
+
+        width: 40
+        height: 40
+        normalColor: Theme.palette.baseColor2
+        hoverColor: Theme.palette.hoverColor(normalColor)
+        opacity: cameraComboBox.opacity
         visible: root.imagePickerVisible
         enabled: root.imagePickerEnabled
         icon.name: "select-image"
+        icon.color: Theme.palette.directColor1
         tooltip.text: qsTr("Upload image")
         onClicked: root.imagePickerRequested()
     }
@@ -156,6 +193,7 @@ Item {
         }
 
         width: Math.min(implicitWidth, parent.width / 2)
+        height: 40
         visible: !cameraUnavailableText.visible && capture.availableCameras.length > 0
         opacity: 0.7
         model: capture.availableCameras

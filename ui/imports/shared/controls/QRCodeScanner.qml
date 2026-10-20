@@ -298,8 +298,8 @@ ColumnLayout {
                     bottom: parent.bottom
                     margins: 10
                 }
-                width: 52
-                height: 52
+                width: 40
+                height: 40
                 normalColor: Theme.palette.baseColor5
                 hoverColor: Theme.palette.hoverColor(normalColor)
                 icon.name: "select-image"

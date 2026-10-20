@@ -17121,6 +17121,14 @@ to load</source>
 <context>
     <name>StatusQrCodeScanner</name>
     <message>
+        <source>Turn off the flashlight</source>
+        <translation>Вимкнути ліхтарик</translation>
+    </message>
+    <message>
+        <source>Turn on the flashlight</source>
+        <translation>Увімкнути ліхтарик</translation>
+    </message>
+    <message>
         <source>Upload image</source>
         <translation type="unfinished">Завантажити зображення</translation>
     </message>

@@ -259,15 +259,11 @@ Item {
             compare(controlUnderTest.imageErrorMessage, "")
         }
 
-        // The image button: a 52x52 icon on a baseColor5 background.
         function imageButton() {
             const button = findChild(controlUnderTest, "qrUploadImageButton")
             verify(!!button)
             verify(button.visible && button.enabled)
             compare(button.icon.name, "select-image")
-            compare(button.width, 52)
-            compare(button.height, 52)
-            compare(String(button.normalColor), String(button.Theme.palette.baseColor5))
             return button
         }
 
@@ -282,6 +278,11 @@ Item {
             compare(pos.x, 12)
             const pickerPos = picker.mapToItem(view, 0, 0)
             compare(pos.y + button.height / 2, pickerPos.y + picker.height / 2)
+            // styled like the picker: its background and transparency
+            compare(button.width, 40)
+            compare(button.height, 40)
+            compare(String(button.normalColor), String(button.Theme.palette.baseColor2))
+            compare(button.opacity, picker.opacity)
         }
 
         // On the camera access screen: bottom-left, so an image can still
@@ -289,6 +290,9 @@ Item {
         function test_imageButtonAtBottomLeftWithoutCameraAccess() {
             controlUnderTest.cameraAccess = deniedAccess
             const button = imageButton()
+            compare(button.width, 40)
+            compare(button.height, 40)
+            compare(String(button.normalColor), String(button.Theme.palette.baseColor5))
             const area = findChild(controlUnderTest, "qrCameraArea")
             verify(!!area)
             const pos = button.mapToItem(area, 0, 0)
