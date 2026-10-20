@@ -202,8 +202,27 @@ Item {
             verify(!!walletBtn)
             tryCompare(walletBtn, "visible", true)
 
-            // Settings is not a nav item anymore, it lives in the profile menu
-            verify(!findChild(controlUnderTest, "Settings-navbar"))
+            const settingsBtn = findChild(controlUnderTest, "Settings-navbar")
+            verify(!!settingsBtn)
+            tryCompare(settingsBtn, "visible", true)
+        }
+
+        function test_activity_center_above_home_and_settings_at_bottom() {
+            const acButton = findChild(controlUnderTest, "Activity Center-navbar")
+            const homeBtn = findChild(controlUnderTest, "Home-navbar")
+            const settingsBtn = findChild(controlUnderTest, "Settings-navbar")
+            const profileBtn = findChild(controlUnderTest, "statusProfileNavBarTabButton")
+            verify(!!acButton)
+            verify(!!homeBtn)
+            verify(!!settingsBtn)
+            verify(!!profileBtn)
+
+            const acY = acButton.mapToItem(controlUnderTest, 0, 0).y
+            const homeY = homeBtn.mapToItem(controlUnderTest, 0, 0).y
+            const settingsY = settingsBtn.mapToItem(controlUnderTest, 0, 0).y
+            const profileY = profileBtn.mapToItem(controlUnderTest, 0, 0).y
+            verify(acY < homeY)
+            verify(settingsY > profileY)
         }
 
         function test_section_button_click() {

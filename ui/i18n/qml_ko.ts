@@ -13725,6 +13725,10 @@ to load</source>
         <translation>활동 센터</translation>
     </message>
     <message>
+        <source>Settings</source>
+        <translation type="unfinished">설정</translation>
+    </message>
+    <message>
         <source>There are no enabled providers</source>
         <translation>활성화된 제공자가 없습니다</translation>
     </message>
@@ -18971,10 +18975,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Copy link to profile</source>
         <translation>프로필 링크 복사</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation>설정</translation>
     </message>
     <message>
         <source>Sign out &amp; Quit</source>

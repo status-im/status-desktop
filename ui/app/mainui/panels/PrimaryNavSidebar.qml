@@ -70,6 +70,7 @@ Control {
     required property bool acVisible
     required property bool acHasUnseenNotifications // ActivityCenterStore.hasUnseenNotifications
     required property int acUnreadNotificationsCount // ActivityCenterStore.unreadNotificationsCount
+    property bool settingsActive: false
 
     signal itemActivated(int sectionType, string sectionId)
     signal activityCenterRequested(bool shouldShow)
@@ -235,6 +236,43 @@ Control {
     contentItem: ColumnLayout {
         spacing: root.spacing
 
+        // Activity Center sits above Home
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: width
+
+            // prevent opacity multiplying; root has a "transparent" background!
+            color: d.containerBgColor
+            radius: d.containerBgRadius
+
+            // prevent badge peeking out when we're fully hidden
+            clip: root.position === 0
+
+            PrimaryNavSidebarButton {
+                anchors.fill: parent
+                bgRadius: parent.radius
+
+                objectName: "Activity Center-navbar"
+
+                checkable: true
+                checked: root.acVisible
+                tooltipText: qsTr("Activity Center")
+
+                icon.name: "notification"
+
+                showBadge: (root.acHasUnseenNotifications || root.acUnreadNotificationsCount) && root.opened
+                badgeCount: root.acUnreadNotificationsCount
+
+                thirdpartyServicesEnabled: root.thirdpartyServicesEnabled
+
+                onToggled: {
+                    root.activityCenterRequested(checked)
+                    if (!root.keepOpenWhenPopups)
+                        root.close()
+                }
+            }
+        }
+
         // main section
         Control {
             objectName: "primaryNavSideBarControl"
@@ -315,43 +353,38 @@ Control {
                     onSetCurrentUserStatusRequested: (status) => root.setCurrentUserStatusRequested(status)
                     onViewProfileRequested: (pubKey) => root.viewProfileRequested(pubKey)
                     onShareOwnProfileRequested: root.shareOwnProfileRequested()
-                    onSettingsRequested: root.settingsRequested()
                     onQuitRequested: root.quitRequested()
                 }
             }
         }
 
-        // AC button
+        // Settings takes the bottom slot Activity Center used to occupy
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: width
 
-            // prevent opacity multiplying; root has a "transparent" background!
             color: d.containerBgColor
             radius: d.containerBgRadius
-
-            // prevent badge peeking out when we're fully hidden
             clip: root.position === 0
 
             PrimaryNavSidebarButton {
                 anchors.fill: parent
                 bgRadius: parent.radius
 
-                objectName: "Activity Center-navbar"
+                objectName: "Settings-navbar"
 
                 checkable: true
-                checked: root.acVisible
-                tooltipText: qsTr("Activity Center")
+                checked: root.settingsActive
+                tooltipText: qsTr("Settings")
 
-                icon.name: "notification"
-
-                showBadge: (root.acHasUnseenNotifications || root.acUnreadNotificationsCount) && root.opened
-                badgeCount: root.acUnreadNotificationsCount
+                icon.name: "settings"
 
                 thirdpartyServicesEnabled: root.thirdpartyServicesEnabled
 
-                onToggled: {
-                    root.activityCenterRequested(checked)
+                onClicked: {
+                    // A click on a checkable button writes `checked` and drops the binding.
+                    checked = Qt.binding(() => root.settingsActive)
+                    root.settingsRequested()
                     if (!root.keepOpenWhenPopups)
                         root.close()
                 }

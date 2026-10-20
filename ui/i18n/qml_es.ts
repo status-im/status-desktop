@@ -13795,6 +13795,10 @@ al cargar</translation>
         <translation>Centro de actividad</translation>
     </message>
     <message>
+        <source>Settings</source>
+        <translation type="unfinished">Ajustes</translation>
+    </message>
+    <message>
         <source>There are no enabled providers</source>
         <translation>No hay proveedores habilitados</translation>
     </message>
@@ -19058,10 +19062,6 @@ Si una transacción con un nonce más bajo está pendiente, las transacciones co
     <message>
         <source>Copy link to profile</source>
         <translation>Copiar enlace al perfil</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation>Ajustes</translation>
     </message>
     <message>
         <source>Sign out &amp; Quit</source>

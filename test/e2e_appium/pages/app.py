@@ -250,79 +250,32 @@ class App(BasePage):
             return False
 
     def click_settings_button(self) -> bool:
-        self.logger.info("Opening Settings from the profile menu")
+        self.logger.info("Clicking Settings button")
         from support.screen_identity import SCREEN_ANCHORS, dismiss_backup_modal
         if self.is_element_visible(SCREEN_ANCHORS["settings"], timeout=1):
             self.logger.info("Already in Settings section — skipping nav")
             return True
-
-        strategies = ["w3c", "native", "w3c"]
-        for attempt, strategy in enumerate(strategies, start=1):
-            if attempt > 1:
-                self._reset_profile_menu_state()
-            if dismiss_backup_modal(self, timeout=1):
-                self.logger.warning(
-                    "click_settings_button: dismissed backup modal on attempt %d",
-                    attempt,
-                )
-            if not self._ensure_main_nav_visible():
-                self.logger.warning(
-                    "Nav not visible on Settings attempt %d", attempt
-                )
-                continue
-            # The drawer is still sliding in when its items reach the a11y
-            # tree; a tap during the slide closes it instead of opening the menu.
-            time.sleep(0.6)
-            if not self.try_click(
-                self.locators.PROFILE_NAV_BUTTON, timeout=5, max_attempts=1
-            ):
-                self.logger.warning(
-                    "Profile nav button tap failed on Settings attempt %d", attempt
-                )
-                continue
-            action = self._wait_for_profile_menu(timeout=5)
-            if action is None:
-                self.logger.warning(
-                    "Profile menu did not open on Settings attempt %d", attempt
-                )
-                self.dump_page_source(f"settings_menu_not_open_a{attempt}_{strategy}")
-                continue
-            if not self._tap_element(action, strategy):
-                self.logger.warning(
-                    "Settings menu item tap failed on attempt %d (strategy=%s)",
-                    attempt, strategy,
-                )
-                continue
-            if self.is_element_visible(SCREEN_ANCHORS["settings"], timeout=15):
-                if attempt > 1:
-                    self.logger.warning(
-                        "click_settings_button: rescued on attempt %d (strategy=%s)",
-                        attempt, strategy,
-                    )
-                return True
-            self.logger.warning(
-                "Settings screen anchor not visible after attempt %d (strategy=%s)",
-                attempt, strategy,
-            )
-            self.dump_page_source(f"settings_nav_no_page_a{attempt}_{strategy}")
-
-        self.dump_page_source("settings_nav_failed")
-        return False
+        dismiss_backup_modal(self, timeout=1)
+        return self._click_drawer_nav_with_verify(
+            nav_locator=self.locators.LEFT_NAV_SETTINGS,
+            landmark_locator=SCREEN_ANCHORS["settings"],
+            nav_name="Settings",
+        )
 
     def _wait_for_profile_menu(self, timeout: int = 5):
-        """The Settings menu item once the profile sheet is open, or None.
+        """The profile sheet once it is open, or None.
 
         The sheet slides up from the bottom. Its items are in the a11y tree
         from the first frame, so a tap during the slide lands on the dimmed
         background and closes the sheet. Wait for the sheet container, then
-        let the slide finish before returning the item to tap.
+        let the slide finish before returning it.
         """
         if not self.is_element_visible(self.locators.PROFILE_MENU_CONTAINER, timeout=timeout):
             return None
         # The sheet keeps animating for ~200-400ms after it is in the tree,
         # matching the drawer settle in _click_drawer_nav_with_verify.
         time.sleep(0.6)
-        return self.wait_for_painted(self.locators.SETTINGS_ACTION, timeout=2)
+        return self.wait_for_painted(self.locators.PROFILE_MENU_CONTAINER, timeout=2)
 
     def _tap_element(self, element, strategy: str) -> bool:
         try:
@@ -342,7 +295,7 @@ class App(BasePage):
 
     def _reset_profile_menu_state(self) -> None:
         """Close an open profile sheet or drawer, then re-foreground the app."""
-        for open_locator in (self.locators.SETTINGS_ACTION, self.locators.LEFT_NAV_ANY):
+        for open_locator in (self.locators.PROFILE_MENU_CONTAINER, self.locators.LEFT_NAV_ANY):
             if self.is_element_visible(open_locator, timeout=1):
                 try:
                     self.driver.press_keycode(4)  # KEYCODE_BACK

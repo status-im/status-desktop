@@ -30,7 +30,6 @@ StatusDropdown {
     signal viewProfileRequested
     signal copyLinkRequested
     signal shareOwnProfileRequested
-    signal settingsRequested
     signal setCurrentUserStatusRequested(int status)
     signal quitRequested
 
@@ -141,18 +140,6 @@ StatusDropdown {
                 icon.name: "add-contact"
                 onTriggered: {
                     root.shareOwnProfileRequested()
-                    root.close()
-                }
-            }
-        }
-
-        ActionWrapper {
-            action: StatusAction {
-                objectName: "userStatusSettingsAction"
-                text: qsTr("Settings")
-                icon.name: "settings"
-                onTriggered: {
-                    root.settingsRequested()
                     root.close()
                 }
             }

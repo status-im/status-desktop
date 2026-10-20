@@ -43,11 +43,6 @@ Item {
     }
 
     SignalSpy {
-        id: settingsSpy
-        signalName: "settingsRequested"
-    }
-
-    SignalSpy {
         id: statusSpy
         signalName: "setCurrentUserStatusRequested"
     }
@@ -73,13 +68,11 @@ Item {
             viewProfileSpy.target = null
             copyLinkSpy.target = null
             shareProfileSpy.target = null
-            settingsSpy.target = null
             statusSpy.target = null
             quitSpy.target = null
             viewProfileSpy.clear()
             copyLinkSpy.clear()
             shareProfileSpy.clear()
-            settingsSpy.clear()
             statusSpy.clear()
             quitSpy.clear()
         }
@@ -179,17 +172,6 @@ Item {
             triggerAction(menu, "userStatusShareProfileAction")
 
             tryCompare(shareProfileSpy, "count", 1)
-            tryCompare(menu, "opened", false)
-        }
-
-        function test_settingsActionEmitsRequested() {
-            const menu = createMenu()
-            settingsSpy.target = menu
-            settingsSpy.clear()
-
-            triggerAction(menu, "userStatusSettingsAction")
-
-            tryCompare(settingsSpy, "count", 1)
             tryCompare(menu, "opened", false)
         }
 

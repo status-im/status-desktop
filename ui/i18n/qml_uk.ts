@@ -13866,6 +13866,10 @@ to load</source>
         <translation>Центр активності</translation>
     </message>
     <message>
+        <source>Settings</source>
+        <translation type="unfinished">Налаштування</translation>
+    </message>
+    <message>
         <source>There are no enabled providers</source>
         <translation>Немає увімкнених провайдерів</translation>
     </message>
@@ -19146,10 +19150,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Copy link to profile</source>
         <translation>Копіювати посилання на профіль</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation>Налаштування</translation>
     </message>
     <message>
         <source>Sign out &amp; Quit</source>

@@ -27,7 +27,6 @@ StatusIconTabButton {
 
     signal viewProfileRequested(string pubKey)
     signal shareOwnProfileRequested
-    signal settingsRequested
     signal setCurrentUserStatusRequested(int status)
     signal quitRequested
 
@@ -100,7 +99,6 @@ StatusIconTabButton {
 
         onViewProfileRequested: root.viewProfileRequested(root.pubKey)
         onShareOwnProfileRequested: root.shareOwnProfileRequested()
-        onSettingsRequested: root.settingsRequested()
         onCopyLinkRequested: ClipboardUtils.setText(root.getLinkToProfileFn(root.pubKey))
         onSetCurrentUserStatusRequested: (status) => root.setCurrentUserStatusRequested(status)
         onQuitRequested: root.quitRequested()

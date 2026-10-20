@@ -47,6 +47,7 @@ class MainLeftPanel(QObject):
         self.community_template_button = Button(names.statusCommunityMainNavBarListView_CommunityNavBarButton)
         self.wallet_button = Button(names.mainWalletButton)
         self.activity_center_button = Button(names.activityCenterButton)
+        self.settings_button = Button(names.settingsButton)
         self.market_button = Button(names.marketButton)
 
     @allure.step('Click Wallet button and record load time until WalletScreen is visible')
@@ -90,9 +91,9 @@ class MainLeftPanel(QObject):
     def open_messages_screen(self):
         return self.messages_button
 
-    @allure.step('Open Settings screen from the profile context menu')
+    @allure.step('Open Settings screen')
     def open_settings(self) -> SettingsScreen:
-        self.open_online_identifier().settings_button.click()
+        self.settings_button.click()
         return SettingsScreen().wait_until_appears()
 
     @allure.step('Click Activity center button and open Activity center panel')
