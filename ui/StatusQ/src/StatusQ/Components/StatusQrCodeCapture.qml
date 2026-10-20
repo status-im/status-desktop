@@ -37,6 +37,11 @@ Item {
     }
 
     readonly property bool cameraAvailable: camera.active
+
+    readonly property bool torchSupported: camera.active && !!camera.cameraDevice
+                                           && camera.isTorchModeSupported(Camera.TorchOn)
+
+    property bool torchOn: false
     readonly property string cameraError: camera.error === Camera.CameraError ? camera.errorString : ""
 
     function setCameraDevice(deviceId: string) {
@@ -68,6 +73,7 @@ Item {
 
             active: root.active
             focusMode: Camera.FocusModeAutoNear
+            torchMode: root.torchOn && root.active ? Camera.TorchOn : Camera.TorchOff
 
             Component.onDestruction: camera.active = false
         }

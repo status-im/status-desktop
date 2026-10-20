@@ -17120,6 +17120,14 @@ selhalo</translation>
 <context>
     <name>StatusQrCodeScanner</name>
     <message>
+        <source>Turn off the flashlight</source>
+        <translation>Vypnout svítilnu</translation>
+    </message>
+    <message>
+        <source>Turn on the flashlight</source>
+        <translation>Zapnout svítilnu</translation>
+    </message>
+    <message>
         <source>Upload image</source>
         <translation type="unfinished">Nahrát obrázek</translation>
     </message>

@@ -17038,6 +17038,14 @@ al cargar</translation>
 <context>
     <name>StatusQrCodeScanner</name>
     <message>
+        <source>Turn off the flashlight</source>
+        <translation>Apagar la linterna</translation>
+    </message>
+    <message>
+        <source>Turn on the flashlight</source>
+        <translation>Encender la linterna</translation>
+    </message>
+    <message>
         <source>Upload image</source>
         <translation type="unfinished">Subir imagen</translation>
     </message>
