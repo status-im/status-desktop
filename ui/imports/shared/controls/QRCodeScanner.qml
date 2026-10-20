@@ -9,6 +9,7 @@ import StatusQ.Core
 import StatusQ.Core.Backpressure
 import StatusQ.Core.Theme
 import StatusQ.Core.Utils as SQUtils
+import StatusQ.Popups.Dialog
 
 import MobileUI
 import NimQtCamera
@@ -55,25 +56,77 @@ ColumnLayout {
 
     signal validTagFound(string tag)
 
+    readonly property alias imageErrorMessage: d.imageErrorMessage
+
+    // Decodes the QR codes in a local image file (what "Upload image" picks):
+    // the codes go through the validators like camera codes. Ignored once a
+    // result was accepted or a validator error shows (state !== None).
+    function scanImageFile(url) {
+        if (root.state !== StatusQrCodeScanner.State.None)
+            return
+        d.clearImageError()
+        imageDecoder.decodeFile(url)
+    }
+
     // Starts a new scanning session: after a result (Success) or an error the
     // scanner stays idle until reset, so a reused dialog calls this on opening.
+    // An image still decoding belongs to the old session and is dropped.
     function reset() {
+        imageDecoder.cancel()
         errorTimer.stop()
         d.errorMessage = ""
+        d.clearImageError()
         root.state = StatusQrCodeScanner.State.None
     }
 
     spacing: Theme.padding / 1.4
+
+    onVisibleChanged: {
+        if (!visible) {
+            imageDecoder.cancel()
+            d.clearImageError()
+        }
+    }
 
     QtObject {
         id: d
 
         readonly property int radius: 16
         readonly property bool cameraReady: !root.cameraPermissionDenied && root.cameraAccess.granted
+        readonly property bool imagePickerEnabled: root.state === StatusQrCodeScanner.State.None
+                                                   && !imageDecoder.busy
         property string errorMessage
+        property string imageErrorMessage
         property int counter: 0
 
+        readonly property int imageErrorDurationMs: 4000
+
+        readonly property string imageNameFilters: {
+            const lower = "*.jpg *.jpeg *.jpe *.png" + (imageDecoder.heicSupported ? " *.heic *.heif" : "")
+            return lower + " " + lower.toUpperCase()
+        }
+
+        function showImageError(message) {
+            d.errorMessage = "" // replaces a lingering validator message
+            d.imageErrorMessage = message
+            imageErrorTimer.restart()
+        }
+
+        function clearImageError() {
+            imageErrorTimer.stop()
+            d.imageErrorMessage = ""
+        }
+
+        function passesValidators(tag) {
+            for (let i in root.validators) {
+                if (!root.validators[i].validate(tag))
+                    return false
+            }
+            return true
+        }
+
         function validateTag(tag) {
+            d.clearImageError()
             for (let i in root.validators) {
                 const validator = root.validators[i]
                 if (!validator.validate(tag)) {
@@ -102,6 +155,53 @@ ColumnLayout {
     }
 
     Timer {
+        id: imageErrorTimer
+        interval: d.imageErrorDurationMs
+        onTriggered: d.imageErrorMessage = ""
+    }
+
+    QrImageDecoder {
+        id: imageDecoder
+        objectName: "qrImageDecoder"
+
+        onDecoded: (texts, undecodable) => {
+            if (root.state !== StatusQrCodeScanner.State.None)
+                return // a result was accepted meanwhile (one per session)
+            if (texts.length === 0) {
+                d.showImageError(undecodable > 0 ? qsTr("Couldn't read the QR code")
+                                                 : qsTr("No QR code found in the image"))
+                return
+            }
+            // The first code the validators accept; else the first one, so the
+            // validator's own error shows (as for a camera code).
+            d.validateTag(texts.find(t => d.passesValidators(t)) ?? texts[0])
+        }
+
+        onFailed: (kind, message) => {
+            if (root.state !== StatusQrCodeScanner.State.None)
+                return
+            if (kind === "unsupported")
+                d.showImageError(imageDecoder.heicSupported
+                                 ? qsTr("Unsupported format. Select a JPG, PNG, or HEIC image")
+                                 : qsTr("Unsupported format. Select a JPG or PNG image"))
+            else
+                d.showImageError(qsTr("Couldn't open the image"))
+        }
+    }
+
+    StatusFileDialog {
+        id: imageDialog
+        objectName: "qrImageFileDialog"
+
+        title: qsTr("Please choose an image")
+        currentFolder: picturesShortcut
+        usePhotoLibrary: true
+        nameFilters: [qsTr("Image files (%1)").arg(d.imageNameFilters)]
+
+        onAccepted: root.scanImageFile(selectedFile)
+    }
+
+    Timer {
         id: permissionTimer
         interval: 500
         onTriggered: root.cameraAccess.request()
@@ -117,6 +217,7 @@ ColumnLayout {
 
     Loader {
         id: cameraLoader
+        objectName: "qrCameraArea"
         active: true
         Layout.alignment: Qt.AlignHCenter
         Layout.fillWidth: true
@@ -128,62 +229,83 @@ ColumnLayout {
     Component {
         id: btnComponent
 
-        ColumnLayout {
+        Item {
             anchors.fill: parent
-            spacing: Theme.smallPadding / 2
 
-            Item {
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
+            ColumnLayout {
+                anchors.fill: parent
+                spacing: Theme.smallPadding / 2
 
-            Image {
-                Layout.alignment: Qt.AlignHCenter
+                Item {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
 
-                // Temporary image
-                source: (Theme.style === Theme.Light) ? Assets.png("activity_center/NewsDisabled-Light") :
-                                                        Assets.png("activity_center/NewsDisabled-Dark")
-                fillMode: Image.PreserveAspectFit
-                Layout.preferredWidth: 80
-                mipmap: true
-                cache: false
-            }
+                Image {
+                    Layout.alignment: Qt.AlignHCenter
 
-            StatusBaseText {
-                Layout.fillWidth: true
-                text: qsTr('Enable access to your camera')
-                font.weight: Font.Medium
-                leftPadding: Theme.bigPadding
-                rightPadding: Theme.bigPadding
-                wrapMode: Text.WordWrap
-                horizontalAlignment: Text.AlignHCenter
-            }
+                    // Temporary image
+                    source: (Theme.style === Theme.Light) ? Assets.png("activity_center/NewsDisabled-Light") :
+                                                            Assets.png("activity_center/NewsDisabled-Dark")
+                    fillMode: Image.PreserveAspectFit
+                    Layout.preferredWidth: 80
+                    mipmap: true
+                    cache: false
+                }
 
-            StatusBaseText {
-                Layout.fillWidth: true
-                text: qsTr("To scan QR codes, add contacts, send funds to wallets, and sync apps.")
-                leftPadding: Theme.bigPadding
-                rightPadding: Theme.bigPadding
-                font.pixelSize: Theme.additionalTextSize
-                wrapMode: Text.WordWrap
-                horizontalAlignment: Text.AlignHCenter
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    text: qsTr('Enable access to your camera')
+                    font.weight: Font.Medium
+                    leftPadding: Theme.bigPadding
+                    rightPadding: Theme.bigPadding
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    text: qsTr("To scan QR codes, add contacts, send funds to wallets, and sync apps.")
+                    leftPadding: Theme.bigPadding
+                    rightPadding: Theme.bigPadding
+                    font.pixelSize: Theme.additionalTextSize
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                StatusButton {
+                    objectName: "openCameraSettingsButton"
+                    text: qsTr("Open settings")
+                    // The OS page where camera access is granted; Linux has none
+                    // (and no camera permission to deny).
+                    visible: root.cameraAccess.canOpenSettings
+                    size: StatusBaseButton.Size.Tiny
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: Theme.smallPadding
+                    onClicked: root.cameraAccess.openSettings()
+                }
+
+                Item {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
             }
 
             StatusButton {
-                objectName: "openCameraSettingsButton"
-                text: qsTr("Open settings")
-                // The OS page where camera access is granted; Linux has none
-                // (and no camera permission to deny).
-                visible: root.cameraAccess.canOpenSettings
-                size: StatusBaseButton.Size.Tiny
-                Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: Theme.smallPadding
-                onClicked: root.cameraAccess.openSettings()
-            }
-
-            Item {
-                Layout.fillHeight: true
-                Layout.fillWidth: true
+                objectName: "qrUploadImageButton"
+                anchors {
+                    left: parent.left
+                    bottom: parent.bottom
+                    margins: 10
+                }
+                width: 52
+                height: 52
+                normalColor: Theme.palette.baseColor5
+                hoverColor: Theme.palette.hoverColor(normalColor)
+                icon.name: "select-image"
+                tooltip.text: qsTr("Upload image")
+                enabled: d.imagePickerEnabled
+                onClicked: imageDialog.open()
             }
         }
     }
@@ -197,6 +319,10 @@ ColumnLayout {
             objectName: "statusQrCodeScanner"
             state: root.state
             anchors.fill: parent
+
+            imagePickerVisible: true
+            imagePickerEnabled: d.imagePickerEnabled
+            onImagePickerRequested: imageDialog.open()
 
             // Pulls grayscale frames from the preview, at most `maxFps`
             // while the camera runs and nothing is accepted yet, cropped to
@@ -242,6 +368,7 @@ ColumnLayout {
     }
 
     StatusBaseText {
+        objectName: "qrScannerErrorText"
         Layout.fillWidth: true
 
         visible: !!text
@@ -249,12 +376,8 @@ ColumnLayout {
         color: Theme.palette.dangerColor1
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
-        text: {
-            if (!!d.errorMessage) {
-                return d.errorMessage
-            }
-            return ""
-        }
+        // the latest message: each kind clears the other when it is set
+        text: d.imageErrorMessage || d.errorMessage
     }
 
     StatusBaseText {

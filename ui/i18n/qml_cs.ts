@@ -14704,12 +14704,44 @@ selhalo</translation>
         <translation>Povolit přístup k fotoaparátu</translation>
     </message>
     <message>
+        <source>Upload image</source>
+        <translation>Nahrát obrázek</translation>
+    </message>
+    <message>
         <source>Align the QR code within the frame to scan</source>
         <translation>Umístěte QR kód do rámečku pro naskenování</translation>
     </message>
     <message>
         <source>To scan QR codes, add contacts, send funds to wallets, and sync apps.</source>
         <translation>Pro skenování QR kódů, přidávání kontaktů, odesílání finančních prostředků do peněženek a synchronizaci aplikací.</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read the QR code</source>
+        <translation>QR kód se nepodařilo přečíst</translation>
+    </message>
+    <message>
+        <source>No QR code found in the image</source>
+        <translation>V obrázku nebyl nalezen žádný QR kód</translation>
+    </message>
+    <message>
+        <source>Unsupported format. Select a JPG, PNG, or HEIC image</source>
+        <translation>Nepodporovaný formát. Vyberte obrázek JPG, PNG nebo HEIC</translation>
+    </message>
+    <message>
+        <source>Unsupported format. Select a JPG or PNG image</source>
+        <translation>Nepodporovaný formát. Vyberte obrázek JPG nebo PNG</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open the image</source>
+        <translation>Obrázek se nepodařilo otevřít</translation>
+    </message>
+    <message>
+        <source>Please choose an image</source>
+        <translation>Prosím vyberte obrázek</translation>
+    </message>
+    <message>
+        <source>Image files (%1)</source>
+        <translation>Soubory s obrázky (%1)</translation>
     </message>
     <message>
         <source>Open settings</source>
@@ -17087,6 +17119,10 @@ selhalo</translation>
 </context>
 <context>
     <name>StatusQrCodeScanner</name>
+    <message>
+        <source>Upload image</source>
+        <translation type="unfinished">Nahrát obrázek</translation>
+    </message>
     <message>
         <source>Camera is not available</source>
         <translation>Kamera není dostupná</translation>

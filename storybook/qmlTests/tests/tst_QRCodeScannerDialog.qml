@@ -5,6 +5,8 @@ import StatusQ.Components
 
 import shared.popups
 
+import Storybook.Testing
+
 // The dialog's content must stay inside it when the window (and so the dialog,
 // capped at 80% of the window height) gets short.
 Item {
@@ -20,6 +22,8 @@ Item {
     }
 
     property QRCodeScannerDialog controlUnderTest: null
+
+    readonly property string address: "0x1234567890abcdef1234567890abcdef12345678"
 
     QtObject {
         id: grantedAccess
@@ -41,6 +45,10 @@ Item {
         readonly property bool canOpenSettings: true
         function request() {}
         function openSettings() { return true }
+    }
+
+    FakeVideoSource {
+        id: fake
     }
 
     SignalSpy {
@@ -127,6 +135,85 @@ Item {
             compare(scanner.state, StatusQrCodeScanner.State.None)
             scanner.validTagFound(address) // the same code again
             tryCompare(tagSpy, "count", 2, 2000)
+        }
+
+        function openScanner() {
+            tagSpy.clear()
+            controlUnderTest.open()
+            tryCompare(controlUnderTest, "opened", true)
+            const scanner = findChild(controlUnderTest.contentItem, "qrCodeScanner")
+            verify(!!scanner)
+            return scanner
+        }
+
+        function imageUrl(name) {
+            const path = fake.tempPath("qrdialog-image-" + name)
+            verify(fake.writeQrImage(path, root.address))
+            return fake.fileUrl(path)
+        }
+
+        // An image still decoding when the dialog closes leads nowhere.
+        function test_closeDuringImageDecodeEmitsNothing() {
+            const scanner = openScanner()
+            scanner.scanImageFile(imageUrl("close.png"))
+            controlUnderTest.close()
+            tryCompare(controlUnderTest, "opened", false)
+            wait(1500)
+            compare(tagSpy.count, 0)
+        }
+
+        // ... nor in the next session, after reopening.
+        function test_reopenDropsThePreviousSessionsImage() {
+            const scanner = openScanner()
+            scanner.scanImageFile(imageUrl("reopen.png"))
+            controlUnderTest.close()
+            tryCompare(controlUnderTest, "opened", false)
+            controlUnderTest.open()
+            tryCompare(controlUnderTest, "opened", true)
+            wait(1500)
+            compare(tagSpy.count, 0)
+            compare(scanner.state, StatusQrCodeScanner.State.None)
+        }
+
+        // Real images of a Status profile QR code: decoded like a camera code
+        // and handed on as a link (the profile flow), closing the dialog.
+        readonly property string profileLink:
+            "https://status.app/u/iweACg4KDHpRMy4uLlZoNG5OMwM=#zQ3shZnCMtyHdMqqBw3yEGqmzKKNUxvJorDJqMjWPEEVh4nN3"
+
+        function realImage(name) {
+            return Qt.resolvedUrl("../../testData/qr/" + name)
+        }
+
+        function test_realImageOpensTheProfile_data() {
+            return [
+                { tag: "straight", file: "profile.png", heic: false },
+                { tag: "rotated", file: "profile-angle.png", heic: false },
+                { tag: "HEIC", file: "profile-angle.heic", heic: true },
+                { tag: "HEIF", file: "profile-angle.heif", heic: true },
+                { tag: "PNG named .heic", file: "profile-png-content.heic", heic: false },
+            ]
+        }
+
+        function test_realImageOpensTheProfile(data) {
+            const scanner = openScanner()
+            if (data.heic && !findChild(scanner, "qrImageDecoder").heicSupported)
+                skip("no HEIC decoder on this platform")
+            scanner.scanImageFile(realImage(data.file))
+            tryCompare(tagSpy, "count", 1, 5000)
+            compare(tagSpy.signalArguments[0][0], QRCodeScannerDialog.TagType.Link)
+            compare(tagSpy.signalArguments[0][1], profileLink)
+            tryCompare(controlUnderTest, "opened", false)
+        }
+
+        // Cut off through a finder pattern: found but unreadable; the dialog
+        // stays open for another try.
+        function test_realImageCutOffCantBeRead() {
+            const scanner = openScanner()
+            scanner.scanImageFile(realImage("profile-partial.png"))
+            tryCompare(scanner, "imageErrorMessage", "Couldn't read the QR code", 5000)
+            compare(tagSpy.count, 0)
+            verify(controlUnderTest.opened)
+            compare(scanner.state, StatusQrCodeScanner.State.None)
         }
 
         function test_contentFitsInTallWindow() {

@@ -54,6 +54,11 @@ Item {
 
     property int state: StatusQrCodeScanner.State.None
 
+    property bool imagePickerVisible: false
+    property bool imagePickerEnabled: true
+
+    signal imagePickerRequested()
+
     enum State {
         None,
         Success,
@@ -119,13 +124,35 @@ Item {
         }
     }
 
+    StatusButton {
+        id: qrUploadImageButton
+        objectName: "qrUploadImageButton"
+
+        anchors {
+            left: parent.left
+            bottom: parent.bottom
+            margins: 12
+        }
+
+        width: 52
+        height: 52
+        normalColor: Theme.palette.baseColor5
+        hoverColor: Theme.palette.hoverColor(normalColor)
+        visible: root.imagePickerVisible
+        enabled: root.imagePickerEnabled
+        icon.name: "select-image"
+        tooltip.text: qsTr("Upload image")
+        onClicked: root.imagePickerRequested()
+    }
+
     StatusComboBox {
         id: cameraComboBox
+        objectName: "qrCameraComboBox"
 
         anchors {
             right: parent.right
-            bottom: parent.bottom
-            margins: 10
+            verticalCenter: qrUploadImageButton.verticalCenter
+            rightMargin: 12
         }
 
         width: Math.min(implicitWidth, parent.width / 2)

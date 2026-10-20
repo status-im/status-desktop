@@ -14562,12 +14562,44 @@ to load</source>
         <translation>카메라 접근을 허용하세요</translation>
     </message>
     <message>
+        <source>Upload image</source>
+        <translation>이미지 업로드</translation>
+    </message>
+    <message>
         <source>Align the QR code within the frame to scan</source>
         <translation>QR 코드를 프레임 안에 맞춰 스캔하세요</translation>
     </message>
     <message>
         <source>Scanned successfully</source>
         <translation>스캔 완료</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read the QR code</source>
+        <translation>QR코드를 읽을 수 없어요</translation>
+    </message>
+    <message>
+        <source>No QR code found in the image</source>
+        <translation>이미지에서 QR코드를 찾을 수 없어요</translation>
+    </message>
+    <message>
+        <source>Unsupported format. Select a JPG, PNG, or HEIC image</source>
+        <translation>지원하지 않는 형식이에요. JPG, PNG 또는 HEIC 이미지를 선택하세요</translation>
+    </message>
+    <message>
+        <source>Unsupported format. Select a JPG or PNG image</source>
+        <translation>지원하지 않는 형식이에요. JPG 또는 PNG 이미지를 선택하세요</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open the image</source>
+        <translation>이미지를 열 수 없어요</translation>
+    </message>
+    <message>
+        <source>Please choose an image</source>
+        <translation>이미지를 선택하세요</translation>
+    </message>
+    <message>
+        <source>Image files (%1)</source>
+        <translation>이미지 파일(%1)</translation>
     </message>
     <message>
         <source>To scan QR codes, add contacts, send funds to wallets, and sync apps.</source>
@@ -16923,6 +16955,10 @@ to load</source>
 </context>
 <context>
     <name>StatusQrCodeScanner</name>
+    <message>
+        <source>Upload image</source>
+        <translation type="unfinished">이미지 업로드</translation>
+    </message>
     <message>
         <source>Camera is not available</source>
         <translation>카메라를 사용할 수 없습니다</translation>
