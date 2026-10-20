@@ -184,5 +184,38 @@ Item {
             fuzzyCompare(after.offset, before.offset, 0.5,
                          "the top row moved by " + (after.offset - before.offset) + "px")
         }
+
+        // An exact offset the content is too short for is clamped and kept,
+        // so it can be retried once a reveal's heights settle. Kept for good,
+        // it fires on the next unrelated growth: rows appended below the
+        // viewport then move the reader to where the stale request pointed.
+        function test_anExactOffsetThatCannotBeHonouredDoesNotFireLater() {
+            const model = make(modelComponent)
+            model.fill(0, 60)
+
+            const provider = make(providerComponent)
+            const view = make(viewComponent, { model, provider })
+
+            tryVerify(() => settled(view, 60), 5000, "rows laid out")
+
+            // row 55 is near the end: 600px below its top is past the bottom
+            verify(view.positionViewAtRowOffset(55, 600))
+
+            const bottom = view.contentHeight - view.height
+            fuzzyCompare(view.contentY, bottom, 0.5, "clamped to the bottom")
+            verify(view.contentY - view.itemAtRow(55).y < 600 - 100,
+                   "and well short of what was asked")
+
+            // rows arriving below the viewport, outside any batch; the Column
+            // lays them out on polish, so wait for the content to have grown
+            const contentHeight = view.contentHeight
+            model.fill(60, 30)
+            tryVerify(() => settled(view, 90) && view.contentHeight > contentHeight + 1000,
+                      5000, "the live rows landed")
+
+            fuzzyCompare(view.contentY, bottom, 0.5,
+                         "the viewport moved by " + (view.contentY - bottom)
+                         + "px for rows that arrived below it")
+        }
     }
 }
