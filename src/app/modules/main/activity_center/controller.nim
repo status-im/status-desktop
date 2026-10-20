@@ -147,8 +147,8 @@ proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], commun
     mentionedNames = initTable[string, string]()): string =
   return self.messageService.getRenderedText(parsedTextArray, communityChats, mentionedNames)
 
-proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
-  let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
+proc switchTo*(self: Controller, sectionId, subsectionId, itemId: string, nestedSubsectionId: string = "") =
+  let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: subsectionId, messageId: itemId, threadId: nestedSubsectionId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
 
 proc chatExists*(self: Controller, chatId: string): bool =
