@@ -6,6 +6,11 @@
 #include <QVideoFrame>
 #include <QVideoFrameFormat>
 #include <QVideoSink>
+#include <QDir>
+#include <QFile>
+#include <QUrl>
+#include <QImage>
+#include <algorithm>
 
 #include <cstring>
 #include <vector>
@@ -102,6 +107,79 @@ public:
         return push(sink, img);
     }
 
+    // Image files for the scanner's "Upload image" path.
+    // A native path in the temp directory, and its file: URL (both correct on
+    // Windows, where a drive letter and spaces need care).
+    Q_INVOKABLE QString tempPath(const QString& name) const
+    {
+        return QDir::temp().filePath(name);
+    }
+
+    Q_INVOKABLE QString fileUrl(const QString& path) const
+    {
+        return QUrl::fromLocalFile(path).toString();
+    }
+
+    Q_INVOKABLE bool writeQrImage(const QString& path, const QString& text,
+                                  const QString& format = QStringLiteral("PNG"))
+    {
+        auto qr = render(text, 6);
+        if (qr.size == 0)
+            return false;
+        Luma img(qr.size + 64, qr.size + 64, 255);
+        img.paste(qr, 32, 32);
+        return save(img, path, format);
+    }
+
+    Q_INVOKABLE bool writeTwoQrsImage(const QString& path, const QString& left, const QString& right)
+    {
+        auto a = render(left, 4);
+        auto b = render(right, 4);
+        if (a.size == 0 || b.size == 0)
+            return false;
+        Luma img(a.size + b.size + 48, std::max(a.size, b.size) + 32, 255);
+        img.paste(a, 16, 16);
+        img.paste(b, a.size + 32, 16);
+        return save(img, path, QStringLiteral("PNG"));
+    }
+
+    Q_INVOKABLE bool writeBlankImage(const QString& path)
+    {
+        return save(Luma(400, 300, 255), path, QStringLiteral("PNG"));
+    }
+
+    // A code whose data region is damaged beyond error correction: found,
+    // not decodable.
+    Q_INVOKABLE bool writeDamagedQrImage(const QString& path, const QString& text)
+    {
+        const int scale = 4, quiet = 4;
+        auto qr = render(text, scale, qrcodegen_Ecc_LOW); // least redundancy
+        if (qr.size == 0)
+            return false;
+        const int modules = qr.size / scale - 2 * quiet;
+        for (int my = modules / 2; my < modules - 9; ++my)
+            for (int mx = modules / 2; mx < modules - 1; ++mx)
+                for (int dy = 0; dy < scale; ++dy)
+                    for (int dx = 0; dx < scale; ++dx) {
+                        auto& px = qr.data[((my + quiet) * scale + dy) * qr.w + (mx + quiet) * scale + dx];
+                        px = 255 - px;
+                    }
+        return save(qr, path, QStringLiteral("PNG"));
+    }
+
+    // A valid PNG signature with a broken body: a damaged image file.
+    Q_INVOKABLE bool writeBrokenPng(const QString& path)
+    {
+        static const char bytes[] = "\x89PNG\r\n\x1a\n\x01\x02\x03\x04\x05\x06\x07\x08";
+        return writeRaw(path, QByteArray(bytes, sizeof(bytes) - 1));
+    }
+
+    // Not an image at all.
+    Q_INVOKABLE bool writeText(const QString& path, const QString& text)
+    {
+        return writeRaw(path, text.toUtf8());
+    }
+
 private:
     struct Luma {
         int w = 0, h = 0, size = 0; // size: square images (rendered codes)
@@ -117,11 +195,11 @@ private:
         }
     };
 
-    static Luma render(const QString& text, int scale)
+    static Luma render(const QString& text, int scale, qrcodegen_Ecc ecc = qrcodegen_Ecc_MEDIUM)
     {
         std::vector<uint8_t> qr(qrcodegen_BUFFER_LEN_MAX), tmp(qrcodegen_BUFFER_LEN_MAX);
         const QByteArray utf8 = text.toUtf8();
-        if (!qrcodegen_encodeText(utf8.constData(), tmp.data(), qr.data(), qrcodegen_Ecc_MEDIUM,
+        if (!qrcodegen_encodeText(utf8.constData(), tmp.data(), qr.data(), ecc,
                                   qrcodegen_VERSION_MIN, qrcodegen_VERSION_MAX,
                                   qrcodegen_Mask_AUTO, true))
             return {};
@@ -137,6 +215,20 @@ private:
                         std::memset(&img.data[((my + quiet) * scale + dy) * side + (mx + quiet) * scale],
                                     0, scale);
         return img;
+    }
+
+    static bool save(const Luma& img, const QString& path, const QString& format)
+    {
+        QImage out(img.w, img.h, QImage::Format_Grayscale8);
+        for (int y = 0; y < img.h; ++y)
+            std::memcpy(out.scanLine(y), &img.data[size_t(y) * img.w], size_t(img.w));
+        return out.save(path, format.toLatin1().constData());
+    }
+
+    static bool writeRaw(const QString& path, const QByteArray& bytes)
+    {
+        QFile f(path);
+        return f.open(QIODevice::WriteOnly | QIODevice::Truncate) && f.write(bytes) == bytes.size();
     }
 
     static bool push(QObject* sinkObject, const Luma& img, int rotation = 0)
