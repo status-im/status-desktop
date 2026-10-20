@@ -793,7 +793,7 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq check-qt-dir $(STATUSGO) $(NIMSDS
 		--passL:"-l$(STATUSKEYCARD_QT_LINKNAME)" \
 		--passL:"$(QRCODEGEN)" \
 		$(NIM_MATH_LIB) \
-		--parallelBuild:0 \
+		--parallelBuild:$(or $(NPROC),0) \
 		$(NIM_EXTRA_PARAMS) src/nim_status_client.nim
 ifeq ($(mkspecs),macx)
 	install_name_tool -change \
