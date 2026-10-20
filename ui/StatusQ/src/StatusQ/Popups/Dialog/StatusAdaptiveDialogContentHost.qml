@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
+import StatusQ.Core
 import StatusQ.Controls
 
 // Hosts the dialog content component and applies the scroll rules from the dialog spec.
@@ -40,7 +41,12 @@ Control {
         readonly property real activeContentExtent: activeFlickable ? activeFlickable.contentHeight
                                                                       + activeFlickable.topMargin
                                                                       + activeFlickable.bottomMargin : 0
-        readonly property bool contentOverflows: activeFlickable ? activeContentExtent > activeFlickable.height : false
+        // Fractional section heights don't add up exactly once the viewport height is derived
+        // from the dialog height (e.g. 452.8 vs 452.79999999999995), so treat (nearly) equal
+        // extents as fitting rather than overflowing.
+        readonly property bool contentOverflows: activeFlickable ? activeContentExtent > activeFlickable.height
+                                                                   && !SystemUtils.fuzzyCompare(activeContentExtent, activeFlickable.height)
+                                                                 : false
 
         function resolveFlickable(item) {
             if (!item)
@@ -138,7 +144,8 @@ Control {
         size: d.activeFlickable && d.activeFlickable.visibleArea.heightRatio >= 0
               ? d.activeFlickable.visibleArea.heightRatio : 1
         active: !!d.activeFlickable && d.activeFlickable.moving
-        visible: !!d.activeFlickable && resolveVisibility(policy, d.activeFlickable.height, d.activeContentExtent)
+        visible: !!d.activeFlickable && (policy === ScrollBar.AlwaysOn
+                                         || (policy === ScrollBar.AsNeeded && d.contentOverflows))
 
         Component.onCompleted: syncPositionFromFlickable()
         onPressedChanged: syncPositionFromFlickable()

@@ -45,12 +45,12 @@ SplitView {
             id: popup
             visible: true
             notification: notificationMock
-            onLinkClicked: link => logs.logEvent("NewsMessagesPopup::onLinkClicked " + link)
+            onLinkClicked: logs.logEvent("NewsMessagesPopup::onLinkClicked", ["link"], arguments)
         }
     }
    
     LogsAndControlsPanel {
-        SplitView.minimumHeight: 100
+        SplitView.minimumHeight: 200
         SplitView.preferredHeight: 200
 
         logsView.logText: logs.logText
@@ -68,19 +68,12 @@ SplitView {
                     checked: true
                 }
 
-                StatusInput {
+                TextField {
+                    Layout.fillWidth: true
                     id: linkLabelInput
-                    label: "linkLabel"
+                    placeholderText: "Button text"
                     text: "Read our blog post"
                 }
-            }
-
-            StatusInput {
-                id: newsTitleInput
-                Layout.fillWidth: true
-                label: "newsTitle"
-                text: notificationMock.newsTitle
-                onTextChanged: notificationMock.newsTitle = newsTitleInput.text
             }
 
             TextArea {
