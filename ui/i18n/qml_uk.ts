@@ -14740,6 +14740,10 @@ to load</source>
         <translation>Надсилання токенів</translation>
     </message>
     <message>
+        <source>Sync to pair devices</source>
+        <translation>Синхронізація для прив’язки пристроїв</translation>
+    </message>
+    <message>
         <source>Open WEB links</source>
         <translation>Відкриття вебпосилань</translation>
     </message>

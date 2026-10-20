@@ -21,6 +21,28 @@ Item {
 
     property QRCodeScannerDialog controlUnderTest: null
 
+    QtObject {
+        id: grantedAccess
+
+        readonly property string status: "granted"
+        readonly property bool granted: true
+        readonly property bool canRequest: false
+        readonly property bool canOpenSettings: false
+        function request() {}
+        function openSettings() { return false }
+    }
+
+    QtObject {
+        id: deniedAccess
+
+        readonly property string status: "denied"
+        readonly property bool granted: false
+        readonly property bool canRequest: false
+        readonly property bool canOpenSettings: true
+        function request() {}
+        function openSettings() { return true }
+    }
+
     SignalSpy {
         id: tagSpy
         target: root.controlUnderTest
@@ -33,6 +55,13 @@ Item {
 
         function init() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
+            scanner().cameraAccess = grantedAccess
+        }
+
+        function scanner() {
+            const s = findChild(controlUnderTest.contentItem, "qrCodeScanner")
+            verify(!!s)
+            return s
         }
 
         function cleanup() {
@@ -53,6 +82,28 @@ Item {
             const bottom = r.mapToItem(view, 0, r.height).y
             verify(bottom <= view.height + 0.5,
                    `rows end at ${bottom}, content is ${view.height} tall`)
+        }
+
+        // The "Enable access to your camera" screen stands alone: what the
+        // scanner can do is shown only with the camera.
+        function test_infoRowsHiddenWithoutCameraAccess() {
+            scanner().cameraAccess = deniedAccess
+            controlUnderTest.open()
+            tryCompare(controlUnderTest, "opened", true)
+            compare(rows().visible, false)
+        }
+
+        function test_infoRowsHiddenWhenPermissionDenied() {
+            controlUnderTest.cameraPermissionDenied = true
+            controlUnderTest.open()
+            tryCompare(controlUnderTest, "opened", true)
+            compare(rows().visible, false)
+        }
+
+        function test_infoRowsShownWithCamera() {
+            controlUnderTest.open()
+            tryCompare(controlUnderTest, "opened", true)
+            compare(rows().visible, true)
         }
 
         // A reused dialog (kept instead of destroyed on close) scans again

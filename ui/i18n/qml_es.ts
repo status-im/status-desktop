@@ -14668,6 +14668,10 @@ al cargar</translation>
         <translation>Enviar tokens</translation>
     </message>
     <message>
+        <source>Sync to pair devices</source>
+        <translation>Sincronizar para emparejar dispositivos</translation>
+    </message>
+    <message>
         <source>Open WEB links</source>
         <translation>Abrir enlaces web</translation>
     </message>

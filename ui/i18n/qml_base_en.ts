@@ -14649,6 +14649,10 @@ to load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Sync to pair devices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Open WEB links</source>
         <translation type="unfinished"></translation>
     </message>

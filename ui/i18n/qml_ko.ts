@@ -14597,6 +14597,10 @@ to load</source>
         <translation>토큰 전송</translation>
     </message>
     <message>
+        <source>Sync to pair devices</source>
+        <translation>동기화하여 기기 연결</translation>
+    </message>
+    <message>
         <source>Open WEB links</source>
         <translation>웹 링크 열기</translation>
     </message>

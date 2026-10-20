@@ -18,14 +18,13 @@ RowLayout {
         id: d
 
         readonly property int iconSize: 20
-        readonly property color iconColor: Theme.palette.baseColor1
     }
 
     StatusIcon {
         icon: root.icon
         width: d.iconSize
         height: d.iconSize
-        color: d.iconColor
+        color: Theme.palette.directColor1
         Layout.leftMargin: 6
         Layout.alignment: Qt.AlignVCenter
     }

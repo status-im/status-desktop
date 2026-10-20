@@ -14739,6 +14739,10 @@ selhalo</translation>
         <translation>Poslat tokeny</translation>
     </message>
     <message>
+        <source>Sync to pair devices</source>
+        <translation>Synchronizace pro spárování zařízení</translation>
+    </message>
+    <message>
         <source>Open WEB links</source>
         <translation>Otevřít webové odkazy</translation>
     </message>
