@@ -65,8 +65,18 @@ if [[ "${QMAKE_EXTRA_CONFIG:-}" != "fastlane" ]]; then
   # entitlements (incl. the App Group added in mobile/ios/*.entitlements).
   if [[ "$SDK" == iphonesimulator* ]]; then
     IDENTITY="-" # simulator runs ad-hoc signed code
+  elif [[ -n "${CODE_SIGN_IDENTITY:-}" ]]; then
+    IDENTITY="$CODE_SIGN_IDENTITY"
   else
-    IDENTITY="${CODE_SIGN_IDENTITY:-Apple Development}"
+    # The certificate xcodebuild signed the app with (the team's), by SHA-1: a
+    # name like "Apple Development" is ambiguous with several certificates in
+    # the keychain, and codesign refuses it.
+    CERTS=$(mktemp -d)
+    codesign -d --extract-certificates="$CERTS/cert" "$APP_BUNDLE" 2>/dev/null || true
+    IDENTITY=$(openssl x509 -inform DER -in "$CERTS/cert0" -noout -fingerprint -sha1 2>/dev/null \
+               | sed 's/.*=//; s/://g')
+    rm -r "$CERTS"
+    IDENTITY="${IDENTITY:-Apple Development}"
   fi
   echo "Re-signing $APP_BUNDLE with identity: $IDENTITY"
   codesign --force --sign "$IDENTITY" --preserve-metadata=entitlements,requirements,flags "$APP_BUNDLE"

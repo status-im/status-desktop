@@ -42,7 +42,6 @@ cp bin/nim_status_client "${DEST}/bin/"
 cp bin/StatusQ/* "${DEST}/lib/"
 cp resources.rcc "${DEST}/"
 cp nim-status.desktop "${APP_DIR}/."
-cp -R bin/lib/* "${DEST}/lib/"
 cp status.png "${APP_DIR}/status.png"
 cp status.png "${DEST}/"
 
