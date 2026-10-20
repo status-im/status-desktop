@@ -14633,12 +14633,44 @@ al cargar</translation>
         <translation>Habilitar acceso a tu cámara</translation>
     </message>
     <message>
+        <source>Upload image</source>
+        <translation>Subir imagen</translation>
+    </message>
+    <message>
         <source>Align the QR code within the frame to scan</source>
         <translation>Alinea el código QR dentro del marco para escanear</translation>
     </message>
     <message>
         <source>Scanned successfully</source>
         <translation>Escaneado correctamente</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read the QR code</source>
+        <translation>No se pudo leer el código QR</translation>
+    </message>
+    <message>
+        <source>No QR code found in the image</source>
+        <translation>No se encontró ningún código QR en la imagen</translation>
+    </message>
+    <message>
+        <source>Unsupported format. Select a JPG, PNG, or HEIC image</source>
+        <translation>Formato no compatible. Selecciona una imagen JPG, PNG o HEIC</translation>
+    </message>
+    <message>
+        <source>Unsupported format. Select a JPG or PNG image</source>
+        <translation>Formato no compatible. Selecciona una imagen JPG o PNG</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open the image</source>
+        <translation>No se pudo abrir la imagen</translation>
+    </message>
+    <message>
+        <source>Please choose an image</source>
+        <translation>Por favor elige una imagen</translation>
+    </message>
+    <message>
+        <source>Image files (%1)</source>
+        <translation>Archivos de imagen (%1)</translation>
     </message>
     <message>
         <source>To scan QR codes, add contacts, send funds to wallets, and sync apps.</source>
@@ -17005,6 +17037,10 @@ al cargar</translation>
 </context>
 <context>
     <name>StatusQrCodeScanner</name>
+    <message>
+        <source>Upload image</source>
+        <translation type="unfinished">Subir imagen</translation>
+    </message>
     <message>
         <source>Camera is not available</source>
         <translation>La cámara no está disponible</translation>

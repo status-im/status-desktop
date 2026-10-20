@@ -14614,11 +14614,43 @@ to load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Upload image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Align the QR code within the frame to scan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Scanned successfully</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read the QR code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No QR code found in the image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsupported format. Select a JPG, PNG, or HEIC image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsupported format. Select a JPG or PNG image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open the image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please choose an image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image files (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -16985,6 +17017,10 @@ to load</source>
 </context>
 <context>
     <name>StatusQrCodeScanner</name>
+    <message>
+        <source>Upload image</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Camera is not available</source>
         <translation type="unfinished"></translation>

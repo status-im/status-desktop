@@ -14705,12 +14705,44 @@ to load</source>
         <translation>Дозвольте доступ до камери</translation>
     </message>
     <message>
+        <source>Upload image</source>
+        <translation>Завантажити зображення</translation>
+    </message>
+    <message>
         <source>Align the QR code within the frame to scan</source>
         <translation>Розмістіть QR-код у рамці для сканування</translation>
     </message>
     <message>
         <source>Scanned successfully</source>
         <translation>Успішно відскановано</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read the QR code</source>
+        <translation>Не вдалося прочитати QR-код</translation>
+    </message>
+    <message>
+        <source>No QR code found in the image</source>
+        <translation>На зображенні не знайдено QR-код</translation>
+    </message>
+    <message>
+        <source>Unsupported format. Select a JPG, PNG, or HEIC image</source>
+        <translation>Непідтримуваний формат. Виберіть зображення JPG, PNG або HEIC</translation>
+    </message>
+    <message>
+        <source>Unsupported format. Select a JPG or PNG image</source>
+        <translation>Непідтримуваний формат. Виберіть зображення JPG або PNG</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open the image</source>
+        <translation>Не вдалося відкрити зображення</translation>
+    </message>
+    <message>
+        <source>Please choose an image</source>
+        <translation>Виберіть зображення</translation>
+    </message>
+    <message>
+        <source>Image files (%1)</source>
+        <translation>Файли зображень (%1)</translation>
     </message>
     <message>
         <source>To scan QR codes, add contacts, send funds to wallets, and sync apps.</source>
@@ -17088,6 +17120,10 @@ to load</source>
 </context>
 <context>
     <name>StatusQrCodeScanner</name>
+    <message>
+        <source>Upload image</source>
+        <translation type="unfinished">Завантажити зображення</translation>
+    </message>
     <message>
         <source>Camera is not available</source>
         <translation>Камера недоступна</translation>

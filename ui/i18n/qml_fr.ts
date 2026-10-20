@@ -14629,12 +14629,44 @@ Seul le détenteur du jeton Owner peut distribuer des jetons TokenMaster. Ces je
         <translation>Autoriser l’accès à votre caméra</translation>
     </message>
     <message>
+        <source>Upload image</source>
+        <translation>Importer une image</translation>
+    </message>
+    <message>
         <source>Align the QR code within the frame to scan</source>
         <translation>Alignez le code QR dans le cadre pour effectuer la numérisation</translation>
     </message>
     <message>
         <source>Scanned successfully</source>
         <translation>Numérisation réussie</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read the QR code</source>
+        <translation>Impossible de lire le code QR</translation>
+    </message>
+    <message>
+        <source>No QR code found in the image</source>
+        <translation>Aucun code QR trouvé dans l’image</translation>
+    </message>
+    <message>
+        <source>Unsupported format. Select a JPG, PNG, or HEIC image</source>
+        <translation>Format non pris en charge. Sélectionnez une image JPG, PNG ou HEIC</translation>
+    </message>
+    <message>
+        <source>Unsupported format. Select a JPG or PNG image</source>
+        <translation>Format non pris en charge. Sélectionnez une image JPG ou PNG</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open the image</source>
+        <translation>Impossible d’ouvrir l’image</translation>
+    </message>
+    <message>
+        <source>Please choose an image</source>
+        <translation>Veuillez choisir une image</translation>
+    </message>
+    <message>
+        <source>Image files (%1)</source>
+        <translation>Fichiers d&apos;images (%1)</translation>
     </message>
     <message>
         <source>To scan QR codes, add contacts, send funds to wallets, and sync apps.</source>
@@ -17001,6 +17033,10 @@ avec un retour à la ligne</translation>
 </context>
 <context>
     <name>StatusQrCodeScanner</name>
+    <message>
+        <source>Upload image</source>
+        <translation type="unfinished">Importer une image</translation>
+    </message>
     <message>
         <source>Camera is not available</source>
         <translation>La caméra n’est pas disponible</translation>

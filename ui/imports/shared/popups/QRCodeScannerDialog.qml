@@ -87,7 +87,7 @@ StatusDialog {
 
                 Timer {
                     interval: 300
-                    running: !!d.validTag
+                    running: !!d.validTag && root.visible
                     repeat: false
                     onTriggered: {
                         root.tagFound(d.validTagType, d.validTag)
