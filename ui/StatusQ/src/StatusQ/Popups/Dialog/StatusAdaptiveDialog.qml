@@ -109,8 +109,10 @@ Dialog {
         // Footer section is visible when either action buttons or error tags are present.
         // The bottom safe area is applied to whichever visible section sits at the sheet bottom.
         readonly property bool hasFooterSection: hasFooter || hasErrorTags
-        readonly property real headerHeight: headerSection.implicitHeight
-        readonly property real footerHeight: footerSection.implicitHeight
+        // Track the items actually assigned to header/footer (consumers may replace the
+        // default sections) and, like the Dialog layout, only count them when visible.
+        readonly property real headerHeight: root.header && root.header.visible ? root.implicitHeaderHeight : 0
+        readonly property real footerHeight: root.footer && root.footer.visible ? root.implicitFooterHeight : 0
 
         // Internal spacing between the dialog edge and each visible component.
         readonly property real edgePadding: Math.max(root.Theme.padding, 8)

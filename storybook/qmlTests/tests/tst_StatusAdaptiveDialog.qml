@@ -160,7 +160,7 @@ Item {
             contentComponent: Component {
                 ListView {
                     objectName: "flickableContent"
-                    implicitHeight: contentHeight
+                    implicitHeight: testContentHeight
                     model: 30
                     delegate: Item {
                         width: ListView.view.width
@@ -209,6 +209,53 @@ Item {
             contentComponent: Component {
                 Item {
                     implicitHeight: 600
+                }
+            }
+        }
+    }
+
+    Component {
+        id: customSectionsDialogComponent
+
+        StatusAdaptiveDialog {
+            property bool customFooterVisible: true
+
+            maximumWidthOverride: 420
+            header: Rectangle {
+                objectName: "customHeader"
+                implicitHeight: 60
+            }
+            contentComponent: Component {
+                Item {
+                    implicitHeight: 120
+                }
+            }
+            footer: Rectangle {
+                objectName: "customFooter"
+                implicitHeight: 80
+                visible: customFooterVisible
+            }
+        }
+    }
+
+    Component {
+        id: fractionalContentDialogComponent
+
+        StatusAdaptiveDialog {
+            id: fractionalContentDialog
+
+            property real testContentHeight
+
+            title: "Fractional content"
+            maximumWidthOverride: 420
+            contentComponent: Component {
+                Item {
+                    implicitHeight: fractionalContentDialog.testContentHeight
+                }
+            }
+            footerRightButtons: ObjectModel {
+                StatusButton {
+                    text: "Done"
                 }
             }
         }
@@ -681,6 +728,75 @@ Item {
             compare(scrollFlickable.visible, false);
             verify(flickableContent.height <= contentViewport.height);
             compare(flickableContent.topMargin, Math.max(Theme.padding, 8));
+        }
+
+        function test_custom_header_and_footer_are_included_in_height_data() {
+            return [
+                { tag: "desktop", mobile: false },
+                { tag: "bottom sheet", mobile: true }
+            ];
+        }
+
+        // Replaced header/footer items must be accounted for, otherwise the content is
+        // squeezed into a scrolling viewport (https://github.com/status-im/status-app/issues/22816)
+        function test_custom_header_and_footer_are_included_in_height(data) {
+            if (data.mobile)
+                setTestWindowSize(d.mobileWindowWidth, d.mobileWindowHeight);
+
+            createAndOpenDialog(customSectionsDialogComponent);
+
+            const contentHost = findChild(controlUnderTest, "statusAdaptiveDialogContentHost");
+            const scrollFlickable = findChild(controlUnderTest, "statusAdaptiveDialogScrollFlickable");
+            verify(!!contentHost);
+            verify(!!scrollFlickable);
+            compare(controlUnderTest.header.objectName, "customHeader");
+            compare(controlUnderTest.footer.objectName, "customFooter");
+
+            tryCompare(controlUnderTest, "height", 60 + contentHost.implicitHeight + 80);
+            compare(contentHost.height, contentHost.implicitHeight);
+            compare(controlUnderTest.footer.y + controlUnderTest.footer.height, controlUnderTest.height);
+            verify(!scrollFlickable.interactive);
+        }
+
+        // Fractional section heights must not produce a scrollbar/scrolling for content that
+        // fits; the viewport height derived from the dialog height may differ by a rounding error
+        function test_fractional_content_height_does_not_scroll() {
+            const heights = [];
+            for (let h = 100.1; h < 300; h += 3.7)
+                heights.push(h);
+
+            for (const contentHeight of heights) {
+                createAndOpenDialog(fractionalContentDialogComponent);
+                controlUnderTest.testContentHeight = contentHeight;
+
+                const contentHost = findChild(controlUnderTest, "statusAdaptiveDialogContentHost");
+                const scrollFlickable = findChild(controlUnderTest, "statusAdaptiveDialogScrollFlickable");
+                const contentScrollBar = findChild(controlUnderTest, "statusAdaptiveDialogContentScrollBar");
+                verify(!!contentHost);
+                verify(!!scrollFlickable);
+                verify(!!contentScrollBar);
+
+                tryCompare(scrollFlickable, "contentHeight", contentHeight);
+                tryVerify(() => Math.abs(contentHost.height - contentHost.implicitHeight) < 0.001,
+                          5000, `content host not at its natural height for content height ${contentHeight}`);
+                verify(!contentScrollBar.visible, `scrollbar shown for content height ${contentHeight}`);
+                verify(!scrollFlickable.interactive, `content scrollable for content height ${contentHeight}`);
+            }
+        }
+
+        function test_hidden_custom_footer_is_excluded_from_height() {
+            createAndOpenDialog(customSectionsDialogComponent);
+
+            const contentHost = findChild(controlUnderTest, "statusAdaptiveDialogContentHost");
+            verify(!!contentHost);
+
+            controlUnderTest.customFooterVisible = false;
+            tryCompare(controlUnderTest, "height", 60 + contentHost.implicitHeight);
+            compare(contentHost.height, contentHost.implicitHeight);
+
+            controlUnderTest.customFooterVisible = true;
+            tryCompare(controlUnderTest, "height", 60 + contentHost.implicitHeight + 80);
+            compare(contentHost.height, contentHost.implicitHeight);
         }
 
     }
