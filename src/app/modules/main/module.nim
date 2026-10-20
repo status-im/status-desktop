@@ -1570,6 +1570,12 @@ method onCommunityTokenOwnersFetched*[T](self: Module[T], communityId: string, c
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.setCommunityTokenOwners(chainId, contractAddress, owners, item.memberRole == MemberRole.Owner)
+    for tokenItem in item.communityTokens.items:
+      if tokenItem.tokenDto.chainId == chainId and tokenItem.tokenDto.address == contractAddress:
+        if not tokenItem.tokenDto.infiniteSupply:
+          item.updateCommunityRemainingSupply(chainId, contractAddress,
+            self.controller.getRemainingSupply(chainId, contractAddress))
+        break
 
 method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, deployState: DeployState) =
   let item = self.view.model().getItemById(communityId)
