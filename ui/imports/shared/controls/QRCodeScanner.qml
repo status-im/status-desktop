@@ -51,6 +51,8 @@ ColumnLayout {
     // Camera permission (status, request, OS settings). Tests pass a fake.
     property QtObject cameraAccess: CameraAccess {}
 
+    readonly property bool cameraReady: d.cameraReady
+
     signal validTagFound(string tag)
 
     // Starts a new scanning session: after a result (Success) or an error the
@@ -260,7 +262,7 @@ ColumnLayout {
 
         visible: d.cameraReady && !!cameraLoader.item?.cameraAvailable && root.state === StatusQrCodeScanner.State.None
         wrapMode: Text.WordWrap
-        color: Theme.palette.baseColor1
+        color: Theme.palette.directColor1
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
         text: qsTr("Align the QR code within the frame to scan")

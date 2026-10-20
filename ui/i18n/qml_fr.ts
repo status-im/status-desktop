@@ -14664,6 +14664,10 @@ Seul le détenteur du jeton Owner peut distribuer des jetons TokenMaster. Ces je
         <translation>Envoyer des jetons</translation>
     </message>
     <message>
+        <source>Sync to pair devices</source>
+        <translation>Synchroniser pour associer des appareils</translation>
+    </message>
+    <message>
         <source>Open WEB links</source>
         <translation>Ouvrir les liens web</translation>
     </message>

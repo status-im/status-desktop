@@ -70,7 +70,8 @@ StatusDialog {
 
             width: scrollView.availableWidth
             height: Math.max(scrollView.availableHeight,
-                             d.scannerMinHeight + spacing + infoRows.implicitHeight)
+                             d.scannerMinHeight
+                             + (infoRows.visible ? spacing + infoRows.implicitHeight : 0))
             spacing: Theme.padding
 
             QRCodeScanner {
@@ -125,6 +126,7 @@ StatusDialog {
                 id: infoRows
 
                 objectName: "qrScannerInfoRows"
+                visible: qrCodeScanner.cameraReady
                 Layout.fillWidth: true
                 spacing: Theme.padding
 
@@ -147,6 +149,13 @@ StatusDialog {
 
                     text: qsTr("Send tokens")
                     icon: "send"
+                }
+
+                IconRow {
+                    Layout.fillWidth: true
+
+                    text: qsTr("Sync to pair devices")
+                    icon: "rotate"
                 }
 
                 IconRow {

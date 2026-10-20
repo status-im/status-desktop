@@ -26,11 +26,13 @@ ItemDelegate {
     QtObject {
         id: d
 
+        readonly property var palette: root.Theme.palette
+
         readonly property bool highlightedWithPrimaryColor: root.highlighted &&
-                                                           Qt.colorEqual(root.highlightColor, Theme.palette.primaryColor1)
-        readonly property color contentColor: !root.enabled ? Theme.palette.baseColor1 :
+                                                           Qt.colorEqual(root.highlightColor, d.palette.primaryColor1)
+        readonly property color contentColor: !root.enabled ? d.palette.baseColor1 :
                                                 d.highlightedWithPrimaryColor ? StatusColors.white :
-                                                                                Theme.palette.directColor1
+                                                                                d.palette.directColor1
     }
 
     contentItem: RowLayout {
