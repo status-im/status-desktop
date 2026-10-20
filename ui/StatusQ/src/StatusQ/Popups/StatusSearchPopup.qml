@@ -319,6 +319,12 @@ StatusModal {
                         // the subtitle is HTML; auto-detection would show the entities of a
                         // tagless text ("Tom &amp; Jerry") literally
                         statusListItemSubTitle.textFormat: Text.RichText
+                        // Rich text honours neither elide nor maximumLineCount, so the
+                        // preview has to be kept on its line by not wrapping it, and the
+                        // overflow cut off - otherwise a long result wraps to several
+                        // lines and paints over the results under it.
+                        statusListItemSubTitle.wrapMode: Text.NoWrap
+                        statusListItemSubTitle.clip: true
                         statusListItemSubTitle.elide: Text.ElideRight
                         statusListItemSubTitle.color: Theme.palette.directColor1
                         asset.isLetterIdenticon: (model.image === "")

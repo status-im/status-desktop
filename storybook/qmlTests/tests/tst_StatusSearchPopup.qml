@@ -94,6 +94,29 @@ Item {
             compare(findSubtitles(popup.contentItem)[0].textFormat, Text.RichText)
         }
 
+        // Rich text honours neither elide nor maximumLineCount - a wrapping subtitle
+        // grew to several lines inside its 20px slot and painted over the results
+        // below it - so the preview must stay on one line and clip what does not fit.
+        function test_aLongPreviewStaysOnOneLine() {
+            const results = createTemporaryObject(resultsComponent, root)
+            results.appendResult("m1", "Messages",
+                                 "This is a fairly long search result preview that should be "
+                                 + "kept to a single line instead of wrapping over several "
+                                 + "lines in the results list of the popup")
+            results.appendResult("m2", "Messages", "short one")
+            const popup = openWith(results)
+
+            const subtitle = findSubtitles(popup.contentItem)[0]
+            const short = findSubtitles(popup.contentItem)[1]
+
+            fuzzyCompare(subtitle.contentHeight, short.contentHeight, 1,
+                         "a long preview must be no taller than a short one")
+            verify(subtitle.contentWidth > subtitle.width,
+                   "and long enough that it really does overflow")
+            compare(subtitle.wrapMode, Text.NoWrap)
+            verify(subtitle.clip, "the overflow must be cut off, not painted over the next row")
+        }
+
         function test_mentionNamesFollowTheResolver() {
             const results = createTemporaryObject(resultsComponent, root)
             results.appendResult("m1", "Messages", `hi @${root.aliceKey}`)
