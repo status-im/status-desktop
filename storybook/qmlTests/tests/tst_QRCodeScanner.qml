@@ -2,6 +2,7 @@ import QtQuick
 import QtTest
 
 import StatusQ.Components
+import StatusQ.Core.Theme
 import StatusQ.Controls.Validators
 
 import Storybook.Testing
@@ -169,6 +170,73 @@ Item {
             verify(fakeSource.pushQrAtRotated(output.videoSink, root.address,
                                               726, 376, 1600, 900, 90))
             tryCompare(tagSpy, "count", 1, 5000)
+        }
+
+        function statusScanner() {
+            const scanner = findChild(controlUnderTest, "statusQrCodeScanner")
+            verify(!!scanner)
+            return scanner
+        }
+
+        function flashlightButton() {
+            const button = findChild(controlUnderTest, "qrFlashlightButton")
+            verify(!!button)
+            return button
+        }
+
+        // No camera here, so no torch: no flashlight button.
+        function test_noFlashlightWithoutTorch() {
+            compare(statusScanner().flashlightAvailable, false)
+            compare(flashlightButton().visible, false)
+        }
+
+        // Left of the upload button, the same size, on the same line.
+        function test_flashlightLeftOfUploadButton() {
+            const scanner = statusScanner()
+            scanner.flashlightAvailable = true // a device with a torch
+            const flash = flashlightButton()
+            const upload = findChild(scanner, "qrUploadImageButton")
+            verify(flash.visible && !!upload)
+            compare(flash.width, upload.width)
+            compare(flash.height, upload.height)
+            compare(flash.icon.name, "flashlight-off")
+            const f = flash.mapToItem(scanner, 0, 0)
+            const u = upload.mapToItem(scanner, 0, 0)
+            compare(f.x, 12)
+            verify(u.x > f.x + flash.width, "upload button right of the flashlight")
+            compare(f.y, u.y)
+            // styled like the camera picker
+            const picker = findChild(scanner, "qrCameraComboBox")
+            compare(String(flash.normalColor), String(flash.Theme.palette.baseColor2))
+            compare(flash.opacity, picker.opacity)
+            compare(upload.opacity, picker.opacity)
+        }
+
+        function test_flashlightToggles() {
+            const scanner = statusScanner()
+            scanner.flashlightAvailable = true
+            const flash = flashlightButton()
+            mouseClick(flash)
+            compare(scanner.flashlightOn, true)
+            compare(flash.icon.name, "flashlight-on")
+            compare(String(flash.normalColor), String(flash.StatusColors.white))
+            compare(findChild(scanner, "qrCodeCapture").torchOn, true)
+            mouseClick(flash)
+            compare(scanner.flashlightOn, false)
+            compare(flash.icon.name, "flashlight-off")
+            compare(findChild(scanner, "qrCodeCapture").torchOn, false)
+        }
+
+        // The camera stops (background, dialog closed): the light goes off.
+        function test_flashlightOffWhenCameraStops() {
+            const scanner = statusScanner()
+            scanner.flashlightAvailable = true
+            mouseClick(flashlightButton())
+            compare(scanner.flashlightOn, true)
+            appState.setActive(false)
+            compare(scanner.flashlightOn, false)
+            appState.setActive(true)
+            compare(scanner.flashlightOn, false)
         }
 
         // Background (mobile) / lost focus (desktop): no camera, no scanning.

@@ -17034,6 +17034,14 @@ avec un retour à la ligne</translation>
 <context>
     <name>StatusQrCodeScanner</name>
     <message>
+        <source>Turn off the flashlight</source>
+        <translation>Éteindre la lampe torche</translation>
+    </message>
+    <message>
+        <source>Turn on the flashlight</source>
+        <translation>Allumer la lampe torche</translation>
+    </message>
+    <message>
         <source>Upload image</source>
         <translation type="unfinished">Importer une image</translation>
     </message>
