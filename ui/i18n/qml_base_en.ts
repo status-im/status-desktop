@@ -17018,6 +17018,14 @@ to load</source>
 <context>
     <name>StatusQrCodeScanner</name>
     <message>
+        <source>Turn off the flashlight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn on the flashlight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Upload image</source>
         <translation type="unfinished"></translation>
     </message>
