@@ -360,6 +360,39 @@ Item {
             verify(!lv.moreAvailableTop, "with no band above the chat's first message")
         }
 
+        // ---- reading ----------------------------------------------------------
+
+        // Scrolled a little above the newest message - closer than half a
+        // window - and away to another chat; unread messages arrive. Coming
+        // back lands on the recorded position, above them: the chat must stay
+        // unread until the reader gets to the bottom.
+        function test_comingBackAboveUnreadMessagesDoesNotMarkThemRead() {
+            prewarmedPool()
+            const view = openView()
+            const lv = view.chatLogView
+
+            lv.contentY = Math.max(lv.originY, lv.contentHeight - lv.height * 1.5)
+            waitForRendering(lv)
+            verify(!lv.atBottom, "reading above the newest message")
+
+            view.messageStore = storeB
+            view.chatContentModule = moduleB
+            settle(view)
+
+            const marked = moduleA.markAllMessagesReadCalls
+            moduleA.chatDetails.hasUnreadMessages = true
+
+            // in ChatColumnView's order: the module is bound before the store
+            view.chatContentModule = moduleA
+            view.messageStore = storeA
+            settle(view)
+            waitForRendering(lv)
+
+            verify(!lv.atBottom, "back above the newest message")
+            compare(moduleA.markAllMessagesReadCalls, marked,
+                    "not marked read: the unread messages are below the reader")
+        }
+
         // ---- rows from the pool ----------------------------------------------
 
         function test_rowsComeFromThePool() {
