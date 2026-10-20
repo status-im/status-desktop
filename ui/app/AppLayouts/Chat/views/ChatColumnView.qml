@@ -23,6 +23,7 @@ import QtModelsToolkit
 
 import AppLayouts.Communities.popups
 import AppLayouts.Communities.panels
+import AppLayouts.Chat.adaptors
 import AppLayouts.Chat.stores as ChatStores
 import AppLayouts.Wallet.stores as WalletStore
 
@@ -145,6 +146,30 @@ Item {
         }
     }
 
+    // The names a mention can carry: the chat's members, the user's contacts and
+    // the current user, with a generated alias for a key none of them names. The
+    // message bubble resolves mentions through the same pair; a preview built from
+    // usersModel alone showed a raw public key for anyone outside it - in a 1:1
+    // chat that model holds mutual contacts only.
+    MentionNamesAdaptor {
+        id: mentionNamesAdaptor
+
+        chatUsersModel: root.usersModel
+        contactsModel: root.rootStore?.contactsModel ?? null
+        selfPubKey: root.myPublicKey
+        selfDisplayName: root.rootStore?.name ?? ""
+    }
+
+    MentionResolver {
+        id: mentionResolver
+
+        enabled: root.visible
+        sourceModel: mentionNamesAdaptor.model
+        nameRole: "preferredDisplayName"
+        aliasProvider: pubKey => root.rootStore?.generateAlias(pubKey) ?? ""
+        contactInfoRequester: pubKey => root.rootStore?.requestContactInfo(pubKey)
+    }
+
     QtObject {
         id: d
 
@@ -207,14 +232,7 @@ Item {
         // "@0x…" mentions back into pills. Unknown keys and the "everyone" tag are omitted;
         // loadText() falls back to the raw key / "everyone" for those.
         function mentionNames(unparsedText) {
-            const names = ({})
-            const keys = MarkdownUtils.mentions(unparsedText)
-            for (const key of keys) {
-                const user = SQUtils.ModelUtils.getByKey(root.usersModel, "pubKey", key)
-                if (user)
-                    names[key] = user.preferredDisplayName
-            }
-            return names
+            return mentionResolver.resolveFor(unparsedText)
         }
 
         function setCurrentEditMessageOff() {
