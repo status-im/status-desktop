@@ -4,6 +4,7 @@
 #include <QHash>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <QVariant>
 
 class StatusEmojiModel : public QAbstractListModel
 {
@@ -54,6 +55,15 @@ public:
     Q_INVOKABLE QJsonArray getSuggestions(const QString& name) const;
     Q_INVOKABLE int maxAsciiEmojiAliasLength() const;
     Q_INVOKABLE int getCategoryOffset(int categoryIndex) const;
+
+    // One entry per section of the picker grid: { name, text, count, rows }, where `text`
+    // holds the whole section's emoji as a single string. A grid that draws a section as one
+    // text run gets everything it needs from this, instead of reading the model row by row
+    // through a filtering proxy. `filter` matches name and shortname, case-insensitively;
+    // `skinColor` picks which tone variant to show, the base one by default. `rows` are model
+    // rows, for the single entry a hover or a click has to look up.
+    Q_INVOKABLE QVariantList sections(const QString &filter = {},
+                                      const QString &skinColor = {}) const;
 
     Q_INVOKABLE void addRecentEmoji(const QString &hexcode);
 

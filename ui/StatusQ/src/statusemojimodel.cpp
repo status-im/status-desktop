@@ -301,6 +301,74 @@ int StatusEmojiModel::getCategoryOffset(int categoryIndex) const {
     return 0;
 }
 
+QVariantList StatusEmojiModel::sections(const QString &filter, const QString &skinColor) const
+{
+    ensureLoaded();
+
+    // The catalogue carries every tone of an emoji as its own entry and the grid shows one
+    // of them: the requested tone where there is one, and otherwise the toneless entry.
+    // Mirrors what the skinColor role plus the picker's filters resolve to today.
+    const auto toneOf = [](const QString &unicode) {
+        const auto it = std::find_if(skinColors.cbegin(), skinColors.cend(),
+                                     [&unicode](const auto *tone) {
+                                         return unicode.contains(QLatin1String(tone));
+                                     });
+        return it == skinColors.cend() ? QString() : QString::fromLatin1(*it);
+    };
+    const auto wantedTone = skinColor == QLatin1String(kBaseColor) ? QString() : skinColor;
+
+    QVariantList sections;
+    QString name;
+    QString text;
+    QList<int> rows;
+
+    const auto flush = [&sections, &name, &text, &rows] {
+        if (rows.isEmpty())
+            return;
+        sections.append(QVariantMap{{"name"_L1, name},
+                                    {"text"_L1, text},
+                                    {"count"_L1, static_cast<int>(rows.size())},
+                                    {"rows"_L1, QVariant::fromValue(rows)}});
+        text.clear();
+        rows.clear();
+    };
+
+    const auto recentCount = static_cast<int>(m_recentEmojiJson.size());
+    // while searching there are no recents, the same as in the picker today
+    const auto firstRow = filter.isEmpty() ? 0 : recentCount;
+
+    for (auto row = firstRow; row < rowCount(); ++row) {
+        const auto emoji = row < recentCount
+                               ? m_recentEmojiJson.at(row).toObject()
+                               : m_emojiJson.at(row - recentCount).toObject();
+
+        const auto tone = toneOf(emoji.value(kUnicode).toString());
+        const auto wanted = wantedTone.isEmpty()
+                                ? tone.isEmpty()
+                                : (tone == wantedTone
+                                   || (tone.isEmpty() && !emoji.value(kHasSkins).toBool(false)));
+        if (!wanted)
+            continue;
+
+        if (!filter.isEmpty()
+            && !emoji.value(kName).toString().contains(filter, Qt::CaseInsensitive)
+            && !emoji.value(kShortname).toString().contains(filter, Qt::CaseInsensitive))
+            continue;
+
+        const auto category = emoji.value(kCategory).toString();
+        if (category != name) {
+            flush();
+            name = category;
+        }
+
+        text += emoji.value(kEmoji).toString();
+        rows.append(row);
+    }
+    flush();
+
+    return sections;
+}
+
 QStringList StatusEmojiModel::categories() const
 {
     static const QStringList categories{kRecentCategoryName,

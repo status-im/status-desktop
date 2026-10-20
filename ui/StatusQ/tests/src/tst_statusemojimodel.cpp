@@ -18,6 +18,15 @@ class tst_StatusEmojiModel : public QObject
     QQmlEngine *m_engine = nullptr;
     QObject *m_benchObj = nullptr;
 
+    // the five tone codepoints; 1f3f0..1f3f9 are ordinary emoji (castle, rosette, ...)
+    static bool hasTone(const QString &unicode)
+    {
+        for (const auto *tone : {"1f3fb", "1f3fc", "1f3fd", "1f3fe", "1f3ff"})
+            if (unicode.contains(QLatin1String(tone)))
+                return true;
+        return false;
+    }
+
     static QStringList unicodes(const QJsonArray &emojis)
     {
         QStringList result;
@@ -228,6 +237,137 @@ private slots:
                  keycap);
         QCOMPARE(model.data(model.index(0, 0), StatusEmojiModel::CategoryRole).toString(),
                  "recent"_L1);
+    }
+
+    // The picker grid draws a whole section as one text run, so it asks for the sections
+    // rather than walking the model: one call per keystroke, no proxy, no per-row reads.
+
+    void sections_coverTheCatalogueInOrder()
+    {
+        const auto sections = m_model->sections();
+        QVERIFY(!sections.isEmpty());
+
+        auto expected = m_model->property("categories").toStringList();
+        if (m_model->property("recentEmojis").toStringList().isEmpty())
+            expected.removeOne("recent"_L1);
+
+        QStringList names;
+        int total = 0;
+        for (const auto &value : sections) {
+            const auto section = value.toMap();
+            names.append(section.value("name"_L1).toString());
+            QCOMPARE(section.value("count"_L1).toInt(),
+                     section.value("rows"_L1).value<QList<int>>().size());
+            total += section.value("count"_L1).toInt();
+        }
+        QCOMPARE(names, expected);
+
+        // one entry per emoji that has no tone of its own - the set the picker shows
+        auto baseEntries = 0;
+        for (const auto &value : m_model->property("emojiJson").toJsonArray()) {
+            if (!hasTone(value.toObject().value("unicode").toString()))
+                ++baseEntries;
+        }
+        QCOMPARE(total, baseEntries + m_model->property("recentEmojis").toStringList().size());
+    }
+
+    void sections_textAndRowsAgreeWithTheModel()
+    {
+        for (const auto &value : m_model->sections()) {
+            const auto section = value.toMap();
+            const auto rows = section.value("rows"_L1).value<QList<int>>();
+
+            QString expected;
+            for (const auto row : rows) {
+                const auto index = m_model->index(row, 0);
+                QCOMPARE(m_model->data(index, StatusEmojiModel::CategoryRole).toString(),
+                         section.value("name"_L1).toString());
+                expected += m_model->data(index, StatusEmojiModel::EmojiRole).toString();
+            }
+            QCOMPARE(section.value("text"_L1).toString(), expected);
+        }
+    }
+
+    void sections_filterMatchesNameAndShortnameWhateverTheCase()
+    {
+        const auto lower = m_model->sections("smile");
+        QVERIFY(!lower.isEmpty());
+        QCOMPARE(m_model->sections("SmIlE"), lower);
+
+        auto matches = 0;
+        for (const auto &value : lower) {
+            const auto section = value.toMap();
+            for (const auto row : section.value("rows"_L1).value<QList<int>>()) {
+                const auto index = m_model->index(row, 0);
+                const auto name = m_model->data(index, StatusEmojiModel::NameRole).toString();
+                const auto shortname =
+                    m_model->data(index, StatusEmojiModel::ShortnameRole).toString();
+                QVERIFY2(name.contains("smile"_L1, Qt::CaseInsensitive)
+                             || shortname.contains("smile"_L1, Qt::CaseInsensitive),
+                         qPrintable(name));
+                ++matches;
+            }
+        }
+        QVERIFY(matches > 5);
+
+        // a phrase only one category can match leaves only that category
+        const auto flags = m_model->sections("flag:");
+        QCOMPARE(flags.size(), 1);
+        QCOMPARE(flags.first().toMap().value("name"_L1).toString(), "flags"_L1);
+    }
+
+    void sections_noMatchGivesNoSections()
+    {
+        QVERIFY(m_model->sections("zzzxq").isEmpty());
+    }
+
+    void sections_skinColorPicksTheToneVariants()
+    {
+        const auto wave = QString::fromUtf8("\U0001F44B");
+        const auto waveTone2 = QString::fromUtf8("\U0001F44B\U0001F3FC");
+
+        const auto base = m_model->sections("waving hand");
+        QVERIFY(!base.isEmpty());
+        QVERIFY(base.first().toMap().value("text"_L1).toString().contains(wave));
+        QVERIFY(!base.first().toMap().value("text"_L1).toString().contains(waveTone2));
+
+        const auto toned = m_model->sections("waving hand", "1f3fc");
+        QVERIFY(!toned.isEmpty());
+        const auto text = toned.first().toMap().value("text"_L1).toString();
+        QVERIFY(text.contains(waveTone2));
+
+        // every entry carries the requested tone, or no tone at all because it has none
+        for (const auto &value : m_model->sections({}, "1f3fc")) {
+            for (const auto row : value.toMap().value("rows"_L1).value<QList<int>>()) {
+                const auto unicode =
+                    m_model->data(m_model->index(row, 0), StatusEmojiModel::UnicodeRole).toString();
+                if (!hasTone(unicode))
+                    continue;
+                QVERIFY2(unicode.contains("1f3fc"_L1), qPrintable(unicode));
+            }
+        }
+    }
+
+    void sections_recentsComeFirstAndAreDroppedWhileSearching()
+    {
+        StatusEmojiModel model;
+        QSignalSpy loaded(&model, &StatusEmojiModel::emojiJsonChanged);
+        QVERIFY(loaded.wait());
+        model.setProperty("recentEmojis", QStringList{"1f600"});
+
+        const auto sections = model.sections();
+        QCOMPARE(sections.first().toMap().value("name"_L1).toString(), "recent"_L1);
+        QCOMPARE(sections.first().toMap().value("count"_L1).toInt(), 1);
+
+        for (const auto &value : model.sections("grinning"))
+            QVERIFY(value.toMap().value("name"_L1).toString() != "recent"_L1);
+    }
+
+    // the catalogue is parsed lazily, and a query must not depend on that having happened
+    void sections_workOnAFreshlyConstructedModel()
+    {
+        StatusEmojiModel model;
+        QVERIFY(!model.sections().isEmpty());
     }
 
     void benchmarkAsciiAliasLookup()
