@@ -941,6 +941,11 @@ StackView {
                     accountAddress: remotelyDestructPopup.selectedAccount
                     tokenKey: view.token.key
                     enabled: remotelyDestructPopup.tokenCount > 0 && accountAddress !== "" && (remotelyDestructPopup.opened || signTransactionPopup.opened)
+
+                    onEnabledChanged: {
+                        if (enabled && signTransactionPopup.opened)
+                            feesResponse = null
+                    }
                 }
             }
 
@@ -1021,6 +1026,7 @@ StackView {
 
                 property bool isRemotelyDestructTransaction
 
+                requireFeeText: isRemotelyDestructTransaction
                 readonly property string tokenName: footer.token.name
 
                 title: isRemotelyDestructTransaction

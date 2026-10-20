@@ -22,6 +22,7 @@ StatusAdaptiveDialog {
     property string errorText
     property string totalFeeText
     property string accountName
+    property bool requireFeeText: false
 
     property string keyUid: ""
     property bool migratedToColdWallet: false
@@ -55,7 +56,7 @@ StatusAdaptiveDialog {
         }
         StatusButton {
             objectName: "signTransactionButton"
-            enabled: root.errorText === ""
+            enabled: root.errorText === "" && (!root.requireFeeText || root.totalFeeText !== "")
             icon.name: Utils.resolveAuthSignIcon(root.keyUid, root.migratedToColdWallet, Constants.AuthSignPurpose.General)
             text: qsTr("Sign transaction")
             onClicked: {
