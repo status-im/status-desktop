@@ -625,6 +625,19 @@ SplitView {
                                       + "** this row was changed in place")
         }
 
+        // Doubles a row's text, so the row grows by about its own height - a
+        // reaction, an edit or an image that finished loading, which is what
+        // happens to a real message after it is laid out. Done to a row above
+        // the viewport it shows whether the reading position survives it.
+        function expandRow(row) {
+            if (row < 0 || row >= messagesModel.count)
+                return
+
+            const text = ModelUtils.get(messagesModel, row, "messageText") ?? ""
+
+            messagesModel.setProperty(row, "messageText", text + " " + text)
+        }
+
         // True only while insertMessages() is causing rows that should not
         // wait. The Repeater builds them synchronously inside the model
         // change, so the flag only has to stand for the duration of the call.
@@ -1726,6 +1739,13 @@ SplitView {
                         enabled: messagesModel.count > 0
 
                         onClicked: d.touchRow(touchRowSpinBox.value)
+                    }
+
+                    Button {
+                        text: "Expand"
+                        enabled: messagesModel.count > 0
+
+                        onClicked: d.expandRow(touchRowSpinBox.value)
                     }
                 }
 
