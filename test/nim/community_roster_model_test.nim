@@ -482,9 +482,38 @@ suite "community roster canonical order":
     # keyC is the logged-in user
     model.fill(snapshot(10, member(keyA, "alice"), member(keyB, "bob"), member(keyC, "carol")))
     spy.clear()
-    fake.contacts[keyC] = RosterContact(displayName: "aaron")
+    fake.contacts[keyC] = RosterContact(known: true, displayName: "aaron")
     model.contactChanged(keyC)
     check model.orderedKeys == @[keyC, keyA, keyB]
     check model.indexConsistent
     check spy.countMoves() == 1
     check spy.countResets() == 0
+
+  test "a known contact's cleared names win over the entry's":
+    var bob = member(keyB, "bob", alias = "Brave Cat")
+    bob.ensName = "bob.eth"
+    bob.ensVerified = true
+    var carol = member(keyC, "carol", alias = "Cool Cat")
+    carol.ensName = "carol.eth"
+    carol.ensVerified = true
+    var dave = member(keyD, "dave")
+    dave.ensName = "dave.eth"
+    dave.ensVerified = true
+    fake.contacts[keyB] = RosterContact(known: true, displayName: "bob", alias: "Brave Cat")
+    # keyC is the logged-in user, who cleared their display name and ENS name
+    fake.contacts[keyC] = RosterContact(known: true, alias: "Cool Cat")
+    model.fill(snapshot(10, bob, carol, dave))
+    let rowB = model.rowOfKey(keyB)
+    check model.str(rowB, "ensName") == ""
+    check not model.flag(rowB, "isEnsVerified")
+    check model.str(rowB, "preferredDisplayName") == "bob"
+    let rowC = model.rowOfKey(keyC)
+    check model.str(rowC, "displayName") == ""
+    check model.str(rowC, "ensName") == ""
+    check model.str(rowC, "preferredDisplayName") == "Cool Cat"
+    check model.flag(rowC, "usesDefaultName")
+    # a member the contacts cache does not hold keeps the entry's names
+    let rowD = model.rowOfKey(keyD)
+    check model.str(rowD, "ensName") == "dave.eth"
+    check model.str(rowD, "preferredDisplayName") == "dave.eth"
+    check model.orderedKeys == @[keyB, keyC, keyD]

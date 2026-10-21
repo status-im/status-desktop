@@ -8,8 +8,10 @@ import ./dto/roster
 import app/modules/shared_models/contacts_utils
 
 type
-  ## Contacts-cache name fields that win over the roster entry's.
+  ## Contacts-cache name fields. Known (self, or a contact the cache holds):
+  ## they replace the roster entry's, empty included; otherwise the entry's apply.
   RosterNames* = object
+    known*: bool
     localNickname*: string
     displayName*: string
     ensName*: string
@@ -22,15 +24,20 @@ type
     online*: seq[string]
     names*: Table[string, RosterNames]
 
+proc resolveNames*(member: RosterMember, names: RosterNames): RosterNames =
+  ## The name fields a member row shows.
+  if names.known:
+    return names
+  RosterNames(localNickname: names.localNickname, displayName: member.displayName,
+    ensName: member.ensName, ensVerified: member.ensVerified, alias: member.alias)
+
+proc preferredName*(names: RosterNames): string =
+  ## Of resolved names; an unverified ENS name is no name.
+  resolvePreferredDisplayName(names.localNickname, (if names.ensVerified: names.ensName else: ""),
+    names.displayName, names.alias)
+
 proc preferredName*(member: RosterMember, names: RosterNames): string =
-  ## The name a member row shows; an unverified ENS name is no name.
-  let displayName = if names.displayName.len > 0: names.displayName else: member.displayName
-  let fromNamesEns = names.ensName.len > 0
-  let ensName = if fromNamesEns: names.ensName else: member.ensName
-  let ensVerified = if fromNamesEns: names.ensVerified else: member.ensVerified
-  let alias = if names.alias.len > 0: names.alias else: member.alias
-  resolvePreferredDisplayName(names.localNickname, (if ensVerified: ensName else: ""),
-    displayName, alias)
+  preferredName(resolveNames(member, names))
 
 proc cmpKeys(a, b: RawPubKey): int =
   for i in 0 ..< a.len:

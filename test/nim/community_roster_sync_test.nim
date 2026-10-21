@@ -263,6 +263,21 @@ suite "roster canonical order":
     check snap.keysOf == @[keyC, keyA, keyB]
     check snap.sortKeys[2].name == "zed.eth"
 
+  test "a known contact's cleared ENS name sorts by the remaining name":
+    var ens = named(keyA, "zoe")
+    ens.ensName = "aaa.eth"
+    ens.ensVerified = true
+    var unknown = named(keyB, "yan")
+    unknown.ensName = "bbb.eth"
+    unknown.ensVerified = true
+    var snap = RosterSnapshot(members: @[ens, unknown, named(keyC, "carol")])
+    var inputs: RosterOrderInputs
+    inputs.names[keyA] = RosterNames(known: true, displayName: "zoe")
+    sortRoster(snap, inputs)
+    check snap.keysOf == @[keyB, keyC, keyA]
+    check snap.sortKeys[0].name == "bbb.eth"
+    check snap.sortKeys[2].name == "zoe"
+
   test "equal names tie-break on the key":
     var snap = RosterSnapshot(members: @[named(keyC, "alice"), named(keyA, "alice")])
     sortRoster(snap, RosterOrderInputs())
