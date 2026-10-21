@@ -277,7 +277,7 @@ proc init*(self: Controller) =
     var chatThreads: seq[ThreadDto] = @[]
     for thread in args.threads:
       if thread.chatId == self.chatId:
-        chatThreads.add(self.messageService.getThreadForParentMessage(self.chatId, thread.parentMessageId))
+        chatThreads.add(thread)
     let listLoaded = args.summariesLoaded and self.chatId in args.completedChatIds
     if chatThreads.len > 0 or listLoaded:
       self.delegate.onChatThreadsLoaded(chatThreads, listLoaded)
