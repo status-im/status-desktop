@@ -193,6 +193,40 @@ suite "thread navigation":
     check(parent.view.threadsModel().rowCount(nil) == 1)
     check(not child.view.hasThreadsModel())
 
+  test "loaded thread events carry the same enriched DTOs as the cache":
+    for includeSummaries in [false, true]:
+      let events = createEventEmitter()
+      let service = message_service.newService(events, nil, nil, nil, nil, nil, nil)
+      service.init()
+      events.emit(chat_service.SIGNAL_CHAT_THREADS_UPDATED,
+        chat_service.ChatThreadsUpdatedArgs(threads: @[
+          ThreadDto(chatId: "chat-id", threadId: "thread-id", parentMessageId: "parent-id",
+            name: "Original", messagesCount: 2, participantsCount: 1,
+            participantsPreviewIds: @["alice"], unviewedMessagesCount: 1,
+            lastMessage: ThreadLastMessageDto(`from`: "alice", text: "Latest", timestamp: 100))
+        ]))
+      var emitted: seq[ThreadDto]
+      events.on(message_service.SIGNAL_CHAT_THREADS_FOR_CHATS_LOADED) do(e: Args):
+        let args = ChatThreadsForChatsLoadedArgs(e)
+        emitted = args.threads
+        check(args.completedChatIds == @["chat-id"])
+        check(args.summariesLoaded == includeSummaries)
+        for thread in args.threads:
+          check(thread == service.getThreadForParentMessage(thread.chatId, thread.parentMessageId))
+      service.onAsyncLoadChatThreadsForChats($(%* {
+        "chatIds": ["chat-id"], "includeSummaries": includeSummaries,
+        "threads": [{"chatId": "chat-id", "threadId": "thread-id", "parentMessageId": "parent-id",
+          "name": "Updated", "messagesCount": 0, "unviewedMessagesCount": 0}]
+      }))
+      require(emitted.len == 1)
+      check(emitted[0].name == "Updated")
+      check(emitted[0].unviewedMessagesCount == 0)
+      check(emitted[0].messagesCount == 2)
+      check(emitted[0].participantsCount == 1)
+      check(emitted[0].participantsPreviewIds == @["alice"])
+      check(emitted[0].lastMessage.text == "Latest")
+      check(emitted[0].lastMessage.timestamp == 100)
+
   test "thread summary snapshots preserve concurrent creations and unread updates":
     if THREADS_ENABLED:
       let events = createEventEmitter()

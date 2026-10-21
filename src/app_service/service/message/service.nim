@@ -277,11 +277,13 @@ QtObject:
       result = mergeThreadSummary(
         self.chatThreadsByParentIdByChat[chatId][thread.parentMessageId], thread)
 
-  proc replaceChatThreadsCache(self: Service, chatId: string, threads: seq[ThreadDto]) =
+  proc replaceChatThreadsCache(self: Service, chatId: string, threads: seq[ThreadDto]): seq[ThreadDto] =
     var threadsByParentId = initTable[string, ThreadDto]()
     for thread in threads:
       if thread.parentMessageId.len > 0:
-        threadsByParentId[thread.parentMessageId] = self.mergeCachedThread(chatId, thread)
+        let merged = self.mergeCachedThread(chatId, thread)
+        threadsByParentId[thread.parentMessageId] = merged
+        result.add(merged)
     self.chatThreadsByParentIdByChat[chatId] = threadsByParentId
 
   proc cacheThreads(self: Service, chatId: string, threads: seq[ThreadDto]) =
@@ -1025,7 +1027,6 @@ QtObject:
 
       # Updates received after the request began take precedence over its snapshot.
       if includeSummaries:
-        threads = @[]
         for chatId in chatIds:
           var merged = initTable[string, ThreadDto]()
           for thread in threadsByChat.getOrDefault(chatId):
@@ -1035,13 +1036,13 @@ QtObject:
           threadsByChat[chatId] = @[]
           for _, thread in merged:
             threadsByChat[chatId].add(thread)
-            threads.add(thread)
 
       # Settle every requested chat, including those with no threads, so they leave the
       # loading set without waiting for a per-chat success event.
+      threads = @[]
       for chatId in chatIds:
         let chatThreads = threadsByChat.getOrDefault(chatId, @[])
-        self.replaceChatThreadsCache(chatId, chatThreads)
+        threads.add(self.replaceChatThreadsCache(chatId, chatThreads))
         self.chatThreadListsLoadedChats.incl(chatId)
         self.chatThreadListsLoadingChats.excl(chatId)
         if includeSummaries:
