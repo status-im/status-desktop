@@ -20,9 +20,10 @@ when defined(QT_MODEL_SPY):
   import ../shared/qt_model_spy
 
 type
-  ## Contacts-cache fields a member row shows; default for anyone the cache
-  ## does not hold.
+  ## Contacts-cache fields a member row shows; default (not known) for anyone
+  ## the cache does not hold.
   RosterContact* = object
+    known*: bool
     localNickname*: string
     displayName*: string
     ensName*: string
@@ -77,7 +78,7 @@ const
     ModelRole.IsBlocked, ModelRole.ContactRequest]
 
 proc names*(contact: RosterContact): RosterNames =
-  RosterNames(localNickname: contact.localNickname, displayName: contact.displayName,
+  RosterNames(known: contact.known, localNickname: contact.localNickname, displayName: contact.displayName,
     ensName: contact.ensName, ensVerified: contact.ensVerified, alias: contact.alias)
 
 QtObject:
@@ -197,31 +198,26 @@ QtObject:
     else:
       discard
 
-    # a name the contacts cache holds is fresher than the entry's
     let contact = self.lookups.contact(pubKey)
     let isCurrentUser = self.hasMyKey and member.key == self.myKey
-    let displayName = if contact.displayName.len > 0: contact.displayName else: member.displayName
-    let fromContactEns = contact.ensName.len > 0
-    let ensName = if fromContactEns: contact.ensName else: member.ensName
-    let ensVerified = if fromContactEns: contact.ensVerified else: member.ensVerified
-    let alias = if contact.alias.len > 0: contact.alias else: member.alias
-    let effectiveEnsName = if ensVerified: ensName else: ""
+    let names = resolveNames(member, contact.names)
 
     case enumRole
     of ModelRole.DisplayName:
-      newQVariant(displayName)
+      newQVariant(names.displayName)
     of ModelRole.PreferredDisplayName:
-      newQVariant(preferredName(member, contact.names))
+      newQVariant(preferredName(names))
     of ModelRole.UsesDefaultName:
-      newQVariant(resolveUsesDefaultName(contact.localNickname, effectiveEnsName, displayName))
+      newQVariant(resolveUsesDefaultName(names.localNickname,
+        (if names.ensVerified: names.ensName else: ""), names.displayName))
     of ModelRole.EnsName:
-      newQVariant(ensName)
+      newQVariant(names.ensName)
     of ModelRole.IsEnsVerified:
-      newQVariant(ensVerified)
+      newQVariant(names.ensVerified)
     of ModelRole.LocalNickname:
-      newQVariant(contact.localNickname)
+      newQVariant(names.localNickname)
     of ModelRole.Alias:
-      newQVariant(alias)
+      newQVariant(names.alias)
     of ModelRole.Icon:
       if contact.icon.len > 0 or self.lookups.contactImageUrl.isNil:
         newQVariant(contact.icon)

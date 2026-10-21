@@ -176,6 +176,7 @@ proc rosterContact(self: Module, pubKey: string): RosterContact =
   if pubKey == singletonInstance.userProfile.getPubKey():
     let ensName = singletonInstance.userProfile.getPreferredName()
     return RosterContact(
+      known: true,
       displayName: singletonInstance.userProfile.getDisplayName(),
       ensName: ensName,
       ensVerified: ensName.len > 0,
@@ -186,6 +187,7 @@ proc rosterContact(self: Module, pubKey: string): RosterContact =
   if details.isNil:
     return
   RosterContact(
+    known: true,
     localNickname: details.dto.localNickname,
     displayName: details.dto.displayName,
     ensName: details.dto.name,
