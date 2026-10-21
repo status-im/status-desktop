@@ -509,7 +509,7 @@ StackLayout {
         isPendingOwnershipRequest: root.isPendingOwnershipRequest
         sectionItemModel: root.sectionItemModel
         communitySettingsDisabled: root.communitySettingsDisabled
-        settingsShown: root.currentIndex === 1
+        settingsShown: root.currentIndex === 1 && root.visible
         getEmojiHashFn: pubKey => root.utilsStore?.getEmojiHash(pubKey) ?? []
         leftPanelWidthOverride: root.leftPanelWidthOverride
 
