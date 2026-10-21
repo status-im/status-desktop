@@ -98,6 +98,10 @@ Item {
             function getChatId() { return moduleMock.mockChatId }
             function updateKeepUnread(flag) {}
 
+            // the messages this module was asked to stop editing
+            property var editOffCalls: []
+            function setEditModeOff(messageId) { editOffCalls.push(messageId) }
+
             // Like the backend: a page lands at the model's end, then the
             // answer; nothing left answers at once. The chat identifier (the
             // welcome banner) comes last, with the page that reaches the
@@ -243,6 +247,8 @@ Item {
         function init() {
             fill(messagesA, "a", 200)
             fill(messagesB, "b", 200)
+            moduleA.messagesModule.editOffCalls = []
+            moduleB.messagesModule.editOffCalls = []
             moduleA.historyLeft = 0
             moduleA.fetchCalls = 0
             moduleA.answerLater = false
@@ -358,6 +364,64 @@ Item {
             tryVerify(() => !lv.busy && lv.rowForKey("a-17") >= 0, 5000,
                       "and is shown, under what was the oldest message")
             verify(!lv.moreAvailableTop, "with no band above the chat's first message")
+        }
+
+        // ---- reading ----------------------------------------------------------
+
+        // Scrolled a little above the newest message - closer than half a
+        // window - and away to another chat; unread messages arrive. Coming
+        // back lands on the recorded position, above them: the chat must stay
+        // unread until the reader gets to the bottom.
+        function test_comingBackAboveUnreadMessagesDoesNotMarkThemRead() {
+            prewarmedPool()
+            const view = openView()
+            const lv = view.chatLogView
+
+            lv.contentY = Math.max(lv.originY, lv.contentHeight - lv.height * 1.5)
+            waitForRendering(lv)
+            verify(!lv.atBottom, "reading above the newest message")
+
+            view.messageStore = storeB
+            view.chatContentModule = moduleB
+            settle(view)
+
+            const marked = moduleA.markAllMessagesReadCalls
+            moduleA.chatDetails.hasUnreadMessages = true
+
+            // in ChatColumnView's order: the module is bound before the store
+            view.chatContentModule = moduleA
+            view.messageStore = storeA
+            settle(view)
+            waitForRendering(lv)
+
+            verify(!lv.atBottom, "back above the newest message")
+            compare(moduleA.markAllMessagesReadCalls, marked,
+                    "not marked read: the unread messages are below the reader")
+        }
+
+        // A message being edited leaves the window when its chat is left, and
+        // the edit ends then, as it did when the delegate was destroyed. The
+        // message belongs to the chat being left, so that chat's store is the
+        // one to tell - the view is already bound to the next chat's by then.
+        function test_leavingAChatWhileEditingEndsTheEditInThatChat() {
+            prewarmedPool()
+            const view = openView()
+            const lv = view.chatLogView
+
+            const key = lv.keyAtRow(0)
+            messagesA.setProperty(0, "editMode", true)
+            tryVerify(() => rowItems(view).some(r => r.content.messageId === key
+                                                      && r.content.editModeOn),
+                      5000, "the newest message is being edited")
+
+            view.chatContentModule = moduleB
+            view.messageStore = storeB
+            settle(view)
+
+            compare(moduleB.messagesModule.editOffCalls, [],
+                    "chat b, which does not hold the message, was not told")
+            compare(moduleA.messagesModule.editOffCalls, [key],
+                    "chat a, where the message is, ends the edit")
         }
 
         // ---- rows from the pool ----------------------------------------------

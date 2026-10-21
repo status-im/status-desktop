@@ -49,7 +49,10 @@ QtObject {
     function warnAndDeleteMessage(messageId) {}
     function setEditModeOn(messageId) {}
     function setEditModeOnLastMessage(pubkey) {}
-    function setEditModeOff(messageId) {}
+    function setEditModeOff(messageId) {
+        if (messageModule && messageModule.setEditModeOff)
+            messageModule.setEditModeOff(messageId)
+    }
     function editMessage(messageId, updatedMsg) {}
     function fillGaps(messageId) {}
     function leaveChat() {}

@@ -321,6 +321,43 @@ private slots:
         QCOMPARE(target.totalWrites(), 0);
     }
 
+    // A proxy's roleNames() are its source's. Swapping the source is a reset
+    // with a new role numbering, so a mapping taken at attach time writes the
+    // old numbers' data - nothing, or another role's value - once rebound.
+    void roleMappingFollowsAModelReset()
+    {
+        auto first = makeModel();
+
+        auto second = std::make_unique<QStandardItemModel>();
+        second->setItemRoleNames({{Qt::UserRole + 7, "name"}, {Qt::UserRole + 8, "age"}});
+        auto* row = new QStandardItem;
+        row->setData(QStringLiteral("Dave"), Qt::UserRole + 7);
+        row->setData(60, Qt::UserRole + 8);
+        second->appendRow(row);
+
+        QSortFilterProxyModel proxy;
+        proxy.setSourceModel(first.get());
+
+        BindTarget target;
+        RowBinder binder;
+        binder.setTarget(&target);
+        binder.bind(&proxy, 1);
+        QCOMPARE(target.name(), QStringLiteral("Bob"));
+
+        proxy.setSourceModel(second.get());
+        QVERIFY(!binder.bound());
+
+        // the same model object, rebound after its reset
+        binder.bind(&proxy, 0);
+        QVERIFY(binder.bound());
+        QCOMPARE(target.name(), QStringLiteral("Dave"));
+        QCOMPARE(target.age(), 60);
+
+        target.resetWrites();
+        second->item(0)->setData(61, Qt::UserRole + 8);
+        QCOMPARE(target.age(), 61);
+    }
+
     void modelDestructionDetaches()
     {
         auto model = makeModel();

@@ -3,6 +3,7 @@ import QtTest
 
 import AppLayouts.ActivityCenter.controls
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
 Item {
     id: root
@@ -102,6 +103,33 @@ Item {
             compare(controlUnderTest.contentText, longText)
             // But the rendered text should be truncated (the internal StatusBaseText
             // uses Utils.elideText when plainTextLength > contentMaxChars)
+        }
+
+        // the block's text item: the one child rendering rich text
+        function findText(item) {
+            if ("textFormat" in item)
+                return item
+            for (const child of item.children ?? []) {
+                const found = findText(child)
+                if (found)
+                    return found
+            }
+            return null
+        }
+
+        // the HTML the adaptors hand over carries a mention as <a href="0x04…(130 hex)">:
+        // trimming to contentMaxChars must drop trailing words, not the text itself
+        function test_longContentWithMentionKeepsItsVisibleText() {
+            const key = "0x04" + "a".repeat(128)
+            controlUnderTest = createTemporaryObject(componentUnderTest, root, {
+                contentText: `hey <a href="${key}" class="mention">@Alice</a> ` + "word ".repeat(40)
+            })
+            verify(!!controlUnderTest)
+            waitForRendering(controlUnderTest)
+
+            const shown = StringUtils.plainText(findText(controlUnderTest.contentItem).text)
+            verify(shown.includes("@Alice"), `shown: "${shown}"`)
+            verify(shown.includes("word"), `shown: "${shown}"`)
         }
 
         function test_preImageProperties() {
