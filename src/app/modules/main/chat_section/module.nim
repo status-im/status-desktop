@@ -623,7 +623,7 @@ method onCommunityRosterLoaded*(self: Module, snapshot: sink RosterSnapshot, del
     return
   if not self.rosterHolders.isNil:
     self.rosterHolders.onLoadSucceeded()
-  self.roster.fill(snapshot)
+  self.roster.load(snapshot)
   for delta in deltas:
     self.roster.applyDelta(delta)
   debug "community roster loaded", sectionId = self.controller.getMySectionId(),
