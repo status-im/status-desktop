@@ -1884,10 +1884,11 @@ QtObject:
 
       let updatedCommunity = rpcResponseObj["response"]["result"]["communities"][0].toCommunityDto
       let requestToJoin = rpcResponseObj["response"]["result"]["requestsToJoinCommunity"][0].toCommunityMembershipRequestDto
-      self.handleCommunityRosterDeltas(parseRosterDeltas(rpcResponseObj["response"]["result"]{"communityChanges"}))
 
       let membershipRequestUpdated = self.updateMembershipRequestToNewState(communityId, requestId, updatedCommunity,
         RequestToJoinType(requestToJoin.state))
+      # Roster deltas drop accepted requests, so the request is updated first
+      self.handleCommunityRosterDeltas(parseRosterDeltas(rpcResponseObj["response"]["result"]{"communityChanges"}))
 
       if (userKey == ""):
         error "Did not find pubkey in the pending request"
