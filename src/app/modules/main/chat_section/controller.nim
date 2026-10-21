@@ -21,6 +21,8 @@ import ../../../core/eventemitter
 import ../../../core/unique_event_emitter
 import ../../../global/app_signals
 
+import constants
+
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
@@ -446,7 +448,7 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_LOGGEDIN_USER_NAME_CHANGED) do(e: Args):
       self.delegate.onLoggedInUserNameChanged()
 
-    when defined(android) or defined(ios):
+    when constants.IS_MOBILE:
       self.events.on(SIGNAL_APP_BACKGROUNDED) do(e: Args):
         self.delegate.onAppBackgrounded()
 
