@@ -18,7 +18,7 @@ from gui.screens.messages import MessagesScreen
 import configs
 from constants import RandomUser, UserAccount
 from gui.main_window import MainWindow
-from scripts.utils.generators import random_text_message
+from scripts.utils.generators import random_picker_emojis, random_text_message
 from scripts.utils.parsers import remove_tags
 
 
@@ -30,7 +30,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
     main_window = MainWindow()
 
     messages_screen = MessagesScreen()
-    emoji = 'sunglasses'
+    chat_emoji = random_picker_emojis()[0]
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
 
 
@@ -152,11 +152,11 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
                 'Message text is not found in the last message'
 
         with step(f'User {user_two.name} send emoji to {user_one.name}'):
-            messages_screen.group_chat.send_emoji_to_chat(emoji)
+            messages_screen.group_chat.send_emoji_to_chat(chat_emoji.keyword)
             assert driver.waitFor(
                 lambda: (
                     len(messages_screen.chat.messages(0)) > 0 and
-                    '😎' in str(messages_screen.chat.messages(0)[0].text)
+                    chat_emoji.glyph in str(messages_screen.chat.messages(0)[0].text)
                 ),
                 timeout
             ), f"Emoji not found in message text"
@@ -183,7 +183,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             assert driver.waitFor(
                 lambda: (
                     len(messages_screen.chat.messages(1)) > 0 and
-                    '😎' in str(messages_screen.chat.messages(1)[0].text)
+                    chat_emoji.glyph in str(messages_screen.chat.messages(1)[0].text)
                 ),
                 timeout
             ), f"Emoji not found in message text"

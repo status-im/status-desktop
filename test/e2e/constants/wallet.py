@@ -4,7 +4,7 @@ from enum import Enum, IntEnum
 
 from constants.networks import WalletNetworkNaming
 from scripts.utils.generators import (
-    random_emoji_with_unicode,
+    random_picker_emojis,
     random_wallet_acc_keypair_name,
     random_wallet_account_color,
 )
@@ -22,7 +22,7 @@ class RandomWalletAccount(WalletAccount):
         super().__init__(
             name=random_wallet_acc_keypair_name(),
             color=random_wallet_account_color(),
-            emoji=random_emoji_with_unicode()
+            emoji=random_picker_emojis()[0].keyword
         )
 
 

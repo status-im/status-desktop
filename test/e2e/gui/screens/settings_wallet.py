@@ -9,7 +9,7 @@ from constants.wallet import (
     WalletAccountListItem,
 )
 from driver import objects_access
-from driver.objects_access import walk_children
+from driver.objects_access import emoji_text
 from gui.components.context_menu import ContextMenu
 from gui.components.wallet.remove_saved_address_popup import RemoveSavedAddressPopup
 from gui.components.wallet.add_saved_address_popup import AddEditSavedAddressPopup
@@ -208,10 +208,9 @@ class AccountDetailsView(QObject):
         color_name = str(getattr(self._wallet_account_title.object, 'color')['name'])
         return color_name
 
-    @allure.step('Get account emoji id')
-    def get_account_emoji_id(self):
-        emoji_id = str(getattr(self._wallet_account_emoji.object, 'emojiId'))
-        return emoji_id
+    @allure.step('Get account emoji')
+    def get_account_emoji(self):
+        return emoji_text(self._wallet_account_emoji.object)
 
     @allure.step('Get account origin value')
     def get_account_origin_value(self):
@@ -341,7 +340,7 @@ class EditAccountOrderSettings(WalletSettingsView):
             for child in objects_access.walk_children(account_item):
                 if getattr(child, 'objectName', '') == 'identicon':
                     icon_color = str(child.color.name)
-                    icon_emoji = str(child.emoji)
+                    icon_emoji = emoji_text(child)
                     break
             _accounts.append(WalletAccountListItem(name, icon_color, icon_emoji, element))
 

@@ -46,9 +46,7 @@ class MessageContextMenuPopup(QObject):
         # Find the emoji element
         emoji_obj = driver.waitForObject(temp_real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
-        # The reaction carries the id the backend knows it by; it is rendered from the
-        # emoji font, so there is no image path to parse
-        emoji_id = str(getattr(emoji_obj, 'emojiId', ''))
+        emoji_id = str(getattr(emoji_obj, 'emojiId', '')).strip()
         if emoji_id:
             return emoji_id
 

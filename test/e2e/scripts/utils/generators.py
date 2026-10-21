@@ -1,6 +1,9 @@
 import json
 import random
 import string
+from dataclasses import dataclass
+from functools import lru_cache
+
 from zpywallet import HDWallet
 from zpywallet.network import EthereumMainNet
 from eth_account.hdaccount import Language, generate_mnemonic, Mnemonic
@@ -106,11 +109,25 @@ def random_text_message():
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 141))
 
 
-def random_emoji_with_unicode() -> tuple:
-    with open(configs.testpath.TEST_FILES / 'emojis_unicodes_list.json', "r", encoding="utf-8") as file:
-        data = json.load(file)
-        random_item = random.choice(data)
-        return random_item['shortname'], random_item['unicode']
+@dataclass(frozen=True)
+class PickerEmoji:
+    keyword: str
+    glyph: str
+
+
+@lru_cache(maxsize=1)
+def _pickable_emojis() -> tuple[PickerEmoji, ...]:
+    with open(configs.testpath.TEST_FILES / 'emojis_unicodes_list.json', encoding='utf-8') as file:
+        catalog = json.load(file)
+    return tuple(
+        PickerEmoji(keyword=item['shortname'].strip(':'), glyph=item['emoji'].strip())
+        for item in catalog
+        if '_tone' not in item['shortname'] and '-' not in item['unicode']
+    )
+
+
+def random_picker_emojis(count: int = 1) -> list[PickerEmoji]:
+    return random.sample(_pickable_emojis(), count)
 
 
 def random_wallet_account_color():

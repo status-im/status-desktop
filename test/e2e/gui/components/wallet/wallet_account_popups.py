@@ -1,6 +1,7 @@
 import squish
 
 from constants.wallet import *
+from driver.objects_access import emoji_text
 from gui.screens.settings_wallet import *
 from gui.components.emoji_popup import EmojiPopup
 from gui.components.authenticate_popup import AuthenticatePopup
@@ -96,9 +97,9 @@ class AccountPopup(QObject):
         EmojiPopup().wait_until_appears(timeout_msec=10000).select(value.strip(':'))
         return self
 
-    @allure.step('Get emoji id from account header')
+    @allure.step('Get emoji from account header')
     def get_emoji_from_account_title(self):
-        return str(getattr(self._emoji_id_in_title.object, 'emojiId'))
+        return emoji_text(self._emoji_id_in_title.object)
 
     @allure.step('Set eth address for account added from context menu')
     def set_eth_address(self, value: str):
