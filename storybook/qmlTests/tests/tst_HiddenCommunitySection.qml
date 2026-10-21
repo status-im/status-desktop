@@ -35,6 +35,7 @@ Item {
             mock.channelsPerCategory = 2
             mock.messagesPerChannel = 5
             mock.install()
+            harness.communitiesStore.rosterHolds = ({})
         }
 
         function cleanup() {
@@ -49,6 +50,42 @@ Item {
             verify(!!loader)
             tryVerify(() => loader.status === Loader.Ready, 120000)
             return loader
+        }
+
+        function rosterHolds() {
+            return harness.communitiesStore.rosterHolds[mock.communityId] ?? 0
+        }
+
+        function test_hiddenMembersPanelReleasesTheRoster() {
+            const loader = loadSection()
+            const view = harness.findChildByTypePrefix(loader, "ChatView")
+            verify(!!view)
+            view.showUsersList = true
+            tryVerify(() => rosterHolds() === 1, 20000,
+                      "the shown members panel must hold the roster")
+
+            harness.visible = false
+            compare(rosterHolds(), 0, "a hidden section must release the roster")
+
+            harness.visible = true
+            compare(rosterHolds(), 1, "showing the section again must take it back")
+        }
+
+        function test_hiddenFocusedInputReleasesTheRoster() {
+            const loader = loadSection()
+            const view = harness.findChildByTypePrefix(loader, "ChatView")
+            verify(!!view)
+            view.showUsersList = false
+            const column = harness.findChildByTypePrefix(loader, "ChatColumnView")
+            verify(!!column)
+            const input = harness.findChildByTypePrefix(column, "StatusChatInput")
+            verify(!!input)
+            input.textInput.forceActiveFocus()
+            tryVerify(() => rosterHolds() === 1, 5000,
+                      "the focused input must hold the roster")
+
+            harness.visible = false
+            compare(rosterHolds(), 0, "a hidden section must release the roster")
         }
 
         function test_hiddenSettingsAreNotShown() {

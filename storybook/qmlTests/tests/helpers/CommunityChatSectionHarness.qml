@@ -27,6 +27,7 @@ Item {
 
     readonly property alias mock: mock
     readonly property alias loader: harnessLoader
+    readonly property alias communitiesStore: communitiesStoreMock
 
     function findChildByTypePrefix(item, prefix) {
         if (!item)
