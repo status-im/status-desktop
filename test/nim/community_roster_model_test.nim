@@ -78,17 +78,15 @@ suite "community roster model":
   teardown:
     spy.disable()
 
-  test "the snapshot goes in with a single insert":
+  test "the snapshot goes in with one reset":
     var snap = snapshot(10, member(keyA, "alice"), member(keyB, alias = "Brave Cat"), member(keyC, "me"))
     snap.channels["gated"] = @[ChannelMember(key: raw(keyA), role: ChannelRole.Viewer)]
     model.fill(snap)
     check model.rowCount() == 3
     check model.getCount() == 3
     check model.isLoaded()
-    check spy.countInserts() == 1
-    check spy.getInserts()[0].first == 0
-    check spy.getInserts()[0].last == 2
-    check spy.countResets() == 0
+    check spy.countResets() == 1
+    check spy.countInserts() == 0
     check model.hasMember(keyB)
     check not model.hasMember("0x04ff")
     check model.isGatedChannel("gated")
@@ -335,13 +333,14 @@ suite "community roster canonical order":
         return false
     true
 
-  test "the snapshot fills online-first, then case-folded name, with one insert":
+  test "the snapshot fills online-first, then case-folded name, with one reset":
     fake.statuses[keyB] = OnlineStatus.Online
     model.fill(snapshot(10, member(keyA, "charlie"), member(keyB, "Delta"), member(keyC, "bob"),
       member(keyD, "alice")))
     check model.orderedKeys == @[keyB, keyD, keyC, keyA]
     check model.indexConsistent
-    check spy.countInserts() == 1
+    check spy.countResets() == 1
+    check spy.countInserts() == 0
     check spy.countMoves() == 0
 
   test "a snapshot sorted on the worker goes in as it is":
@@ -442,9 +441,9 @@ suite "community roster canonical order":
     model.fill(snap)
     check model.orderedKeys == @[keyC, keyA, keyB]
     check model.indexConsistent
-    check spy.countInserts() == 1
+    check spy.countResets() == 1
+    check spy.countInserts() == 0
     check spy.countMoves() == 1
-    check spy.countResets() == 0
 
   test "a nickname set during a reload moves a kept row right after the fill":
     model.fill(snapshot(10, member(keyA, "alice"), member(keyB, "bob"), member(keyC, "carol")))
