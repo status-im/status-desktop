@@ -43,6 +43,20 @@ public:
                                        const QVariantMap& mentions = {},
                                        const QFont& font = {}) const;
 
+    // Renders `text` as a Text.StyledText fragment: line breaks are kept (unlike
+    // singleLineHtml), but the markup stays within the tag subset StyledText supports, which
+    // has no stylesheet. Colours are therefore inlined and `colors` supplies them, as a map of
+    // "code", "quote", "mention" and "link" to a color (a missing or empty entry leaves that
+    // run in the Text's own colour); a code span/block and a quote block are only coloured
+    // (quote lines "> "-prefixed) and a mention is a coloured link, not a pill. Mentions are
+    // resolved from `mentions` as in toBlocks. With `enlargeEmoji` true, emoji runs are grown
+    // by StyledText's single size step (1.2x, about the line height of our text font).
+    // See Markdown::toStyledText.
+    Q_INVOKABLE QString styledText(const QString& text,
+                                   const QVariantMap& mentions = {},
+                                   const QVariantMap& colors = {},
+                                   bool enlargeEmoji = false) const;
+
     // Returns the plain text of `text` (formatting removed, mentions resolved to display names,
     // code content inline, line breaks preserved) — e.g. for Accessible.name. Mentions are
     // resolved from `mentions` as in toBlocks. See Markdown::toPlainText.

@@ -34,6 +34,30 @@ QString toSingleLineHtml(const Node& root,
                          const QHash<int, QPair<QString, QString>>& mentions = {},
                          int emojiPx = 0);
 
+// Colours baked into the markup by toStyledText. Text.StyledText has no stylesheet, so a
+// colour cannot be applied by a rule and has to be inlined as a <font color> wrapper.
+// An empty entry leaves that run in the Text's own colour (links then take Text.linkColor).
+// Values are anything QColor::fromString() accepts, e.g. "#4360df".
+struct StyledTextColors {
+    QString code;
+    QString quote;
+    QString mention;
+    QString link;
+};
+
+// Renders the document as a Text.StyledText fragment: line breaks are kept (as <br/>), so the
+// document keeps its shape, but the markup stays inside the tag subset StyledText understands
+// (<b>, <i>, <s>, <br>, <font color|size>, <a href>). That subset has no backgrounds and no
+// monospace family, so a code span/block and a quote block are only coloured (quote lines are
+// also "> "-prefixed) and a mention is a coloured link, not a pill. `colors` supplies those
+// colours; `mentions` resolves mention nodes as in toHtml. With `enlargeEmoji` true, emoji runs
+// are wrapped in <font size="+1">: StyledText's only size step (1.2x the base size, which is
+// about the line height of our text font), the equivalent of toHtml's `emojiPx`.
+QString toStyledText(const Node& root,
+                     const QHash<int, QPair<QString, QString>>& mentions = {},
+                     const StyledTextColors& colors = {},
+                     bool enlargeEmoji = false);
+
 // Renders the document as plain text (no HTML): formatting delimiters dropped, mentions as their
 // display name, inline/fenced code as raw content, line breaks preserved. Intended for
 // accessibility text and other non-visual consumers.

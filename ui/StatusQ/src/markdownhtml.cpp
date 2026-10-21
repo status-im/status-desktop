@@ -42,20 +42,17 @@ QString emojiFontSpan(QStringView emoji, int emojiPx)
     return QStringLiteral("<span style=\"font-size:%1px\">%2</span>").arg(emojiPx).arg(emoji);
 }
 
-// Renders each run of emoji in `s` (already HTML-escaped) wrapped in a font-size span, so the
-// rich-text view enlarges them ~to the line height. `emojiPx <= 0` leaves the string unchanged.
-// Safe on escaped text: entities and <br/> are ASCII, never in the emoji ranges.
-QString emojiWrap(const QString& s, int emojiPx)
+// Passes each maximal run of consecutive emoji clusters in `s` (already HTML-escaped) through
+// `wrapRun` and leaves everything else untouched. Safe on escaped text: entities and <br/> are
+// ASCII, never in the emoji ranges.
+template <typename WrapRun>
+QString wrapEmojiRuns(const QString& s, WrapRun wrapRun)
 {
-    if (emojiPx <= 0 || !Markdown::clusterHasEmoji(s))
-        return s;
-
     QString out;
     out.reserve(s.size());
     int runStart = -1; // start of the current maximal run of consecutive emoji clusters, or -1
     const auto flushRun = [&](int end) {
-        const QString run = s.mid(runStart, end - runStart);
-        out += emojiFontSpan(run, emojiPx);
+        out += wrapRun(s.mid(runStart, end - runStart));
         runStart = -1;
     };
     Markdown::forEachGraphemeCluster(s, [&](QStringView cluster, int start, int /*end*/) {
@@ -72,6 +69,18 @@ QString emojiWrap(const QString& s, int emojiPx)
     if (runStart >= 0)
         flushRun(s.size());
     return out;
+}
+
+// Renders each run of emoji in `s` wrapped in a font-size span, so the rich-text view enlarges
+// them ~to the line height. `emojiPx <= 0` leaves the string unchanged.
+QString emojiWrap(const QString& s, int emojiPx)
+{
+    if (emojiPx <= 0 || !Markdown::clusterHasEmoji(s))
+        return s;
+
+    return wrapEmojiRuns(s, [emojiPx](const QString& run) {
+        return emojiFontSpan(run, emojiPx);
+    });
 }
 
 // Concatenates the raw (escaped, newlines preserved) text of every Text descendant,
@@ -227,6 +236,142 @@ QString renderSingleLine(const Node& node,
     case NodeKind::Document:
     case NodeKind::Paragraph:
         return renderSingleLineChildren(node, mentions, emojiPx);
+    }
+    return {};
+}
+
+// ── Styled-text rendering ─────────────────────────────────────────────────────
+// Text.StyledText understands only a small tag subset and no stylesheet at all (no <span>,
+// no class, no CSS), so backgrounds and font families are out of reach: a code span and a
+// quote block can only be coloured, and a mention is a coloured link rather than a pill.
+// Line breaks are kept as <br/>, so the document keeps its shape (unlike renderSingleLine).
+
+// Wraps `content` in a <font color> element; an empty colour or content is left alone.
+QString fontColorElement(const QString& color, const QString& content)
+{
+    if (color.isEmpty() || content.isEmpty())
+        return content;
+    return QStringLiteral("<font color=\"%1\">%2</font>").arg(color, content);
+}
+
+// StyledText's only size step: 1.2x the base size, which is about the line height of our
+// text font (see the emojiPx spans renderNode emits for the rich-text path).
+QString emojiSizeElement(const QString& run)
+{
+    return QStringLiteral("<font size=\"+1\">%1</font>").arg(run);
+}
+
+// Inline text for StyledText: escaped, newlines as <br/>, emoji runs optionally enlarged.
+QString escapeStyled(QStringView s, bool enlargeEmoji)
+{
+    QString out = escape(s);
+    out.replace(QLatin1Char('\n'), "<br/>"_L1);
+    if (enlargeEmoji && Markdown::clusterHasEmoji(out))
+        out = wrapEmojiRuns(out, emojiSizeElement);
+    return out;
+}
+
+// Code content for StyledText: escaped, newlines as <br/> and every space after the first of
+// a run as &nbsp;, because StyledText collapses whitespace and code keeps its indentation.
+QString escapeStyledCode(const Node& node)
+{
+    QString out = collectCodeText(node);
+    out.replace(QLatin1Char('\n'), "<br/>"_L1);
+
+    QString spaced;
+    spaced.reserve(out.size());
+    bool inSpaceRun = false;
+    for (const QChar c : out) {
+        if (c == QLatin1Char(' ')) {
+            spaced += inSpaceRun ? "&nbsp;"_L1 : " "_L1;
+            inSpaceRun = true;
+        } else {
+            spaced += c;
+            inSpaceRun = false;
+        }
+    }
+    return spaced;
+}
+
+QString renderStyled(const Node& node, const QHash<int, QPair<QString, QString>>& mentions,
+                     const Markdown::StyledTextColors& colors, bool enlargeEmoji);
+
+QString renderStyledChildren(const Node& node,
+                             const QHash<int, QPair<QString, QString>>& mentions,
+                             const Markdown::StyledTextColors& colors, bool enlargeEmoji)
+{
+    QString out;
+    for (const Node& c : node.children)
+        out += renderStyled(c, mentions, colors, enlargeEmoji);
+    return out;
+}
+
+// Prefixes every line of an already rendered fragment with "> " (the lines are the <br/>
+// separated pieces this renderer itself emitted). A trailing empty line is left alone: the
+// newline that terminates the quote belongs to the block, and the text after it is not quoted.
+QString quotePrefixLines(const QString& html)
+{
+    QStringList lines = html.split("<br/>"_L1);
+    const int quoted = lines.constLast().isEmpty() ? lines.size() - 1 : lines.size();
+    for (int i = 0; i < quoted; ++i)
+        lines[i].prepend("&gt; "_L1);
+    return lines.join("<br/>"_L1);
+}
+
+QString renderStyled(const Node& node, const QHash<int, QPair<QString, QString>>& mentions,
+                     const Markdown::StyledTextColors& colors, bool enlargeEmoji)
+{
+    const auto children = [&] { return renderStyledChildren(node, mentions, colors, enlargeEmoji); };
+
+    switch (node.kind) {
+    case NodeKind::Delimiter:
+        return {};
+
+    case NodeKind::Text:
+        return escapeStyled(node.literal, enlargeEmoji);
+
+    case NodeKind::Strong:
+        return QStringLiteral("<b>%1</b>").arg(children());
+    case NodeKind::Emphasis:
+        return QStringLiteral("<i>%1</i>").arg(children());
+    case NodeKind::Strikethrough:
+        return QStringLiteral("<s>%1</s>").arg(children());
+
+    case NodeKind::CodeSpan:
+        return fontColorElement(colors.code, escapeStyledCode(node));
+
+    case NodeKind::CodeBlock: {
+        // The newlines around a fence are the parser's, not the code's (see renderPlain).
+        QString code = escapeStyledCode(node);
+        while (code.startsWith("<br/>"_L1)) code.remove(0, 5);
+        while (code.endsWith("<br/>"_L1))   code.chop(5);
+        return fontColorElement(colors.code, code);
+    }
+
+    case NodeKind::QuoteBlock:
+        return fontColorElement(colors.quote, quotePrefixLines(children()));
+
+    case NodeKind::Link:
+        return QStringLiteral("<a href=\"%1\">%2</a>")
+                .arg(escape(node.destination), fontColorElement(colors.link, children()));
+
+    case NodeKind::WalletLink:
+        return QStringLiteral("<a href=\"%1%2\">%3</a>")
+                .arg(kSendViaChatPrefix, escape(node.destination),
+                     fontColorElement(colors.link, children()));
+
+    case NodeKind::Mention: {
+        const auto it = mentions.constFind(static_cast<int>(node.start));
+        const QString name = it != mentions.cend() ? it->first  : "@mention"_L1;
+        const QString href = it != mentions.cend() ? it->second : QString();
+        // No pill: StyledText cannot paint a background, so the mention is only coloured.
+        return QStringLiteral("<a href=\"%1\">%2</a>")
+                .arg(escape(href), fontColorElement(colors.mention, escape(name)));
+    }
+
+    case NodeKind::Document:
+    case NodeKind::Paragraph:
+        return children();
     }
     return {};
 }
@@ -491,6 +636,12 @@ QString toSingleLineHtml(const Node& root, const QHash<int, QPair<QString, QStri
                          int emojiPx)
 {
     return renderSingleLine(root, mentions, emojiPx);
+}
+
+QString toStyledText(const Node& root, const QHash<int, QPair<QString, QString>>& mentions,
+                     const StyledTextColors& colors, bool enlargeEmoji)
+{
+    return renderStyled(root, mentions, colors, enlargeEmoji);
 }
 
 QString toPlainText(const Node& root, const QHash<int, QPair<QString, QString>>& mentions)

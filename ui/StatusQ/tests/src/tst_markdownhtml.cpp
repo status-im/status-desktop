@@ -1,3 +1,4 @@
+#include <QRegularExpression>
 #include <QTest>
 #include <QUrl>
 
@@ -180,6 +181,159 @@ private slots:
     {
         QCOMPARE(hs("pay alice.eth"),
                  "pay <a href=\"//send-via-personal-chat//alice.eth\">alice.eth</a>");
+    }
+
+    // ── toStyledText: Text.StyledText rendering ─────────────────────────────────
+
+    static const StyledTextColors& colors()
+    {
+        static const StyledTextColors c{"#111111", "#222222", "#333333", "#444444"};
+        return c;
+    }
+
+    static QString st(const QString& text,
+                      const QHash<int, QPair<QString, QString>>& mentions = {},
+                      const StyledTextColors& styleColors = {},
+                      bool enlargeEmoji = false,
+                      const Options& opts = {})
+    {
+        return toStyledText(parse(text, opts), mentions, styleColors, enlargeEmoji);
+    }
+
+    void styled_plainText() { QCOMPARE(st("just text"), "just text"); }
+
+    void styled_htmlEscaped() { QCOMPARE(st("a<b>&c"), "a&lt;b&gt;&amp;c"); }
+
+    // Newlines are kept as <br/> (the whole point over toSingleLineHtml).
+    void styled_newlineBecomesBreak()
+    {
+        QCOMPARE(st("a\nb"), "a<br/>b");
+        QCOMPARE(st("a\n\nb"), "a<br/><br/>b");
+    }
+
+    // Inline formatting uses the tags StyledText supports.
+    void styled_inlineFormatting()
+    {
+        QCOMPARE(st("**b** *i* ~~s~~"), "<b>b</b> <i>i</i> <s>s</s>");
+        QCOMPARE(st("**a *b* c**"), "<b>a <i>b</i> c</b>");
+    }
+
+    void styled_delimitersDropped()
+    {
+        const QString out = st("**a** *b* ~~c~~ `d`");
+        QVERIFY(!out.contains('*'));
+        QVERIFY(!out.contains('~'));
+        QVERIFY(!out.contains('`'));
+    }
+
+    // No markup StyledText cannot parse: no <span>, no class, no CSS, no <code>/<pre>.
+    void styled_onlySupportedMarkup_data()
+    {
+        QTest::addColumn<QString>("text");
+        QTest::newRow("formatting") << "**b** *i* ~~s~~ `code`";
+        QTest::newRow("code fence") << "```\nx = 1\n```";
+        QTest::newRow("quote") << "> quoted **text**\n> second line";
+        QTest::newRow("link") << "see https://status.im and alice.eth";
+        QTest::newRow("multiline") << "a\nb\n\nc";
+    }
+
+    void styled_onlySupportedMarkup()
+    {
+        QFETCH(QString, text);
+        const QString out = st(text, {}, colors(), /*enlargeEmoji*/ true);
+        QVERIFY(!out.contains("<span"));
+        QVERIFY(!out.contains("class="));
+        QVERIFY(!out.contains("style="));
+        QVERIFY(!out.contains("<code"));
+        QVERIFY(!out.contains("<pre"));
+
+        // Every tag that is emitted is one QQuickStyledText parses.
+        static const QRegularExpression tagRe(QStringLiteral("</?([a-zA-Z0-9]+)"));
+        auto it = tagRe.globalMatch(out);
+        while (it.hasNext()) {
+            const QString tag = it.next().captured(1).toLower();
+            QVERIFY2(QStringList({"b", "i", "s", "br", "font", "a"}).contains(tag),
+                     qPrintable("unsupported tag: " + tag));
+        }
+    }
+
+    // A code span is only coloured — StyledText can paint neither a background nor a family.
+    void styled_codeSpan()
+    {
+        QCOMPARE(st("`hi`"), "hi");
+        QCOMPARE(st("`hi`", {}, colors()), "<font color=\"#111111\">hi</font>");
+    }
+
+    // Code keeps its line breaks, and its indentation survives whitespace collapsing.
+    void styled_codeBlock()
+    {
+        QCOMPARE(st("```hi```"), "hi");
+        QCOMPARE(st("```\nx = 1\n```"), "x = 1");
+        QCOMPARE(st("```\na\nb\n```"), "a<br/>b");
+        QCOMPARE(st("`  indented`"), " &nbsp;indented");
+        QCOMPARE(st("```\nif x:\n    return\n```"),
+                 "if x:<br/> &nbsp;&nbsp;&nbsp;return");
+    }
+
+    // A quote block is "> "-prefixed per line and coloured; formatting survives inside.
+    void styled_quoteBlock()
+    {
+        QCOMPARE(st("> **bold** text"), "&gt; <b>bold</b> text");
+        QCOMPARE(st("> a\n> b"), "&gt; a<br/>&gt; b");
+        QCOMPARE(st("> hi", {}, colors()), "<font color=\"#222222\">&gt; hi</font>");
+    }
+
+    // The newline ending a quote belongs to the block: the text after it is not quoted, so
+    // that last (empty) line keeps no "> " prefix.
+    void styled_quoteFollowedByText()
+    {
+        QCOMPARE(st("> quoted\nafter"), "&gt; quoted<br/>after");
+        QCOMPARE(st("before\n> quoted\nafter"), "before<br/>&gt; quoted<br/>after");
+    }
+
+    // A blank line inside a quote stays quoted ("> " is the marker, a bare ">" is text).
+    void styled_quoteWithBlankLine()
+    {
+        QCOMPARE(st("> a\n> \n> b"), "&gt; a<br/>&gt; <br/>&gt; b");
+        QCOMPARE(st("> a\n>\n> b"), "&gt; a<br/>&gt;<br/>&gt; b");
+    }
+
+    // Links and wallet links keep the hrefs the rich renderers use.
+    void styled_links()
+    {
+        QCOMPARE(st("see https://status.im"),
+                 "see <a href=\"https://status.im\">https://status.im</a>");
+        QCOMPARE(st("[google](https://google.com)"),
+                 "<a href=\"https://google.com\">google</a>");
+        QCOMPARE(st("pay alice.eth"),
+                 "pay <a href=\"//send-via-personal-chat//alice.eth\">alice.eth</a>");
+        QCOMPARE(st("see https://status.im", {}, colors()),
+                 "see <a href=\"https://status.im\">"
+                 "<font color=\"#444444\">https://status.im</font></a>");
+    }
+
+    // A mention is a coloured link, not a pill (no background in StyledText).
+    void styled_mention()
+    {
+        const QString text = "hi " + QString(QChar(0xFFFC));
+        const QHash<int, QPair<QString, QString>> m{ {3, {"@alice", "0xabc"}} };
+        QCOMPARE(st(text, m), "hi <a href=\"0xabc\">@alice</a>");
+        QCOMPARE(st(text, m, colors()),
+                 "hi <a href=\"0xabc\"><font color=\"#333333\">@alice</font></a>");
+        QCOMPARE(st(text), "hi <a href=\"\">@mention</a>"); // unresolved mention
+    }
+
+    // Emoji runs are grown only when asked, and then with StyledText's single size step.
+    void styled_emojiEnlargement()
+    {
+        const QString grin = QString::fromUcs4(U"\U0001F600", 1);
+        const QString text = "hi " + grin + grin + " there " + grin;
+        QCOMPARE(st(text), text);
+        QCOMPARE(st(text, {}, {}, /*enlargeEmoji*/ true),
+                 "hi <font size=\"+1\">" + grin + grin + "</font> there "
+                 + "<font size=\"+1\">" + grin + "</font>");
+        // Text without emoji is untouched either way.
+        QCOMPARE(st("plain **text**", {}, {}, true), st("plain **text**"));
     }
 
     // ── toPlainText: plain-text projection (accessibility) ──────────────────────
