@@ -201,13 +201,13 @@ Item {
     RosterHolder {
         communitiesStore: root.communitiesStore
         communityId: d.communityId
-        active: rightPanelLoader.active
+        active: rightPanelLoader.active && root.visible
     }
 
     RosterHolder {
         communitiesStore: root.communitiesStore
         communityId: d.communityId
-        active: centerPanelLoader.item?.chatInputFocused ?? false
+        active: (centerPanelLoader.item?.chatInputFocused ?? false) && root.visible
     }
 
     QtObject {
