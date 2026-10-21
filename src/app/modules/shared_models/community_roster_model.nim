@@ -401,9 +401,10 @@ QtObject:
     self.countChanged()
 
   proc fill*(self: CommunityRosterModel, snapshot: sink RosterSnapshot) =
-    ## Loads the roster with one insert, or brings a loaded one to a reloaded
-    ## snapshot with per-row removes, moves and inserts (no reset). A snapshot
-    ## the load worker did not sort is sorted here.
+    ## Loads the roster with one insert, or replaces a loaded one with a model
+    ## reset (a reload after a permission change: rare, so the view's scroll
+    ## position is not kept). A snapshot the load worker did not sort is
+    ## sorted here; a repeated member keeps its first entry.
     if snapshot.sortKeys.len != snapshot.members.len:
       snapshot.sortKeys.setLen(0)
       for member in snapshot.members:
@@ -422,19 +423,16 @@ QtObject:
       snapshot.members = move(members)
       snapshot.sortKeys = move(keys)
 
-    var firstIndex = initTable[RawPubKey, int](snapshot.members.len)
-    for i, member in snapshot.members:
-      discard firstIndex.hasKeyOrPut(member.key, i)
+    var members = newSeqOfCap[RosterMember](snapshot.members.len)
+    var keys = newSeqOfCap[RosterSortKey](snapshot.members.len)
+    var rows = initTable[RawPubKey, int](snapshot.members.len)
+    for i in 0 ..< snapshot.members.len:
+      if rows.hasKeyOrPut(snapshot.members[i].key, members.len):
+        continue
+      members.add move(snapshot.members[i])
+      keys.add move(snapshot.sortKeys[i])
 
     if self.members.len == 0:
-      var members = newSeqOfCap[RosterMember](snapshot.members.len)
-      var keys = newSeqOfCap[RosterSortKey](snapshot.members.len)
-      for i in 0 ..< snapshot.members.len:
-        if firstIndex[snapshot.members[i].key] != i:
-          continue
-        self.rows[snapshot.members[i].key] = members.len
-        members.add move(snapshot.members[i])
-        keys.add move(snapshot.sortKeys[i])
       if members.len > 0:
         let parentIndex = newQModelIndex()
         defer: parentIndex.delete
@@ -443,42 +441,28 @@ QtObject:
         self.beginInsertRows(parentIndex, 0, members.len - 1)
         self.members = move(members)
         self.sortKeys = move(keys)
+        self.rows = move(rows)
         self.endInsertRows()
         when defined(QT_MODEL_SPY):
           recordEndInsertRows()
         self.countChanged()
     else:
-      var row = self.members.len - 1
-      while row >= 0:
-        # a copy: remove() shifts the row the key would alias
-        let key = self.members[row].key
-        if not firstIndex.hasKey(key):
-          self.remove(key)
-        dec row
-      # each kept row moves to its new place while the others stay sorted
-      var newcomers: seq[int]
-      for i in 0 ..< snapshot.members.len:
-        if firstIndex[snapshot.members[i].key] != i:
-          continue
-        let existing = self.rows.getOrDefault(snapshot.members[i].key, -1)
-        if existing < 0:
-          newcomers.add i
-          continue
-        self.members[existing] = move(snapshot.members[i])
-        if self.sortKeys[existing] != snapshot.sortKeys[i]:
-          self.sortKeys[existing] = move(snapshot.sortKeys[i])
-          self.reposition(existing)
-      if self.members.len > 0:
-        when defined(QT_MODEL_SPY):
-          recordDataChanged(0, self.members.len - 1, @[])
-        let first = self.createIndex(0, 0, nil)
-        let last = self.createIndex(self.members.len - 1, 0, nil)
-        defer:
-          first.delete
-          last.delete
-        self.dataChanged(first, last)
-      for i in newcomers:
-        self.insertSorted(move(snapshot.members[i]), move(snapshot.sortKeys[i]))
+      let oldCount = self.members.len
+      when defined(QT_MODEL_SPY):
+        recordBeginResetModel()
+      self.beginResetModel()
+      for key in self.rows.keys:
+        if not rows.hasKey(key):
+          self.membershipStates.del(key)
+          self.airdropAddresses.del(key)
+      self.members = move(members)
+      self.sortKeys = move(keys)
+      self.rows = move(rows)
+      self.endResetModel()
+      when defined(QT_MODEL_SPY):
+        recordEndResetModel()
+      if self.members.len != oldCount:
+        self.countChanged()
 
     var changedChannels: seq[string]
     for chatId in self.channels.keys:
