@@ -23,7 +23,7 @@ def test_plus_button_add_watched_address(main_screen: MainWindow, address: str):
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup\
             .set_name(wallet_account.name)\
-            .set_emoji(wallet_account.emoji[0])\
+            .set_emoji(wallet_account.emoji)\
             .set_color(wallet_account.color).set_origin_watched_address(address).save_changes()
         account_popup.wait_until_hidden()
 

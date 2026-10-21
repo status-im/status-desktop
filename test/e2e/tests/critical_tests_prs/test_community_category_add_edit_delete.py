@@ -4,16 +4,17 @@ from allure_commons._allure import step
 
 from constants import RandomCommunity
 from gui.main_window import MainWindow
+from scripts.utils.generators import random_picker_emojis
 
 @pytest.mark.parametrize(
-    'category_name, general_checkbox, channel_name, channel_description, channel_emoji, second_channel_name, '
-    'second_channel_description, second_channel_emoji',
-    [pytest.param('Category in general', True, 'Channel', 'Description', 'sunglasses', 'Second-channel',
-                  'Description', 'sunglasses')])
+    'category_name, general_checkbox, channel_name, channel_description, second_channel_name, '
+    'second_channel_description',
+    [pytest.param('Category in general', True, 'Channel', 'Description', 'Second-channel', 'Description')])
 @pytest.mark.critical
 def test_create_edit_remove_community_category(main_screen: MainWindow, category_name, general_checkbox, channel_name,
-                                 channel_description, channel_emoji, second_channel_name, second_channel_description,
-                                 second_channel_emoji):
+                                 channel_description, second_channel_name, second_channel_description):
+    channel_emoji, second_channel_emoji = random_picker_emojis(2)
+
     with step('Create community and select it'):
         community = RandomCommunity()
         main_screen.left_panel.create_community(community_data=community)
@@ -26,11 +27,12 @@ def test_create_edit_remove_community_category(main_screen: MainWindow, category
         community_screen.verify_category(category_name)
 
     with step('Create community channel inside category'):
-        community_screen.left_panel.open_new_channel_popup_in_category().create(channel_name, channel_description,
-                                                                                channel_emoji).save_create_button.click()
+        community_screen.left_panel.open_new_channel_popup_in_category().create(
+            channel_name, channel_description, channel_emoji.keyword).save_create_button.click()
 
     with step('Create community channel outside of category'):
-        community_screen.create_channel(second_channel_name, second_channel_description, second_channel_emoji)
+        community_screen.create_channel(
+            second_channel_name, second_channel_description, second_channel_emoji.keyword)
 
     with step('Verify that selected channel is listed outside of category'):
         assert community_screen.left_panel.get_channel_or_category_index(second_channel_name) == 0

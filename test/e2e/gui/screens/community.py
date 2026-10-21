@@ -8,7 +8,7 @@ from allure_commons._allure import step
 import configs
 import driver
 from constants import CommunityChannel
-from driver.objects_access import walk_children
+from driver.objects_access import emoji_text, walk_children
 from gui.components.community.community_category_popup import NewCategoryPopup
 from gui.components.community.community_channel_popups import EditChannelPopup, NewChannelPopup
 from gui.components.community.invite_contacts import InviteContactsPopup
@@ -163,8 +163,8 @@ class CommunityToolBar(QObject):
 
     @property
     @allure.step('Get channel emoji')
-    def channel_emoji(self):
-        return self._channel_header.object.asset.emoji
+    def channel_emoji(self) -> str:
+        return emoji_text(self._channel_header.object.asset.emoji)
 
     @property
     @allure.step('Get channel color')
@@ -496,8 +496,8 @@ class ChatView(QObject):
 
     @property
     @allure.step('Get channel emoji')
-    def channel_emoji(self):
-        return self._channel_identifier_view.object.chatEmoji
+    def channel_emoji(self) -> str:
+        return emoji_text(self._channel_identifier_view.object.chatEmoji)
 
     @property
     @allure.step('Get channel color')

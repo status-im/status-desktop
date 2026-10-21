@@ -45,7 +45,7 @@ def test_settings_edit_status_account(main_screen: MainWindow, new_name):
             f"Status account storage should be {WalletAccountSettings.STORED_ON_DEVICE.value}"
 
     with step('Edit Status account by clicking Edit account button'):
-        account_emoji_id_before = status_acc_view.get_account_emoji_id()
+        account_emoji_before = status_acc_view.get_account_emoji()
         edit_acc_pop_up = status_acc_view.open_edit_account_popup()
         edit_acc_pop_up.edit_account(new_name)
 
@@ -55,9 +55,9 @@ def test_settings_edit_status_account(main_screen: MainWindow, new_name):
 
     with step('Check the new values appear on account details view for  main account'):
         new_screen = AccountDetailsView().wait_until_appears()
-        account_emoji_id_after = new_screen.get_account_emoji_id()
+        account_emoji_after = new_screen.get_account_emoji()
         assert new_screen.get_account_name_value() == new_name, f"Account name has not been changed"
-        # assert account_emoji_id_before != account_emoji_id_after, f"Account emoji has not been changed"
+        # assert account_emoji_before != account_emoji_after, f"Account emoji has not been changed"
         current_color = status_acc_view.get_account_color_value()
         assert WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_COLOR.value != current_color, \
             (

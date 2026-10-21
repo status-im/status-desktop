@@ -12,15 +12,14 @@ from constants.wallet import WalletAccountPopup
 
 from gui.main_window import MainWindow
 
-@pytest.mark.parametrize('account_name, color, emoji, emoji_unicode',
+@pytest.mark.parametrize('account_name',
                          [
                              pytest.param(''.join(random.choices(string.ascii_letters +
-                                                                 string.digits, k=15)), '#2a4af5', 'sunglasses',
-                                          '1f60e')
+                                                                 string.digits, k=15)))
                          ])
 @pytest.mark.settings_all
 def test_add_new_account_from_wallet_settings(
-        main_screen: MainWindow, user_account, account_name: str, color: str, emoji: str, emoji_unicode: str):
+        main_screen: MainWindow, user_account, account_name: str):
 
     wallet_account = RandomWalletAccount()
 

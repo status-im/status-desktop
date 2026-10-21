@@ -10,7 +10,7 @@ import constants
 import driver
 from constants import WalletAccount
 from constants.wallet import WalletNetworkSettings
-from driver.objects_access import walk_children
+from driver.objects_access import emoji_text, walk_children
 from gui.components.context_menu import ContextMenu
 from gui.components.wallet.add_saved_address_popup import AddEditSavedAddressPopup
 from gui.components.wallet.asset_context_menu_popup import AssetContextMenuPopup
@@ -94,12 +94,8 @@ class WalletLeftPanel(QObject):
                 for account_item in raw_data:
                     name = str(account_item.title)
                     color = str(account_item.asset.color.name).lower()
-                    emoji = ''
-                    for child in walk_children(account_item):
-                        if hasattr(child, 'emojiId'):
-                            emoji = str(child.emojiId)
-                            break
-                    accounts.append(constants.WalletAccount(name=name, color=color, emoji=emoji.split('-')[0]))
+                    emoji = emoji_text(account_item.asset.emoji)
+                    accounts.append(constants.WalletAccount(name=name, color=color, emoji=emoji))
                 return accounts
             except LookupError as e:
                 LOG.debug(f'accounts are not found: {e}')

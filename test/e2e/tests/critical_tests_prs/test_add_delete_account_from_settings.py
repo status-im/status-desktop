@@ -14,14 +14,13 @@ from helpers.settings_helper import open_wallet_settings
 
 
 @pytest.mark.critical
-@pytest.mark.parametrize('account_name, color, emoji, emoji_unicode',
+@pytest.mark.parametrize('account_name',
                          [
                              pytest.param(''.join(random.choices(string.ascii_letters +
-                                                                 string.digits, k=15)), '#2a4af5', 'sunglasses',
-                                          '1f60e')
+                                                                 string.digits, k=15)))
                          ])
 def test_delete_generated_account_from_wallet_settings(
-        main_screen: MainWindow, user_account, account_name: str, color: str, emoji: str, emoji_unicode: str):
+        main_screen: MainWindow, user_account, account_name: str):
     
     with step('Open add account pop up from wallet settings'):
         add_account_popup = open_wallet_settings(main_screen).open_add_account_pop_up()

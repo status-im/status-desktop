@@ -11,18 +11,18 @@ from constants import UserAccount, RandomCommunity
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen
 from helpers.multiple_instances_helper import authorize_user_in_aut, switch_to_aut
+from scripts.utils.generators import random_picker_emojis
 from scripts.utils.parsers import remove_tags
 
 
 @pytest.mark.communities
 @pytest.mark.parametrize(
-    'channel_name, channel_description, channel_emoji, channel_emoji_image, channel_color, new_channel_name, '
-    'new_channel_description, new_channel_emoji',
-    [('Channel', 'Description', 'sunglasses', None, '#4360df', 'New-channel', 'New channel description', 'thumbsup')])
-def test_create_edit_remove_community_channel(main_screen, channel_name, channel_description, channel_emoji,
-                                              channel_emoji_image,
-                                              channel_color, new_channel_name, new_channel_description,
-                                              new_channel_emoji):
+    'channel_name, channel_description, new_channel_name, new_channel_description',
+    [('Channel', 'Description', 'New-channel', 'New channel description')])
+def test_create_edit_remove_community_channel(main_screen, channel_name, channel_description,
+                                              new_channel_name, new_channel_description):
+    create_emoji, edit_emoji = random_picker_emojis(2)
+
     with step('Create community and select it'):
         community = RandomCommunity()
         main_screen.left_panel.create_community(community_data=community)
@@ -36,17 +36,18 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
         )
 
     with step('Create new channel for recently created community'):
-        community_screen.create_channel(channel_name, channel_description, channel_emoji)
+        community_screen.create_channel(channel_name, channel_description, create_emoji.keyword)
 
     with step('Verify channel'):
         community_screen.verify_channel(
             channel_name,
             channel_description,
-            channel_emoji_image
+            create_emoji.glyph
         )
 
     with step('Edit channel'):
-        community_screen.edit_channel(channel_name, new_channel_name, new_channel_description, new_channel_emoji)
+        community_screen.edit_channel(
+            channel_name, new_channel_name, new_channel_description, edit_emoji.keyword)
 
     with step('Verify edited channel details are correct in channels list'):
         channel = community_screen.left_panel.get_channel_parameters(new_channel_name)
@@ -56,8 +57,7 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
         assert driver.waitFor(lambda: community_screen.tool_bar.channel_name == new_channel_name,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         assert community_screen.tool_bar.channel_description == new_channel_description
-        assert community_screen.tool_bar.channel_emoji == '👍 '
-        # assert community_screen.tool_bar.channel_color == channel_color
+        assert community_screen.tool_bar.channel_emoji == edit_emoji.glyph
 
     with step('Delete channel'):
         community_screen.delete_channel(new_channel_name)

@@ -28,6 +28,15 @@ def describe_button_for_log(btn) -> str:
         return repr(btn)
 
 
+def emoji_text(value) -> str:
+    if value is None:
+        return ''
+    try:
+        return str(getattr(value, 'emoji', value)).strip()
+    except (AttributeError, RuntimeError):
+        return ''
+
+
 def walk_children(parent, depth: int = 1000):
     for child in object.children(parent):
         yield child
