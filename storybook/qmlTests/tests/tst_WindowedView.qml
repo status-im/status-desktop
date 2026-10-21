@@ -53,6 +53,21 @@ Item {
         }
     }
 
+    // Height that can be grown after the row was laid out, the way a message
+    // does when a reaction lands, an edit arrives or an image finishes loading.
+    Component {
+        id: growableDelegate
+
+        Item {
+            id: growableRow
+
+            property int value: 0
+            property real extra: 0
+
+            implicitHeight: 20 + (growableRow.value % 5) * 30 + growableRow.extra
+        }
+    }
+
     // Reports no height at all when there is no room to lay anything out, the
     // way wrapped text does at zero width.
     Component {
@@ -2708,6 +2723,157 @@ Item {
 
             fuzzyCompare(view.contentY, view.contentHeight - view.height, 0.5,
                          "stickToBottom follows again")
+        }
+    }
+
+    // A row changing height on its own - a reaction, an edit, an image that
+    // finished loading - keeps its own place in the Column, so everything after
+    // it moves. Above the viewport those are the rows on screen, and the reader
+    // is held the same way a resize holds them.
+    TestCase {
+        id: growthTests
+
+        name: "WindowedView.RowGrowth"
+        when: windowShown
+
+        readonly property real growth: 100
+
+        function initTestCase() {
+            waitForRendering(view)
+        }
+
+        function init() {
+            provider.reset()
+            provider.delegate = growableDelegate
+        }
+
+        function cleanup() {
+            view.stickToBottom = false
+            view.verticalLayoutDirection
+                    = WindowedView.VerticalLayoutDirection.TopToBottom
+            provider.delegate = plainDelegate
+        }
+
+        function fill(count) {
+            owner.reset(0)
+            tryVerify(() => view.rowCount === 0, 2000, "emptied")
+            owner.reset(count)
+            tryVerify(() => settled(count), 8000, "rows laid out")
+        }
+
+        function bottomUp() {
+            view.verticalLayoutDirection
+                    = WindowedView.VerticalLayoutDirection.BottomToTop
+            waitForRendering(view)
+        }
+
+        function midContent() {
+            view.contentY = Math.round((view.contentHeight - view.height) / 2)
+            waitForRendering(view)
+            verify(view.contentY > 100, "there is room above the viewport")
+        }
+
+        // Changes one row's height and waits for the Column to lay the change
+        // out: the content height is what says it landed.
+        function resize(shell, delta) {
+            const contentHeight = view.contentHeight
+
+            shell.content.extra += delta
+            tryVerify(() => Math.abs(view.contentHeight
+                                     - (contentHeight + delta)) < 0.5,
+                      2000, "the content took the change")
+            tryVerify(() => !view.busy, 2000)
+        }
+
+        function test_aRowAboveTheViewportGrowingHoldsTheReader() {
+            fill(40)
+            midContent()
+
+            const before = topRow()
+            const above = view.itemAtRow(0)     // top-down, the first in the Column
+
+            verify(above.y + above.height < view.contentY, "entirely above")
+
+            resize(above, growthTests.growth)
+
+            const after = offsetOf(before.value)
+
+            verify(!isNaN(after), "the row is still there")
+            fuzzyCompare(after, before.offset, 0.5,
+                         "it moved by " + (after - before.offset) + "px")
+        }
+
+        // Rendered bottom-up - a chat - the model's last row is the topmost on
+        // screen, so that is the one above the reader.
+        function test_bottomUpARowAboveTheViewportGrowingHoldsTheReader() {
+            bottomUp()
+            fill(40)
+            midContent()
+
+            const before = topRow()
+            const above = view.itemAtRow(39)
+
+            verify(above.y + above.height < view.contentY, "entirely above")
+
+            resize(above, growthTests.growth)
+
+            const after = offsetOf(before.value)
+
+            verify(!isNaN(after), "the row is still there")
+            fuzzyCompare(after, before.offset, 0.5,
+                         "it moved by " + (after - before.offset) + "px")
+        }
+
+        // Shrinking is the same thing the other way round: a reaction removed,
+        // an image that failed, a message collapsed again.
+        function test_aRowAboveTheViewportShrinkingHoldsTheReader() {
+            fill(40)
+            midContent()
+
+            const before = topRow()
+            const above = view.itemAtRow(0)
+
+            verify(above.y + above.height < view.contentY, "entirely above")
+            resize(above, -above.height / 2)
+
+            const after = offsetOf(before.value)
+
+            verify(!isNaN(after), "the row is still there")
+            fuzzyCompare(after, before.offset, 0.5,
+                         "it moved by " + (after - before.offset) + "px")
+        }
+
+        // Below the reader nothing they can see moves, so the view must not
+        // correct for it - a correction there would scroll them instead.
+        function test_aRowBelowTheViewportGrowingLeavesTheReader() {
+            fill(40)
+            midContent()
+
+            const before = topRow()
+            const contentY = view.contentY
+            const below = view.itemAtRow(39)    // top-down, the last in the Column
+
+            verify(below.y > view.contentY + view.height, "entirely below")
+
+            resize(below, growthTests.growth)
+
+            fuzzyCompare(view.contentY, contentY, 0.5, "the viewport stayed")
+            compare(topRow().value, before.value, "and so did the top row")
+        }
+
+        // At the end and asked to stay there, the bottom is the position: the
+        // pin in applyContentHeight() owns it and no row is held instead.
+        function test_atTheBottomTheViewFollowsTheBottom() {
+            view.stickToBottom = true
+            fill(40)
+
+            view.contentY = view.contentHeight - view.height
+            waitForRendering(view)
+
+            resize(view.itemAtRow(0), growthTests.growth)
+
+            fuzzyCompare(view.contentY, view.contentHeight - view.height, 0.5,
+                         "still at the bottom")
         }
     }
 

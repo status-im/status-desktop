@@ -1052,15 +1052,49 @@ Flickable {
             d.anchorOffset = d.rowTop(item) - root.contentY
         }
 
-        // A resize re-wraps every row, so every height changes at once - the
-        // ones above the viewport included, which is what moves the content out
-        // from under the reader. The row held still is the topmost one whose top
-        // edge they can actually see: a row clipped by the viewport top is not
-        // the message they are reading from its beginning.
+        // A row that changes height keeps its own place in the Column - what
+        // moves is everything after it. Above the viewport that is the rows on
+        // screen, so the reader is carried down the screen by the growth unless
+        // something holds them. Called from the shell's height handler, which
+        // runs before the Column lays the change out: the offset the anchor
+        // records is still the one the reader is looking at, as it is for a
+        // resize. The correction itself is the one that always follows a height
+        // change - rowsColumn.onHeightChanged, through restorePosition().
+        function noteRowResized(shell, delta) {
+            // A row being measured for the first time, or one whose content
+            // went away: that is content arriving or leaving, not moving.
+            if (delta === 0 || !shell.revealed)
+                return
+
+            // A reveal lands its own batch, and a slide's or a resize's anchor
+            // and a pending request are the stronger guarantee - all of them
+            // already say where the view belongs.
+            if (d.finishing || d.anchorItem || d.pendingRow >= 0)
+                return
+
+            // Below the reader: the row grows into space they cannot see, and
+            // nothing above them moves. Deliberately the row's top rather than
+            // its whole extent, so a row straddling the viewport top counts as
+            // above - the convention anchorTopVisibleRow() picks rows by.
+            if (d.rowTop(shell) >= root.contentY)
+                return
+
+            d.anchorTopVisibleRow()
+        }
+
+        // Holds the row the reader is reading: the topmost one whose top edge
+        // they can actually see - a row clipped by the viewport top is not the
+        // message they are reading from its beginning.
+        //
+        // Armed for the two things that move the content out from under them
+        // outside a slide: a resize, which re-wraps every row so every height
+        // changes at once, and a row above the viewport changing height on its
+        // own - a reaction, an edit, an image that finished loading. Both move
+        // the rows below the change, which is where the reader is looking.
         //
         // Different from armAnchor(), which wants the row nearest an edge
         // because a slide is about to trim the other one.
-        function anchorForResize() {
+        function anchorTopVisibleRow() {
             // Nothing laid out to anchor to - the rows have collapsed, and
             // anchoring to that would record the collapse as the place to come
             // back to. The width being restored arrives here before the rows
@@ -1795,7 +1829,7 @@ Flickable {
     //
     // A height change needs none of this - it moves the viewport, not the rows,
     // so the top-visible row keeps its offset by itself.
-    onWidthChanged: d.anchorForResize()
+    onWidthChanged: d.anchorTopVisibleRow()
 
     Column {
         id: rowsColumn
@@ -1945,6 +1979,17 @@ Flickable {
                 height: shell.revealed && shell.content
                         ? shell.content.implicitHeight : 0
                 visible: shell.revealed
+
+                // The height this row was last laid out with, so its own change
+                // can be told from a first measurement and its size known.
+                property real appliedHeight: 0
+
+                onHeightChanged: {
+                    const delta = shell.height - shell.appliedHeight
+
+                    shell.appliedHeight = shell.height
+                    d.noteRowResized(shell, delta)
+                }
 
                 onRevealedChanged: d.revealedCount += shell.revealed ? 1 : -1
 
