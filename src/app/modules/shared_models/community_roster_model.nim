@@ -5,7 +5,7 @@
 ## status table. Rows keep the canonical member order (roster_order): views bind
 ## without sorting proxies.
 
-import nimqml, std/[algorithm, sets, tables, json]
+import nimqml, std/[sets, tables, json]
 
 import app_service/common/types
 import app_service/service/community/dto/roster
@@ -400,37 +400,10 @@ QtObject:
       recordEndRemoveRows()
     self.countChanged()
 
-  proc fill*(self: CommunityRosterModel, snapshot: sink RosterSnapshot) =
-    ## The full load: resets the model with the snapshot. Deltas go through
-    ## applyDelta. A snapshot the load worker did not sort is sorted here; a
-    ## repeated member keeps its first entry.
-    if snapshot.sortKeys.len != snapshot.members.len:
-      snapshot.sortKeys.setLen(0)
-      for member in snapshot.members:
-        snapshot.sortKeys.add self.sortKeyOf(member)
-      var order = newSeq[int](snapshot.members.len)
-      for i in 0 ..< order.len:
-        order[i] = i
-      order.sort(proc(i, j: int): int =
-        cmpRosterOrder(snapshot.sortKeys[i], snapshot.members[i].key,
-          snapshot.sortKeys[j], snapshot.members[j].key))
-      var members = newSeqOfCap[RosterMember](order.len)
-      var keys = newSeqOfCap[RosterSortKey](order.len)
-      for i in order:
-        members.add move(snapshot.members[i])
-        keys.add move(snapshot.sortKeys[i])
-      snapshot.members = move(members)
-      snapshot.sortKeys = move(keys)
-
-    var members = newSeqOfCap[RosterMember](snapshot.members.len)
-    var keys = newSeqOfCap[RosterSortKey](snapshot.members.len)
+  proc resetMembers(self: CommunityRosterModel, snapshot: var RosterSnapshot) =
     var rows = initTable[RawPubKey, int](snapshot.members.len)
-    for i in 0 ..< snapshot.members.len:
-      if rows.hasKeyOrPut(snapshot.members[i].key, members.len):
-        continue
-      members.add move(snapshot.members[i])
-      keys.add move(snapshot.sortKeys[i])
-
+    for i, member in snapshot.members:
+      rows[member.key] = i
     let oldCount = self.members.len
     when defined(QT_MODEL_SPY):
       recordBeginResetModel()
@@ -439,8 +412,8 @@ QtObject:
       if not rows.hasKey(key):
         self.membershipStates.del(key)
         self.airdropAddresses.del(key)
-    self.members = move(members)
-    self.sortKeys = move(keys)
+    self.members = move(snapshot.members)
+    self.sortKeys = move(snapshot.sortKeys)
     self.rows = move(rows)
     self.endResetModel()
     when defined(QT_MODEL_SPY):
@@ -448,12 +421,13 @@ QtObject:
     if self.members.len != oldCount:
       self.countChanged()
 
+  proc setChannels(self: CommunityRosterModel, channels: sink Table[string, seq[ChannelMember]]) =
     var changedChannels: seq[string]
     for chatId in self.channels.keys:
-      if not snapshot.channels.hasKey(chatId):
+      if not channels.hasKey(chatId):
         changedChannels.add chatId
     self.channels.clear()
-    for chatId, channelMembers in snapshot.channels.pairs:
+    for chatId, channelMembers in channels.pairs:
       var roles = initTable[RawPubKey, ChannelRole](channelMembers.len)
       for member in channelMembers:
         roles[member.key] = member.role
@@ -461,6 +435,8 @@ QtObject:
       changedChannels.add chatId
     for chatId in changedChannels:
       self.emitChannelMembersChanged(chatId)
+
+  proc resortChangedDuringLoad(self: CommunityRosterModel) =
     # the worker sorted by inputs older than these changes
     for key in self.changedSinceCapture:
       let row = self.rows.getOrDefault(key, -1)
@@ -468,6 +444,13 @@ QtObject:
         self.resort(row)
     self.capturing = false
     self.changedSinceCapture.clear()
+
+  proc load*(self: CommunityRosterModel, snapshot: sink RosterSnapshot) =
+    ## The full load, as one model reset; deltas go through applyDelta. The
+    ## snapshot comes sorted by sortRoster, with sortKeys set and unique keys.
+    self.resetMembers(snapshot)
+    self.setChannels(move snapshot.channels)
+    self.resortChangedDuringLoad()
     self.setLoaded(true)
 
   proc applyChannelDelta(self: CommunityRosterModel, delta: ChannelMembersDelta) =
@@ -511,7 +494,7 @@ QtObject:
 
   proc captureOrderChanges*(self: CommunityRosterModel) =
     ## The load worker is reading its order inputs now: contact and online
-    ## status changes until the fill are held and replayed as moves after it.
+    ## status changes until the load are held and replayed as moves after it.
     self.capturing = true
     self.changedSinceCapture.clear()
 
