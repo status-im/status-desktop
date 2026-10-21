@@ -4,6 +4,7 @@
 #include "StatusQ/markdownhtml.h"
 #include "StatusQ/markdownparser.h"
 
+#include <QColor>
 #include <QFontMetricsF>
 
 using namespace Qt::Literals::StringLiterals;
@@ -36,6 +37,23 @@ void collectMentionKeys(const Markdown::Node& node, QStringList& out)
         out.append(node.destination);
     for (const Markdown::Node& c : node.children)
         collectMentionKeys(c, out);
+}
+
+// A colour from `colors` as markup, i.e. what QColor::fromString() parses back: "#rrggbb",
+// or "#aarrggbb" when it is translucent. A missing or invalid entry yields an empty string,
+// which leaves the run in the Text's own colour.
+QString colorAt(const QVariantMap& colors, QLatin1StringView key)
+{
+    const QVariant value = colors.value(key);
+    if (!value.isValid())
+        return {};
+    if (value.typeId() == QMetaType::QString)
+        return value.toString();
+
+    const QColor color = value.value<QColor>();
+    if (!color.isValid())
+        return {};
+    return color.name(color.alpha() == 255 ? QColor::HexRgb : QColor::HexArgb);
 }
 
 } // namespace
@@ -84,6 +102,21 @@ QString MarkdownUtils::singleLineHtml(const QString& text, const QVariantMap& me
     // Emojis are sized to the line height; the emoji-only enlargement is intentionally not applied.
     const int emojiPx = qRound(QFontMetricsF(font).height());
     return Markdown::toSingleLineHtml(root, mentionMap, emojiPx);
+}
+
+QString MarkdownUtils::styledText(const QString& text, const QVariantMap& mentions,
+                                  const QVariantMap& colors, bool enlargeEmoji) const
+{
+    const Markdown::Node root = Markdown::parse(text, {});
+
+    QHash<int, QPair<QString, QString>> mentionMap;
+    collectTextMentions(root, mentions, mentionMap);
+
+    const Markdown::StyledTextColors styleColors{colorAt(colors, "code"_L1),
+                                                 colorAt(colors, "quote"_L1),
+                                                 colorAt(colors, "mention"_L1),
+                                                 colorAt(colors, "link"_L1)};
+    return Markdown::toStyledText(root, mentionMap, styleColors, enlargeEmoji);
 }
 
 QString MarkdownUtils::plainText(const QString& text, const QVariantMap& mentions) const
