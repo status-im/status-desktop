@@ -214,10 +214,12 @@ suite "community roster model":
     check model.channelMembers("general").len == 0
     check changed.len == 0
 
-  test "a reloaded snapshot gates and ungates channels and keeps the rows":
+  test "a reloaded snapshot resets the rows and regates the channels":
     var snap = snapshot(10, member(keyA, "alice"), member(keyB, "bob"))
     snap.channels["gated"] = @[ChannelMember(key: raw(keyA))]
     model.fill(snap)
+    model.setMembershipState(keyA, MembershipRequestState.Banned)
+    model.setAirdropAddress(keyA, "0xa1")
     model.setMembershipState(keyB, MembershipRequestState.BannedPending)
     var changed: seq[string]
     model.onChannelMembersChanged(proc(chatId: string) = changed.add chatId)
@@ -226,13 +228,10 @@ suite "community roster model":
     var reloaded = snapshot(20, member(keyB, "bobby"), member(keyC, "carol"))
     reloaded.channels["general"] = @[ChannelMember(key: raw(keyB), role: ChannelRole.Viewer)]
     model.fill(reloaded)
-    check spy.countResets() == 0
-    # only alice's row goes and only carol's comes
-    check spy.countRemoves() == 1
-    check spy.getRemoves()[0].first == 0
-    check spy.getRemoves()[0].last == 0
-    check spy.countInserts() == 1
-    check spy.getInserts()[0].first == spy.getInserts()[0].last
+    check spy.countResets() == 1
+    check spy.countRemoves() == 0
+    check spy.countInserts() == 0
+    check spy.countMoves() == 0
     check model.isLoaded()
     check model.rowCount() == 2
     check not model.hasMember(keyA)
@@ -244,6 +243,10 @@ suite "community roster model":
     check model.channelMembers("general") == @[keyB]
     check "gated" in changed
     check "general" in changed
+    # alice's overlays went with her row
+    model.applyDelta(RosterDelta(clock: 21, added: @[member(keyA, "alice")]))
+    check model.num(model.rowOfKey(keyA), "membershipRequestState") == MembershipRequestState.Accepted.int
+    check model.str(model.rowOfKey(keyA), "airdropAddress") == ""
 
   test "contact and online status changes refresh only that row":
     model.fill(snapshot(10, member(keyA, "alice"), member(keyB, "bob")))
@@ -415,13 +418,19 @@ suite "community roster canonical order":
     check model.orderedKeys == @[keyC, keyA]
     check model.indexConsistent
 
-  test "a reloaded snapshot keeps the order without a reset":
+  test "a reloaded snapshot resets the loaded roster to its sorted contents":
     model.fill(snapshot(10, member(keyA, "alice"), member(keyB, "bob"), member(keyC, "carol")))
     spy.clear()
     model.fill(snapshot(20, member(keyA, "zoe"), member(keyB, "bob"), member(keyD, "aaron")))
     check model.orderedKeys == @[keyD, keyB, keyA]
     check model.indexConsistent
-    check spy.countResets() == 0
+    check model.getCount() == 3
+    check not model.hasMember(keyC)
+    check model.str(model.rowOfKey(keyA), "displayName") == "zoe"
+    check spy.countResets() == 1
+    check spy.countMoves() == 0
+    check spy.countInserts() == 0
+    check spy.countRemoves() == 0
 
   test "a status change during the load moves the row right after the fill":
     # the worker sorted with the inputs captured when the load started
@@ -444,10 +453,12 @@ suite "community roster canonical order":
     sortRoster(snap, RosterOrderInputs())
     fake.contacts[keyC] = RosterContact(localNickname: "Aaron")
     model.contactChanged(keyC)
+    spy.clear()
     model.fill(snap)
     check model.orderedKeys == @[keyC, keyA, keyB]
     check model.indexConsistent
-    check spy.countResets() == 0
+    check spy.countResets() == 1
+    check spy.countMoves() == 1
 
   test "the fill ends the capture":
     model.captureOrderChanges()
