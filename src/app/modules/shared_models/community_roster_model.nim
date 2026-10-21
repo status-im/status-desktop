@@ -1,6 +1,6 @@
 ## One community's member roster: a slim entry per member plus a key -> row
-## table. Filled on demand by one insert; every delta after that is a single
-## insert, remove, move or dataChanged. data() never calls the backend: it reads
+## table. Loaded on demand by one model reset; every delta after that is a
+## single insert, remove, move or dataChanged. data() never calls the backend: it reads
 ## the entry, the contacts cache (through `RosterLookups.contact`) and the online
 ## status table. Rows keep the canonical member order (roster_order): views bind
 ## without sorting proxies.
@@ -401,10 +401,9 @@ QtObject:
     self.countChanged()
 
   proc fill*(self: CommunityRosterModel, snapshot: sink RosterSnapshot) =
-    ## Loads the roster with one insert, or replaces a loaded one with a model
-    ## reset (a reload after a permission change: rare, so the view's scroll
-    ## position is not kept). A snapshot the load worker did not sort is
-    ## sorted here; a repeated member keeps its first entry.
+    ## The full load: resets the model with the snapshot. Deltas go through
+    ## applyDelta. A snapshot the load worker did not sort is sorted here; a
+    ## repeated member keeps its first entry.
     if snapshot.sortKeys.len != snapshot.members.len:
       snapshot.sortKeys.setLen(0)
       for member in snapshot.members:
@@ -432,37 +431,22 @@ QtObject:
       members.add move(snapshot.members[i])
       keys.add move(snapshot.sortKeys[i])
 
-    if self.members.len == 0:
-      if members.len > 0:
-        let parentIndex = newQModelIndex()
-        defer: parentIndex.delete
-        when defined(QT_MODEL_SPY):
-          recordBeginInsertRows(0, members.len - 1)
-        self.beginInsertRows(parentIndex, 0, members.len - 1)
-        self.members = move(members)
-        self.sortKeys = move(keys)
-        self.rows = move(rows)
-        self.endInsertRows()
-        when defined(QT_MODEL_SPY):
-          recordEndInsertRows()
-        self.countChanged()
-    else:
-      let oldCount = self.members.len
-      when defined(QT_MODEL_SPY):
-        recordBeginResetModel()
-      self.beginResetModel()
-      for key in self.rows.keys:
-        if not rows.hasKey(key):
-          self.membershipStates.del(key)
-          self.airdropAddresses.del(key)
-      self.members = move(members)
-      self.sortKeys = move(keys)
-      self.rows = move(rows)
-      self.endResetModel()
-      when defined(QT_MODEL_SPY):
-        recordEndResetModel()
-      if self.members.len != oldCount:
-        self.countChanged()
+    let oldCount = self.members.len
+    when defined(QT_MODEL_SPY):
+      recordBeginResetModel()
+    self.beginResetModel()
+    for key in self.rows.keys:
+      if not rows.hasKey(key):
+        self.membershipStates.del(key)
+        self.airdropAddresses.del(key)
+    self.members = move(members)
+    self.sortKeys = move(keys)
+    self.rows = move(rows)
+    self.endResetModel()
+    when defined(QT_MODEL_SPY):
+      recordEndResetModel()
+    if self.members.len != oldCount:
+      self.countChanged()
 
     var changedChannels: seq[string]
     for chatId in self.channels.keys:
