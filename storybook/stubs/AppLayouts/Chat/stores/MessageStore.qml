@@ -59,10 +59,19 @@ QtObject {
     function deleteMessage(messageId) {}
     function markMessageAsUnread(messageId) {}
     function warnAndDeleteMessage(messageId) {}
-    function setEditModeOn(messageId) {}
+    function setEditModeOn(messageId) {
+        if (messageModule && messageModule.setEditModeOn)
+            messageModule.setEditModeOn(messageId)
+    }
     function setEditModeOnLastMessage(pubkey) {}
-    function setEditModeOff(messageId) {}
-    function editMessage(messageId, updatedMsg) {}
+    function setEditModeOff(messageId) {
+        if (messageModule && messageModule.setEditModeOff)
+            messageModule.setEditModeOff(messageId)
+    }
+    function editMessage(messageId, updatedMsg) {
+        if (messageModule && messageModule.editMessage)
+            messageModule.editMessage(messageId, updatedMsg)
+    }
     function fillGaps(messageId) {}
     function leaveChat() {}
     function addNewMessagesMarker() {}

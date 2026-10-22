@@ -300,6 +300,29 @@ QtObject {
                 function createThread(parentMessageId) {
                     threadOpenRequested(parentMessageId, "New thread")
                 }
+
+                // Like the backend: the message's editMode role
+                property var editModeOffCalls: []
+                property var editedMessages: []
+
+                function setEditModeOn(messageId) { setEditMode(messageId, true) }
+                function setEditModeOff(messageId) {
+                    editModeOffCalls.push(messageId)
+                    setEditMode(messageId, false)
+                }
+                function editMessage(messageId, text) {
+                    editedMessages.push({ messageId: messageId, text: text })
+                }
+
+                function setEditMode(messageId, on) {
+                    const messages = contentModule.messagesModel
+                    for (let i = 0; messages && i < messages.count; ++i) {
+                        if (messages.get(i).id === messageId) {
+                            messages.setProperty(i, "editMode", on)
+                            return
+                        }
+                    }
+                }
             }
 
             readonly property var usersModule: QtObject {
@@ -309,13 +332,22 @@ QtObject {
             }
 
             readonly property var inputAreaModule: QtObject {
-                readonly property var preservedProperties: ({ text: "" })
+                // the chat's own input state, as the backend keeps it
+                readonly property var preservedProperties: QtObject {
+                    property string text
+                    property string replyMessageId
+                    property string fileUrlsAndSourcesJson: "[]"
+                    property string editMessageId
+                    property string editText
+                    property string editOriginalText
+                }
                 readonly property bool sendingInProgress: false
                 readonly property var linkPreviewModel: null
                 readonly property var paymentRequestModel: null
                 readonly property bool askToEnableLinkPreview: false
 
                 function clearLinkPreviewCache() {}
+                function setText(text) {}
             }
 
             function markAllMessagesRead() {}
