@@ -1053,10 +1053,72 @@ Flickable {
         property real pendingOffset: NaN
         property int pendingMode: WindowedView.PositionMode.Beginning
 
+        // An exact request the content was too short for: landed at the clamp,
+        // and retried while the rows it was asked against settle their heights
+        // - sampled every frame, for as long as a reveal waits for its own.
+        // Once they are quiet, or rows arrive or leave on their own, the clamp
+        // is where the view is, held by the anchor. Kept for good, the request
+        // would be honoured by whatever grows the content next - rows arriving
+        // long after - and the reader moved to where it pointed.
+        property bool pendingClamped: false
+        property real clampedHeight: -1
+        property int clampedStableSamples: 0
+        property int clampedSamples: 0
+
         function cancelPosition() {
             d.pendingRow = -1
             d.pendingKey = undefined
             d.pendingOffset = NaN
+            d.pendingClamped = false
+            clampTimer.stop()
+        }
+
+        function retryClamped() {
+            if (d.pendingClamped)
+                return
+
+            d.pendingClamped = true
+            d.clampedHeight = -1
+            d.clampedStableSamples = 0
+            d.clampedSamples = 0
+            clampTimer.restart()
+        }
+
+        function clampTick() {
+            const height = rowsColumn.height
+
+            ++d.clampedSamples
+
+            if (height === d.clampedHeight) {
+                ++d.clampedStableSamples
+            } else {
+                d.clampedHeight = height
+                d.clampedStableSamples = 0
+            }
+
+            if (d.clampedStableSamples >= 1 || d.clampedSamples >= d.maxSettleSamples)
+                d.acceptClamp()
+        }
+
+        // The clamp becomes the position: held by the anchor like any other,
+        // the request gone.
+        function acceptClamp() {
+            if (!d.pendingClamped)
+                return
+
+            d.applyPendingPosition(true)
+
+            // its row had no geometry to anchor to: nothing left to wait for
+            if (d.pendingRow >= 0)
+                d.cancelPosition()
+        }
+
+        // Rows arriving or leaving on their own, outside any batch - not the
+        // rows a clamped request was asked against. Called before the model
+        // changes, so the anchor takes the row the reader is looking at.
+        function acceptClampOnLiveRows() {
+            if (d.pendingClamped && !root.busy)
+                d.acceptClamp()
         }
 
         function requestPosition(row, mode, offset) {
@@ -1072,6 +1134,9 @@ Flickable {
             // A deliberate position replaces whatever was holding the view,
             // including a slide's anchor: the request is the guarantee now.
             d.releaseAnchor()
+
+            // and any request still retrying at a clamp
+            d.cancelPosition()
 
             d.pendingRow = d.renderRow(row)
             d.pendingKey = d.keyAt(d.pendingRow)
@@ -1096,7 +1161,10 @@ Flickable {
         // it dealt with the position. A request still waiting answers false, so
         // the anchor keeps the content still in the meantime rather than the
         // view sitting wherever the pending row happens to be.
-        function applyPendingPosition() {
+        //
+        // acceptClamp: an exact request lands where the content allows and is
+        // done, rather than retrying for more.
+        function applyPendingPosition(acceptClamp = false) {
             if (d.pendingRow < 0)
                 return false
 
@@ -1153,14 +1221,18 @@ Flickable {
 
             d.apply(applied)
 
-            // An exact request that had to be clamped was asked in a frame
-            // whose layout has not absorbed the revealed rows yet, so the
-            // content is still too short to honour it. Keep the request and
-            // retry when the heights settle - landing at the clamp would put a
-            // restore at the bottom instead of where it was captured. A mode
-            // request does not retry: a row near an end legitimately clamps.
-            if (exact && Math.abs(applied - wanted) > 0.01)
+            // An exact request that had to be clamped may have been asked
+            // against rows still settling their heights - revealed, but growing
+            // for a few frames yet - so the content is still too short to
+            // honour it. Keep the request and retry while they settle -
+            // landing at the clamp for good would put a restore at the bottom
+            // instead of where it was captured. Only while they settle: see
+            // pendingClamped. A mode request does not retry: a row near an end
+            // legitimately clamps.
+            if (exact && !acceptClamp && Math.abs(applied - wanted) > 0.01) {
+                d.retryClamped()
                 return true
+            }
 
             // Handed to the anchor, by item rather than by row: the window may
             // slide underneath, which would make the same row a different
@@ -1943,12 +2015,17 @@ Flickable {
     Connections {
         target: d.effectiveModel
 
+        function onRowsAboutToBeInserted(parent, first, last) {
+            d.acceptClampOnLiveRows()
+        }
+
         function onRowsInserted(parent, first, last) {
             d.captureStagedRows(first, last)
         }
 
         // aboutToBeRemoved, while the key is still readable
         function onRowsAboutToBeRemoved(parent, first, last) {
+            d.acceptClampOnLiveRows()
             d.dropStagedRows(first, last)
         }
 
@@ -1999,6 +2076,16 @@ Flickable {
         repeat: true
 
         onTriggered: d.settleTick()
+    }
+
+    // An exact request retrying at a clamp, while the rows settle
+    Timer {
+        id: clampTimer
+
+        interval: 16
+        repeat: true
+
+        onTriggered: d.clampTick()
     }
 
     // The whole point of the held anchor: a slide moves the surviving rows,

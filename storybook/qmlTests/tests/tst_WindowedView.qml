@@ -575,6 +575,18 @@ Item {
         }
     }
 
+    // Counts the frames drawn while it runs, and keeps them coming
+    Component {
+        id: frameCounterComponent
+
+        FrameAnimation {
+            property int count: 0
+
+            running: true
+            onTriggered: ++count
+        }
+    }
+
     WindowedView {
         id: view
 
@@ -5233,6 +5245,15 @@ Item {
             return view.contentHeight - view.height
         }
 
+        // Frames enough for a clamped request's rows to have settled, counted
+        // as they are drawn - kept coming while nothing on screen changes.
+        function letTheRowsSettle() {
+            const frames = createTemporaryObject(frameCounterComponent, root)
+
+            tryVerify(() => frames.count >= 15, 2000, "frames went by")
+            frames.running = false
+        }
+
         // Where a row's top sits in the viewport, which is what every mode here
         // is expressed in.
         function topOf(row) {
@@ -5469,26 +5490,27 @@ Item {
                          "the row the jump chose stayed put")
         }
 
-        // What the clamp-retry is for: an exact offset the content is currently
-        // too short to honour is kept, not spent landing at the clamp, and is
-        // honoured once there is content enough.
-        function test_anUnsatisfiableOffsetWaitsForTheContentToGrow() {
+        // What the clamp-retry is for: an exact offset asked against rows still
+        // settling their heights - revealed, but growing for a frame or two
+        // yet, the way a message finishes its layout - is too much for the
+        // content at first. It is kept while they settle, not spent landing at
+        // the clamp, and honoured once there is content enough.
+        function test_anUnsatisfiableOffsetWaitsForTheRowsToSettle() {
+            provider.delegate = growableDelegate
             fill(20)
 
             const last = view.rowCount - 1
             const far = 400
 
             verify(view.positionViewAtRowOffset(last, far), "accepted")
-            waitForRendering(view)
 
             verify(Math.abs(view.viewportOffsetToRow(last) - far) > 1,
                    "it cannot be honoured yet")
             fuzzyCompare(view.contentY, bottomY(), 1.0,
                          "so the view sits at the clamp meanwhile")
 
-            provider.delay = 0
-            rows.append(rows.make(100, 20))
-            tryVerify(() => settled(40), 8000, "the content grew")
+            // the last row settles taller - enough below its top for the offset
+            view.itemAtRow(last).content.extra += far + view.height
 
             // the retry lands on the relayout that follows, so the outcome is
             // the thing to wait for
@@ -5496,33 +5518,77 @@ Item {
                       5000, "and the offset is honoured exactly")
         }
 
+        // Kept for good, a clamped request would be honoured by whatever grows
+        // the content next: rows arriving on their own would move the reader
+        // to where the request pointed, long after it was made.
+        function test_aClampedOffsetIsNotHonouredByRowsArrivingLater() {
+            fill(20)
+
+            const last = view.rowCount - 1
+
+            verify(view.positionViewAtRowOffset(last, 400), "accepted")
+            const clamp = view.contentY
+            fuzzyCompare(clamp, bottomY(), 1.0, "clamped")
+
+            provider.delay = 0
+            rows.append(rows.make(100, 20))
+            tryVerify(() => settled(40) && view.contentHeight > clamp + view.height + 1000,
+                      8000, "the rows arrived, below the viewport")
+
+            fuzzyCompare(view.contentY, clamp, 0.5, "and the viewport stayed where it was")
+        }
+
+        // Once the rows are quiet the clamp is where the view is: content
+        // growing afterwards, by any means, does not take the request up again.
+        function test_aClampedOffsetLapsesOnceTheRowsAreQuiet() {
+            provider.delegate = growableDelegate
+            fill(20)
+
+            const last = view.rowCount - 1
+
+            verify(view.positionViewAtRowOffset(last, 400), "accepted")
+            const clamp = view.contentY
+
+            letTheRowsSettle()
+
+            const contentHeight = view.contentHeight
+            view.itemAtRow(last).content.extra += 400 + view.height
+            tryVerify(() => view.contentHeight > contentHeight + 400, 2000, "the row grew")
+            tryVerify(() => !view.busy, 2000)
+
+            fuzzyCompare(view.contentY, clamp, 0.5, "the view stayed at the clamp")
+        }
+
         // A request names a row by number, and a slide renumbers every row it
         // keeps. A request still waiting has to follow its message, or it lands
         // on whichever one took that number.
         function test_aPendingRequestFollowsItsMessageThroughASlide() {
+            provider.delay = 60
             fill(20)
 
-            const asked = 15
-            const key = view.keyAtRow(asked)
-            const far = 400
-
-            verify(view.positionViewAtRowOffset(asked, far), "accepted")
-            waitForRendering(view)
-
-            verify(Math.abs(view.viewportOffsetToRow(asked) - far) > 1,
-                   "it cannot be honoured yet")
-
-            // rows arrive at the end and the far end is trimmed, so the message
-            // keeps its place in the model and loses its row number
+            // rows arrive at the end and the far end is trimmed as they are
+            // revealed, so the message keeps its place in the model and loses
+            // its row number
             verify(view.requestMore(WindowedView.Edge.Bottom), "the slide was taken")
-            tryVerify(() => !view.busy, 8000, "and landed")
+            tryVerify(() => view.staging, 2000, "a batch is staged")
+
+            // a row of the slide: no geometry yet, so the request waits
+            const asked = 20
+            const key = view.keyAtRow(asked)
+            const offset = 100
+            const shell = view.itemAtRow(asked)
+
+            verify(shell && !shell.visible, "its row is held but not shown")
+            verify(view.positionViewAtRowOffset(asked, offset), "accepted")
+
+            tryVerify(() => !view.busy, 8000, "the slide landed")
 
             const now = view.rowForKey(key)
 
             verify(now >= 0, "the message is still in the window")
             verify(now !== asked, "and its row number really did change")
 
-            tryVerify(() => Math.abs(view.viewportOffsetToRow(now) - far) < 0.5,
+            tryVerify(() => Math.abs(view.viewportOffsetToRow(now) - offset) < 0.5,
                       5000, "the offset is honoured for the message it named")
         }
 
