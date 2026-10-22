@@ -191,12 +191,27 @@ Item {
         readonly property string linkPreviewDisabledNotification: qsTr("Link previews will never be shown. You can manage link previews in %1.").arg(linkPreviewBeginAnchor + qsTr("Settings", "Go to settings page") + linkPreviewEndAnchor)
         readonly property string linkPreviewEnabledForMessageNotification: qsTr("Link previews will be shown for this message. You can manage link previews in %1.").arg(linkPreviewBeginAnchor + qsTr("Settings", "Go to settings page") + linkPreviewEndAnchor)
 
-        property string editMessageId
-        property string editOriginalInputText
-        property string preEditInputText
-        property string preEditMentionNamesJson
-        property string preEditReplyMessageId
-        property var preEditFileUrlsAndSources: []
+        // The active chat's input, kept per chat by the backend so that a
+        // chat switch leaves it as it was: the draft - text, reply and
+        // attachments - and, apart from it, a message edit in progress. The
+        // draft is not written while editing, so it is what an edit returns to.
+        readonly property var preservedProperties: d.activeChatContentModule
+                                                   ? d.activeChatContentModule.inputAreaModule.preservedProperties
+                                                   : null
+
+        readonly property string editMessageId: d.preservedProperties
+                                                ? d.preservedProperties.editMessageId : ""
+
+        // The chat whose state the input shows. From a chat switch until the
+        // next chat's state is restored, the input still holds the previous
+        // chat's - and may report it changing as it adapts to the next chat -
+        // so nothing it does then is the next chat's draft or edit.
+        property var shownChatContentModule: null
+
+        function inputShowsActiveChat() {
+            return !!d.activeChatContentModule
+                    && d.shownChatContentModule === d.activeChatContentModule
+        }
 
         function getChatContentModule(chatId) {
             if (!root.parentModule || !chatId)
@@ -267,7 +282,9 @@ Item {
         }
 
         function startEditMessage(messageId) {
-            if (!messageId)
+            // Already being edited - the edit restored after a chat switch,
+            // its message marked again: what was typed so far stays.
+            if (!messageId || !d.preservedProperties || messageId === d.editMessageId)
                 return
 
             const msg = SQUtils.ModelUtils.getByKey(
@@ -277,49 +294,72 @@ Item {
 
             const unparsedText = msg.unparsedText
 
-            if (editMessageId && editMessageId !== messageId)
-                d.activeMessagesStore.setEditModeOff(editMessageId)
+            if (d.editMessageId)
+                d.activeMessagesStore.setEditModeOff(d.editMessageId)
 
-            if (!editMessageId) {
-                preEditInputText = chatInput.getTextWithPublicKeys()
-                preEditMentionNamesJson = d.inputMentionNamesJson()
-                preEditReplyMessageId = chatInput.replyMessageId
-                preEditFileUrlsAndSources = [...chatInput.fileUrlsAndSources]
-            }
-
-            editMessageId = messageId
+            // First, so that what the input does from here on is the edit's,
+            // never the draft's
+            d.preservedProperties.editMessageId = messageId
             chatInput.isEdit = true
             chatInput.resetReplyArea()
             chatInput.resetImageArea()
             chatInput.textInput.loadText(unparsedText,
                                          d.messageMentionNames(unparsedText, msg.mentionedNames))
-            editOriginalInputText = chatInput.getTextWithPublicKeys()
+            d.preservedProperties.editOriginalText = chatInput.getTextWithPublicKeys()
             chatInput.forceInputActiveFocus()
             Qt.callLater(() => d.activeMessagesStore.jumpToMessage(messageId))
         }
 
-        function restorePreEditInput() {
-            chatInput.textInput.loadText(preEditInputText,
-                                         d.draftMentionNames(preEditInputText, preEditMentionNamesJson))
-            chatInput.replyMessageId = preEditReplyMessageId
+        // Back into the edit that was in progress when the chat was left.
+        // The message may be gone meanwhile - deleted, or not loaded any more:
+        // the edit goes with it, and the draft is shown instead.
+        function resumeEditMessage(messageId, editText) {
+            const msg = SQUtils.ModelUtils.getByKey(
+                          d.activeMessagesStore.messagesModel, "id", messageId)
 
-            if (preEditReplyMessageId)
-                d.showReplyArea(preEditReplyMessageId)
-            else
-                chatInput.resetReplyArea()
+            if (!msg) {
+                d.forgetEditMessage()
+                chatInput.isEdit = false
+                d.restoreDraft()
+                return
+            }
 
+            chatInput.isEdit = true
+            chatInput.resetReplyArea()
             chatInput.resetImageArea()
-            chatInput.validateImagesAndShowImageArea(preEditFileUrlsAndSources || [])
+            chatInput.textInput.loadText(editText,
+                                         d.messageMentionNames(editText, msg.mentionedNames))
+
+            // still marked, unless the model was reloaded meanwhile
+            d.activeMessagesStore.setEditModeOn(messageId)
+        }
+
+        function forgetEditMessage() {
+            if (!d.preservedProperties)
+                return
+
+            d.preservedProperties.editMessageId = ""
+            d.preservedProperties.editText = ""
+            d.preservedProperties.editOriginalText = ""
+        }
+
+        // The draft as the chat keeps it - text, reply and attachments
+        function restoreDraft() {
+            const text = d.preservedProperties ? d.preservedProperties.text : ""
+            const namesJson = d.preservedProperties ? d.preservedProperties.mentionNamesJson : ""
+
+            chatInput.textInput.loadText(text, d.draftMentionNames(text, namesJson))
+            d.restoreInputReply()
+            d.restoreInputAttachments()
         }
 
         function cancelEditMessage(restoreDraft = true) {
             d.setCurrentEditMessageOff()
-            editMessageId = ""
-            editOriginalInputText = ""
+            d.forgetEditMessage()
             chatInput.isEdit = false
 
             if (restoreDraft)
-                d.restorePreEditInput()
+                d.restoreDraft()
             else
                 chatInput.clear()
 
@@ -327,12 +367,12 @@ Item {
         }
 
         function completeEditMessage() {
-            if (!editMessageId)
+            if (!d.editMessageId)
                 return
 
             const newMessageText = chatInput.getTextWithPublicKeys()
 
-            if (editOriginalInputText === newMessageText) {
+            if (d.preservedProperties.editOriginalText === newMessageText) {
                 d.cancelEditMessage()
                 return
             }
@@ -347,15 +387,14 @@ Item {
             if (message.trim().length <= 0)
                 return
 
-            const messageId = editMessageId
+            const messageId = d.editMessageId
             const interpretedMessage = SQUtils.StringUtils.expandAsciiEmoticonShortcuts(message)
 
             d.setCurrentEditMessageOff()
-            editMessageId = ""
-            editOriginalInputText = ""
+            d.forgetEditMessage()
             chatInput.isEdit = false
             d.activeMessagesStore.editMessage(messageId, interpretedMessage)
-            d.restorePreEditInput()
+            d.restoreDraft()
             chatInput.forceInputActiveFocus()
         }
 
@@ -412,26 +451,40 @@ Item {
             chatInput.validateImagesAndShowImageArea(filesList)
         }
 
-        function restoreInputState(preservedText, preservedMentionNamesJson) {
+        // The active chat's state into the input: the edit it was left in,
+        // or its draft
+        function restoreInputState() {
             // scheduled via Qt.callLater — it can fire while this view is
             // tearing down (chat/section switch), when the dying context has
             // already dropped its functions
             if (typeof d.draftMentionNames !== "function")
                 return
 
+            // Not before the view is complete: created asynchronously with
+            // its section, the input would take the state and then have it
+            // replaced by its own initial values. Completion restores again.
+            if (!d.completed)
+                return
+
+            d.shownChatContentModule = d.activeChatContentModule
+
             if (!d.activeChatContentModule) {
+                chatInput.isEdit = false
                 chatInput.clear()
                 chatInput.resetReplyArea()
                 chatInput.resetImageArea()
                 return
             }
 
-            // Restore message text
-            chatInput.textInput.loadText(preservedText,
-                                         d.draftMentionNames(preservedText, preservedMentionNamesJson))
+            const preserved = d.preservedProperties
 
-            d.restoreInputReply()
-            d.restoreInputAttachments()
+            if (preserved.editMessageId) {
+                d.resumeEditMessage(preserved.editMessageId, preserved.editText)
+                return
+            }
+
+            chatInput.isEdit = false
+            d.restoreDraft()
         }
 
         readonly property var updateLinkPreviews: {
@@ -448,15 +501,24 @@ Item {
             if (!d.activeChatContentModule) {
                 return
             }
-            editMessageId = ""
-            editOriginalInputText = ""
-            chatInput.isEdit = false
-
-            const preserved = d.activeChatContentModule.inputAreaModule.preservedProperties
-
             d.activeChatContentModule.inputAreaModule.clearLinkPreviewCache()
-            // Call later to make sure usersStore and activeMessagesStore bindings are updated
-            Qt.callLater(d.restoreInputState, preserved.text, preserved.mentionNamesJson)
+            // Call later to make sure usersStore and activeMessagesStore bindings are updated.
+            // Until then the input is left as it is - the chat left keeps its
+            // draft or edit, and nothing reaches the next chat's (see
+            // shownChatContentModule).
+            Qt.callLater(d.restoreInputState)
+        }
+
+        property bool completed: false
+
+        // A chat already active when the view is created gets no change to
+        // react to, and one that became active while it was being created
+        // was not restored then.
+        Component.onCompleted: {
+            d.completed = true
+
+            if (d.activeChatContentModule)
+                Qt.callLater(d.restoreInputState)
         }
 
         // key can be either a group key or token key
@@ -777,12 +839,19 @@ Item {
                     threadName: root.threadName
 
                     textInput.onTextChanged: {
-                        if (chatInput.isEdit || !d.activeChatContentModule)
+                        if (!d.inputShowsActiveChat())
                             return
                         // Preserve the wire form ("@0x…" mentions + unicode emojis), not textInput.text
                         // (which holds ObjectReplacementCharacter placeholders for pills/emojis), so the
                         // draft can be restored with pills/emojis intact via loadText().
                         const wireText = chatInput.getTextWithPublicKeys()
+
+                        // an edit's text is kept apart from the draft, which it leaves as it was
+                        if (chatInput.isEdit) {
+                            d.activeChatContentModule.inputAreaModule.preservedProperties.editText = wireText
+                            return
+                        }
+
                         const preserved = d.activeChatContentModule.inputAreaModule.preservedProperties
                         if (wireText !== preserved.text) {
                             preserved.text = wireText
@@ -792,7 +861,7 @@ Item {
                     }
 
                     onFileUrlsAndSourcesChanged: {
-                        if (!chatInput.isEdit && !!d.activeChatContentModule)
+                        if (!chatInput.isEdit && d.inputShowsActiveChat())
                             d.activeChatContentModule.inputAreaModule.preservedProperties.fileUrlsAndSourcesJson = JSON.stringify(chatInput.fileUrlsAndSources)
                     }
 
@@ -811,7 +880,7 @@ Item {
 
                         replyMessageId = ""
 
-                        if (!chatInput.isEdit && !!d.activeChatContentModule)
+                        if (!chatInput.isEdit && d.inputShowsActiveChat())
                             d.activeChatContentModule.inputAreaModule.preservedProperties.replyMessageId = ""
                     }
 

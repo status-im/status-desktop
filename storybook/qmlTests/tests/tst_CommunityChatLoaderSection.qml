@@ -663,6 +663,18 @@ Item {
             return SQUtils.ModelUtils.modelToFlatArray(input.textInput.mentionsModel, "name")
         }
 
+        // The input takes the active chat's state a turn after the section is
+        // ready, and what is typed before that belongs to no chat: a draft to
+        // recognise the chat's state by, waited for and then cleared.
+        function loadSectionWithInput() {
+            mock.d.contentModuleFor(mock.activeChatId).inputAreaModule.preservedProperties.text = "loaded"
+            const loader = loadSection()
+            const input = chatInput(loader)
+            tryCompare(input.textInput, "text", "loaded")
+            input.textInput.clear()
+            return loader
+        }
+
         // as the message's edit menu does
         function startEdit(loader, messageId) {
             const messagesView = findChildByTypePrefix(loader, "ChatMessagesView")
@@ -671,7 +683,7 @@ Item {
         }
 
         function test_editShowsMentionNamesWithoutTheRoster() {
-            const loader = loadSection()
+            const loader = loadSectionWithInput()
             const contentModule = mock.d.contentModuleFor(mock.activeChatId)
             const messages = contentModule.messagesModel
             const own = SQUtils.ModelUtils.get(messages, 1)
@@ -688,7 +700,7 @@ Item {
         }
 
         function test_restoredDraftKeepsItsMentionNames() {
-            const loader = loadSection()
+            const loader = loadSectionWithInput()
             const input = chatInput(loader)
             const draftChatId = mock.activeChatId
             // as picked from the suggestions: the pill's name carries the "@"
@@ -722,7 +734,7 @@ Item {
 
         // the input's own mention names cover a contacts-wide model: built on the first edit
         function test_inputMentionNamesBuiltOnFirstUse() {
-            const loader = loadSection()
+            const loader = loadSectionWithInput()
             const columnView = findChildByTypePrefix(loader, "ChatColumnView")
             const input = chatInput(loader)
             revisitWithPlainDraft(input)
@@ -738,7 +750,7 @@ Item {
         }
 
         function test_restoringDraftWithoutMentionsBuildsNoMentionNames() {
-            const loader = loadSection()
+            const loader = loadSectionWithInput()
             const columnView = findChildByTypePrefix(loader, "ChatColumnView")
             revisitWithPlainDraft(chatInput(loader))
             compare(inputMentionNamesBuilt(columnView), 0)
@@ -755,7 +767,7 @@ Item {
 
         function test_restoredDraftNamesSelfWithTheCurrentName() {
             contactsStoreMock.myPublicKey = strangerKey
-            const loader = loadSection()
+            const loader = loadSectionWithInput()
             const chatRootStore = findChildByTypePrefix(loader, "ChatColumnView").rootStore
             chatRootStore.name = "Old Me"
             const input = chatInput(loader)
@@ -767,7 +779,7 @@ Item {
         }
 
         function test_restoredDraftNamesAKeyThatBecameNameable() {
-            const loader = loadSection()
+            const loader = loadSectionWithInput()
             const input = chatInput(loader)
             // nobody could name them when the draft was written
             input.textInput.insertMention(0, "@" + strangerKey, strangerKey)

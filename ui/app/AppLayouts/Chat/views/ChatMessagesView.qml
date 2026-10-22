@@ -712,12 +712,11 @@ Item {
             return Qt.binding(() => root[name])
         }
 
+        // A message being edited stays edited when its row goes: the edit is
+        // the chat input's, which ends it, and is kept across a chat switch.
+        // A row that comes back marked does not start it again - the relay of
+        // its intents is created after the bind.
         function releaseRow(item) {
-            // a message leaving the window while it is being edited stops
-            // being edited, as it did when its delegate was destroyed
-            if (item.editModeOn && root.messageStore)
-                root.messageStore.setEditModeOff(item.messageId)
-
             const relay = d.relays.get(item)
 
             if (relay) {

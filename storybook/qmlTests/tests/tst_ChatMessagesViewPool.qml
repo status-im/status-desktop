@@ -98,6 +98,10 @@ Item {
             function getChatId() { return moduleMock.mockChatId }
             function updateKeepUnread(flag) {}
 
+            // the messages this chat was asked to stop editing
+            property var editModeOffCalls: []
+            function setEditModeOff(messageId) { editModeOffCalls.push(messageId) }
+
             // Like the backend: a page lands at the model's end, then the
             // answer; nothing left answers at once. The chat identifier (the
             // welcome banner) comes last, with the page that reaches the
@@ -221,6 +225,12 @@ Item {
     }
 
     Component {
+        id: signalSpyComp
+
+        SignalSpy {}
+    }
+
+    Component {
         id: viewComp
 
         ChatMessagesView {
@@ -253,6 +263,8 @@ Item {
             moduleB.messagesModule.loading = false
             moduleA.chatDetails.hasUnreadMessages = false
             moduleB.chatDetails.hasUnreadMessages = false
+            moduleA.messagesModule.editModeOffCalls = []
+            moduleB.messagesModule.editModeOffCalls = []
         }
 
         function readyCount() {
@@ -685,6 +697,58 @@ Item {
             verify(lv.atBottom, "back at the newest message")
             tryVerify(() => moduleA.markAllMessagesReadCalls > marked, 5000,
                       "chat a is read")
+        }
+
+        // ---- editing ----------------------------------------------------------------
+
+        // A message being edited in the chat left stays edited: the edit is
+        // the chat input's, which keeps it to come back to. Its row going back
+        // to the pool ends nothing, in either chat.
+        function test_leavingAChatWhileEditingKeepsTheEdit() {
+            prewarmedPool()
+            const view = openView()
+
+            const key = view.chatLogView.keyAtRow(0)
+            messagesA.setProperty(0, "editMode", true)
+            tryVerify(() => rowItems(view).some(r => r.content.messageId === key
+                                                      && r.content.editModeOn),
+                      5000, "the newest message is being edited")
+
+            view.chatContentModule = moduleB
+            view.messageStore = storeB
+            settle(view)
+
+            compare(moduleA.messagesModule.editModeOffCalls, [], "chat a ended no edit")
+            compare(moduleB.messagesModule.editModeOffCalls, [], "nor did chat b")
+            verify(messagesA.get(0).editMode, "the message is still being edited")
+        }
+
+        // Back in the chat, the edited message's row shows it marked - but
+        // the edit is already the input's: the row must not start it again,
+        // which would load the message's text over what was typed.
+        function test_aRowComingBackEditedDoesNotStartTheEditAgain() {
+            prewarmedPool()
+            const view = openView()
+
+            const key = view.chatLogView.keyAtRow(0)
+            messagesA.setProperty(0, "editMode", true)
+            tryVerify(() => rowItems(view).some(r => r.content.messageId === key
+                                                      && r.content.editModeOn), 5000)
+
+            view.chatContentModule = moduleB
+            view.messageStore = storeB
+            settle(view)
+
+            const spy = createTemporaryObject(signalSpyComp, root,
+                                              { target: view, signalName: "editModeChanged" })
+
+            view.chatContentModule = moduleA
+            view.messageStore = storeA
+            settle(view)
+
+            verify(rowItems(view).some(r => r.content.messageId === key && r.content.editModeOn),
+                   "the message shows marked")
+            compare(spy.count, 0, "and the edit was not started again")
         }
 
         // ---- history --------------------------------------------------------------
