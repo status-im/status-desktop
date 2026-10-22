@@ -17,6 +17,12 @@ class Messaging(Enum):
     PAYMENT_REQUEST_AMOUNT = '1'
 
 
+SPELL_CHECK_MISSPELLED_WORD = 'wrld'
+SPELL_CHECK_SUGGESTION = 'world'
+SPELL_CHECK_MESSAGE_WITH_TYPO = 'hello wrld friend '
+SPELL_CHECK_CORRECTED_MESSAGE = 'hello world friend'
+
+
 class Sticker(NamedTuple):
     hash: str
     pack_id: str = '1'
