@@ -697,16 +697,46 @@ Item {
             compare(inputMentionNames(input), ["@Xena"])
         }
 
+        // the input's own mention names; the message list holds names of its own
+        function inputMentionNamesBuilt(columnView) {
+            const all = findAllInDataByTypePrefix(columnView, "MentionNamesAdaptor", [])
+            const list = findAllInDataByTypePrefix(columnView, "ChatMessagesView", [])
+                .reduce((out, view) => findAllInDataByTypePrefix(view, "MentionNamesAdaptor", out), [])
+            return all.length - list.length
+        }
+
+        // leaves the chat and comes back with a plain draft, so both restores have run
+        function revisitWithPlainDraft(input) {
+            const draftChatId = mock.activeChatId
+            input.textInput.insert(0, "hello")
+            mock.setActiveChat("channel-u-1")
+            tryCompare(input.textInput, "text", "")
+            mock.setActiveChat(draftChatId)
+            tryCompare(input.textInput, "text", "hello")
+        }
+
         // the input's own mention names cover a contacts-wide model: built on the first edit
         function test_inputMentionNamesBuiltOnFirstUse() {
             const loader = loadSection()
             const columnView = findChildByTypePrefix(loader, "ChatColumnView")
-            const before = findAllInDataByTypePrefix(columnView, "MentionNamesAdaptor", []).length
+            const input = chatInput(loader)
+            revisitWithPlainDraft(input)
+            input.textInput.clear()
+            compare(inputMentionNamesBuilt(columnView), 0)
 
-            const own = SQUtils.ModelUtils.get(mock.d.contentModuleFor(mock.activeChatId).messagesModel, 1)
+            const contentModule = mock.d.contentModuleFor(mock.activeChatId)
+            const own = SQUtils.ModelUtils.get(contentModule.messagesModel, 1)
+            contentModule.messagesModel.setProperty(1, "unparsedText", "hi @" + strangerKey)
             findChildByTypePrefix(loader, "ChatContentView").editMessageRequested(own.id)
-            compare(findAllInDataByTypePrefix(columnView, "MentionNamesAdaptor", []).length, before + 1)
-            tryCompare(mock.d.contentModuleFor(mock.activeChatId).messagesModule, "jumpedToMessageId", own.id)
+            compare(inputMentionNamesBuilt(columnView), 1)
+            tryCompare(contentModule.messagesModule, "jumpedToMessageId", own.id)
+        }
+
+        function test_restoringDraftWithoutMentionsBuildsNoMentionNames() {
+            const loader = loadSection()
+            const columnView = findChildByTypePrefix(loader, "ChatColumnView")
+            revisitWithPlainDraft(chatInput(loader))
+            compare(inputMentionNamesBuilt(columnView), 0)
         }
 
         // leaves the draft's chat and comes back, so its draft is restored

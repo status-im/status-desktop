@@ -196,6 +196,11 @@ Item {
             return root.parentModule.getChatContentModule()
         }
 
+        // Every mention is "@0x…", so text without one never needs the resolver built
+        function mayHaveMentions(text) {
+            return !!text && text.includes("@0x")
+        }
+
         function mentionResolver() {
             mentionResolverLoader.active = true
             return mentionResolverLoader.item
@@ -206,12 +211,16 @@ Item {
         // the roster, which is empty while nobody holds it.
         // An edited message is named like its bubble, its own mentionedNames included.
         function messageMentionNames(text, mentionedNames) {
+            if (!d.mayHaveMentions(text))
+                return {}
             return d.mentionResolver().resolveFor(text, mentionedNames)
         }
 
         // A restored draft is named live; a name it was saved with stands in only where the
         // live one is just an alias or the raw key.
         function draftMentionNames(text, savedNamesJson) {
+            if (!d.mayHaveMentions(text))
+                return {}
             let saved = {}
             try {
                 saved = JSON.parse(savedNamesJson || "{}")
