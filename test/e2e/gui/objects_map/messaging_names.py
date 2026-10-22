@@ -61,6 +61,8 @@ mainWindow_suggestionBoxList = {"container": mainWindow_suggestionsBox, "objectN
 suggestionsBox_mentionSuggestion_Rectangle = {"container": mainWindow_suggestionBoxList, "type": "Rectangle", "visible": True}
 mainWindow_statusChatInputSendButton = {"container": statusDesktop_mainWindow, "objectName": "statusChatInputSendButton",
                                        "type": "Control", "visible": True}
+chatInputEditMenu = {"container": mainWindow_Overlay, "objectName": "StatusTextEditMenu", "type": "PopupItem", "visible": True}
+spellingSuggestion_StatusMenuItem = {"container": chatInputEditMenu, "objectName": "spellingSuggestion_", "type": "StatusMenuItem", "visible": True}
 mark_as_Read_StatusMenuItem = {"checkable": False, "container": mainWindow_Overlay, "enabled": True, "objectName": "chatMarkAsReadMenuItem", "type": "StatusMenuItem", "visible": True}
 clear_History_StatusMenuItem = {"checkable": False, "container": mainWindow_Overlay, "enabled": True, "objectName": "clearHistoryMenuItem", "type": "StatusMenuItem", "visible": True}
 clear_group_chat_history_item = {"checkable": False, "container": mainWindow_Overlay, "enabled": True, "objectName": "clearHistoryGroupMenuItem", "type": "StatusMenuItem", "visible": True}

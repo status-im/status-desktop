@@ -16,6 +16,7 @@ from gui.components.messaging.edit_group_name_and_image_popup import EditGroupNa
 from gui.components.messaging.mention_suggestions_popup import MentionSuggestionsPopup
 from gui.components.messaging.leave_group_popup import LeaveGroupPopup
 from gui.components.messaging.link_preview_options_popup import LinkPreviewOptionsPopup
+from gui.components.messaging.chat_input_edit_menu import ChatInputEditMenu
 from gui.components.messaging.message_context_menu_popup import MessageContextMenuPopup
 from gui.components.messaging.payment_request_popup import PaymentRequestPopup
 from gui.components.settings.send_contact_request_popup import SendContactRequestFromProfile
@@ -529,6 +530,28 @@ class ChatMessagesView(QObject):
         self._message_field.wait_until_appears()
         self._message_field.click()
         self._message_field.set_text_property(message)
+
+    @allure.step('Wait until spell check reports issues')
+    def wait_for_spell_issues(self):
+        assert driver.waitFor(
+            lambda: self._message_field.has_spell_issues(),
+            configs.timeouts.UI_LOAD_TIMEOUT_MSEC,
+        ), 'Spell check did not report any issues'
+
+    @allure.step('Wait until spell check reports no issues')
+    def wait_for_no_spell_issues(self):
+        assert driver.waitFor(
+            lambda: self._message_field.has_no_spell_issues(),
+            configs.timeouts.UI_LOAD_TIMEOUT_MSEC,
+        ), 'Spell check still reports issues'
+
+    @allure.step('Apply spelling suggestion {3} for {2}')
+    def apply_spelling_suggestion(self, text: str, word: str, suggestion: str):
+        self.type_message(text)
+        self.wait_for_spell_issues()
+        position = text.find(word) + 2
+        self._message_field.right_click_at_character(position)
+        ChatInputEditMenu().wait_until_appears().select_spelling_suggestion(suggestion)
 
     @allure.step('Confirm sending message')
     def confirm_sending_message(self):

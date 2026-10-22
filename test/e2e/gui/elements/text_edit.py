@@ -45,3 +45,33 @@ class TextEdit(QObject):
         self.set_text_property(query)
         LOG.info('%s: search query set to "%s"', self, query)
         return self
+
+    @allure.step('Right click at character {1} in {0}')
+    def right_click_at_character(self, index: int):
+        rect = self.object.positionToRectangle(index)
+        self.right_click(int(rect.x) + 1, int(rect.y + rect.height / 2))
+        return self
+
+    def _spell_checker(self):
+        return self.object.spellChecker
+
+    def spell_issues_count(self) -> int:
+        issues = self._spell_checker().issues
+        length = getattr(issues, 'length', None)
+        if callable(length):
+            return int(length())
+        if length is not None:
+            return int(length)
+        return len(issues)
+
+    def spell_check_finished(self) -> bool:
+        pending = getattr(self._spell_checker(), 'checkPending', False)
+        if callable(pending):
+            pending = pending()
+        return not pending
+
+    def has_spell_issues(self) -> bool:
+        return self.spell_check_finished() and self.spell_issues_count() > 0
+
+    def has_no_spell_issues(self) -> bool:
+        return self.spell_check_finished() and self.spell_issues_count() == 0
