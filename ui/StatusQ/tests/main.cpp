@@ -6,6 +6,7 @@
 #include <TestHelpers/MonitorQtOutput.h>
 #include <TestHelpers/modelaccessobserverproxy.h>
 
+#include <StatusQ/browserprofileutils.h>
 #include <StatusQ/typesregistration.h>
 
 class RunBeforeQApplicationIsInitialized {
@@ -13,6 +14,7 @@ public:
     RunBeforeQApplicationIsInitialized()
     {
         qputenv("QTWEBENGINE_DISABLE_SANDBOX", "1");
+        BrowserProfileUtils::applyChromiumCertDistrustFlags();
         QtWebEngineQuick::initialize();
     }
 };

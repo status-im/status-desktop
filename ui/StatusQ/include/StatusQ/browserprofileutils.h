@@ -2,8 +2,12 @@
 
 #include <QHash>
 #include <QJSValue>
+#include <QList>
 #include <QObject>
+#include <QSslCertificate>
 #include <QUrl>
+
+#include <QtWebEngineCore/QWebEngineCertificateError>
 
 class QWebEngineDownloadRequest;
 class QWebEnginePage;
@@ -24,6 +28,23 @@ class BrowserProfileUtils : public QObject
 public:
     explicit BrowserProfileUtils(QObject *parent = nullptr);
     ~BrowserProfileUtils() override;
+
+    // Appends the Chromium flags that distrust compromised root CAs in the
+    // built-in Chrome Root Store (specifically emSign ECC Root CA - G3 after
+    // the Oct 2026 eMudhra intermediate key compromise) to
+    // QTWEBENGINE_CHROMIUM_FLAGS. Must be called before
+    // QtWebEngineQuick::initialize().
+    static void applyChromiumCertDistrustFlags();
+
+    // Returns true if any certificate in `chain` matches a distrusted root or
+    // compromised intermediate CA (by certificate SHA-256, SPKI SHA-256, or CA
+    // Common Name).
+    static bool isCertificateChainDistrusted(const QList<QSslCertificate> &chain);
+
+    // Returns true if `error`'s certificate chain contains a distrusted root or
+    // compromised intermediate CA. Such errors must be rejected outright
+    // without offering an interactive certificate-override dialog.
+    Q_INVOKABLE bool isDistrustedCertificateError(const QWebEngineCertificateError &error) const;
 
     // Subscribe to cookieAdded on the profile's cookie store and keep a live
     // set of cookie names. Must be called once when the profile is created
