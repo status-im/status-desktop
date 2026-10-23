@@ -9,6 +9,12 @@ Item {
     width: 200
     height: 200
 
+    // Takes the one-time font alias scan's warning at load, before any test lays out text.
+    Text {
+        font.family: "Sans Serif"
+        text: "x"
+    }
+
     Component {
         id: reactionComponent
 
@@ -19,17 +25,8 @@ Item {
         name: "EmojiReaction"
         when: windowShown
 
-        // The one-time font alias scan warns from whichever test first lays out text.
-        function initTestCase() {
-            createTemporaryQmlObject('import QtQuick; Text { font.family: "Sans Serif"; text: "x" }', root)
-            wait(100)
-        }
-
         function renderedEmoji(reaction) {
-            for (const child of reaction.children)
-                if (child.emoji !== undefined)
-                    return child.emoji
-            return null
+            return findChild(reaction, "emojiReaction_statusEmoji").emoji
         }
 
         // Reaction ids follow Twemoji's filename spelling, which drops U+FE0F. The
@@ -37,9 +34,9 @@ Item {
         // text font instead of as emoji.
         function test_idWithoutTheSelectorRendersTheQualifiedCharacter_data() {
             return [
-                { tag: "heart", emojiId: "2764", expected: "❤️" },
-                { tag: "smiling face", emojiId: "263a", expected: "☺️" },
-                { tag: "hand", emojiId: "1f590", expected: "\u{1F590}️" },
+                { tag: "heart", emojiId: "2764", expected: "\u2764\uFE0F" },
+                { tag: "smiling face", emojiId: "263a", expected: "\u263A\uFE0F" },
+                { tag: "hand", emojiId: "1f590", expected: "\u{1F590}\uFE0F" },
                 { tag: "no selector needed", emojiId: "1f602", expected: "\u{1F602}" },
             ]
         }
