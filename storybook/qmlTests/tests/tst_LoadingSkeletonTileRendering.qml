@@ -5,7 +5,7 @@ import StatusQ.Components
 
 /*
  Checks what the tile shader actually draws. The offscreen QPA platform has no
- RHI backend to compile and run shaders with, so the whole case is skipped
+ RHI backend to compile and run shaders with, so every test is skipped
  there; run it with a real window (no QT_QPA_PLATFORM=offscreen).
 */
 Item {
@@ -35,11 +35,44 @@ Item {
         }
     }
 
+    // two tiles farther apart than the band is wide
+    Component {
+        id: groupComp
+
+        Rectangle {
+            readonly property alias leftTile: leftTile
+            readonly property alias rightTile: rightTile
+
+            width: 360
+            height: 40
+            color: "#0000ff"
+
+            LoadingSkeletonGroup {
+                anchors.fill: parent
+
+                LoadingSkeletonTile {
+                    id: leftTile
+                    x: 0
+                    width: 40
+                    height: 40
+                    color: "#404040"
+                }
+                LoadingSkeletonTile {
+                    id: rightTile
+                    x: 320
+                    width: 40
+                    height: 40
+                    color: "#404040"
+                }
+            }
+        }
+    }
+
     TestCase {
         name: "LoadingSkeletonTileRendering"
         when: windowShown
 
-        function initTestCase() {
+        function init() {
             if (Qt.platform.pluginName === "offscreen")
                 skip("shaders are not run on the offscreen platform")
         }
@@ -77,8 +110,10 @@ Item {
             verify(!!frame)
             const tile = frame.tile
 
-            tryCompare(tile, "status", ShaderEffect.Compiled)
             waitForRendering(frame)
+            // only the first effect to load a shader reports Compiled; later
+            // ones reuse the cached shader and stay Uncompiled
+            verify(tile.status !== ShaderEffect.Error, tile.log)
 
             const image = grabImage(tile)
             const scale = image.width / tile.width
@@ -94,6 +129,38 @@ Item {
                 const e = middleRowExtremes(grabImage(tile), scale)
                 return brightness(e.brightest) > brightness(e.darkest) + 0.03
             }, 3000, "the sweep band must brighten the tile in some frame")
+        }
+
+        function test_band_sweeps_across_group_tiles_in_turn() {
+            const frame = createTemporaryObject(groupComp, root)
+            verify(!!frame)
+            const tiles = [frame.leftTile, frame.rightTile]
+            waitForRendering(frame)
+
+            const base = brightness(Qt.color("#404040"))
+            let seen = [false, false]
+            let bothInOneFrame = false
+
+            // one band crosses both tiles per loop, so over a loop each tile
+            // lights up, never together
+            tryVerify(() => {
+                const image = grabImage(frame)
+                const scale = image.width / frame.width
+                const row = Math.floor(image.height / 2)
+                const lit = tiles.map(tile => {
+                    for (let x = tile.x + 2; x < tile.x + tile.width - 2; ++x) {
+                        if (brightness(image.pixel(Math.round(x * scale), row))
+                                > base + 0.03)
+                            return true
+                    }
+                    return false
+                })
+                seen = seen.map((s, i) => s || lit[i])
+                bothInOneFrame = bothInOneFrame || (lit[0] && lit[1])
+                return seen[0] && seen[1]
+            }, 3000, "the band must light each tile in some frame")
+            verify(!bothInOneFrame,
+                   "the band must not light tiles far apart in the same frame")
         }
     }
 }
