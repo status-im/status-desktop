@@ -143,6 +143,14 @@ git add .
 git commit -m "Add ${channel} benchmark results for ${build_label}"
 
 echo -e "${GRN}Pushing changes${RST}"
-git push "${REPO_URL}"
+push_attempts=5
+for ((attempt = 1; attempt <= push_attempts; attempt++)); do
+  git pull --rebase origin master
+  git push origin master && break
+  [[ "${attempt}" -eq "${push_attempts}" ]] \
+    && { echo -e "${RED}Failed to push benchmark results after ${push_attempts} attempts${RST}"; exit 1; }
+  echo -e "${YLW}Push rejected because master moved; retrying (${attempt}/${push_attempts})${RST}"
+  sleep $((attempt * 2))
+done
 
 echo -e "${GRN}Push finished${RST}"
