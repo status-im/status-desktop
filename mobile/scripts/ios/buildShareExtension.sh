@@ -66,7 +66,27 @@ if [[ "${QMAKE_EXTRA_CONFIG:-}" != "fastlane" ]]; then
   if [[ "$SDK" == iphonesimulator* ]]; then
     IDENTITY="-" # simulator runs ad-hoc signed code
   else
-    IDENTITY="${CODE_SIGN_IDENTITY:-Apple Development}"
+    IDENTITY="${CODE_SIGN_IDENTITY:-}"
+    if [[ -z "$IDENTITY" ]]; then
+      # A bare "Apple Development" is ambiguous as soon as the keychain holds
+      # development certificates for more than one team (codesign matches the
+      # name by prefix) — re-sign with a certificate of the same team that
+      # xcodebuild already signed the app with. The team id is the OU of the
+      # certificate subject.
+      TEAM=$(codesign -d --verbose=2 "$APP_BUNDLE" 2>&1 | awk -F= '/^TeamIdentifier=/{print $2}')
+      if [[ -n "$TEAM" && "$TEAM" != "not set" ]]; then
+        while IFS= read -r CANDIDATE; do
+          OU=$(security find-certificate -c "$CANDIDATE" -p 2>/dev/null \
+                   | openssl x509 -noout -subject 2>/dev/null \
+                   | grep -oE 'OU *= *[^/,]+' | head -1 | sed -E 's/OU *= *//')
+          if [[ "$OU" == "$TEAM" ]]; then
+            IDENTITY="$CANDIDATE"
+            break
+          fi
+        done < <(security find-identity -v -p codesigning | grep -oE '"[^"]+"' | tr -d '"' | sort -u)
+      fi
+      IDENTITY="${IDENTITY:-Apple Development}"
+    fi
   fi
   echo "Re-signing $APP_BUNDLE with identity: $IDENTITY"
   codesign --force --sign "$IDENTITY" --preserve-metadata=entitlements,requirements,flags "$APP_BUNDLE"
