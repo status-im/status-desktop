@@ -3,6 +3,7 @@ package app.status.mobile;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.util.Log;
@@ -18,7 +19,8 @@ import java.util.Set;
 
 // Copies one shared image stream into the share-intake cache, normalized the
 // same way as the iOS share extension: HEIC/HEIF is re-encoded as JPEG (the
-// app's image validator and status-go do not decode it).
+// app's image validator and status-go do not decode it), JPEG only when
+// larger than the cap. GIF/PNG/WebP keep their bytes (animation, transparency).
 final class ShareImageTranscoder {
     private static final String TAG = "ShareImageTranscoder";
     // The chat compresses image messages to ~350 KB anyway, so nothing
@@ -34,12 +36,25 @@ final class ShareImageTranscoder {
     // A failed re-encode falls back to the original bytes.
     static File copyNormalized(Context ctx, Uri uri, String mime, File dir, String baseName) {
         ContentResolver resolver = ctx.getContentResolver();
-        if (HEIF_MIMES.contains(mime)) {
+        if (HEIF_MIMES.contains(mime)
+                || ("image/jpeg".equals(mime) && isLargerThanCap(resolver, uri))) {
             File jpeg = new File(dir, baseName + ".jpg");
             if (writeJpeg(resolver, uri, jpeg)) return jpeg;
         }
         File out = new File(dir, baseName + extensionForMime(mime));
         return copyBytes(resolver, uri, out) ? out : null;
+    }
+
+    private static boolean isLargerThanCap(ContentResolver resolver, Uri uri) {
+        BitmapFactory.Options bounds = new BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        try (InputStream in = resolver.openInputStream(uri)) {
+            if (in == null) return false;
+            BitmapFactory.decodeStream(in, null, bounds);
+        } catch (Exception e) {
+            return false;
+        }
+        return Math.max(bounds.outWidth, bounds.outHeight) > MAX_IMAGE_EDGE_PX;
     }
 
     private static boolean writeJpeg(ContentResolver resolver, Uri uri, File out) {
