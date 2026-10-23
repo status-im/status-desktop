@@ -259,7 +259,7 @@ Q_DECL_EXPORT bool statusq_incubationDebugStats(void* engine, int* count, int* p
 }
 
 Q_DECL_EXPORT void statusq_installBackgroundGraphicsRelease() {
-    new BackgroundGraphicsRelease(qApp);
+    new Status::BackgroundGraphicsRelease(qApp);
 }
 
 Q_DECL_EXPORT void* statusq_osnotification_create() {
