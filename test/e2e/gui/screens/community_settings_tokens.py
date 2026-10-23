@@ -17,6 +17,7 @@ from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
 from gui.objects_map import communities_names
+from helpers.wallet_helper import find_network_option_item
 
 
 class TokensView(QObject):
@@ -271,14 +272,7 @@ class EditOwnerTokenView(QObject):
         options = list(driver.findAllObjects(self.network_delegate.real_name)) or list(
             driver.findAllObjects(self.network_item.real_name))
         assert options, 'Network options are not displayed'
-        option_names = [str(getattr(item, 'objectName', '')) for item in options]
-        matched = next((item for item, name in zip(options, option_names) if name.endswith(network_name)), None)
-        assert matched is not None, f'Network {network_name!r} not found in {option_names}'
-        toggled = getattr(matched, 'toggled', None)
-        if callable(toggled):
-            toggled()
-        else:
-            QObject(matched).click()
+        QObject(find_network_option_item(network_name, options)).click()
         assert driver.waitFor(
             lambda: network_name in self.get_fee_title,
             configs.timeouts.UI_LOAD_TIMEOUT_MSEC,
