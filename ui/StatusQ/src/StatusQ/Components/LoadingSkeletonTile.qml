@@ -11,7 +11,13 @@ import StatusQ.Core.Theme
    pass without offscreen layers.
 
    Inside a LoadingSkeletonGroup the sweep runs across the whole group,
-   otherwise across the tile itself.
+   otherwise across the tile itself. Each tile runs its own sweep phase, so a
+   tile that starts after the rest of its group (added later by a Repeater,
+   or made visible later) restarts its phase and can be out of step with the
+   band.
+
+   Nothing is drawn under the software scene graph; there is no fallback, as
+   the app never selects it.
 
    Only \c color and \c radius are meant to be set; \c phase, \c sweepOrigin,
    \c sweepSize, \c itemSize, \c pixelRatio and \c highlightColor are internal
