@@ -16,6 +16,7 @@
       qtbase
       qtdeclarative
       qtmultimedia
+      qtshadertools
       qtsvg
       qttools
       qtwebchannel

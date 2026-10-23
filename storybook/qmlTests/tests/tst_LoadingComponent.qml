@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Effects
 import QtTest
 
 import StatusQ.Components
@@ -22,45 +23,88 @@ Item {
         name: "LoadingComponent"
         when: windowShown
 
-        // --- Cycle 1: animation lifecycle seam ---
+        function descendants(item) {
+            let result = []
+            const stack = [item]
+            while (stack.length) {
+                const current = stack.pop()
+                result.push(current)
+                const kids = current.children ?? []
+                for (let i = 0; i < kids.length; ++i)
+                    stack.push(kids[i])
+            }
+            return result
+        }
 
-        // (1) not visible -> NO running animation object materialized.
-        // The heavy shimmer subtree (gradient + animator) must not exist while
-        // the placeholder is hidden, so the render thread can park (no forced
-        // 60fps whole-scene repaint).
+        function shaderOf(comp) {
+            return descendants(comp).find(o => o instanceof ShaderEffect)
+        }
+
+        function init() {
+            failOnWarning(/.*/)
+        }
+
         function test_shimmer_absent_when_not_visible() {
             const comp = createTemporaryObject(loadingComp, root, {visible: false})
             verify(!!comp)
-            verify(!findChild(comp, "shimmerSweep"),
-                   "shimmer sweep must not be materialized while hidden")
             verify(!findChild(comp, "shimmerAnimator"),
                    "no animation object should exist while hidden")
         }
 
-        // (2) visible -> shimmer materialized and animating.
         function test_shimmer_present_and_running_when_visible() {
             const comp = createTemporaryObject(loadingComp, root, {visible: true})
             verify(!!comp)
 
-            tryVerify(() => !!findChild(comp, "shimmerSweep"), 1000,
-                      "shimmer sweep must be materialized while visible")
+            tryVerify(() => !!findChild(comp, "shimmerAnimator"), 1000,
+                      "animation object must exist while visible")
             const anim = findChild(comp, "shimmerAnimator")
-            verify(!!anim, "animation object must exist while visible")
             compare(anim.running, true, "shimmer must be animating while visible")
+            verify(anim instanceof UniformAnimator,
+                   "the sweep must be animated on the render thread")
+            compare(anim.target, shaderOf(comp))
         }
 
-        // (3) becomes hidden -> shimmer + animation torn down (placeholder gone).
         function test_shimmer_stops_and_is_removed_when_hidden() {
             const comp = createTemporaryObject(loadingComp, root, {visible: true})
             verify(!!comp)
-            tryVerify(() => !!findChild(comp, "shimmerSweep"), 1000)
+            tryVerify(() => !!findChild(comp, "shimmerAnimator"), 1000)
 
             comp.visible = false
 
-            tryVerify(() => !findChild(comp, "shimmerSweep"), 1000,
-                      "shimmer sweep must be torn down once hidden")
-            verify(!findChild(comp, "shimmerAnimator"),
-                   "no animation object should linger once hidden")
+            tryVerify(() => !findChild(comp, "shimmerAnimator"), 1000,
+                      "no animation object should linger once hidden")
+        }
+
+        function test_no_offscreen_render_passes() {
+            const comp = createTemporaryObject(loadingComp, root)
+            verify(!!comp)
+            tryVerify(() => !!findChild(comp, "shimmerAnimator"), 1000)
+
+            for (const item of descendants(comp)) {
+                verify(!(item instanceof MultiEffect), "MultiEffect found")
+                verify(!(item instanceof ShaderEffectSource),
+                       "ShaderEffectSource found")
+                verify(!(item.layer && item.layer.enabled),
+                       `layer enabled on ${item}`)
+            }
+        }
+
+        function test_shape_follows_radius_and_size() {
+            const comp = createTemporaryObject(loadingComp, root, {radius: 8})
+            verify(!!comp)
+
+            const shader = shaderOf(comp)
+            verify(!!shader, "the placeholder must be drawn by a shader")
+            compare(shader.radius, 8)
+            compare(shader.width, 120)
+            compare(shader.height, 16)
+
+            comp.radius = 2
+            comp.width = 60
+            comp.height = 30
+            compare(shader.radius, 2)
+            compare(shader.width, 60)
+            compare(shader.height, 30)
         }
     }
 }

@@ -1,8 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Effects
-
-import StatusQ.Core.Theme
 
 /*!
    \qmltype LoadingComponent
@@ -36,86 +33,7 @@ Control {
 
     background: null
 
-    contentItem: Item {
-        id: content
-
-        Rectangle {
-            id: rect
-            anchors.fill: parent
-            color: Theme.palette.statusLoadingHighlight
-            radius: root.radius
-            visible: false // used only as the mask effect source
-
-            // The animated sweep is materialized only while the placeholder is
-            // effectively visible. When hidden, the Loader is inactive so no
-            // animation object exists and the render thread can park instead of
-            // repainting the whole scene at 60fps for a hidden shimmer.
-            Loader {
-                id: sweepLoader
-                width: rect.width
-                height: rect.height
-                active: root.visible
-                sourceComponent: sweepComponent
-            }
-        }
-
-        MultiEffect {
-            maskEnabled: true
-            maskThresholdMin: 0.5
-            maskSpreadAtMin: 1.0
-            anchors.fill: rect
-            source: rect
-            maskSource: Rectangle {
-                parent: root
-                layer.enabled: true
-                visible: false
-                width: root.width
-                height: root.height
-                radius: root.radius
-            }
-        }
-    }
-
-    // Native Rectangle gradient sweep; only the rounded mask effect pass remains.
-    // The sweep reads its geometry from `parent` (the Loader) so it needs no
-    // reference to outer-scope ids.
-    Component {
-        id: sweepComponent
-
-        Rectangle {
-            id: sweep
-            objectName: "shimmerSweep"
-
-            width: 100
-            height: 2 * sweep.parent.height
-            x: -width
-            y: -height / 4
-            rotation: 20
-
-            gradient: Gradient {
-                orientation: Gradient.Horizontal
-                GradientStop { position: 0.2; color: StatusColors.transparent }
-                GradientStop { position: 0.5; color: Theme.palette.statusLoadingHighlight2 }
-                GradientStop { position: 0.8; color: StatusColors.transparent }
-            }
-
-            XAnimator on x {
-                id: sweepAnimator
-                objectName: "shimmerAnimator"
-                easing.type: Easing.Linear
-                loops: Animation.Infinite
-                running: true
-                from: -sweep.width
-                to: sweep.parent.width + sweep.width
-                duration: 1000
-            }
-
-            // Restart the sweep when the placeholder is resized, matching the
-            // original behaviour (avoids a stale sweep span for one cycle).
-            Connections {
-                target: sweep.parent
-                function onWidthChanged() { sweepAnimator.restart() }
-            }
-        }
+    contentItem: LoadingSkeletonTile {
+        radius: root.radius
     }
 }

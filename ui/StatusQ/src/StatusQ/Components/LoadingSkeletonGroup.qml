@@ -1,7 +1,4 @@
 import QtQuick
-import QtQuick.Effects
-
-import StatusQ.Core.Theme
 
 /*!
    \qmltype LoadingSkeletonGroup
@@ -9,11 +6,10 @@ import StatusQ.Core.Theme
    \inqmlmodule StatusQ.Components
    \since StatusQ.Components 0.1
    \brief Renders an arbitrary arrangement of LoadingSkeletonTile shapes with a
-   single shared shimmer sweep.
+   single continuous shimmer sweep across the whole group.
 
    Use this for creation-time skeleton screens instead of many LoadingComponent
-   instances: tiles are plain rectangles and the whole group costs one effect
-   pass, where every LoadingComponent carries its own mask effect and animator.
+   instances, so that the shimmer runs across the arrangement as one band.
 
    Example:
 
@@ -42,60 +38,5 @@ Item {
     Item {
         id: shapesContainer
         anchors.fill: parent
-        layer.enabled: root.visible
-    }
-
-    // The animated sweep band, materialized only while the group is visible.
-    // It is masked by the shapes so the shimmer only shows on the tiles.
-    Item {
-        id: sweepContainer
-        anchors.fill: parent
-        visible: false
-
-        Loader {
-            anchors.fill: parent
-            active: root.visible
-            sourceComponent: Rectangle {
-                id: sweep
-
-                width: 100
-                height: 2 * parent.height
-                x: -width
-                y: -height / 4
-                rotation: 20
-
-                gradient: Gradient {
-                    orientation: Gradient.Horizontal
-                    GradientStop { position: 0.2; color: StatusColors.transparent }
-                    GradientStop { position: 0.5; color: Theme.palette.statusLoadingHighlight2 }
-                    GradientStop { position: 0.8; color: StatusColors.transparent }
-                }
-
-                XAnimator on x {
-                    id: sweepAnimator
-                    easing.type: Easing.Linear
-                    loops: Animation.Infinite
-                    running: true
-                    from: -sweep.width
-                    to: sweep.parent.width + sweep.width
-                    duration: 1000
-                }
-
-                Connections {
-                    target: sweep.parent
-                    function onWidthChanged() { sweepAnimator.restart() }
-                }
-            }
-        }
-    }
-
-    MultiEffect {
-        maskEnabled: true
-        maskThresholdMin: 0.5
-        maskSpreadAtMin: 1.0
-        anchors.fill: parent
-        source: sweepContainer
-        maskSource: shapesContainer
-        visible: root.visible
     }
 }
