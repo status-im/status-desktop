@@ -12,7 +12,6 @@ from helpers.multiple_instances_helper import (
     authorize_user_in_aut,
     switch_to_aut,
 )
-from scripts.utils.generators import random_text_message
 
 
 @pytest.mark.critical
@@ -20,7 +19,6 @@ def test_request_payment_in_chat(multiple_instances):
     requester: UserAccount = RandomUser()
     payer: UserAccount = RandomUser()
     main_window = MainWindow()
-    message_text = random_text_message()
     amount = Messaging.PAYMENT_REQUEST_AMOUNT.value
     symbol = WalletTokenSymbols.ETH.value
 
@@ -54,15 +52,16 @@ def test_request_payment_in_chat(multiple_instances):
                 lambda: str(preview.object.amount) == amount,
                 configs.timeouts.ROUTES_TIMEOUT_MSEC,
             ), f'Payment request preview amount is not {amount}: {preview.object.amount!r}'
-            messages_screen.group_chat.send_message_to_group_chat(message_text)
-            messages_screen.chat.find_message_by_text(message_text, 0)
+            messages_screen.group_chat.confirm_sending_message()
+            sent_card = messages_screen.chat.payment_request_card()
+            assert str(sent_card.object.symbol) == symbol
+            assert str(sent_card.object.amount) == amount
             main_window.minimize()
 
         with step(f'{payer.name} sees the payment request and opens Send'):
             switch_to_aut(aut_payer, main_window)
             messages_screen = main_window.left_panel.open_messages_screen()
             chat = messages_screen.left_panel.click_chat_by_name(requester.name)
-            chat.find_message_by_text(message_text, 0)
             card = chat.payment_request_card()
             assert str(card.object.symbol) == symbol
             assert str(card.object.amount) == amount
