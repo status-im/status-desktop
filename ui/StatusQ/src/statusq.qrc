@@ -62,6 +62,9 @@
         <file>StatusQ/Components/StatusRoundedImage.qml</file>
         <file>StatusQ/Components/StatusRoundedMedia.qml</file>
         <file>StatusQ/Components/StatusScanCorners.qml</file>
+        <file>StatusQ/Components/StatusShaderRoundedImage.qml</file>
+        <file>StatusQ/Components/StatusShapeRoundedImage.qml</file>
+        <file>StatusQ/Components/shaders/roundedimage.frag.qsb</file>
         <file>StatusQ/Components/StatusSmartIdenticon.qml</file>
         <file>StatusQ/Components/StatusSortableColumnHeader.qml</file>
         <file>StatusQ/Components/StatusStepper.qml</file>
@@ -278,6 +281,7 @@
         <file>StatusQ/Validators/AmountValidator.qml</file>
         <file>StatusQ/Validators/qmldir</file>
         <file>StatusQ/Components/private/StatusNewItemGradient.qml</file>
+        <file>StatusQ/Components/private/StatusRoundedImageBase.qml</file>
         <file>StatusQ/Components/StatusSoundEffect.qml</file>
         <file>StatusQ/Popups/Dialog/StatusFolderDialog.qml</file>
         <file>StatusQ/Popups/Dialog/StatusFileDialog.qml</file>
