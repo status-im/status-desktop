@@ -18,11 +18,7 @@ import android.util.Log;
 import im.status.mobileui.PushNotificationHelper;
 import android.content.ActivityNotFoundException;
 import android.widget.Toast;
-import android.webkit.MimeTypeMap;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -396,31 +392,11 @@ public class StatusQtActivity extends QtActivity {
                 Log.w(TAG, "share intake: dropping non-image stream (" + mime + ")");
                 continue;
             }
-            File out = new File(dir,
-                    "share-" + System.currentTimeMillis() + "-" + (index++) + extensionForMime(mime));
-            try (InputStream in = resolver.openInputStream(uri);
-                 OutputStream os = new FileOutputStream(out)) {
-                if (in == null) {
-                    out.delete();
-                    continue;
-                }
-                byte[] buffer = new byte[64 * 1024];
-                int read;
-                while ((read = in.read(buffer)) != -1) {
-                    os.write(buffer, 0, read);
-                }
-                paths.add(out.getAbsolutePath());
-            } catch (Exception e) {
-                Log.w(TAG, "share intake: failed to copy shared image " + uri, e);
-                out.delete();
-            }
+            File out = ShareImageTranscoder.copyNormalized(ctx, uri, mime, dir,
+                    "share-" + System.currentTimeMillis() + "-" + (index++));
+            if (out != null) paths.add(out.getAbsolutePath());
         }
         return paths.toArray(new String[0]);
-    }
-
-    private static String extensionForMime(String mime) {
-        String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime);
-        return ext != null ? "." + ext : "";
     }
 
     private void sweepShareIntakeCache() {
