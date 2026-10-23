@@ -30,30 +30,30 @@ suite "thread editing permissions":
 
   test "community creator may rename a read-only channel thread":
     let chat = ChatDto(id: "chat", chatType: ChatType.CommunityChat, canView: true, canPost: false)
-    let community = CommunityDto(members: @[ChatMember(id: "creator")])
+    let community = CommunityDto(isMember: true)
     check canEditThread(thread, chat, "creator", community)
 
   test "owners admins and token masters may rename others and legacy threads":
     let chat = ChatDto(id: "chat", chatType: ChatType.CommunityChat, canView: true)
     let legacy = ThreadDto(threadId: "legacy", chatId: "chat")
     for role in [MemberRole.Owner, MemberRole.Admin, MemberRole.TokenMaster]:
-      let community = CommunityDto(memberRole: role, members: @[ChatMember(id: "admin")])
+      let community = CommunityDto(memberRole: role, isMember: true)
       check canEditThread(thread, chat, "admin", community)
       check canEditThread(legacy, chat, "admin", community)
-    let member = CommunityDto(members: @[ChatMember(id: "member")])
+    let member = CommunityDto(isMember: true)
     check not canEditThread(thread, chat, "member", member)
     check not canEditThread(legacy, chat, "member", member)
 
   test "removed banned and channel-inaccessible creators cannot rename":
     var chat = ChatDto(id: "chat", chatType: ChatType.CommunityChat, canView: true)
-    var community = CommunityDto(members: @[ChatMember(id: "creator")])
+    var community = CommunityDto(isMember: true)
     chat.canView = false
     check not canEditThread(thread, chat, "creator", community)
     chat.canView = true
     community.pendingAndBannedMembers["creator"] = CommunityMemberPendingBanOrKick.Banned
     check not canEditThread(thread, chat, "creator", community)
     community.pendingAndBannedMembers.clear()
-    community.members = @[]
+    community.isMember = false
     check not canEditThread(thread, chat, "creator", community)
 
   test "missing mismatched and unsupported identifiers fail closed":
