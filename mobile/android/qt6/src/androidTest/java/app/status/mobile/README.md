@@ -14,7 +14,15 @@ Contract under test: **only foreign `content://` streams are accepted**.
 two rejection paths; `foreignContentStreamIsAccepted` guards against an
 over-broad fix.
 
-### Running
+## `ShareImageTranscoderTest`
+
+Image normalization at share intake (`ShareImageTranscoder.copyNormalized`):
+HEIC/HEIF is re-encoded as JPEG and JPEGs over 2048 px are downscaled, as the
+iOS share extension does, because neither the composer's image validator nor
+status-go decodes HEIC. Uses the `landscape-3000x2000.heic` fixture from the
+test APK's assets; the JPEG/PNG inputs are generated at runtime.
+
+## Running
 
 Needs a booted emulator/device and the app built with the Qt Android toolchain
 (`QT_ANDROID_DIR`, status-go libs, NDK). Gradle runs from the androiddeployqt
@@ -24,6 +32,7 @@ output dir, so go through the mobile build:
 GRADLE_TARGETS="assembleDebug connectedDebugAndroidTest" make mobile-build
 ```
 
-The test itself does not boot Qt — it invokes the static `extractStreamUris`
-seam by reflection — but it runs under instrumentation because `android.net.Uri`
-parsing and the `PackageManager` provider lookup need the real framework.
+Neither test boots Qt — they call static seams (`extractStreamUris` by
+reflection, `ShareImageTranscoder` directly) — but they run under
+instrumentation because `android.net.Uri` parsing, the `PackageManager` provider
+lookup and `ImageDecoder`'s HEIF support need the real framework.
