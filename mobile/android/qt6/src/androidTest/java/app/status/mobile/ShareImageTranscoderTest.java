@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -18,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -82,6 +85,43 @@ public class ShareImageTranscoderTest {
 
         assertNotNull(out);
         assertArrayEquals(garbage, Files.readAllBytes(out.toPath()));
+    }
+
+    @Test
+    public void oversizedJpegIsDownscaledTo2048() throws Exception {
+        File jpeg = writeFile("portrait.jpg", encode(3000, 4000, Bitmap.CompressFormat.JPEG));
+
+        File out = ShareImageTranscoder.copyNormalized(
+                CTX, Uri.fromFile(jpeg), "image/jpeg", outDir, "share-3");
+
+        assertNotNull(out);
+        BitmapFactory.Options bounds = decodeBounds(out);
+        assertEquals("image/jpeg", bounds.outMimeType);
+        assertEquals(1536, bounds.outWidth);
+        assertEquals(2048, bounds.outHeight);
+    }
+
+    @Test
+    public void pngKeepsItsBytes() throws Exception {
+        // Above the cap on purpose: only photo formats are re-encoded.
+        byte[] png = encode(3000, 100, Bitmap.CompressFormat.PNG);
+        File in = writeFile("wide.png", png);
+
+        File out = ShareImageTranscoder.copyNormalized(
+                CTX, Uri.fromFile(in), "image/png", outDir, "share-4");
+
+        assertNotNull(out);
+        assertTrue(out.getName().endsWith(".png"));
+        assertArrayEquals(png, Files.readAllBytes(out.toPath()));
+    }
+
+    private static byte[] encode(int width, int height, Bitmap.CompressFormat format) {
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.eraseColor(Color.rgb(40, 120, 200));
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(format, 90, bytes);
+        bitmap.recycle();
+        return bytes.toByteArray();
     }
 
     private static BitmapFactory.Options decodeBounds(File file) {
