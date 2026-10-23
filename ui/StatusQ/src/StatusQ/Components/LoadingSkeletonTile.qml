@@ -12,6 +12,10 @@ import StatusQ.Core.Theme
 
    Inside a LoadingSkeletonGroup the sweep runs across the whole group,
    otherwise across the tile itself.
+
+   Only \c color and \c radius are meant to be set; \c phase, \c sweepOrigin,
+   \c sweepSize, \c itemSize, \c pixelRatio and \c highlightColor are internal
+   shader inputs.
 */
 ShaderEffect {
     id: root

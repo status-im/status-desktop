@@ -33,10 +33,5 @@ import QtQuick
 Item {
     id: root
 
-    default property alias contentData: shapesContainer.data
-
-    Item {
-        id: shapesContainer
-        anchors.fill: parent
-    }
+    default property alias contentData: root.data
 }

@@ -26,7 +26,7 @@ Control {
     id: root
 
     /*!
-        \qmlproperty bool LoadingComponent::radius
+        \qmlproperty int LoadingComponent::radius
         This property lets user set custom radius
     */
     property int radius: 4
