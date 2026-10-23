@@ -102,10 +102,12 @@ Item {
             verify(title instanceof ShaderEffect)
             compare(title.radius, 4)
 
-            title.radius = 7
+            compare(title.itemSize, Qt.size(100, 14))
             title.width = 150
-            compare(title.radius, 7)
-            compare(title.width, 150)
+            title.height = 20
+            compare(title.itemSize, Qt.size(150, 20))
+            compare(title.sweepSize, Qt.size(300, 200),
+                    "a grouped tile sweeps across the group, not itself")
         }
 
         function test_sweep_is_continuous_across_the_group() {
