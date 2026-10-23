@@ -10,6 +10,10 @@ Item {
     width: 200
     height: 200
 
+    MediaDevices {
+        id: mediaDevices
+    }
+
     Component {
         id: soundEffectComponent
 
@@ -25,6 +29,14 @@ Item {
         // statusString of a StatusSoundEffect without an underlying SoundEffect instance
         readonly property string idleStatus: String(SoundEffect.Null)
         readonly property string readyStatus: String(SoundEffect.Ready)
+
+        // Without an audio output device (e.g. on CI) a cached sample can put
+        // SoundEffect into the Error state before play(), which then resets the
+        // status to Null, so playback tests can't run at all.
+        function requireAudioOutput() {
+            if (mediaDevices.audioOutputs.length === 0)
+                skip("no usable audio output device")
+        }
 
         // Waits until the sample has been loaded and playback has started.
         // Without an audio output device (e.g. on CI) SoundEffect ends up in the
@@ -48,6 +60,8 @@ Item {
         }
 
         function test_releasedAfterPlaybackFinished() {
+            requireAudioOutput()
+
             const sound = createTemporaryObject(soundEffectComponent, root)
             verify(!!sound)
 
@@ -60,6 +74,8 @@ Item {
         }
 
         function test_releasedAfterStop() {
+            requireAudioOutput()
+
             const sound = createTemporaryObject(soundEffectComponent, root)
             verify(!!sound)
 
@@ -72,6 +88,8 @@ Item {
         }
 
         function test_stopPlaySequenceKeepsPlaying() {
+            requireAudioOutput()
+
             const sound = createTemporaryObject(soundEffectComponent, root)
             verify(!!sound)
 
