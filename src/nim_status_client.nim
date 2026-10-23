@@ -322,10 +322,6 @@ proc mainProc() =
   let app = newQGuiApplication()
   singletonInstance.setApplication(app)
 
-  # Vulkan when the device supports it; QSG_RHI_BACKEND / QT_QUICK_BACKEND override
-  when defined(android):
-    statusq_selectGraphicsApi()
-
   # The only hook every exit path reaches
   QCoreApplication.instance().onAboutToQuit(proc() =
     markShuttingDown()
@@ -379,6 +375,10 @@ proc mainProc() =
     app.icon(app.applicationDirPath & statusAppIconPath)
 
   statusq_installMessageHandler(logHandlerCallback)
+
+  # Vulkan when the device supports it; QSG_RHI_BACKEND / QT_QUICK_BACKEND override
+  when defined(android):
+    statusq_selectGraphicsApi(singletonInstance.engine.vptr)
 
   when defined(USE_QML_SERVER):
     echo "Setting remote import path: ", remoteImportPath
