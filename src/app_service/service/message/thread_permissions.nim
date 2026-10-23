@@ -1,4 +1,4 @@
-import std/[sequtils, tables]
+import std/tables
 import dto/thread
 import ../chat/dto/chat
 import ../community/dto/community
@@ -20,7 +20,7 @@ proc canEditThread*(thread: ThreadDto, chat: ChatDto, publicKey: string,
   of ChatType.CommunityChat:
     if community.isOwner or community.isAdmin or community.isTokenMaster:
       return true
-    if not chat.canView or not community.members.anyIt(it.id == publicKey):
+    if not chat.canView or not community.isMember:
       return false
     if community.pendingAndBannedMembers.hasKey(publicKey) and
         community.pendingAndBannedMembers[publicKey].isBanned:
