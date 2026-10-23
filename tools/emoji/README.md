@@ -23,15 +23,19 @@ Then run the StatusQ emoji conformance test before committing. Both artifacts
 are committed to the repo, so this is only needed when `manifest.json` changes.
 
 `StatusEmojiModel` serves the catalogue from `emojitable_data.cpp`, a table of
-read-only data with no pointers in it: nothing is parsed or allocated at runtime,
-and the pages stay file-backed. The json is not shipped in the app. The table is
+read-only data with no pointers in it: the catalogue is never parsed nor copied
+to the heap, and its pages stay file-backed. The json is not shipped in the app. The table is
 committed rather than generated during the build so StatusQ builds need no
-Python; `build-table.py --check`, `test_build_table.py` and StatusQ's
-`TestStatusEmojiModel` (row by row against `emojiList.json`) catch drift.
+Python. CI catches drift through StatusQ's `TestStatusEmojiModel` (ctest, run by
+`make run-statusq-tests`): it compares every row against `emojiList.json` and
+looks every entry up through each sorted index (hexcode, its normalised form,
+shortname, ASCII emoticon) and the category starts. `build-table.py --check`
+(fails if `emojitable_data.cpp` is not what `emojiList.json` produces) and
+`test_build_table.py` are not run by CI; run them by hand after a rebuild.
 
 `build-catalogue.py --check` regenerates in memory and fails if the committed
 files are not what the pinned sources produce; `python3 -m unittest discover -s
-tools/emoji` covers the generator itself. The generator refuses to write a
+tools/emoji` covers the generators themselves. Both are manual too. The generator refuses to write a
 catalogue that would break the app: it checks the entry count, that ids are
 unique (also once normalised, which is how stored ids are resolved), that every
 entry has a unique well-formed shortname, that categories match the list

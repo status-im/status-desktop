@@ -5,8 +5,11 @@
 #include <QTest>
 
 #include <algorithm>
+#include <cstring>
 
 #include <StatusQ/statusemojimodel.h>
+
+#include "emojitable.h"
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -23,6 +26,41 @@ class tst_StatusEmojiModel : public QObject
         for (const auto &emoji : emojis)
             result.append(emoji.toObject().value("unicode").toString());
         return result;
+    }
+
+    // Another spelling of the same id: no U+FE0F, no leading zeros.
+    static QString canonicalForm(const QString &unicode)
+    {
+        QStringList parts;
+        for (const auto &part : unicode.split(u'-')) {
+            if (part == "fe0f"_L1)
+                continue;
+            auto digits = part;
+            while (digits.size() > 1 && digits.startsWith(u'0'))
+                digits.remove(0, 1);
+            parts.append(digits);
+        }
+        return parts.join(u'-');
+    }
+
+    static const char *text(EmojiTable::StringRef ref)
+    {
+        return reinterpret_cast<const char *>(EmojiTable::strings + ref);
+    }
+
+    static bool isSortedPermutation(const std::uint16_t *index,
+                                    EmojiTable::StringRef EmojiTable::Entry::*field)
+    {
+        QSet<std::uint16_t> seen;
+        for (int i = 0; i < EmojiTable::entryCount; ++i) {
+            if (index[i] >= EmojiTable::entryCount)
+                return false;
+            seen.insert(index[i]);
+            if (i > 0 && std::strcmp(text(EmojiTable::entries[index[i - 1]].*field),
+                                     text(EmojiTable::entries[index[i]].*field)) >= 0)
+                return false;
+        }
+        return seen.size() == EmojiTable::entryCount;
     }
 
 private slots:
@@ -62,6 +100,56 @@ private slots:
                          qPrintable(u"row %1 (%2), role %3"_s.arg(row).arg(
                              entry.value("unicode").toString(), name)));
             }
+        }
+    }
+
+    // The lookups binary-search sorted indices of the table; an index that is out of
+    // order or stale loses entries without any row being wrong.
+    void everyEntryIsFoundThroughEveryIndex()
+    {
+        StatusEmojiModel model;
+        QHash<QString, QString> asciiOwners; // the first entry listing an emoticon owns it
+        for (const auto &value : std::as_const(m_catalogue)) {
+            const auto entry = value.toObject();
+            const auto unicode = entry.value("unicode").toString();
+            const auto emoji = entry.value("emoji").toString();
+            const auto shortname = entry.value("shortname").toString();
+
+            QVERIFY2(model.getEmojiFromHexcode(unicode) == emoji, qPrintable(unicode));
+            QVERIFY2(model.getEmojiFromHexcode(canonicalForm(unicode)) == emoji,
+                     qPrintable(canonicalForm(unicode)));
+            QVERIFY2(model.getEmojiUnicodeFromShortname(shortname) == unicode,
+                     qPrintable(shortname));
+
+            for (const auto &alias : entry.value("aliases_ascii").toArray())
+                asciiOwners.insert(alias.toString(), asciiOwners.value(alias.toString(), emoji));
+        }
+        QVERIFY(!asciiOwners.isEmpty());
+        for (auto it = asciiOwners.cbegin(); it != asciiOwners.cend(); ++it)
+            QVERIFY2(model.getEmojiFromAsciiAlias(it.key()) == it.value(), qPrintable(it.key()));
+    }
+
+    // The canonical fallback hides a broken hexcode index from the lookups above, so
+    // check the indices themselves: each a permutation of the entries, strictly sorted.
+    void indicesAreSortedPermutations()
+    {
+        QVERIFY(isSortedPermutation(EmojiTable::byUnicode, &EmojiTable::Entry::unicode));
+        QVERIFY(isSortedPermutation(EmojiTable::byCanonical, &EmojiTable::Entry::canonical));
+        QVERIFY(isSortedPermutation(EmojiTable::byShortname, &EmojiTable::Entry::shortname));
+    }
+
+    void categoryOffsetIsTheFirstRowOfTheCategory()
+    {
+        StatusEmojiModel model;
+        const auto categories = model.property("categories").toStringList();
+        for (int category = 1; category < categories.size(); ++category) {
+            const auto first = std::find_if(m_catalogue.cbegin(), m_catalogue.cend(),
+                                            [&](const auto &value) {
+                                                return value.toObject().value("category").toString()
+                                                       == categories.at(category);
+                                            });
+            QVERIFY2(first != m_catalogue.cend(), qPrintable(categories.at(category)));
+            QCOMPARE(model.getCategoryOffset(category), int(first - m_catalogue.cbegin()));
         }
     }
 
