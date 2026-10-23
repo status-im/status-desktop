@@ -3,6 +3,7 @@ import QtQuick.Effects
 import QtTest
 
 import StatusQ.Components
+import StatusQ.Core
 
 Item {
     id: root
@@ -73,6 +74,11 @@ Item {
 
         function init() {
             failOnWarning(/.*/)
+        }
+
+        function test_shader_is_built_in() {
+            verify(SystemUtils.fileExists(":/StatusQ/shaders/skeletontile.frag.qsb"),
+                   "the compiled tile shader must be a StatusQ resource")
         }
 
         function test_no_offscreen_render_passes() {
