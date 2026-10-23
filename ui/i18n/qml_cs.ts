@@ -13947,6 +13947,10 @@ selhalo</translation>
         <translation>Centrum aktivit</translation>
     </message>
     <message>
+        <source>Settings</source>
+        <translation type="unfinished">Nastavení</translation>
+    </message>
+    <message>
         <source>There are no enabled providers</source>
         <translation>Nejsou povoleni žádní poskytovatelé</translation>
     </message>
@@ -19247,10 +19251,6 @@ Pokud je ve frontě transakce s nižším nonce, transakce s vyšším nonce zů
     <message>
         <source>Copy link to profile</source>
         <translation>Kopírovat odkaz na profil</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation>Nastavení</translation>
     </message>
     <message>
         <source>Sign out &amp; Quit</source>

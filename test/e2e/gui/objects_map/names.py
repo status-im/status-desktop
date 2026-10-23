@@ -63,6 +63,7 @@ communitiesSettingsNavBarList = {"container": statusDesktop_mainWindow, "objectN
 communitiesPortalButton = {"container": primaryNavSidebar, "objectName": "Communities Portal-navbar",
                            "type": "PrimaryNavSidebarButton", "visible": True}
 activityCenterButton = {"container": statusDesktop_mainWindow, "objectName": "Activity Center-navbar", "type": "PrimaryNavSidebarButton", "visible": True}
+settingsButton = {"container": statusDesktop_mainWindow, "objectName": "Settings-navbar", "type": "PrimaryNavSidebarButton", "visible": True}
 
 # Online identifier
 onlineIdentifierButton = {"checkable": True, "container": primaryNavSidebar, "objectName": "statusProfileNavBarTabButton", "type": "ProfileButton", "visible": True}
@@ -174,9 +175,6 @@ userContextMenu_ViewMyProfileAction = {"container": statusDesktop_mainWindow_ove
 userContextMenu_CopyLinkToProfile = {"container": statusDesktop_mainWindow_overlay,
                                      "objectName": "userStatusCopyLinkAction", "type": "StatusMenuItem",
                                      "visible": True}
-userContextMenu_SettingsAction = {"container": statusDesktop_mainWindow_overlay,
-                                  "objectName": "userStatusSettingsAction", "type": "StatusMenuItem",
-                                  "visible": True}
 userStatusDisplayName = {"container": onlineIdentifier, "objectName": "userStatusDisplayName",
                          "type": "StatusBaseText", "visible": True}
 

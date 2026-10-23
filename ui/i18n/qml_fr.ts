@@ -13873,6 +13873,10 @@ Seul le détenteur du jeton Owner peut distribuer des jetons TokenMaster. Ces je
         <translation>Centre d’activité</translation>
     </message>
     <message>
+        <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>There are no enabled providers</source>
         <translation>Aucun fournisseur n’est activé</translation>
     </message>
@@ -19159,10 +19163,6 @@ Si une transaction avec un nonce inférieur est en attente, les transactions ave
     <message>
         <source>Copy link to profile</source>
         <translation>Copier le lien vers le profil</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation>Paramètres</translation>
     </message>
     <message>
         <source>Sign out &amp; Quit</source>

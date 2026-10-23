@@ -2763,6 +2763,7 @@ Item {
                 acVisible: mainLayoutItem.openACCenterPanel
                 acHasUnseenNotifications: appMain.activityCenterStore?.hasUnseenNotifications ?? false
                 acUnreadNotificationsCount: appMain.activityCenterStore?.unreadNotificationsCount ?? 0
+                settingsActive: d.activeSectionType === Constants.appSection.profile
 
                 selfContactDetails: appMain.ownContactDetails ?? appMain.loadingContactDetails
                 getEmojiHashFn: appMain.utilsStore.getEmojiHash
