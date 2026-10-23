@@ -215,6 +215,7 @@ private slots:
     void hexcodeLookupReturnsTheFullyQualifiedCharacter()
     {
         QCOMPARE(m_model->getEmojiFromHexcode("2764"), QString::fromUtf8("\u2764\uFE0F"));
+        QCOMPARE(m_model->getEmojiFromHexcode("263a"), QString::fromUtf8("\u263A\uFE0F"));
         QCOMPARE(m_model->getEmojiFromHexcode("1f590"), QString::fromUtf8("\U0001F590\uFE0F"));
         // one that needs no selector, to show the lookup is not just appending one
         QCOMPARE(m_model->getEmojiFromHexcode("1f602"), QString::fromUtf8("\U0001F602"));
