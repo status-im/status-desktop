@@ -109,6 +109,10 @@ add_executable(TestIncubationCadence src/tst_incubationcadence.cpp)
 target_link_libraries(TestIncubationCadence PRIVATE Qt::Test Qt::Gui Qt::Qml Qt::Quick StatusQ)
 add_test(NAME TestIncubationCadence COMMAND TestIncubationCadence)
 
+add_executable(TestGraphicsApiSelection src/tst_graphicsapiselection.cpp)
+target_link_libraries(TestGraphicsApiSelection PRIVATE Qt::Test StatusQ)
+add_test(NAME TestGraphicsApiSelection COMMAND TestGraphicsApiSelection)
+
 add_executable(TestStatusEmojiModel src/tst_statusemojimodel.cpp)
 target_link_libraries(TestStatusEmojiModel PRIVATE Qt::Test Qt::Qml StatusQ)
 add_test(NAME TestStatusEmojiModel COMMAND TestStatusEmojiModel)
