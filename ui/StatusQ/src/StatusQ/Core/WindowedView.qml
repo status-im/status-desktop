@@ -608,6 +608,13 @@ Flickable {
         property bool holdTop: false
         property bool holdBottom: false
 
+        // Whether the user has moved towards each edge since the last request.
+        // A move made while the slide was still settling counts: otherwise
+        // the hold would wait for a move that has already happened - and with
+        // the user at that edge, for one that no longer can.
+        property bool movedTowardsTop: false
+        property bool movedTowardsBottom: false
+
         function wantsMore(atTop) {
             return atTop ? root.moreAvailableTop && !d.holdTop && d.bandInReach(topBand)
                          : root.moreAvailableBottom && !d.holdBottom && d.bandInReach(bottomBand)
@@ -1430,10 +1437,13 @@ Flickable {
         // work to do.
         function userMoved(delta) {
             // Moving towards a held edge is what the hold waited for.
-            if (delta < 0)
+            if (delta < 0) {
                 d.holdTop = false
-            else if (delta > 0)
+                d.movedTowardsTop = true
+            } else if (delta > 0) {
                 d.holdBottom = false
+                d.movedTowardsBottom = true
+            }
 
             // A jump must not outlive the user's next move - the same lifetime
             // the resize anchor has.
@@ -1490,6 +1500,8 @@ Flickable {
 
             d.requestedAtTop = atTop
             d.requestedAtEdge = true
+            d.movedTowardsTop = false
+            d.movedTowardsBottom = false
 
             if (atTop)
                 d.loadingTop = true
@@ -1640,10 +1652,11 @@ Flickable {
 
             d.wave = d.waveWaiting()
 
-            // A slide holds the opposite edge until the user moves towards it;
-            // anything else - a fill, an owner's batch - leaves both free.
-            d.holdTop = d.requestedAtEdge && !d.requestedAtTop
-            d.holdBottom = d.requestedAtEdge && d.requestedAtTop
+            // A slide holds the opposite edge until the user moves towards it -
+            // unless they already have while it settled; anything else - a
+            // fill, an owner's batch - leaves both free.
+            d.holdTop = d.requestedAtEdge && !d.requestedAtTop && !d.movedTowardsTop
+            d.holdBottom = d.requestedAtEdge && d.requestedAtTop && !d.movedTowardsBottom
 
             // In this same turn, so rows leaving and rows appearing change the
             // content together. An owner that defers removals trims here.

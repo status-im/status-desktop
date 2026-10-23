@@ -3110,6 +3110,11 @@ Item {
             // A release leaves the view flicking, which outlives the test.
             view.cancelFlick()
 
+            // A held answer outlives a failing test: the view stays busy and
+            // every later test waits on it.
+            owner.holdAnswer = false
+            owner.answer()
+
             view.autoRequest = false
             view.prefetchMargin = 0
             view.placeholder = null
@@ -3256,6 +3261,81 @@ Item {
             mouseRelease(scrollBar, x, 0)
 
             tryVerify(() => owner.startBudget < 3, 3000, "asked on release")
+            tryVerify(() => !view.busy, 8000)
+        }
+
+        // The slide the bottom band asks for may still be settling when the
+        // handle is dragged to the top. The drag is the move towards the top
+        // the slide's hold would wait for - held only once the slide lands, the
+        // top would wait for a move that has already happened.
+        function test_aDragDuringASlideLeavesTheTopFree_data() {
+            return [
+                { tag: "the slide lands while the handle is held", whileHeld: true },
+                { tag: "the slide lands after the release", whileHeld: false }
+            ]
+        }
+
+        function test_aDragDuringASlideLeavesTheTopFree(data) {
+            provider.delay = 0
+            freshFill(40)
+            arm(3)
+
+            // the bottom slide is admitted and stays open until answered
+            owner.holdAnswer = true
+            view.contentY = view.contentHeight - view.height
+            tryVerify(() => owner.endBudget < 3, 3000, "the bottom slide was asked")
+            verify(view.busy)
+
+            const x = scrollBar.width / 2
+
+            mousePress(scrollBar, x, scrollBar.height - 4)
+            verify(scrollBar.pressed, "the handle is held")
+
+            for (let i = 5; i >= 0; --i) {
+                mouseMove(scrollBar, x, scrollBar.height * i / 6)
+                waitForRendering(view)
+            }
+
+            verify(view.contentY < view.placeholderHeight,
+                   "the drag reached the start band: " + view.contentY)
+
+            owner.holdAnswer = false
+
+            if (data.whileHeld) {
+                owner.answer()
+                tryVerify(() => !view.busy, 8000, "the slide landed")
+                compare(owner.startBudget, 3, "held: nothing asked")
+            }
+
+            mouseRelease(scrollBar, x, 0)
+
+            if (!data.whileHeld)
+                owner.answer()
+
+            tryVerify(() => owner.startBudget < 3, 3000, "the top asked")
+            tryVerify(() => !view.busy, 8000)
+        }
+
+        // The same without the scroll bar: a move to the top while the slide
+        // settles, the way a wheel or a flick gets there.
+        function test_aMoveDuringASlideLeavesTheTopFree() {
+            provider.delay = 0
+            freshFill(40)
+            arm(3)
+
+            owner.holdAnswer = true
+            view.contentY = view.contentHeight - view.height
+            tryVerify(() => owner.endBudget < 3, 3000, "the bottom slide was asked")
+            verify(view.busy)
+
+            view.contentY = 0
+            waitForRendering(view)
+            compare(owner.startBudget, 3, "nothing asked while the slide is open")
+
+            owner.holdAnswer = false
+            owner.answer()
+
+            tryVerify(() => owner.startBudget < 3, 3000, "the top asked once the slide landed")
             tryVerify(() => !view.busy, 8000)
         }
 
