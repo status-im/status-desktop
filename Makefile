@@ -12,6 +12,8 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 
 GIT_ROOT ?= $(shell git rev-parse --show-toplevel 2>/dev/null || echo .)
 LINK_PCRE=0 # nimbus-build-system links `pcre` by default which is not needed
+# Nimble that resolves status-go's libsds; older ones pick the wrong Nim.
+export NIMBLE_COMMIT := v0.26.0
 # we don't want an error here, so we can handle things later, in the ".DEFAULT" target
 -include $(BUILD_SYSTEM_DIR)/makefiles/variables.mk
 
@@ -302,6 +304,7 @@ endif
 NIM_SDS_SOURCE_DIR ?= $(GIT_ROOT)/vendor/nim-sds
 export NIM_SDS_SOURCE_DIR
 NIMSDS_LIBDIR := $(NIM_SDS_SOURCE_DIR)/build
+export NIMSDS_LIBDIR
 NIMSDS_LIBFILE := $(NIMSDS_LIBDIR)/libsds.$(LIB_EXT)
 ifeq ($(mkspecs),win32)
  # Nim invokes native clang.exe outside the MSYS shell. Pass the import library
