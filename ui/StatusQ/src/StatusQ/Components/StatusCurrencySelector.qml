@@ -7,11 +7,14 @@ import StatusQ
 import StatusQ.Core
 import StatusQ.Core.Utils
 import StatusQ.Controls
+import StatusQ.Controls.private
 import StatusQ.Components
 import StatusQ.Core.Theme
 
 import SortFilterProxyModel
 import QtModelsToolkit
+
+import shared.controls
 
 Button {
     id: root
@@ -130,16 +133,13 @@ Button {
                 searchField.forceActiveFocus()
             currencySelectorPanel.positionViewAtIndex(d.searchableModel.mapFromSource(d.itemData?.row ?? 0), ListView.Visible)
         }
-        onClosed: searchField.input.edit.clear()
+        onClosed: searchField.clear()
 
         contentItem: ColumnLayout {
             spacing: Theme.halfPadding
-            StatusInput {
+            SearchBox {
                 id: searchField
                 Layout.fillWidth: true
-                placeholderText: qsTr("Search")
-                input.asset.name: "search"
-                input.clearable: true
                 KeyNavigation.tab: currencySelectorPanel
             }
             StatusListView {
@@ -158,6 +158,7 @@ Button {
                 }
 
                 delegate: ItemDelegate {
+                    id: delegate
                     objectName: "itemDelegate_" + model.shortName
                     width: ListView.view.width
                     height: d.delegateHeight
@@ -198,12 +199,11 @@ Button {
                                 color: Theme.palette.baseColor1
                             }
                         }
-                        StatusIcon {
-                            Layout.preferredHeight: 20
+                        StatusCheckIndicator {
                             Layout.alignment: Qt.AlignRight
-                            visible: checked
-                            icon: "tiny/checkmark"
-                            color: Theme.palette.primaryColor1
+                            checkState: delegate.checked ? Qt.Checked : Qt.Unchecked
+                            mirrored: delegate.mirrored
+                            hovered: delegate.hovered
                         }
                     }
                     onClicked: {
