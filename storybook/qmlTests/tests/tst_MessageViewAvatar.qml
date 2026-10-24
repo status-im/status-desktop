@@ -89,6 +89,19 @@ Item {
             verify(avatar.width > 0)
         }
 
+        // Every row has one, so it stays a plain static shape: no shader,
+        // animator or draw call of its own per message.
+        function test_avatarSkeletonIsStatic() {
+            const view = createTemporaryObject(messageViewComp, root)
+            verify(!!view)
+
+            const skeleton = findChild(view, "avatarLoadingSkeleton")
+            verify(!!skeleton)
+            verify(!(skeleton instanceof ShaderEffect),
+                   "avatar skeleton must not be a shader effect")
+            compare(findChild(skeleton, "shimmerAnimator"), null)
+        }
+
         // Async incubation parents the partially-built avatar into the scene
         // before it is complete — it must stay invisible behind the skeleton
         // until Ready instead of painting piece by piece.

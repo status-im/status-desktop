@@ -267,10 +267,12 @@ Control {
                         bridgeBadgeImage: root.messageDetails.sender.badgeImage || Assets.svg("bridge")
                         onClicked: (mouse) => root.profilePictureClicked(this, mouse)
 
-                        LoadingSkeletonTile {
+                        // static on purpose: a shimmer per message row costs an animator and a draw call each
+                        Rectangle {
                             objectName: "avatarLoadingSkeleton"
                             anchors.fill: parent
                             radius: width / 2
+                            color: Theme.palette.statusLoadingHighlight
                             visible: profileImage.active && profileImage.status !== Loader.Ready
                         }
                     }

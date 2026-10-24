@@ -33,7 +33,7 @@ endif()
 find_package(QT 6.11 NAMES Qt6 REQUIRED COMPONENTS Core)
 
 find_package(Qt6 COMPONENTS
-        Core CorePrivate Qml Gui GuiPrivate Quick QuickPrivate QuickLayoutsPrivate QuickControls2 WebChannel Svg Network Multimedia REQUIRED)
+        Core CorePrivate Qml Gui GuiPrivate Quick QuickPrivate QuickLayoutsPrivate QuickControls2 ShaderTools WebChannel Svg Network Multimedia REQUIRED)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND NOT ANDROID)
     find_package(Qt6 COMPONENTS DBus REQUIRED)
@@ -397,6 +397,12 @@ qt_add_resources(StatusQ "statusq_dictionaries"
         src/assets/dictionaries/README_en_US.txt
         src/assets/dictionaries/HUNSPELL_COPYING.MPL
         src/assets/dictionaries/SOURCES
+)
+qt_add_shaders(StatusQ "statusq_shaders"
+    PREFIX "/StatusQ/shaders"
+    BASE "${CMAKE_CURRENT_SOURCE_DIR}/src/assets/shaders"
+    FILES
+        src/assets/shaders/skeletontile.frag
 )
 
 if(IOS OR ANDROID OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
